@@ -1,0 +1,78 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Faith Journey | The Warthens",
+  description:
+    "Reliance on God for discovering, understanding, and living out truth. Our faith journey, coming soon.",
+};
+
+export default function FaithJourneyPage() {
+  return (
+    <section className="relative overflow-hidden">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10"
+        style={{
+          background:
+            "radial-gradient(55% 45% at 50% 0%, rgba(168,85,247,0.20), transparent)",
+        }}
+      />
+      <div className="mx-auto max-w-3xl px-6 pt-16 pb-20 text-center sm:pt-24">
+        <p className="inline-flex items-center gap-2 rounded-full border border-purple-500/30 bg-purple-500/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-purple-300">
+          Faith Journey · Coming Soon
+        </p>
+        <h1 className="text-balance mt-6 text-4xl font-semibold tracking-tight sm:text-5xl">
+          Reliance on God for discovering, understanding, and living out truth
+        </h1>
+        <p className="mx-auto mt-6 max-w-2xl text-balance text-lg text-foreground-muted">
+          We&apos;ve both served in leadership in a local church community.
+          We&apos;ve also walked through deconstructing what we thought
+          faith was supposed to look like, and found God faithful through
+          all of it, restoring and growing our understanding of truth
+          along the way. This page is where we&apos;ll share that journey.
+          For now, here&apos;s where it started.
+        </p>
+
+        <a
+          href="https://youtu.be/-udk7605GZw"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group mx-auto mt-10 block aspect-video w-full max-w-2xl overflow-hidden rounded-3xl border border-border-subtle shadow-2xl shadow-purple-950/40"
+        >
+          <div className="relative h-full w-full">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="https://img.youtube.com/vi/-udk7605GZw/maxresdefault.jpg"
+              alt="Redeeming A Deconstructed Faith | Our Christian Journey"
+              className="h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 flex items-center justify-center bg-black/30 transition-colors group-hover:bg-black/40">
+              <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/95 text-purple-700 shadow-lg transition-transform group-hover:scale-105">
+                <svg viewBox="0 0 24 24" fill="currentColor" className="ml-1 h-7 w-7">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </span>
+            </div>
+            <p className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-5 py-4 text-left text-sm font-semibold text-white">
+              Redeeming A Deconstructed Faith | Our Christian Journey
+            </p>
+          </div>
+        </a>
+
+        <p className="mt-8 text-sm text-foreground-muted">
+          More content, stories, and resources are on the way. Follow along
+          on{" "}
+          <a
+            href="https://youtube.com/@thewarthens?si=hMA8NuKtm0vox8X4"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-purple-300 hover:text-purple-200"
+          >
+            YouTube
+          </a>{" "}
+          so you don&apos;t miss it.
+        </p>
+      </div>
+    </section>
+  );
+}

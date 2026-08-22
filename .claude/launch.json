@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "warthens-dev",
+      "runtimeExecutable": "/bin/zsh",
+      "runtimeArgs": ["-c", "cd /Users/justonwarthen/Desktop/thewarthens-site && export PATH=/opt/homebrew/bin:$PATH && exec npm run dev"],
+      "port": 3000
+    }
+  ]
+}
