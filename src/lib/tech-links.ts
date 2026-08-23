@@ -33,11 +33,15 @@ export const techSections: TechSection[] = [
     ],
   },
   {
-    title: "Software Engineering, Design & Data Bootcamps",
+    title: "Software Engineering, Cybersecurity, Design & Data Bootcamps",
     note: "via Springboard",
     links: [
       {
         label: "Software Engineering Course",
+        href: "https://www.springboard.com/landing/influencer/thewarthens?utm_source=thewarthens&utm_medium=influencer&utm_campaign=non-ct&utm_term=paid&utm_content=firstyoutubelanpage8242023",
+      },
+      {
+        label: "Cybersecurity Training",
         href: "https://www.springboard.com/landing/influencer/thewarthens?utm_source=thewarthens&utm_medium=influencer&utm_campaign=non-ct&utm_term=paid&utm_content=firstyoutubelanpage8242023",
       },
       {
@@ -47,20 +51,6 @@ export const techSections: TechSection[] = [
       {
         label: "Data Analytics / Science Training",
         href: "https://www.springboard.com/landing/influencer/thewarthens?utm_source=thewarthens&utm_medium=influencer&utm_campaign=non-ct&utm_term=paid&utm_content=firstyoutubelanpage8242023",
-      },
-      {
-        label: "Graduate w/ CompTIA Security+",
-        href: "https://www.springboard.com/landing/influencer/thewarthens?utm_source=thewarthens&utm_medium=influencer&utm_campaign=non-ct&utm_term=paid&utm_content=firstyoutubelanpage8242023",
-      },
-    ],
-  },
-  {
-    title: "Cybersecurity Training",
-    note: "via Leveld Careers",
-    links: [
-      {
-        label: "Cybersecurity Training",
-        href: "https://www.leveldcareers.com/a/2147528378/5LmSQXTm",
       },
     ],
   },

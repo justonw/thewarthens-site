@@ -213,9 +213,8 @@ export const careerPaths: Record<PathId, CareerPath> = {
     payHigh: 100000,
     links: [
       { label: "I.T. Training", href: "https://www.coursecareers.com/journey" },
-      { label: "Cybersecurity Training", href: "https://www.leveldcareers.com/a/2147528378/5LmSQXTm" },
       {
-        label: "Graduate w/ CompTIA Security+",
+        label: "Cybersecurity Training",
         href: "https://www.springboard.com/landing/influencer/thewarthens?utm_source=thewarthens&utm_medium=influencer&utm_campaign=non-ct&utm_term=paid&utm_content=firstyoutubelanpage8242023",
       },
     ],
