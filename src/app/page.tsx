@@ -21,8 +21,20 @@ const jsonLd = {
     "https://youtube.com/@thewarthens",
     "https://www.instagram.com/thewarthens",
     "https://www.tiktok.com/@techjourneyyoutube",
+    "https://www.linkedin.com/in/juston-warthen-96aa13167",
+    "https://www.linkedin.com/in/atiya-warthen-4062881b0",
   ],
 };
+
+function LinkedInBadge() {
+  return (
+    <span className="absolute bottom-0 right-0 flex h-7 w-7 items-center justify-center rounded-full border-2 border-background bg-[#0A66C2] text-white shadow-sm">
+      <svg viewBox="0 0 24 24" fill="currentColor" className="h-3.5 w-3.5">
+        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zM7.114 20.452H3.558V9h3.556v11.452z" />
+      </svg>
+    </span>
+  );
+}
 
 export default function Home() {
   return (
@@ -148,20 +160,38 @@ export default function Home() {
         <Reveal className="mx-auto max-w-5xl px-6 py-20">
           <div className="grid items-center gap-10 sm:grid-cols-[auto_1fr]">
             <div className="flex justify-center gap-4 sm:justify-start">
-              <Image
-                src="/team/atiya.png"
-                alt="Atiya Warthen"
-                width={112}
-                height={112}
-                className="h-28 w-28 rounded-full border-2 border-border-subtle object-cover"
-              />
-              <Image
-                src="/team/juston.jpg"
-                alt="Juston Warthen"
-                width={112}
-                height={112}
-                className="-ml-6 h-28 w-28 rounded-full border-2 border-border-subtle object-cover"
-              />
+              <a
+                href="https://www.linkedin.com/in/atiya-warthen-4062881b0"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative block h-28 w-28 shrink-0"
+                aria-label="Atiya Warthen on LinkedIn"
+              >
+                <Image
+                  src="/team/atiya.png"
+                  alt="Atiya Warthen"
+                  width={112}
+                  height={112}
+                  className="h-28 w-28 rounded-full border-2 border-border-subtle object-cover transition-opacity group-hover:opacity-90"
+                />
+                <LinkedInBadge />
+              </a>
+              <a
+                href="https://www.linkedin.com/in/juston-warthen-96aa13167"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative -ml-6 block h-28 w-28 shrink-0"
+                aria-label="Juston Warthen on LinkedIn"
+              >
+                <Image
+                  src="/team/juston.jpg"
+                  alt="Juston Warthen"
+                  width={112}
+                  height={112}
+                  className="h-28 w-28 rounded-full border-2 border-border-subtle object-cover transition-opacity group-hover:opacity-90"
+                />
+                <LinkedInBadge />
+              </a>
             </div>
             <div>
               <h2 className="text-2xl font-semibold">About us</h2>

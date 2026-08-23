@@ -9,6 +9,9 @@ const socials = [
   },
   { href: "https://www.tiktok.com/@techjourneyyoutube?_t=8oaopXMHjKg&_r=1", label: "TikTok" },
   { href: "https://calendly.com/techjourneyinfo", label: "Book a Call" },
+  { href: "mailto:info@thewarthens.com", label: "Email Us" },
+  { href: "https://www.linkedin.com/in/juston-warthen-96aa13167", label: "Juston's LinkedIn" },
+  { href: "https://www.linkedin.com/in/atiya-warthen-4062881b0", label: "Atiya's LinkedIn" },
 ];
 
 export default function Footer() {
@@ -81,17 +84,19 @@ export default function Footer() {
               Follow Along
             </p>
             <nav className="mt-3 flex flex-col gap-2">
-              {socials.map((s) => (
-                <a
-                  key={s.label}
-                  href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-foreground-muted transition-colors hover:text-foreground"
-                >
-                  {s.label}
-                </a>
-              ))}
+              {socials.map((s) => {
+                const isMailto = s.href.startsWith("mailto:");
+                return (
+                  <a
+                    key={s.label}
+                    href={s.href}
+                    {...(!isMailto && { target: "_blank", rel: "noopener noreferrer" })}
+                    className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+                  >
+                    {s.label}
+                  </a>
+                );
+              })}
             </nav>
           </div>
         </div>
