@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { freeResources, techSections } from "@/lib/tech-links";
 import Reveal from "@/components/Reveal";
 import ScrollCue from "@/components/ScrollCue";
+import CareerQuiz from "@/components/CareerQuiz";
 
 export const metadata: Metadata = {
   title: "Tech Journey | The Warthens",
@@ -64,6 +65,19 @@ export default function TechJourneyPage() {
             current job.
           </p>
           <ScrollCue className="mt-10" />
+        </Reveal>
+      </section>
+
+      <section className="mx-auto max-w-3xl px-6 pb-16">
+        <Reveal>
+          <p className="text-center text-sm text-foreground-muted">
+            Not sure where to start? This takes about 2 minutes and looks
+            at how you like to work, what&apos;s pulling you toward a
+            change, and your pace — there&apos;s no wrong answer.
+          </p>
+          <div className="mt-5">
+            <CareerQuiz />
+          </div>
         </Reveal>
       </section>
 

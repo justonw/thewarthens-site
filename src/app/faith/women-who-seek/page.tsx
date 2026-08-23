@@ -276,7 +276,6 @@ export default function WomenWhoSeekPage() {
           sizes="100vw"
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-background/50" />
       </div>
 
       {/* Closing */}
