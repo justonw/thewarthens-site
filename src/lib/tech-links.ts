@@ -65,8 +65,8 @@ export const techSections: TechSection[] = [
     ],
   },
   {
-    title: "All CourseCareers Programs",
-    note: "One membership unlocks every course below",
+    title: "Trades, Business & Supply Chain Careers",
+    note: "via CourseCareers, browse all paths and pick what fits",
     links: [
       { label: "I.T. Training", href: "https://www.coursecareers.com/journey" },
       { label: "Business Operations", href: "https://www.coursecareers.com/journey" },
