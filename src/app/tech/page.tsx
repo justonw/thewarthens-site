@@ -3,6 +3,7 @@ import { freeResources, techSections } from "@/lib/tech-links";
 import Reveal from "@/components/Reveal";
 import ScrollCue from "@/components/ScrollCue";
 import CareerQuiz from "@/components/CareerQuiz";
+import IncomeSnapshot from "@/components/IncomeSnapshot";
 
 const title = "Tech Journey | The Warthens";
 const description =
@@ -84,6 +85,12 @@ export default function TechJourneyPage() {
           <div className="mt-5">
             <CareerQuiz />
           </div>
+        </Reveal>
+      </section>
+
+      <section className="mx-auto max-w-3xl px-6 pb-16">
+        <Reveal>
+          <IncomeSnapshot />
         </Reveal>
       </section>
 
