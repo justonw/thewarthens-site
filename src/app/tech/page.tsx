@@ -5,6 +5,7 @@ import ScrollCue from "@/components/ScrollCue";
 import CareerQuiz from "@/components/CareerQuiz";
 import IncomeSnapshot from "@/components/IncomeSnapshot";
 import JobTracker from "@/components/JobTracker";
+import StarterChecklist from "@/components/StarterChecklist";
 import EmailGatedDownload from "@/components/EmailGatedDownload";
 
 const title = "Tech Journey | The Warthens";
@@ -151,10 +152,16 @@ export default function TechJourneyPage() {
             Once you&apos;re applying, stay organized
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-foreground-muted">
-            A resume &amp; LinkedIn checklist, plus a tracker for every
-            application and follow-up. Use the live version right on this
-            page, or get both files sent to your inbox.
+            An interactive resume &amp; LinkedIn checklist, plus a tracker
+            for every application and follow-up. Use the live versions
+            right on this page, or get both as files sent to your inbox.
           </p>
+        </Reveal>
+      </section>
+
+      <section className="mx-auto max-w-3xl px-6 pb-16">
+        <Reveal>
+          <StarterChecklist />
         </Reveal>
       </section>
 

@@ -75,19 +75,29 @@ export const techSections: TechSection[] = [
     ],
   },
   {
-    title: "Learn Business Operations, Management & More",
+    title: "Learn a Skilled Trade",
     note: 'with "CourseCareers"',
     links: [
-      { label: "Accounting", href: "https://coursecareers.com/a/bbe72885?course=accounting" },
-      { label: "UX / UI", href: "https://www.coursecareers.com/journey" },
+      { label: "Electrician", href: "https://coursecareers.com/a/bbe72885?course=electrical" },
+      { label: "HVAC", href: "https://coursecareers.com/a/bbe72885?course=hvac" },
+      { label: "Plumbing", href: "https://coursecareers.com/a/bbe72885?course=plumbing" },
       {
         label: "Construction Project Management",
         href: "https://coursecareers.com/a/bbe72885?course=construction-management",
       },
-      { label: "Supply Chain", href: "https://www.coursecareers.com/journey" },
-      { label: "Plumbing", href: "https://coursecareers.com/a/bbe72885?course=plumbing" },
-      { label: "Electrician", href: "https://coursecareers.com/a/bbe72885?course=electrical" },
-      { label: "HVAC", href: "https://coursecareers.com/a/bbe72885?course=hvac" },
+    ],
+  },
+  {
+    title: "Learn Supply Chain",
+    note: 'with "CourseCareers"',
+    links: [{ label: "Supply Chain", href: "https://www.coursecareers.com/journey" }],
+  },
+  {
+    title: "Learn Business Operations & Accounting",
+    note: 'with "CourseCareers"',
+    links: [
+      { label: "Accounting", href: "https://coursecareers.com/a/bbe72885?course=accounting" },
+      { label: "Business Operations", href: "https://www.coursecareers.com/journey" },
     ],
   },
 ];

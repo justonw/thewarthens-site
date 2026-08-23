@@ -94,12 +94,26 @@ export default function CareerQuiz() {
           </div>
         )}
 
-        <button
-          onClick={retake}
-          className="mt-8 text-sm font-semibold text-foreground-muted underline decoration-border-subtle underline-offset-4 hover:text-foreground"
-        >
-          Retake the quiz
-        </button>
+        <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-border-subtle pt-6 text-sm">
+          <a
+            href="#learn"
+            className="font-semibold text-blue-600 hover:text-blue-700"
+          >
+            Browse the full course list ↓
+          </a>
+          <a
+            href="#toolkit"
+            className="font-semibold text-blue-600 hover:text-blue-700"
+          >
+            Get the job search toolkit ↓
+          </a>
+          <button
+            onClick={retake}
+            className="font-semibold text-foreground-muted underline decoration-border-subtle underline-offset-4 hover:text-foreground"
+          >
+            Retake the quiz
+          </button>
+        </div>
       </div>
     );
   }

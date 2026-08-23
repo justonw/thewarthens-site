@@ -109,7 +109,11 @@ export const careerPaths: Record<PathId, CareerPath> = {
     affiliate: true,
     payLow: 42000,
     payHigh: 61000,
-    links: [{ label: "Sales Development Representative", href: "https://higherlevels.com/?via=journey" }],
+    links: [
+      { label: "Sales Development Representative", href: "https://higherlevels.com/?via=journey" },
+      { label: "SDR to Account Executive", href: "https://higherlevels.com/?via=journey" },
+      { label: "Account Executive Growth", href: "https://higherlevels.com/?via=journey" },
+    ],
   },
   swe: {
     id: "swe",
