@@ -8,6 +8,11 @@ export type StartHereStep = {
   linkLabel?: string;
 };
 
+export type StartHereFaq = {
+  question: string;
+  answer: string;
+};
+
 export type StartHereGuide = {
   slug: string;
   pathId: PathId;
@@ -18,6 +23,7 @@ export type StartHereGuide = {
   steps: StartHereStep[];
   paidNote: string;
   paidLinks: { label: string; href: string }[];
+  faq: StartHereFaq[];
 };
 
 export const startHereGuides: StartHereGuide[] = [
@@ -79,6 +85,23 @@ export const startHereGuides: StartHereGuide[] = [
       "You don't have to finish the free steps above before considering this. A paid program makes sense whenever you want a packaged, structured way of learning and a designated community to talk through what you're working on, whether that's day one or after you've already tried the free content. We partner with Higher Levels for that reason.",
     paidLinks: [
       { label: "Sales Development Representative (Higher Levels)", href: "https://higherlevels.com/?via=journey" },
+    ],
+    faq: [
+      {
+        question: "How do I get into tech sales with no experience?",
+        answer:
+          "Start free: watch real day-to-day content from people doing the job (not just course marketing), learn the basic vocabulary (SPIN Selling, Gap Selling, the Challenger Sale), and fix your resume and LinkedIn before you apply anywhere. Then start applying to real SDR postings even before you feel ready. You don't need a degree or prior sales experience, retail, hospitality, or any customer-facing background transfers well.",
+      },
+      {
+        question: "Do I need a degree to break into tech sales?",
+        answer:
+          "No. Tech sales is one of the more degree-blind entry points in the economy. What actually matters is being able to handle daily rejection at volume and communicate clearly, both of which retail, hospitality, service, and military backgrounds already build.",
+      },
+      {
+        question: "What should I do before paying for a tech sales course?",
+        answer:
+          "Everything in this free path first: watch honest day-in-the-life content, follow a training program's free content to see what it actually teaches, learn the core vocabulary, and clean up your resume and LinkedIn. If you still want a structured program and community after that, paying then makes more sense than paying first.",
+      },
     ],
   },
   {
@@ -155,6 +178,23 @@ export const startHereGuides: StartHereGuide[] = [
         href: "https://www.springboard.com/landing/influencer/thewarthens?utm_source=thewarthens&utm_medium=influencer&utm_campaign=non-ct&utm_term=paid&utm_content=firstyoutubelanpage8242023",
       },
     ],
+    faq: [
+      {
+        question: "How do I get started in cybersecurity with no experience, for free?",
+        answer:
+          "In order: get comfortable at the command line with OverTheWire's Bandit wargame, learn networking fundamentals through Professor Messer's free videos, work through TryHackMe's free Pre Security path, then Professor Messer's free Security+ course before you ever pay for the exam. Practice with picoCTF, and join a community like r/cybersecurity to start asking questions.",
+      },
+      {
+        question: "What's the best free way to learn cybersecurity basics?",
+        answer:
+          "Professor Messer's free video courses (Network+ and Security+) are the most consistently recommended free resource, paired with TryHackMe's browser-based, hands-on rooms, which need no install and cover real fundamentals at zero cost.",
+      },
+      {
+        question: "Do I need a degree or certification to start learning cybersecurity?",
+        answer:
+          "No, all of the resources in this free path (OverTheWire, Professor Messer, TryHackMe, picoCTF) require nothing but time and a computer. A cert like CompTIA Security+ becomes useful later, once you've built real fundamentals and want something to show employers.",
+      },
+    ],
   },
   {
     slug: "coding",
@@ -224,6 +264,23 @@ export const startHereGuides: StartHereGuide[] = [
       {
         label: "Software Engineering Course (Springboard)",
         href: "https://www.springboard.com/landing/influencer/thewarthens?utm_source=thewarthens&utm_medium=influencer&utm_campaign=non-ct&utm_term=paid&utm_content=firstyoutubelanpage8242023",
+      },
+    ],
+    faq: [
+      {
+        question: "How do I start learning to code for free?",
+        answer:
+          "Start with freeCodeCamp's Responsive Web Design certification, it's free, requires no account to begin, and covers HTML, CSS, and 5 hands-on projects. Supplement with video from freeCodeCamp's own channel or Traversy Media, but keep building more than you watch. Once you finish the basics, The Odin Project is a free, open-source curriculum that goes deeper.",
+      },
+      {
+        question: "What programming language should I learn first?",
+        answer:
+          "JavaScript, if you're starting with web development, which is the most beginner-friendly lane since you write code, refresh a browser, and immediately see it work. Python is the better first language if data or AI interests you more.",
+      },
+      {
+        question: "Do I need a bootcamp to become a software engineer?",
+        answer:
+          "No, not to start. Everything in this free path (freeCodeCamp, The Odin Project, building and shipping your own project on GitHub Pages) can get you real, demonstrable skill before you spend a dollar. A bootcamp can still make sense later for structure and community, but it's not required to begin.",
       },
     ],
   },

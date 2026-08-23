@@ -23,7 +23,7 @@ export async function generateMetadata({
     description: guide.dek,
     alternates: { canonical: `/tech/guides/${guide.slug}` },
     openGraph: { title: guide.title, description: guide.dek, url: `/tech/guides/${guide.slug}` },
-    twitter: { title: guide.title, description: guide.dek },
+    twitter: { card: "summary_large_image", title: guide.title, description: guide.dek },
   };
 }
 

@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: "/tech" },
   openGraph: { title, description, url: "/tech" },
-  twitter: { title, description },
+  twitter: { card: "summary_large_image", title, description },
 };
 
 const quickNav = [
@@ -45,9 +45,59 @@ const quickNav = [
   { href: "#toolkit", label: "Get the Files" },
 ];
 
+const hubFaq = [
+  {
+    question: "How do I change careers into tech with no experience or degree?",
+    answer:
+      "Take the free career quiz to see which path fits how you work, then use that path's free Start Here guide before spending a dollar on any course. Most of the paths on this page, tech sales, IT, cybersecurity, coding, and the trades, don't require a degree, they require transferable skills and a real search.",
+  },
+  {
+    question: "What tech career pays the most for beginners in 2026?",
+    answer:
+      "Based on the entry-level ranges in our Income Snapshot, IT & Cybersecurity ($78K-$100K) and Data Analytics ($85K-$100K) currently show the highest entry-level ranges, with Software Engineering ($60K-$75K) and Skilled Trades ($60K-$80K) close behind. Ranges vary by location and employer, and none of these are guarantees.",
+  },
+  {
+    question: "Is it too late to switch careers to tech?",
+    answer:
+      "No, but the on-ramp looks different than it did a few years ago. Our Hype vs. Reality guides break down what's actually changed for tech sales, software engineering, and cybersecurity, so you can go in with realistic timelines instead of outdated marketing claims.",
+  },
+  {
+    question: "How much does it cost to start a career in tech?",
+    answer:
+      "It can cost nothing to start. Every path's Start Here guide is a free, step-by-step way to test whether a field fits you before you consider a paid course or bootcamp. Paying only makes sense later, once you want a structured program and community on top of what you've already learned for free.",
+  },
+];
+
 export default function TechJourneyPage() {
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "The Warthens", item: "https://thewarthens.com" },
+      { "@type": "ListItem", position: 2, name: "Tech Journey", item: "https://thewarthens.com/tech" },
+    ],
+  };
+
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: hubFaq.map((f) => ({
+      "@type": "Question",
+      name: f.question,
+      acceptedAnswer: { "@type": "Answer", text: f.answer },
+    })),
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <section className="relative overflow-hidden">
         <div
           aria-hidden
@@ -100,7 +150,10 @@ export default function TechJourneyPage() {
 
       <section id="quiz" className="mx-auto max-w-3xl scroll-mt-32 px-6 pb-16">
         <Reveal>
-          <p className="text-center text-sm text-foreground-muted">
+          <h2 className="text-center text-2xl font-semibold sm:text-3xl">
+            Find Your Path
+          </h2>
+          <p className="mt-3 text-center text-sm text-foreground-muted">
             Not sure where to start? This takes about 2 minutes and looks
             at how you like to work, what&apos;s pulling you toward a
             change, and your pace. There&apos;s no wrong answer.
@@ -113,6 +166,7 @@ export default function TechJourneyPage() {
 
       <section id="pay" className="mx-auto max-w-3xl scroll-mt-32 px-6 pb-16">
         <Reveal>
+          <h2 className="sr-only">See the Pay</h2>
           <IncomeSnapshot />
         </Reveal>
       </section>
@@ -267,6 +321,31 @@ export default function TechJourneyPage() {
             ]}
             ctaLabel="Email Me Both"
           />
+        </Reveal>
+      </section>
+
+      <section className="mx-auto max-w-3xl px-6 pb-16">
+        <Reveal>
+          <h2 className="text-xl font-semibold sm:text-2xl">Quick Answers</h2>
+          <div className="mt-5 space-y-3">
+            {hubFaq.map((f, i) => (
+              <details
+                key={i}
+                className="group rounded-2xl border border-border-subtle bg-background-elevated"
+              >
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-5 font-semibold">
+                  {f.question}
+                  <span
+                    aria-hidden
+                    className="shrink-0 text-sm text-foreground-muted transition-transform group-open:rotate-180"
+                  >
+                    ⌄
+                  </span>
+                </summary>
+                <p className="px-5 pb-5 text-sm text-foreground-muted">{f.answer}</p>
+              </details>
+            ))}
+          </div>
         </Reveal>
       </section>
 

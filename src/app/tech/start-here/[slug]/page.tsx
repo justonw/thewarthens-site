@@ -23,7 +23,7 @@ export async function generateMetadata({
     description: guide.dek,
     alternates: { canonical: `/tech/start-here/${guide.slug}` },
     openGraph: { title: guide.title, description: guide.dek, url: `/tech/start-here/${guide.slug}` },
-    twitter: { title: guide.title, description: guide.dek },
+    twitter: { card: "summary_large_image", title: guide.title, description: guide.dek },
   };
 }
 
@@ -60,6 +60,16 @@ export default async function StartHerePage({
     })),
   };
 
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: guide.faq.map((f) => ({
+      "@type": "Question",
+      name: f.question,
+      acceptedAnswer: { "@type": "Answer", text: f.answer },
+    })),
+  };
+
   return (
     <>
       <script
@@ -69,6 +79,10 @@ export default async function StartHerePage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <div className="border-b border-border-subtle/60 bg-background-elevated/30">
         <div className="mx-auto max-w-3xl px-6 py-3 text-sm text-foreground-muted">
@@ -160,6 +174,31 @@ export default async function StartHerePage({
                 {link.label}
                 <span aria-hidden>→</span>
               </a>
+            ))}
+          </div>
+        </Reveal>
+      </section>
+
+      <section className="mx-auto max-w-3xl px-6 pb-10">
+        <Reveal>
+          <h2 className="text-xl font-semibold sm:text-2xl">Quick Answers</h2>
+          <div className="mt-5 space-y-3">
+            {guide.faq.map((f, i) => (
+              <details
+                key={i}
+                className="group rounded-2xl border border-border-subtle bg-background-elevated"
+              >
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-5 font-semibold">
+                  {f.question}
+                  <span
+                    aria-hidden
+                    className="shrink-0 text-sm text-foreground-muted transition-transform group-open:rotate-180"
+                  >
+                    ⌄
+                  </span>
+                </summary>
+                <p className="px-5 pb-5 text-sm text-foreground-muted">{f.answer}</p>
+              </details>
             ))}
           </div>
         </Reveal>

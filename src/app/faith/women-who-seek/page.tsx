@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   description,
   alternates: { canonical: "/faith/women-who-seek" },
   openGraph: { title, description, url: "/faith/women-who-seek" },
-  twitter: { title, description },
+  twitter: { card: "summary_large_image", title, description },
   appleWebApp: {
     capable: true,
     title: "Women Who Seek",
@@ -33,6 +33,29 @@ export const metadata: Metadata = {
 
 const ZOOM_LINK =
   "https://us06web.zoom.us/j/84219780543?pwd=QH05EYCRiT5XFeOa5UybiNH0tK9ssX.1";
+
+const faq = [
+  {
+    question: "What is Women Who Seek?",
+    answer:
+      "Women Who Seek is a Bible study community for women, hosted by Atiya Warthen, focused on finding Jesus throughout Scripture. Wherever you are in your journey with Jesus, you're welcome.",
+  },
+  {
+    question: "How do I join the Women Who Seek Bible study?",
+    answer:
+      "The monthly virtual Bible study meets the first Wednesday of every month over Zoom, 7:30-9:00 PM EST. Join using the Zoom link on this page, or contact us for the Meeting ID and passcode.",
+  },
+  {
+    question: "Is Women Who Seek only for women in certain cities?",
+    answer:
+      "No. The monthly Bible study is virtual and open to any woman, anywhere. In-person gatherings are also held periodically in cities like New Orleans and Atlanta, and there's an annual conference for all women.",
+  },
+  {
+    question: "Do I need Bible knowledge or experience to join?",
+    answer:
+      "No. Women Who Seek welcomes women wherever they are in their journey with Jesus, whether you've known Him for years or are just beginning.",
+  },
+];
 
 function Verse({ children, citation }: { children: React.ReactNode; citation: string }) {
   return (
@@ -48,8 +71,36 @@ function Verse({ children, citation }: { children: React.ReactNode; citation: st
 }
 
 export default function WomenWhoSeekPage() {
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "The Warthens", item: "https://thewarthens.com" },
+      { "@type": "ListItem", position: 2, name: "Faith Journey", item: "https://thewarthens.com/faith" },
+      { "@type": "ListItem", position: 3, name: "Women Who Seek", item: "https://thewarthens.com/faith/women-who-seek" },
+    ],
+  };
+
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faq.map((f) => ({
+      "@type": "Question",
+      name: f.question,
+      acceptedAnswer: { "@type": "Answer", text: f.answer },
+    })),
+  };
+
   return (
     <div className={playfair.variable}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <div className="border-b border-border-subtle/60 bg-background-elevated/30">
         <div className="mx-auto max-w-5xl px-6 py-3 text-sm text-foreground-muted">
           <Link href="/faith" className="hover:text-foreground">
@@ -275,6 +326,39 @@ export default function WomenWhoSeekPage() {
               </p>
             </Reveal>
           </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="border-t border-border-subtle">
+        <div className="mx-auto max-w-3xl px-6 py-16">
+          <Reveal>
+            <p className="text-sm font-semibold uppercase tracking-wider text-mauve-700">
+              Questions
+            </p>
+            <h2 className={`${serif} mt-3 text-3xl font-medium sm:text-4xl`}>
+              Quick Answers
+            </h2>
+            <div className="mt-6 space-y-3">
+              {faq.map((f, i) => (
+                <details
+                  key={i}
+                  className="group rounded-2xl border border-border-subtle bg-background-elevated"
+                >
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-5 font-semibold">
+                    {f.question}
+                    <span
+                      aria-hidden
+                      className="shrink-0 text-sm text-foreground-muted transition-transform group-open:rotate-180"
+                    >
+                      ⌄
+                    </span>
+                  </summary>
+                  <p className="px-5 pb-5 text-sm text-foreground-muted">{f.answer}</p>
+                </details>
+              ))}
+            </div>
+          </Reveal>
         </div>
       </section>
 

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description,
   alternates: { canonical: "/faith" },
   openGraph: { title, description, url: "/faith" },
-  twitter: { title, description },
+  twitter: { card: "summary_large_image", title, description },
 };
 
 const videoJsonLd = {
@@ -36,12 +36,52 @@ const videoJsonLd = {
   },
 };
 
+const faq = [
+  {
+    question: "What is Faith Journey?",
+    answer:
+      "Faith Journey is Juston and Atiya Warthen's story of deconstructing what they thought faith was supposed to look like after serving in local church leadership, and finding God faithful through it, restoring and growing their understanding of truth along the way.",
+  },
+  {
+    question: "Is there a community for women in Faith Journey?",
+    answer:
+      "Yes. Women Who Seek is a Bible study community for women, hosted by Atiya Warthen, open to any woman wherever she is in her journey with Jesus.",
+  },
+];
+
 export default function FaithJourneyPage() {
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "The Warthens", item: "https://thewarthens.com" },
+      { "@type": "ListItem", position: 2, name: "Faith Journey", item: "https://thewarthens.com/faith" },
+    ],
+  };
+
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faq.map((f) => ({
+      "@type": "Question",
+      name: f.question,
+      acceptedAnswer: { "@type": "Answer", text: f.answer },
+    })),
+  };
+
   return (
     <section className="relative overflow-hidden">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(videoJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <div
         aria-hidden
@@ -107,6 +147,29 @@ export default function FaithJourneyPage() {
           </a>{" "}
           so you don&apos;t miss it.
         </p>
+      </Reveal>
+
+      <Reveal delay={100} className="mx-auto max-w-3xl px-6 pb-16 text-left">
+        <h2 className="text-xl font-semibold sm:text-2xl">Quick Answers</h2>
+        <div className="mt-5 space-y-3">
+          {faq.map((f, i) => (
+            <details
+              key={i}
+              className="group rounded-2xl border border-border-subtle bg-background-elevated"
+            >
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-5 font-semibold">
+                {f.question}
+                <span
+                  aria-hidden
+                  className="shrink-0 text-sm text-foreground-muted transition-transform group-open:rotate-180"
+                >
+                  ⌄
+                </span>
+              </summary>
+              <p className="px-5 pb-5 text-sm text-foreground-muted">{f.answer}</p>
+            </details>
+          ))}
+        </div>
       </Reveal>
 
       <Reveal delay={150} className="mx-auto max-w-3xl px-6 pb-6 text-center">
