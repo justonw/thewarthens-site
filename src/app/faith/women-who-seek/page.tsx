@@ -86,7 +86,7 @@ export default function WomenWhoSeekPage() {
           >
             Women Who Seek
           </h1>
-          <p className={`${serif} mt-3 text-2xl italic text-mauve-700 sm:text-3xl`}>
+          <p className={`${serif} mt-3 text-2xl italic text-rust-700 sm:text-3xl`}>
             Finding Jesus in the Scriptures
           </p>
           <p className="mx-auto mt-8 max-w-xl text-balance text-lg text-foreground-muted">

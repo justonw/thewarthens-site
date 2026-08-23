@@ -25,6 +25,9 @@
   --color-mauve-800: #55363f;
   --color-mauve-900: #47303a;
   --color-mauve-950: #3a2530;
+
+  /* Women Who Seek italic accent: warm rust/terracotta */
+  --color-rust-700: #9c5346;
 }
 
 html {
