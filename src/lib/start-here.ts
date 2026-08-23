@@ -36,7 +36,7 @@ export const startHereGuides: StartHereGuide[] = [
         id: "watch-reality",
         title: "Watch this first: what the job actually looks like",
         description:
-          "Before anything else, watch the video below. It's the most honest look at day-to-day tech sales we've put out, cold calls, quota pressure, and all. If this doesn't scare you off, keep going.",
+          "Before anything else, watch the video above. It's the most honest look at day-to-day tech sales we've put out, cold calls, quota pressure, and all. If this doesn't scare you off, keep going.",
       },
       {
         id: "follow-higher-levels",
@@ -50,7 +50,7 @@ export const startHereGuides: StartHereGuide[] = [
         id: "watch-our-playlists",
         title: "Watch our Tech Sales playlists",
         description:
-          "We've put out over 50 free videos on cold calling, LinkedIn, resumes, and interview prep specifically for people trying to break into tech sales. Start with \"Mastering Tech Sales\" and \"Tech Sales Career.\"",
+          "We've put out over 50 free videos on cold calling, LinkedIn, resumes, interview prep, and industry insights specifically for people trying to break into tech sales. Start with \"Mastering Tech Sales\" and \"Tech Sales Career.\"",
         href: "https://youtube.com/@thewarthens",
         linkLabel: "Our YouTube channel",
       },
@@ -84,7 +84,7 @@ export const startHereGuides: StartHereGuide[] = [
       },
     ],
     paidNote:
-      "Once you've done the free steps above and tech sales still feels right, a structured program can shorten the timeline. We partner with Higher Levels for exactly that reason, but it's worth trying the free content first so you know it's a fit before paying for anything.",
+      "You don't have to finish the free steps above before considering this. A paid program makes sense whenever you want a packaged, structured way of learning and a designated community to talk through what you're working on, whether that's day one or after you've already tried the free content. We partner with Higher Levels for that reason.",
     paidLinks: [
       { label: "Sales Development Representative (Higher Levels)", href: "https://higherlevels.com/?via=journey" },
     ],
@@ -104,7 +104,7 @@ export const startHereGuides: StartHereGuide[] = [
         id: "watch-interview",
         title: "Watch this first: a real cybersecurity engineer",
         description:
-          "Before you study anything, watch the interview below to hear what the job is actually like from someone doing it.",
+          "Before you study anything, watch the interview above to hear what the job is actually like from someone doing it.",
       },
       {
         id: "command-line",
@@ -156,7 +156,7 @@ export const startHereGuides: StartHereGuide[] = [
       },
     ],
     paidNote:
-      "Once you've finished the free path above and want to move faster, or you need the actual Security+ credential for a resume filter, that's when paying for a structured program starts to make sense. We partner with Springboard for exactly that stage, not as a substitute for the free fundamentals.",
+      "You don't have to finish the free path above before considering this. A paid program makes sense whenever you want a packaged, structured way of learning and a designated community to talk through what you're working on, whether that's day one or after you've already tried the free fundamentals. We partner with Springboard for that reason.",
     paidLinks: [
       {
         label: "Cybersecurity Training (Springboard)",
@@ -179,7 +179,7 @@ export const startHereGuides: StartHereGuide[] = [
         id: "watch-swe",
         title: "Watch this first: a real software engineer's perspective",
         description:
-          "Before you write a line of code, watch the video below to hear what the job is actually like from someone doing it at Microsoft.",
+          "Before you write a line of code, watch the video above to hear what the job is actually like from someone doing it at Microsoft.",
       },
       {
         id: "pick-a-lane",
@@ -227,7 +227,7 @@ export const startHereGuides: StartHereGuide[] = [
       },
     ],
     paidNote:
-      "The real milestone before paying for anything: finish the Responsive Web Design certification and build one project on your own, from a blank file, without following a tutorial step by step. If you've done that and want to move faster, that's when a paid bootcamp is worth evaluating as an informed buyer. We partner with Springboard for that stage.",
+      "You don't have to finish the free path above before considering this. A paid bootcamp makes sense whenever you want a packaged, structured way of learning and a designated community to talk through what you're building, whether that's day one or after you've already tried freeCodeCamp on your own. We partner with Springboard for that reason.",
     paidLinks: [
       {
         label: "Software Engineering Course (Springboard)",
