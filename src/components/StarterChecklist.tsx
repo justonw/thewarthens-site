@@ -54,10 +54,10 @@ export default function StarterChecklist() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
-            Interactive Checklist
+            Backed by 2026 Hiring Research
           </p>
           <h3 className="mt-2 text-xl font-semibold sm:text-2xl">
-            The Career-Changer Starter Kit
+            Beat the AI Resume Scan
           </h3>
         </div>
         {doneCount > 0 && (
@@ -70,8 +70,11 @@ export default function StarterChecklist() {
         )}
       </div>
       <p className="mt-3 text-sm text-foreground-muted">
-        A resume &amp; LinkedIn checklist built for 2026&apos;s AI screening.
-        Check items off as you go, saved privately in your browser.
+        Most companies now screen resumes with an ATS, and a growing
+        number add an AI layer on top, before a human ever sees them.
+        This checklist covers what the research says actually gets you
+        past that screen and into recruiter searches. Check items off
+        as you go, saved privately in your browser.
       </p>
 
       <div className="mt-5 flex items-center gap-3">
@@ -134,6 +137,11 @@ export default function StarterChecklist() {
         <a href="#toolkit" className="font-semibold text-blue-600 hover:text-blue-700">
           Get the job search toolkit ↓
         </a>
+      </p>
+      <p className="mt-3 text-xs text-foreground-muted">
+        Sources: Jobscan ATS usage data, Merit America, Resume.io,
+        Kickresume, CareerEnlightenment, Simplify Jobs LinkedIn
+        optimization research, all 2026-dated.
       </p>
     </div>
   );

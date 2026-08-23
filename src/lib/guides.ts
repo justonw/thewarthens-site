@@ -34,16 +34,14 @@ export const guides: Guide[] = [
     slug: "tech-sales-hype-vs-reality",
     pathId: "sales",
     title: "Tech Sales (SDR): Hype vs. Reality",
-    dek: "What sales-training marketing says about breaking into tech sales, compared to what the actual 2025-2026 industry data and real SDRs say. Includes an honest look at our own training partner's claims.",
+    dek: "What sales-training marketing says about breaking into tech sales, compared to what the actual 2025-2026 industry data and real SDRs say.",
     updated: "August 2026",
     hype: [
       {
-        text: "\"Zero tech or sales experience required\" and \"build a $100K+ career\" in a 5-week average completion time.",
-        source: "Higher Levels, our own affiliate training partner",
+        text: "Sales-training marketing in this space commonly claims no prior tech or sales experience is needed, and pitches a fast path to a \"$100K+ career\" within weeks of finishing a course.",
       },
       {
-        text: "\"Typical starting salaries for entry-level tech sales roles are around $68,000\" and most people are hired within 1 to 6 months of finishing a course.",
-        source: "CourseCareers marketing",
+        text: "A common claim across course marketing: typical starting salaries for entry-level tech sales roles are around $68,000, with most people hired within 1 to 6 months of finishing a course.",
       },
       {
         text: "The consistent framing across most sales-training marketing: this is \"the most degree-blind, well-paid entry in the economy,\" where retail or service experience beats a business degree.",
@@ -110,8 +108,8 @@ export const guides: Guide[] = [
     ],
     synthesis: [
       "The entry-level pay claims for tech sales roughly check out. Real industry data (Bridge Group, RepVue) lands close to our own $42K-$61K figure, and that's a genuinely strong outcome for someone coming from retail, hospitality, or customer service with no degree.",
-      "Where the marketing, including our own partner's marketing, gets dishonest is in blurring SDR pay with the post-promotion Account Executive pay, and staying quiet about a promotion pipeline that's measurably shrinking. The \"$100K+ career, 5 weeks\" pitch is describing a destination that fewer people are actually reaching on the timeline implied.",
-      "We're keeping our Higher Levels partnership because the entry-level pay and the on-ramp itself are real. But we'd rather you go in knowing the honest numbers than find them out three months into a 40-call-a-day quota grind.",
+      "Where the marketing gets dishonest is in blurring SDR pay with the post-promotion Account Executive pay, and staying quiet about a promotion pipeline that's measurably shrinking. The \"$100K+ career\" pitch is describing a destination that fewer people are actually reaching on the timeline implied.",
+      "We're keeping our current training partnership for this path because the entry-level pay and the on-ramp itself are real. But we'd rather you go in knowing the honest numbers than find them out three months into a 40-call-a-day quota grind.",
     ],
     forWhom: [
       "People with real customer-facing or resilience experience (retail, hospitality, service, military) who can handle daily rejection at volume: the transferable-skills pitch is legitimately true for this group.",
@@ -126,7 +124,7 @@ export const guides: Guide[] = [
       "The Bridge Group, 2025 SDR Models, Metrics & Compensation Report, bridgegroupinc.com",
       "RepVue SDR salary data, repvue.com",
       "graph8.com, \"Is the SDR Role Dead? We Got 1,000 Applications in 3 Hours\"",
-      "Higher Levels and CourseCareers marketing pages, reviewed directly",
+      "Sales-training and course marketing pages, reviewed directly",
       "Blind (teamblind.com) and RepVue company reviews",
     ],
   },
@@ -139,14 +137,10 @@ export const guides: Guide[] = [
     hype: [
       {
         text: "Bootcamps commonly advertise 85-96% job placement rates and salaries in the $70K-$109K range within months of graduating.",
-        source: "Aggregated bootcamp marketing pages (Hack Reactor, App Academy, Springboard, Flatiron)",
+        source: "Aggregated bootcamp marketing pages",
       },
       {
-        text: "\"Become a software engineer in as little as 15 weeks,\" plus a tuition-back job guarantee if you're not employed within 6 months (with eligibility conditions attached, like logging 10-30 applications a week).",
-        source: "Springboard, our own affiliate training partner",
-      },
-      {
-        text: "Some reporting suggests that despite Springboard's advertised employment rate near 95.8%, only around 1.2% of students in recent cohorts actually collected a refund under the job guarantee. We couldn't independently verify this exact figure against a primary Springboard filing, so treat it as a data point worth asking about directly rather than a settled fact, but it points at the same thing the placement-rate gap below shows.",
+        text: "A common claim across bootcamp marketing: \"become a software engineer in as little as 15 weeks,\" often paired with a tuition-back job guarantee if you're not employed within 6 months, typically with eligibility conditions attached, like logging 10-30 applications a week.",
       },
     ],
     realityData: [
@@ -205,7 +199,7 @@ export const guides: Guide[] = [
     ],
     synthesis: [
       "The long-run outlook for software development, per BLS, is genuinely strong. This isn't a dying field. But the fast, easy on-ramp that bootcamp marketing sold in 2018-2021 (12-15 weeks, 85%+ placement, quick six-figure trajectory) has broken down, and we now have unusually convergent, rigorous data (Stanford's payroll research, a Harvard working paper, and Indeed's live hiring data) all pointing at the same cause: AI tools have specifically eaten the boilerplate, testing, and routine debugging work that used to justify hiring and mentoring a junior developer in the first place.",
-      "We're keeping our Springboard partnership because the field itself remains real and the training is legitimate. But if you're going in expecting a 3-month sprint to a six-figure job, the current data doesn't support that timeline, and we'd rather tell you that upfront.",
+      "We're keeping our current training partnership for this path because the field itself remains real and the training is legitimate. But if you're going in expecting a 3-month sprint to a six-figure job, the current data doesn't support that timeline, and we'd rather tell you that upfront.",
     ],
     forWhom: [
       "People who can commit 6-12+ months of active searching after training, not weeks.",
@@ -224,7 +218,7 @@ export const guides: Guide[] = [
       "Indeed Hiring Lab, hiringlab.org",
       "Stack Overflow 2025 Developer Survey, survey.stackoverflow.co",
       "Course Report, 2025 Year in Review, coursereport.com",
-      "Springboard job guarantee terms, reviewed directly, springboard.com",
+      "Bootcamp marketing pages and job guarantee terms, reviewed directly",
       "Blind (teamblind.com)",
     ],
   },

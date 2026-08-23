@@ -193,7 +193,7 @@ export default function TechJourneyPage() {
             title="Get the Printable PDF & Spreadsheet Versions"
             description="You just used the interactive checklist and tracker above. Prefer an offline copy? We'll email you the resume & LinkedIn checklist as a PDF and the job tracker as an editable spreadsheet (XLSX), so you can print it, fill it out by hand, or customize it in Excel or Google Sheets."
             files={[
-              { label: "Starter Kit (PDF)", href: "/downloads/career-changer-starter-kit.pdf" },
+              { label: "Resume Checklist (PDF)", href: "/downloads/career-changer-starter-kit.pdf" },
               { label: "Tracker (XLSX)", href: "/downloads/job-search-tracker.xlsx" },
             ]}
             ctaLabel="Email Me Both"

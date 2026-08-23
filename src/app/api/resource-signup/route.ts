@@ -13,7 +13,7 @@ const RESOURCES: Record<
     label: "Job Search Toolkit",
     files: [
       {
-        label: "Career-Changer Starter Kit (PDF)",
+        label: "Resume & LinkedIn Checklist (PDF)",
         fileUrl: `${SITE_URL}/downloads/career-changer-starter-kit.pdf`,
       },
       {

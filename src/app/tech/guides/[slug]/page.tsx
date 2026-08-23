@@ -88,8 +88,7 @@ export default async function GuidePage({
 
       <Section title="The Hype">
         <p className="mb-4 text-sm text-foreground-muted">
-          What course marketing, including our own affiliate partners&apos;,
-          actually says.
+          What course and training marketing in this space typically says.
         </p>
         <ul className="space-y-3">
           {guide.hype.map((point, i) => (
