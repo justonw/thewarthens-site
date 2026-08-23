@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import Reveal from "@/components/Reveal";
 
 export const metadata: Metadata = {
   title: "Faith Journey | The Warthens",
@@ -14,11 +16,11 @@ export default function FaithJourneyPage() {
         className="pointer-events-none absolute inset-0 -z-10"
         style={{
           background:
-            "radial-gradient(55% 45% at 50% 0%, rgba(168,85,247,0.20), transparent)",
+            "radial-gradient(55% 45% at 50% 0%, rgba(147,51,234,0.10), transparent)",
         }}
       />
-      <div className="mx-auto max-w-3xl px-6 pt-16 pb-20 text-center sm:pt-24">
-        <p className="inline-flex items-center gap-2 rounded-full border border-purple-500/30 bg-purple-500/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-purple-300">
+      <Reveal className="mx-auto max-w-3xl px-6 pt-16 pb-20 text-center sm:pt-24">
+        <p className="inline-flex items-center gap-2 rounded-full border border-purple-600/25 bg-purple-600/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-purple-700">
           Faith Journey · Coming Soon
         </p>
         <h1 className="text-balance mt-6 text-4xl font-semibold tracking-tight sm:text-5xl">
@@ -37,7 +39,7 @@ export default function FaithJourneyPage() {
           href="https://youtu.be/-udk7605GZw"
           target="_blank"
           rel="noopener noreferrer"
-          className="group mx-auto mt-10 block aspect-video w-full max-w-2xl overflow-hidden rounded-3xl border border-border-subtle shadow-2xl shadow-purple-950/40"
+          className="group mx-auto mt-10 block aspect-video w-full max-w-2xl overflow-hidden rounded-3xl border border-border-subtle shadow-xl shadow-black/10"
         >
           <div className="relative h-full w-full">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -66,13 +68,33 @@ export default function FaithJourneyPage() {
             href="https://youtube.com/@thewarthens?si=hMA8NuKtm0vox8X4"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-semibold text-purple-300 hover:text-purple-200"
+            className="font-semibold text-purple-700 hover:text-purple-800"
           >
             YouTube
           </a>{" "}
           so you don&apos;t miss it.
         </p>
-      </div>
+      </Reveal>
+
+      <Reveal delay={150} className="mx-auto max-w-3xl px-6 pb-20 text-center sm:pb-24">
+        <Link
+          href="/faith/women-who-seek"
+          className="flex items-center justify-between gap-4 rounded-3xl border border-border-subtle bg-background-elevated p-6 text-left transition-all hover:-translate-y-0.5 hover:border-rose-600/40 hover:shadow-xl hover:shadow-rose-950/5"
+        >
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-rose-700">
+              A Community for Women
+            </p>
+            <p className="mt-1 text-lg font-semibold">Women Who Seek</p>
+            <p className="mt-1 text-sm text-foreground-muted">
+              Finding Jesus in the Scriptures, hosted by Atiya.
+            </p>
+          </div>
+          <span aria-hidden className="shrink-0 text-rose-700">
+            →
+          </span>
+        </Link>
+      </Reveal>
     </section>
   );
 }

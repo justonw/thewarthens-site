@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { freeResources, techSections } from "@/lib/tech-links";
+import Reveal from "@/components/Reveal";
 
 export const metadata: Metadata = {
   title: "Tech Journey | The Warthens",
@@ -21,7 +22,7 @@ function LinkGrid({ links }: { links: { label: string; href: string }[] }) {
             {link.label}
             <span
               aria-hidden
-              className="text-foreground-muted transition-transform group-hover:translate-x-1 group-hover:text-blue-400"
+              className="text-foreground-muted transition-transform group-hover:translate-x-1 group-hover:text-blue-600"
             >
               →
             </span>
@@ -44,8 +45,8 @@ export default function TechJourneyPage() {
               "radial-gradient(50% 40% at 20% 0%, rgba(56,189,248,0.16), transparent)",
           }}
         />
-        <div className="mx-auto max-w-3xl px-6 pt-16 pb-12 text-center sm:pt-24 sm:pb-16">
-          <p className="text-sm font-semibold uppercase tracking-wider text-blue-400">
+        <Reveal className="mx-auto max-w-3xl px-6 pt-16 pb-12 text-center sm:pt-24 sm:pb-16">
+          <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
             Tech Journey
           </p>
           <h1 className="text-balance mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
@@ -61,21 +62,21 @@ export default function TechJourneyPage() {
             hand a friend who&apos;s ready to think bigger than their
             current job.
           </p>
-        </div>
+        </Reveal>
       </section>
 
       <section className="mx-auto max-w-5xl px-6 pb-10">
-        <div className="rounded-3xl border border-border-subtle bg-background-elevated p-6 sm:p-8">
+        <Reveal className="rounded-3xl border border-border-subtle bg-background-elevated p-6 sm:p-8">
           <h2 className="text-lg font-semibold">{freeResources.title}</h2>
           <div className="mt-5">
             <LinkGrid links={freeResources.links} />
           </div>
-        </div>
+        </Reveal>
       </section>
 
       <section className="mx-auto max-w-5xl space-y-10 px-6 pb-16">
-        {techSections.map((section) => (
-          <div key={section.title}>
+        {techSections.map((section, i) => (
+          <Reveal key={section.title} delay={Math.min(i, 3) * 80}>
             <h2 className="text-lg font-semibold">{section.title}</h2>
             {section.note && (
               <p className="mt-1 text-sm text-foreground-muted">{section.note}</p>
@@ -83,7 +84,7 @@ export default function TechJourneyPage() {
             <div className="mt-4">
               <LinkGrid links={section.links} />
             </div>
-          </div>
+          </Reveal>
         ))}
       </section>
 

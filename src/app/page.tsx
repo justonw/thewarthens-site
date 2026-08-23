@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import Reveal from "@/components/Reveal";
 
 export default function Home() {
   return (
@@ -14,7 +15,7 @@ export default function Home() {
               "radial-gradient(60% 50% at 30% 20%, rgba(139,92,246,0.18), transparent), radial-gradient(50% 40% at 80% 10%, rgba(56,189,248,0.16), transparent)",
           }}
         />
-        <div className="mx-auto max-w-4xl px-6 pt-20 pb-16 text-center sm:pt-28 sm:pb-20">
+        <Reveal className="mx-auto max-w-4xl px-6 pt-20 pb-16 text-center sm:pt-28 sm:pb-20">
           <Image
             src="/brand/icon-square.png"
             alt="The Warthens"
@@ -37,7 +38,7 @@ export default function Home() {
               href="https://youtube.com/@thewarthens?si=hMA8NuKtm0vox8X4"
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full bg-foreground px-6 py-3 text-sm font-semibold text-background transition-opacity hover:opacity-90"
+              className="rounded-full bg-foreground px-6 py-3 text-sm font-semibold text-background transition-transform hover:scale-[1.03] hover:opacity-90"
             >
               Watch on YouTube
             </a>
@@ -48,72 +49,76 @@ export default function Home() {
               Start the Tech Journey
             </Link>
           </div>
-        </div>
+        </Reveal>
       </section>
 
       {/* Two journeys */}
       <section className="mx-auto max-w-6xl px-6 pb-20">
         <div className="grid gap-6 sm:grid-cols-2">
-          <Link
-            href="/tech"
-            className="group relative overflow-hidden rounded-3xl border border-border-subtle bg-background-elevated p-8 transition-colors hover:border-blue-500/40"
-          >
-            <div
-              aria-hidden
-              className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-blue-500/20 blur-3xl transition-opacity group-hover:opacity-80"
-            />
-            <p className="text-sm font-semibold uppercase tracking-wider text-blue-400">
-              Tech Journey
-            </p>
-            <h2 className="mt-3 text-2xl font-semibold">
-              A career that fits, a life that feels lighter
-            </h2>
-            <p className="mt-3 text-foreground-muted">
-              Practical, real-world steps for anyone thinking bigger than
-              their current job, income, or field: coding, IT,
-              cybersecurity, sales, UX, the trades, and everything tech
-              touches.
-            </p>
-            <span className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-blue-400">
-              Explore resources
-              <span aria-hidden className="transition-transform group-hover:translate-x-1">
-                →
+          <Reveal>
+            <Link
+              href="/tech"
+              className="group relative block h-full overflow-hidden rounded-3xl border border-border-subtle bg-background-elevated p-8 transition-all hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-xl hover:shadow-blue-950/5"
+            >
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-blue-500/20 blur-3xl transition-opacity group-hover:opacity-80"
+              />
+              <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
+                Tech Journey
+              </p>
+              <h2 className="mt-3 text-2xl font-semibold">
+                A career that fits, a life that feels lighter
+              </h2>
+              <p className="mt-3 text-foreground-muted">
+                Practical, real-world steps for anyone thinking bigger than
+                their current job, income, or field: coding, IT,
+                cybersecurity, sales, UX, the trades, and everything tech
+                touches.
+              </p>
+              <span className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-blue-600">
+                Explore Tech Resources
+                <span aria-hidden className="transition-transform group-hover:translate-x-1">
+                  →
+                </span>
               </span>
-            </span>
-          </Link>
+            </Link>
+          </Reveal>
 
-          <Link
-            href="/faith"
-            className="group relative overflow-hidden rounded-3xl border border-border-subtle bg-background-elevated p-8 transition-colors hover:border-purple-500/40"
-          >
-            <div
-              aria-hidden
-              className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-purple-500/20 blur-3xl transition-opacity group-hover:opacity-80"
-            />
-            <p className="text-sm font-semibold uppercase tracking-wider text-purple-400">
-              Faith Journey
-            </p>
-            <h2 className="mt-3 text-2xl font-semibold">
-              Reliance on God for discovering, understanding, and living out truth
-            </h2>
-            <p className="mt-3 text-foreground-muted">
-              Our story of deconstruction, restoration, and what we&apos;re
-              still learning after serving in local church leadership.
-              Coming soon.
-            </p>
-            <span className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-purple-400">
-              See what&apos;s coming
-              <span aria-hidden className="transition-transform group-hover:translate-x-1">
-                →
+          <Reveal delay={120}>
+            <Link
+              href="/faith"
+              className="group relative block h-full overflow-hidden rounded-3xl border border-border-subtle bg-background-elevated p-8 transition-all hover:-translate-y-1 hover:border-purple-500/40 hover:shadow-xl hover:shadow-purple-950/5"
+            >
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-purple-500/20 blur-3xl transition-opacity group-hover:opacity-80"
+              />
+              <p className="text-sm font-semibold uppercase tracking-wider text-purple-600">
+                Faith Journey
+              </p>
+              <h2 className="mt-3 text-2xl font-semibold">
+                Reliance on God for discovering, understanding, and living out truth
+              </h2>
+              <p className="mt-3 text-foreground-muted">
+                Our story of deconstruction, restoration, and what we&apos;re
+                still learning after serving in local church leadership.
+                Coming soon.
+              </p>
+              <span className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-purple-600">
+                See What&apos;s Coming
+                <span aria-hidden className="transition-transform group-hover:translate-x-1">
+                  →
+                </span>
               </span>
-            </span>
-          </Link>
+            </Link>
+          </Reveal>
         </div>
       </section>
 
       {/* About */}
       <section className="border-t border-border-subtle bg-background-elevated/40">
-        <div className="mx-auto max-w-5xl px-6 py-20">
+        <Reveal className="mx-auto max-w-5xl px-6 py-20">
           <div className="grid items-center gap-10 sm:grid-cols-[auto_1fr]">
             <div className="flex justify-center gap-4 sm:justify-start">
               <Image
@@ -143,7 +148,7 @@ export default function Home() {
               </p>
             </div>
           </div>
-        </div>
+        </Reveal>
       </section>
     </>
   );
