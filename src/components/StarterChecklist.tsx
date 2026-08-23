@@ -19,6 +19,7 @@ function loadChecked(): Record<string, boolean> {
 
 export default function StarterChecklist() {
   const [checked, setChecked] = useState<Record<string, boolean>>({});
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -33,6 +34,12 @@ export default function StarterChecklist() {
 
   function toggle(id: string) {
     setChecked((prev) => ({ ...prev, [id]: !prev[id] }));
+  }
+
+  function toggleWhy(e: React.MouseEvent, id: string) {
+    e.preventDefault();
+    e.stopPropagation();
+    setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
   }
 
   function reset() {
@@ -94,15 +101,25 @@ export default function StarterChecklist() {
                       onChange={() => toggle(item.id)}
                       className="mt-0.5 h-4 w-4 shrink-0 accent-blue-600"
                     />
-                    <span>
-                      <span
-                        className={`text-sm font-medium ${checked[item.id] ? "text-foreground-muted line-through" : "text-foreground"}`}
-                      >
-                        {item.text}
+                    <span className="flex-1">
+                      <span className="flex items-start justify-between gap-3">
+                        <span
+                          className={`text-sm font-medium ${checked[item.id] ? "text-foreground-muted line-through" : "text-foreground"}`}
+                        >
+                          {item.text}
+                        </span>
+                        <button
+                          onClick={(e) => toggleWhy(e, item.id)}
+                          className="shrink-0 text-xs font-semibold text-blue-600 hover:text-blue-700"
+                        >
+                          {expanded[item.id] ? "Hide" : "Why?"}
+                        </button>
                       </span>
-                      <span className="mt-1 block text-xs italic text-foreground-muted">
-                        {item.why}
-                      </span>
+                      {expanded[item.id] && (
+                        <span className="mt-1 block text-xs italic text-foreground-muted">
+                          {item.why}
+                        </span>
+                      )}
                     </span>
                   </label>
                 </li>

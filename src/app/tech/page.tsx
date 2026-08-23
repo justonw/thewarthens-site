@@ -7,6 +7,7 @@ import IncomeSnapshot from "@/components/IncomeSnapshot";
 import JobTracker from "@/components/JobTracker";
 import StarterChecklist from "@/components/StarterChecklist";
 import EmailGatedDownload from "@/components/EmailGatedDownload";
+import CourseSection from "@/components/CourseSection";
 
 const title = "Tech Journey | The Warthens";
 const description =
@@ -26,31 +27,6 @@ const quickNav = [
   { href: "#learn", label: "Learn a Skill" },
   { href: "#toolkit", label: "Job Search Toolkit" },
 ];
-
-function LinkGrid({ links }: { links: { label: string; href: string }[] }) {
-  return (
-    <ul className="grid gap-3 sm:grid-cols-2">
-      {links.map((link) => (
-        <li key={link.label}>
-          <a
-            href={link.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex items-center justify-between rounded-2xl border border-border-subtle bg-background-elevated px-5 py-4 text-sm font-medium transition-colors hover:border-blue-500/40 hover:bg-background-elevated-2"
-          >
-            {link.label}
-            <span
-              aria-hidden
-              className="text-foreground-muted transition-transform group-hover:translate-x-1 group-hover:text-blue-600"
-            >
-              →
-            </span>
-          </a>
-        </li>
-      ))}
-    </ul>
-  );
-}
 
 export default function TechJourneyPage() {
   return (
@@ -120,25 +96,24 @@ export default function TechJourneyPage() {
         </Reveal>
       </section>
 
-      <section id="learn" className="mx-auto max-w-5xl scroll-mt-20 px-6 pb-10">
-        <Reveal className="rounded-3xl border border-border-subtle bg-background-elevated p-6 sm:p-8">
-          <h2 className="text-lg font-semibold">{freeResources.title}</h2>
-          <div className="mt-5">
-            <LinkGrid links={freeResources.links} />
-          </div>
+      <section id="learn" className="mx-auto max-w-5xl scroll-mt-20 px-6 pb-4">
+        <Reveal>
+          <CourseSection
+            title={freeResources.title}
+            links={freeResources.links}
+            defaultOpen
+          />
         </Reveal>
       </section>
 
-      <section className="mx-auto max-w-5xl space-y-10 px-6 pb-16">
+      <section className="mx-auto max-w-5xl space-y-4 px-6 pb-16">
         {techSections.map((section, i) => (
-          <Reveal key={section.title} delay={Math.min(i, 3) * 80}>
-            <h2 className="text-lg font-semibold">{section.title}</h2>
-            {section.note && (
-              <p className="mt-1 text-sm text-foreground-muted">{section.note}</p>
-            )}
-            <div className="mt-4">
-              <LinkGrid links={section.links} />
-            </div>
+          <Reveal key={section.title} delay={Math.min(i, 3) * 60}>
+            <CourseSection
+              title={section.title}
+              note={section.note}
+              links={section.links}
+            />
           </Reveal>
         ))}
       </section>
