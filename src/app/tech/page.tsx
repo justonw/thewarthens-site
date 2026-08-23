@@ -94,6 +94,31 @@ export default function TechJourneyPage() {
         </Reveal>
       </section>
 
+      <section className="mx-auto max-w-3xl px-6 pb-16">
+        <Reveal className="flex flex-col items-center gap-4 rounded-3xl border border-border-subtle bg-background-elevated p-6 text-center sm:flex-row sm:justify-between sm:text-left sm:p-8">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
+              Free Download
+            </p>
+            <p className="mt-1 text-lg font-semibold">
+              The Career-Changer Starter Kit
+            </p>
+            <p className="mt-1 text-sm text-foreground-muted">
+              A real resume &amp; LinkedIn checklist built for 2026&apos;s
+              AI screening, not generic advice from 2015.
+            </p>
+          </div>
+          <a
+            href="/downloads/career-changer-starter-kit.pdf"
+            download
+            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-semibold text-background transition-opacity hover:opacity-90"
+          >
+            Download PDF
+            <span aria-hidden>↓</span>
+          </a>
+        </Reveal>
+      </section>
+
       <section className="mx-auto max-w-5xl px-6 pb-10">
         <Reveal className="rounded-3xl border border-border-subtle bg-background-elevated p-6 sm:p-8">
           <h2 className="text-lg font-semibold">{freeResources.title}</h2>
