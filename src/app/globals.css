@@ -18,6 +18,13 @@
   --color-foreground-muted: var(--foreground-muted);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Women Who Seek accent: dark mauve */
+  --color-mauve-300: #b7929b;
+  --color-mauve-700: #6b4550;
+  --color-mauve-800: #55363f;
+  --color-mauve-900: #47303a;
+  --color-mauve-950: #3a2530;
 }
 
 html {

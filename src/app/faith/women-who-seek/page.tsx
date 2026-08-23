@@ -24,6 +24,11 @@ export const metadata: Metadata = {
   alternates: { canonical: "/faith/women-who-seek" },
   openGraph: { title, description, url: "/faith/women-who-seek" },
   twitter: { title, description },
+  appleWebApp: {
+    capable: true,
+    title: "Women Who Seek",
+    statusBarStyle: "default",
+  },
 };
 
 const ZOOM_LINK =
@@ -35,7 +40,7 @@ function Verse({ children, citation }: { children: React.ReactNode; citation: st
       <p className={`${serif} text-balance text-xl italic text-foreground-muted`}>
         &ldquo;{children}&rdquo;
       </p>
-      <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-rose-700">
+      <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-mauve-700">
         {citation}
       </p>
     </Reveal>
@@ -62,7 +67,7 @@ export default function WomenWhoSeekPage() {
           className="pointer-events-none absolute inset-0 -z-10"
           style={{
             background:
-              "radial-gradient(55% 45% at 50% 0%, rgba(190,90,70,0.12), transparent)",
+              "radial-gradient(55% 45% at 50% 0%, rgba(107,69,80,0.14), transparent)",
           }}
         />
         <Reveal className="relative mx-auto max-w-3xl px-6 pt-16 pb-10 text-center sm:pt-20">
@@ -70,10 +75,10 @@ export default function WomenWhoSeekPage() {
             aria-hidden
             className="pointer-events-none absolute left-1/2 top-[52%] -z-10 -translate-x-1/2 -translate-y-1/2"
           >
-            <div className="h-[420px] w-[420px] rounded-full border border-rose-300/50 sm:h-[560px] sm:w-[560px]" />
-            <div className="absolute inset-[14%] rounded-full border border-rose-300/40" />
+            <div className="h-[420px] w-[420px] rounded-full border border-mauve-300/50 sm:h-[560px] sm:w-[560px]" />
+            <div className="absolute inset-[14%] rounded-full border border-mauve-300/40" />
           </div>
-          <p className="text-sm font-semibold uppercase tracking-wider text-rose-700">
+          <p className="text-sm font-semibold uppercase tracking-wider text-mauve-700">
             A Community of Women
           </p>
           <h1
@@ -81,7 +86,7 @@ export default function WomenWhoSeekPage() {
           >
             Women Who Seek
           </h1>
-          <p className={`${serif} mt-3 text-2xl italic text-rose-700 sm:text-3xl`}>
+          <p className={`${serif} mt-3 text-2xl italic text-mauve-700 sm:text-3xl`}>
             Finding Jesus in the Scriptures
           </p>
           <p className="mx-auto mt-8 max-w-xl text-balance text-lg text-foreground-muted">
@@ -103,7 +108,7 @@ export default function WomenWhoSeekPage() {
       <section className="border-t border-border-subtle bg-background-elevated/30">
         <div className="mx-auto grid max-w-5xl gap-10 px-6 py-16 sm:grid-cols-2 sm:items-center">
           <Reveal>
-            <p className="text-sm font-semibold uppercase tracking-wider text-rose-700">
+            <p className="text-sm font-semibold uppercase tracking-wider text-mauve-700">
               Who We Are
             </p>
             <h2 className={`${serif} mt-3 text-3xl font-medium sm:text-4xl`}>
@@ -119,7 +124,7 @@ export default function WomenWhoSeekPage() {
               &ldquo;Jesus can be found throughout every passage of the
               Bible. We are on a journey to seek Him together.&rdquo;
             </p>
-            <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-rose-700">
+            <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-mauve-700">
               The Heart of Our Community
             </p>
           </Reveal>
@@ -154,7 +159,7 @@ export default function WomenWhoSeekPage() {
             />
           </Reveal>
           <Reveal delay={150} className="order-1 sm:order-2">
-            <p className="text-sm font-semibold uppercase tracking-wider text-rose-700">
+            <p className="text-sm font-semibold uppercase tracking-wider text-mauve-700">
               What We Believe
             </p>
             <h2 className={`${serif} mt-3 text-3xl font-medium sm:text-4xl`}>
@@ -182,7 +187,7 @@ export default function WomenWhoSeekPage() {
       <section className="border-t border-border-subtle bg-background-elevated/30">
         <div className="mx-auto max-w-5xl px-6 py-16">
           <Reveal className="max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-wider text-rose-700">
+            <p className="text-sm font-semibold uppercase tracking-wider text-mauve-700">
               Join Us
             </p>
             <h2 className={`${serif} mt-3 text-3xl font-medium sm:text-4xl`}>
@@ -206,8 +211,8 @@ export default function WomenWhoSeekPage() {
           </Reveal>
 
           <div className="mt-10 grid gap-6 sm:grid-cols-3">
-            <Reveal delay={0} className="rounded-3xl border border-border-subtle bg-background-elevated p-6 transition-shadow hover:shadow-lg hover:shadow-rose-900/5">
-              <p className="text-xs font-semibold uppercase tracking-wider text-rose-700">
+            <Reveal delay={0} className="rounded-3xl border border-border-subtle bg-background-elevated p-6 transition-shadow hover:shadow-lg hover:shadow-mauve-900/5">
+              <p className="text-xs font-semibold uppercase tracking-wider text-mauve-700">
                 Monthly Bible Study
               </p>
               <h3 className={`${serif} mt-2 text-xl font-medium`}>Seek the Word</h3>
@@ -220,7 +225,7 @@ export default function WomenWhoSeekPage() {
                 href={ZOOM_LINK}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-rose-700 hover:text-rose-800"
+                className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-mauve-700 hover:text-mauve-800"
               >
                 Join Zoom Meeting
                 <span aria-hidden>→</span>
@@ -231,8 +236,8 @@ export default function WomenWhoSeekPage() {
               </p>
             </Reveal>
 
-            <Reveal delay={100} className="rounded-3xl border border-border-subtle bg-background-elevated p-6 transition-shadow hover:shadow-lg hover:shadow-rose-900/5">
-              <p className="text-xs font-semibold uppercase tracking-wider text-rose-700">
+            <Reveal delay={100} className="rounded-3xl border border-border-subtle bg-background-elevated p-6 transition-shadow hover:shadow-lg hover:shadow-mauve-900/5">
+              <p className="text-xs font-semibold uppercase tracking-wider text-mauve-700">
                 In-Person Gatherings
               </p>
               <h3 className={`${serif} mt-2 text-xl font-medium`}>Seek Together</h3>
@@ -241,7 +246,7 @@ export default function WomenWhoSeekPage() {
                 <li>A time of community, encouragement, worship, and the Word</li>
                 <li>Multiple times throughout the year</li>
               </ul>
-              <p className="mt-5 text-xs font-semibold uppercase tracking-wider text-rose-700">
+              <p className="mt-5 text-xs font-semibold uppercase tracking-wider text-mauve-700">
                 Upcoming Dates
               </p>
               <ul className="mt-2 space-y-1 text-sm text-foreground-muted">
@@ -251,8 +256,8 @@ export default function WomenWhoSeekPage() {
               </ul>
             </Reveal>
 
-            <Reveal delay={200} className="rounded-3xl border border-border-subtle bg-background-elevated p-6 transition-shadow hover:shadow-lg hover:shadow-rose-900/5">
-              <p className="text-xs font-semibold uppercase tracking-wider text-rose-700">
+            <Reveal delay={200} className="rounded-3xl border border-border-subtle bg-background-elevated p-6 transition-shadow hover:shadow-lg hover:shadow-mauve-900/5">
+              <p className="text-xs font-semibold uppercase tracking-wider text-mauve-700">
                 Annual Conference
               </p>
               <h3 className={`${serif} mt-2 text-xl font-medium`}>
@@ -262,7 +267,7 @@ export default function WomenWhoSeekPage() {
                 <li>A larger gathering for all the ladies</li>
                 <li>Encouraging every woman to go deeper</li>
               </ul>
-              <p className="mt-5 text-xs font-semibold uppercase tracking-wider text-rose-700">
+              <p className="mt-5 text-xs font-semibold uppercase tracking-wider text-mauve-700">
                 Save the Date
               </p>
               <p className="mt-2 text-sm text-foreground-muted">

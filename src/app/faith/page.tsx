@@ -87,10 +87,10 @@ export default function FaithJourneyPage() {
       <Reveal delay={150} className="mx-auto max-w-3xl px-6 pb-20 text-center sm:pb-24">
         <Link
           href="/faith/women-who-seek"
-          className="flex items-center justify-between gap-4 rounded-3xl border border-border-subtle bg-background-elevated p-6 text-left transition-all hover:-translate-y-0.5 hover:border-rose-600/40 hover:shadow-xl hover:shadow-rose-950/5"
+          className="flex items-center justify-between gap-4 rounded-3xl border border-border-subtle bg-background-elevated p-6 text-left transition-all hover:-translate-y-0.5 hover:border-mauve-600/40 hover:shadow-xl hover:shadow-mauve-950/5"
         >
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-rose-700">
+            <p className="text-xs font-semibold uppercase tracking-wider text-mauve-700">
               A Community for Women
             </p>
             <p className="mt-1 text-lg font-semibold">Women Who Seek</p>
@@ -98,7 +98,7 @@ export default function FaithJourneyPage() {
               Finding Jesus in the Scriptures, hosted by Atiya.
             </p>
           </div>
-          <span aria-hidden className="shrink-0 text-rose-700">
+          <span aria-hidden className="shrink-0 text-mauve-700">
             →
           </span>
         </Link>
