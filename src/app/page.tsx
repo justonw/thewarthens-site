@@ -12,10 +12,11 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "The Warthens",
+  alternateName: ["Tech Journey", "The Warthens Tech Journey"],
   url: "https://thewarthens.com",
   logo: "https://thewarthens.com/brand/icon-square.png",
   description:
-    "Juston and Atiya Warthen share practical steps toward a career and a life that fit, plus their journey of relying on God to discover, understand, and live out truth.",
+    "Juston and Atiya Warthen, known as Tech Journey, share practical steps for a career change into tech, plus their journey of relying on God to discover, understand, and live out truth.",
   sameAs: [
     "https://youtube.com/@thewarthens",
     "https://www.instagram.com/thewarthens",

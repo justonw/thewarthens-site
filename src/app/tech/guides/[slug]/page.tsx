@@ -52,8 +52,40 @@ export default async function GuidePage({
   const guide = getGuide(slug);
   if (!guide) notFound();
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Tech Journey", item: "https://thewarthens.com/tech" },
+      { "@type": "ListItem", position: 2, name: "Hype vs. Reality" },
+      { "@type": "ListItem", position: 3, name: guide.title, item: `https://thewarthens.com/tech/guides/${guide.slug}` },
+    ],
+  };
+
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: guide.title,
+    description: guide.dek,
+    author: { "@type": "Organization", name: "The Warthens", alternateName: "Tech Journey" },
+    publisher: {
+      "@type": "Organization",
+      name: "The Warthens",
+      logo: { "@type": "ImageObject", url: "https://thewarthens.com/brand/icon-square.png" },
+    },
+    mainEntityOfPage: `https://thewarthens.com/tech/guides/${guide.slug}`,
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
       <div className="border-b border-border-subtle/60 bg-background-elevated/30">
         <div className="mx-auto max-w-3xl px-6 py-3 text-sm text-foreground-muted">
           <Link href="/tech" className="hover:text-foreground">

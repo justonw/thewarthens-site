@@ -28,7 +28,9 @@ const quickNav = [
   { href: "#pay", label: "See the Pay" },
   { href: "#guides", label: "Hype vs. Reality" },
   { href: "#learn", label: "Learn a Skill" },
-  { href: "#toolkit", label: "Job Search Toolkit" },
+  { href: "#checklist", label: "Beat the AI Scan" },
+  { href: "#tracker", label: "Track Applications" },
+  { href: "#toolkit", label: "Get the Files" },
 ];
 
 export default function TechJourneyPage() {
@@ -62,25 +64,29 @@ export default function TechJourneyPage() {
           </p>
           <ScrollCue className="mt-8" />
         </Reveal>
-        <Reveal delay={100} className="mx-auto max-w-3xl px-6 pb-16">
-          <nav
-            aria-label="Page sections"
-            className="flex flex-wrap items-center justify-center gap-2"
-          >
-            {quickNav.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className="rounded-full border border-border-subtle bg-background-elevated px-4 py-2 text-xs font-semibold text-foreground-muted transition-colors hover:border-blue-500/40 hover:text-foreground"
-              >
-                {item.label}
-              </a>
-            ))}
-          </nav>
-        </Reveal>
       </section>
 
-      <section id="quiz" className="mx-auto max-w-3xl scroll-mt-20 px-6 pb-16">
+      <div className="sticky top-14 z-40 border-y border-border-subtle bg-background/95 backdrop-blur sm:top-16">
+        <nav
+          aria-label="Page sections"
+          className="mx-auto flex max-w-5xl items-center gap-2 overflow-x-auto px-6 py-3"
+        >
+          <span className="shrink-0 text-xs font-semibold uppercase tracking-wider text-foreground-muted">
+            Jump to
+          </span>
+          {quickNav.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              className="shrink-0 whitespace-nowrap rounded-full border border-border-subtle bg-background-elevated px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:border-blue-500/50 hover:bg-blue-500/10 hover:text-blue-700"
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
+      </div>
+
+      <section id="quiz" className="mx-auto max-w-3xl scroll-mt-32 px-6 pb-16">
         <Reveal>
           <p className="text-center text-sm text-foreground-muted">
             Not sure where to start? This takes about 2 minutes and looks
@@ -93,13 +99,13 @@ export default function TechJourneyPage() {
         </Reveal>
       </section>
 
-      <section id="pay" className="mx-auto max-w-3xl scroll-mt-20 px-6 pb-16">
+      <section id="pay" className="mx-auto max-w-3xl scroll-mt-32 px-6 pb-16">
         <Reveal>
           <IncomeSnapshot />
         </Reveal>
       </section>
 
-      <section id="guides" className="mx-auto max-w-5xl scroll-mt-20 px-6 pb-16">
+      <section id="guides" className="mx-auto max-w-5xl scroll-mt-32 px-6 pb-16">
         <Reveal>
           <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
             Hype vs. Reality
@@ -135,7 +141,7 @@ export default function TechJourneyPage() {
         </Reveal>
       </section>
 
-      <section id="learn" className="mx-auto max-w-5xl scroll-mt-20 px-6 pb-4">
+      <section id="learn" className="mx-auto max-w-5xl scroll-mt-32 px-6 pb-4">
         <Reveal>
           <CourseSection
             title={freeResources.title}
@@ -157,7 +163,7 @@ export default function TechJourneyPage() {
         ))}
       </section>
 
-      <section id="toolkit" className="mx-auto max-w-3xl scroll-mt-20 px-6 pb-16">
+      <section className="mx-auto max-w-3xl px-6 pb-16">
         <Reveal className="text-center">
           <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
             Job Search Toolkit
@@ -173,19 +179,19 @@ export default function TechJourneyPage() {
         </Reveal>
       </section>
 
-      <section className="mx-auto max-w-3xl px-6 pb-16">
+      <section id="checklist" className="mx-auto max-w-3xl scroll-mt-32 px-6 pb-16">
         <Reveal>
           <StarterChecklist />
         </Reveal>
       </section>
 
-      <section className="mx-auto max-w-3xl px-6 pb-16">
+      <section id="tracker" className="mx-auto max-w-3xl scroll-mt-32 px-6 pb-16">
         <Reveal>
           <JobTracker />
         </Reveal>
       </section>
 
-      <section className="mx-auto max-w-3xl px-6 pb-16">
+      <section id="toolkit" className="mx-auto max-w-3xl scroll-mt-32 px-6 pb-16">
         <Reveal>
           <EmailGatedDownload
             resourceId="job-search-toolkit"
