@@ -4,10 +4,16 @@ import Reveal from "@/components/Reveal";
 import ScrollCue from "@/components/ScrollCue";
 import CareerQuiz from "@/components/CareerQuiz";
 
+const title = "Tech Journey | The Warthens";
+const description =
+  "Practical steps to navigate a career transition into tech and tech-adjacent fields, for a more peaceful, satisfying life. Take the free career-path quiz.";
+
 export const metadata: Metadata = {
-  title: "Tech Journey | The Warthens",
-  description:
-    "Practical steps to navigate a career transition into tech and tech-adjacent fields, for a more peaceful, satisfying life.",
+  title,
+  description,
+  alternates: { canonical: "/tech" },
+  openGraph: { title, description, url: "/tech" },
+  twitter: { title, description },
 };
 
 function LinkGrid({ links }: { links: { label: string; href: string }[] }) {

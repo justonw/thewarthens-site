@@ -1,11 +1,35 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import ScrollCue from "@/components/ScrollCue";
 
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "The Warthens",
+  url: "https://thewarthens.com",
+  logo: "https://thewarthens.com/brand/icon-square.png",
+  description:
+    "Juston and Atiya Warthen share practical steps toward a career and a life that fit, plus their journey of relying on God to discover, understand, and live out truth.",
+  sameAs: [
+    "https://youtube.com/@thewarthens",
+    "https://www.instagram.com/thewarthens",
+    "https://www.tiktok.com/@techjourneyyoutube",
+  ],
+};
+
 export default function Home() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div

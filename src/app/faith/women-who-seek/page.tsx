@@ -14,10 +14,16 @@ const playfair = Playfair_Display({
 
 const serif = "font-[family-name:var(--font-playfair)]";
 
+const title = "Women Who Seek | The Warthens";
+const description =
+  "Women Who Seek: a community of women finding Jesus in the Scriptures. Hosted by Atiya Warthen.";
+
 export const metadata: Metadata = {
-  title: "Women Who Seek | The Warthens",
-  description:
-    "Women Who Seek: a community of women finding Jesus in the Scriptures. Hosted by Atiya Warthen.",
+  title,
+  description,
+  alternates: { canonical: "/faith/women-who-seek" },
+  openGraph: { title, description, url: "/faith/women-who-seek" },
+  twitter: { title, description },
 };
 
 const ZOOM_LINK =

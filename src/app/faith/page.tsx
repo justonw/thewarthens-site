@@ -3,10 +3,16 @@ import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import ScrollCue from "@/components/ScrollCue";
 
+const title = "Faith Journey | The Warthens";
+const description =
+  "Reliance on God for discovering, understanding, and living out truth. Our faith journey, coming soon.";
+
 export const metadata: Metadata = {
-  title: "Faith Journey | The Warthens",
-  description:
-    "Reliance on God for discovering, understanding, and living out truth. Our faith journey, coming soon.",
+  title,
+  description,
+  alternates: { canonical: "/faith" },
+  openGraph: { title, description, url: "/faith" },
+  twitter: { title, description },
 };
 
 export default function FaithJourneyPage() {
