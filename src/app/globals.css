@@ -19,12 +19,12 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  /* Women Who Seek accent: dark mauve */
-  --color-mauve-300: #b7929b;
-  --color-mauve-700: #6b4550;
-  --color-mauve-800: #55363f;
-  --color-mauve-900: #47303a;
-  --color-mauve-950: #3a2530;
+  /* Women Who Seek accent: dark mauve, pink-leaning */
+  --color-mauve-300: #c78fa0;
+  --color-mauve-700: #9c5268;
+  --color-mauve-800: #7d3f52;
+  --color-mauve-900: #6b3345;
+  --color-mauve-950: #572838;
 
   /* Women Who Seek italic accent: warm rust/terracotta */
   --color-rust-700: #9c5346;
