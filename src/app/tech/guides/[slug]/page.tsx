@@ -76,6 +76,16 @@ export default async function GuidePage({
     mainEntityOfPage: `https://thewarthens.com/tech/guides/${guide.slug}`,
   };
 
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: guide.faq.map((f) => ({
+      "@type": "Question",
+      name: f.question,
+      acceptedAnswer: { "@type": "Answer", text: f.answer },
+    })),
+  };
+
   return (
     <>
       <script
@@ -85,6 +95,10 @@ export default async function GuidePage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <div className="border-b border-border-subtle/60 bg-background-elevated/30">
         <div className="mx-auto max-w-3xl px-6 py-3 text-sm text-foreground-muted">
@@ -227,6 +241,28 @@ export default async function GuidePage({
               ))}
             </ul>
           </div>
+        </div>
+      </Section>
+
+      <Section title="Quick Answers">
+        <div className="space-y-3">
+          {guide.faq.map((f, i) => (
+            <details
+              key={i}
+              className="group rounded-2xl border border-border-subtle bg-background-elevated p-5"
+            >
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 font-semibold">
+                {f.question}
+                <span
+                  aria-hidden
+                  className="shrink-0 text-sm text-foreground-muted transition-transform group-open:rotate-180"
+                >
+                  ⌄
+                </span>
+              </summary>
+              <p className="mt-3 text-sm text-foreground-muted">{f.answer}</p>
+            </details>
+          ))}
         </div>
       </Section>
 

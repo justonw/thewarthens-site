@@ -11,13 +11,23 @@ import StarterChecklist from "@/components/StarterChecklist";
 import EmailGatedDownload from "@/components/EmailGatedDownload";
 import CourseSection from "@/components/CourseSection";
 
-const title = "Tech Journey | The Warthens";
+const title = "Tech Journey | Career Change to Tech | The Warthens";
 const description =
-  "Practical steps to navigate a career transition into tech and tech-adjacent fields, for a more peaceful, satisfying life. Take the free career-path quiz.";
+  "Real steps for a career change to tech, no experience or degree needed for most paths. Take the free 2-minute career quiz, see real 2026 pay data, and read our honest Hype vs. Reality guides before you commit.";
 
 export const metadata: Metadata = {
   title,
   description,
+  keywords: [
+    "career change to tech",
+    "tech career pivot",
+    "is it too late to switch careers to tech",
+    "career change no experience no degree",
+    "is tech sales worth it",
+    "is software engineering still a good career",
+    "coding bootcamp worth it",
+    "tech journey warthen",
+  ],
   alternates: { canonical: "/tech" },
   openGraph: { title, description, url: "/tech" },
   twitter: { title, description },
@@ -118,7 +128,7 @@ export default function TechJourneyPage() {
             claim about these paths, then checked it against real labor data
             and accounts from people actually doing the job.
           </p>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {guides.map((guide) => (
               <Link
                 key={guide.slug}
