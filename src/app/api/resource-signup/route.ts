@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const FROM_EMAIL = process.env.TRACKER_FROM_EMAIL || "The Warthens <hello@thewarthens.com>";
+const FROM_EMAIL = process.env.TRACKER_FROM_EMAIL || "The Warthens <info@thewarthens.com>";
 const NOTIFY_EMAIL = "justonwarthen@gmail.com";
 const SITE_URL = "https://thewarthens.com";
 
