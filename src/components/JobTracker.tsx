@@ -178,7 +178,7 @@ export default function JobTracker() {
               <button
                 onClick={() => removeEntry(entry.id)}
                 aria-label={`Remove ${entry.company}`}
-                className="text-foreground-muted transition-colors hover:text-red-600"
+                className="-m-3.5 rounded-lg p-3.5 text-foreground-muted transition-colors hover:bg-red-500/10 hover:text-red-600"
               >
                 ✕
               </button>

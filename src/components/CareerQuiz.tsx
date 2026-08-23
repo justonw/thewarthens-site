@@ -121,7 +121,7 @@ export default function CareerQuiz() {
           </a>
           <button
             onClick={retake}
-            className="font-semibold text-foreground-muted underline decoration-border-subtle underline-offset-4 hover:text-foreground"
+            className="-m-3.5 rounded-lg p-3.5 font-semibold text-foreground-muted underline decoration-border-subtle underline-offset-4 hover:text-foreground"
           >
             Retake the quiz
           </button>

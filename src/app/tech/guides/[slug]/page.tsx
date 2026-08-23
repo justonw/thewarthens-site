@@ -249,9 +249,9 @@ export default async function GuidePage({
           {guide.faq.map((f, i) => (
             <details
               key={i}
-              className="group rounded-2xl border border-border-subtle bg-background-elevated p-5"
+              className="group rounded-2xl border border-border-subtle bg-background-elevated"
             >
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 font-semibold">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-5 font-semibold">
                 {f.question}
                 <span
                   aria-hidden
@@ -260,7 +260,7 @@ export default async function GuidePage({
                   ⌄
                 </span>
               </summary>
-              <p className="mt-3 text-sm text-foreground-muted">{f.answer}</p>
+              <p className="px-5 pb-5 text-sm text-foreground-muted">{f.answer}</p>
             </details>
           ))}
         </div>

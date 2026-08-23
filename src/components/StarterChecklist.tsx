@@ -63,7 +63,7 @@ export default function StarterChecklist() {
         {doneCount > 0 && (
           <button
             onClick={reset}
-            className="text-xs font-semibold text-foreground-muted underline decoration-border-subtle underline-offset-4 hover:text-foreground"
+            className="-m-3.5 rounded-lg p-3.5 text-xs font-semibold text-foreground-muted underline decoration-border-subtle underline-offset-4 hover:text-foreground"
           >
             Reset
           </button>
@@ -113,7 +113,7 @@ export default function StarterChecklist() {
                         </span>
                         <button
                           onClick={(e) => toggleWhy(e, item.id)}
-                          className="shrink-0 text-xs font-semibold text-blue-600 hover:text-blue-700"
+                          className="-m-3.5 shrink-0 rounded-lg p-3.5 text-xs font-semibold text-blue-600 hover:bg-blue-500/10 hover:text-blue-700"
                         >
                           {expanded[item.id] ? "Hide" : "Why?"}
                         </button>
