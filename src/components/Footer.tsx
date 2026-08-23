@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { guides } from "@/lib/guides";
+
 const socials = [
   { href: "https://youtube.com/@thewarthens?si=hMA8NuKtm0vox8X4", label: "YouTube" },
   {
@@ -12,7 +15,7 @@ export default function Footer() {
   return (
     <footer className="border-t border-border-subtle/80 bg-background">
       <div className="mx-auto max-w-6xl px-6 py-10">
-        <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
+        <div className="grid gap-8 sm:grid-cols-[1.5fr_1fr_1fr]">
           <div>
             <p className="text-sm font-semibold">The Warthens</p>
             <p className="mt-1 max-w-sm text-sm text-foreground-muted">
@@ -20,19 +23,46 @@ export default function Footer() {
               journey, side by side.
             </p>
           </div>
-          <nav className="flex flex-wrap gap-x-6 gap-y-2">
-            {socials.map((s) => (
-              <a
-                key={s.label}
-                href={s.href}
-                target="_blank"
-                rel="noopener noreferrer"
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
+              Career Guides
+            </p>
+            <nav className="mt-3 flex flex-col gap-2">
+              <Link
+                href="/tech#quiz"
                 className="text-sm text-foreground-muted transition-colors hover:text-foreground"
               >
-                {s.label}
-              </a>
-            ))}
-          </nav>
+                Take the Career Quiz
+              </Link>
+              {guides.map((g) => (
+                <Link
+                  key={g.slug}
+                  href={`/tech/guides/${g.slug}`}
+                  className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+                >
+                  {g.title}
+                </Link>
+              ))}
+            </nav>
+          </div>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
+              Follow Along
+            </p>
+            <nav className="mt-3 flex flex-col gap-2">
+              {socials.map((s) => (
+                <a
+                  key={s.label}
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+                >
+                  {s.label}
+                </a>
+              ))}
+            </nav>
+          </div>
         </div>
         <p className="mt-8 text-xs text-foreground-muted">
           Some links on this site are affiliate links. Some provide free
