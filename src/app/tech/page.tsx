@@ -4,6 +4,8 @@ import Reveal from "@/components/Reveal";
 import ScrollCue from "@/components/ScrollCue";
 import CareerQuiz from "@/components/CareerQuiz";
 import IncomeSnapshot from "@/components/IncomeSnapshot";
+import JobTracker from "@/components/JobTracker";
+import TrackerEmailCapture from "@/components/TrackerEmailCapture";
 
 const title = "Tech Journey | The Warthens";
 const description =
@@ -116,6 +118,18 @@ export default function TechJourneyPage() {
             Download PDF
             <span aria-hidden>↓</span>
           </a>
+        </Reveal>
+      </section>
+
+      <section className="mx-auto max-w-3xl px-6 pb-16">
+        <Reveal>
+          <JobTracker />
+        </Reveal>
+      </section>
+
+      <section className="mx-auto max-w-3xl px-6 pb-16">
+        <Reveal>
+          <TrackerEmailCapture />
         </Reveal>
       </section>
 
