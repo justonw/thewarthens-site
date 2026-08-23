@@ -74,9 +74,8 @@ export const techSections: TechSection[] = [
   },
   {
     title: "Learn Digital Transformation & Design",
-    note: 'with "CourseCareers" or "Springboard"',
+    note: 'with "Springboard"',
     links: [
-      { label: "Software Developer Training", href: "https://www.coursecareers.com/journey" },
       {
         label: "Software Engineering Course",
         href: "https://www.springboard.com/landing/influencer/thewarthens?utm_source=thewarthens&utm_medium=influencer&utm_campaign=non-ct&utm_term=paid&utm_content=firstyoutubelanpage8242023",
@@ -101,7 +100,7 @@ export const techSections: TechSection[] = [
         label: "Construction Project Management",
         href: "https://coursecareers.com/a/bbe72885?course=construction-management",
       },
-      { label: "Supply Chain", href: "https://coursecareers.com/a/bbe72885?course=plumbing" },
+      { label: "Supply Chain", href: "https://www.coursecareers.com/journey" },
       { label: "Plumbing", href: "https://coursecareers.com/a/bbe72885?course=plumbing" },
       { label: "Electrician", href: "https://coursecareers.com/a/bbe72885?course=electrical" },
       { label: "HVAC", href: "https://coursecareers.com/a/bbe72885?course=hvac" },
