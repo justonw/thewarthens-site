@@ -5,7 +5,7 @@ import ScrollCue from "@/components/ScrollCue";
 
 const title = "Faith Journey | The Warthens";
 const description =
-  "Reliance on God for discovering, understanding, and living out truth. Our faith journey, coming soon.";
+  "Learning, understanding, and living out God's wisdom, through faith, by His grace. Our faith journey, coming soon.";
 
 export const metadata: Metadata = {
   title,
@@ -40,7 +40,7 @@ const faq = [
   {
     question: "What is Faith Journey?",
     answer:
-      "Faith Journey is Juston and Atiya Warthen's story of deconstructing what they thought faith was supposed to look like after serving in local church leadership, and finding God faithful through it, restoring and growing their understanding of truth along the way.",
+      "Faith Journey is Juston and Atiya Warthen learning, understanding, and living out God's wisdom through faith, by His grace. That means not adopting cultural norms unless they're actually rooted in biblical, theological truth, being willing to question anything that looks counterfeit, and faithfully contributing that discernment within their own sphere and beyond. It's shaped in part by their own experience serving in local church leadership and later deconstructing what they thought faith was supposed to look like, where they found God faithful through all of it.",
   },
   {
     question: "Is there a community for women in Faith Journey?",
@@ -96,15 +96,21 @@ export default function FaithJourneyPage() {
           Faith Journey · Coming Soon
         </p>
         <h1 className="text-balance mt-6 text-4xl font-semibold tracking-tight sm:text-5xl">
-          Reliance on God for discovering, understanding, and living out truth
+          Learning, understanding, and living out God&apos;s wisdom, through
+          faith, by His grace
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-balance text-lg text-foreground-muted">
-          We&apos;ve both served in leadership in a local church community.
-          We&apos;ve also walked through deconstructing what we thought
-          faith was supposed to look like, and found God faithful through
-          all of it, restoring and growing our understanding of truth
-          along the way. This page is where we&apos;ll share that journey.
-          For now, here&apos;s where it started.
+          We don&apos;t believe in adopting whatever culture hands us unless
+          it&apos;s actually rooted in biblical, theological truth. That
+          means being willing to question anything that looks or feels
+          counterfeit, and lovingly, faithfully contributing what
+          we&apos;re learning within our own sphere and beyond, toward
+          the freedom that only truth brings. That posture comes from
+          our own experience serving in local church leadership and
+          later deconstructing what we thought faith was supposed to
+          look like; God met us faithfully through all of it. This page
+          is where we&apos;ll keep sharing what we&apos;re learning. For
+          now, here&apos;s where it started.
         </p>
         <ScrollCue className="mt-8" />
 
