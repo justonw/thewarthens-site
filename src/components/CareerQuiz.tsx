@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { quizQuestions, careerPaths, type PathId } from "@/lib/quiz";
 import { getGuideForPath } from "@/lib/guides";
+import { getStartHereForPath } from "@/lib/start-here";
 
 type Scores = Partial<Record<PathId, number>>;
 
@@ -43,6 +44,7 @@ export default function CareerQuiz() {
     const [top, ...rest] = results;
     const alternates = rest.slice(0, 2);
     const guide = getGuideForPath(top.id);
+    const startHere = getStartHereForPath(top.id);
 
     return (
       <div className="rounded-3xl border border-border-subtle bg-background-elevated p-6 sm:p-8">
@@ -71,15 +73,26 @@ export default function CareerQuiz() {
             </a>
           ))}
         </div>
-        {guide && (
-          <Link
-            href={`/tech/guides/${guide.slug}`}
-            className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-foreground-muted underline decoration-border-subtle underline-offset-4 hover:text-foreground"
-          >
-            Before you commit, read our honest Hype vs. Reality guide on this path
-            <span aria-hidden>→</span>
-          </Link>
-        )}
+        <div className="mt-4 flex flex-col items-start gap-2">
+          {startHere && (
+            <Link
+              href={`/tech/start-here/${startHere.slug}`}
+              className="inline-flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700"
+            >
+              Free step-by-step path to actually get started
+              <span aria-hidden>→</span>
+            </Link>
+          )}
+          {guide && (
+            <Link
+              href={`/tech/guides/${guide.slug}`}
+              className="inline-flex items-center gap-1 text-sm font-semibold text-foreground-muted underline decoration-border-subtle underline-offset-4 hover:text-foreground"
+            >
+              Before you commit, read our honest Hype vs. Reality guide on this path
+              <span aria-hidden>→</span>
+            </Link>
+          )}
+        </div>
 
         {alternates.length > 0 && (
           <div className="mt-8 border-t border-border-subtle pt-6">

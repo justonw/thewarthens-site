@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { freeResources, techSections } from "@/lib/tech-links";
 import { guides } from "@/lib/guides";
+import { startHereGuides } from "@/lib/start-here";
 import Reveal from "@/components/Reveal";
 import ScrollCue from "@/components/ScrollCue";
 import CareerQuiz from "@/components/CareerQuiz";
@@ -37,6 +38,7 @@ const quickNav = [
   { href: "#quiz", label: "Find Your Path" },
   { href: "#pay", label: "See the Pay" },
   { href: "#guides", label: "Hype vs. Reality" },
+  { href: "#start-here", label: "Start Here (Free)" },
   { href: "#learn", label: "Learn a Skill" },
   { href: "#checklist", label: "Beat the AI Scan" },
   { href: "#tracker", label: "Track Applications" },
@@ -141,6 +143,42 @@ export default function TechJourneyPage() {
                 </div>
                 <span className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-blue-600">
                   Read the guide
+                  <span aria-hidden className="transition-transform group-hover:translate-x-1">
+                    →
+                  </span>
+                </span>
+              </Link>
+            ))}
+          </div>
+        </Reveal>
+      </section>
+
+      <section id="start-here" className="mx-auto max-w-5xl scroll-mt-32 px-6 pb-16">
+        <Reveal>
+          <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
+            Start Here, For Free
+          </p>
+          <h2 className="mt-2 text-2xl font-semibold sm:text-3xl">
+            Free, step-by-step paths to actually start learning
+          </h2>
+          <p className="mt-3 max-w-2xl text-foreground-muted">
+            Concrete, free first steps for three paths, including real
+            video from people actually doing the job, before you spend a
+            dollar on any course.
+          </p>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {startHereGuides.map((g) => (
+              <Link
+                key={g.slug}
+                href={`/tech/start-here/${g.slug}`}
+                className="group flex flex-col justify-between rounded-3xl border border-border-subtle bg-background-elevated p-6 transition-all hover:-translate-y-0.5 hover:border-blue-500/40 hover:shadow-lg hover:shadow-blue-950/5"
+              >
+                <div>
+                  <p className="font-semibold">{g.title}</p>
+                  <p className="mt-2 text-sm text-foreground-muted">{g.dek}</p>
+                </div>
+                <span className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-blue-600">
+                  Start the free path
                   <span aria-hidden className="transition-transform group-hover:translate-x-1">
                     →
                   </span>

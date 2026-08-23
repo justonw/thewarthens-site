@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { guides, getGuide } from "@/lib/guides";
+import { getStartHereForPath } from "@/lib/start-here";
 import Reveal from "@/components/Reveal";
 import SourcesToggle from "@/components/SourcesToggle";
 
@@ -51,6 +52,7 @@ export default async function GuidePage({
   const { slug } = await params;
   const guide = getGuide(slug);
   if (!guide) notFound();
+  const startHere = getStartHereForPath(guide.pathId);
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
@@ -129,6 +131,15 @@ export default async function GuidePage({
           <p className="mx-auto mt-4 max-w-2xl text-balance text-lg text-foreground-muted">
             {guide.dek}
           </p>
+          {startHere && (
+            <Link
+              href={`/tech/start-here/${startHere.slug}`}
+              className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-foreground-muted underline decoration-border-subtle underline-offset-4 hover:text-foreground"
+            >
+              Ready to actually start? Free step-by-step path
+              <span aria-hidden>→</span>
+            </Link>
+          )}
         </Reveal>
       </section>
 
