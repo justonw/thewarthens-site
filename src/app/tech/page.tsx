@@ -130,7 +130,22 @@ export default function TechJourneyPage() {
             claim about these paths, then checked it against real labor data
             and accounts from people actually doing the job.
           </p>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-6 max-w-2xl overflow-hidden rounded-3xl border border-border-subtle">
+            <div className="aspect-video w-full">
+              <iframe
+                className="h-full w-full"
+                src="https://www.youtube.com/embed/gQjj5E4SIlI"
+                title="We Got It Wrong as Tech Influencers - Here's What We Missed"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            </div>
+          </div>
+          <p className="mt-3 max-w-2xl text-sm text-foreground-muted">
+            We Got It Wrong as Tech Influencers, Here&apos;s What We Missed,
+            a transparent look at what we thought we knew but didn&apos;t.
+          </p>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {guides.map((guide) => (
               <Link
                 key={guide.slug}
@@ -252,6 +267,32 @@ export default function TechJourneyPage() {
             ]}
             ctaLabel="Email Me Both"
           />
+        </Reveal>
+      </section>
+
+      <section className="mx-auto max-w-3xl px-6 pb-16">
+        <Reveal>
+          <Link
+            href="/faith"
+            className="group flex items-center justify-between gap-4 rounded-3xl border border-border-subtle bg-background-elevated p-6 text-left transition-all hover:-translate-y-0.5 hover:border-purple-500/40 hover:shadow-xl hover:shadow-purple-950/5"
+          >
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-purple-600">
+                Also On This Site
+              </p>
+              <p className="mt-1 text-lg font-semibold">Faith Journey</p>
+              <p className="mt-1 text-sm text-foreground-muted">
+                Reliance on God for discovering, understanding, and living
+                out truth, alongside the career side.
+              </p>
+            </div>
+            <span
+              aria-hidden
+              className="shrink-0 text-purple-600 transition-transform group-hover:translate-x-1"
+            >
+              →
+            </span>
+          </Link>
         </Reveal>
       </section>
 

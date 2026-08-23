@@ -15,7 +15,7 @@ export const starterChecklist: ChecklistGroup[] = [
   {
     id: "resume",
     title: "Resume Checklist for 2026's AI Screening",
-    note: "98.8% of Fortune 500 companies and 80% of mid-size employers now run resumes through an ATS before a human ever sees them, and a growing number add an LLM layer that scores your resume against the job description.",
+    note: "98.8% of Fortune 500 companies and 80% of mid-size employers now run resumes through an ATS (Applicant Tracking System, the software that filters and ranks resumes) before a human ever sees them. A growing number also add an LLM (an AI language model, the same kind of tech behind ChatGPT) that reads and scores your resume against the job description.",
     items: [
       {
         id: "resume-title",

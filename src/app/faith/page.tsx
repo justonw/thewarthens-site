@@ -109,7 +109,7 @@ export default function FaithJourneyPage() {
         </p>
       </Reveal>
 
-      <Reveal delay={150} className="mx-auto max-w-3xl px-6 pb-20 text-center sm:pb-24">
+      <Reveal delay={150} className="mx-auto max-w-3xl px-6 pb-6 text-center">
         <Link
           href="/faith/women-who-seek"
           className="flex items-center justify-between gap-4 rounded-3xl border border-border-subtle bg-background-elevated p-6 text-left transition-all hover:-translate-y-0.5 hover:border-mauve-600/40 hover:shadow-xl hover:shadow-mauve-950/5"
@@ -124,6 +124,27 @@ export default function FaithJourneyPage() {
             </p>
           </div>
           <span aria-hidden className="shrink-0 text-mauve-700">
+            →
+          </span>
+        </Link>
+      </Reveal>
+
+      <Reveal delay={200} className="mx-auto max-w-3xl px-6 pb-20 text-center sm:pb-24">
+        <Link
+          href="/tech"
+          className="flex items-center justify-between gap-4 rounded-3xl border border-border-subtle bg-background-elevated p-6 text-left transition-all hover:-translate-y-0.5 hover:border-blue-500/40 hover:shadow-xl hover:shadow-blue-950/5"
+        >
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
+              Also On This Site
+            </p>
+            <p className="mt-1 text-lg font-semibold">Tech Journey</p>
+            <p className="mt-1 text-sm text-foreground-muted">
+              Real steps for a career change into tech, alongside the
+              faith side.
+            </p>
+          </div>
+          <span aria-hidden className="shrink-0 text-blue-600">
             →
           </span>
         </Link>

@@ -61,14 +61,6 @@ export const startHereGuides: StartHereGuide[] = [
           "Look up SPIN Selling, Gap Selling, and the Challenger Sale. You don't need to master them, but knowing what they are means you won't sound lost in an interview.",
       },
       {
-        id: "practice-cold-calls",
-        title: "Practice cold calls without a real prospect on the line",
-        description:
-          "Use a free trial cold call simulator to get reps in before you're doing it for a paycheck.",
-        href: "https://www.rithim.ai/r/pNWb22tV",
-        linkLabel: "Trial Cold Call Simulator",
-      },
-      {
         id: "optimize-linkedin",
         title: "Fix your resume and LinkedIn before you apply anywhere",
         description:

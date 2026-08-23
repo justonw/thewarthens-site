@@ -12,7 +12,6 @@ export type TechSection = {
 export const freeResources: TechSection = {
   title: "Free Career Resources",
   links: [
-    { label: "Trial Cold Call Simulator", href: "https://www.rithim.ai/r/pNWb22tV" },
     { label: "Free Tech Courses", href: "https://perscholas.org/" },
     { label: "Learn to Code", href: "https://www.freecodecamp.org/" },
     {

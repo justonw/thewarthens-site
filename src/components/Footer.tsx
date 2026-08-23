@@ -15,7 +15,7 @@ export default function Footer() {
   return (
     <footer className="border-t border-border-subtle/80 bg-background">
       <div className="mx-auto max-w-6xl px-6 py-10">
-        <div className="grid gap-8 sm:grid-cols-[1.5fr_1fr_1fr]">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
           <div>
             <p className="text-sm font-semibold">The Warthens</p>
             <p className="mt-1 max-w-sm text-sm text-foreground-muted">
@@ -25,14 +25,26 @@ export default function Footer() {
           </div>
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
-              Career Guides
+              Tech Journey
             </p>
             <nav className="mt-3 flex flex-col gap-2">
+              <Link
+                href="/tech"
+                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+              >
+                Explore Tech Journey
+              </Link>
               <Link
                 href="/tech#quiz"
                 className="text-sm text-foreground-muted transition-colors hover:text-foreground"
               >
                 Take the Career Quiz
+              </Link>
+              <Link
+                href="/tech#start-here"
+                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+              >
+                Start Here, For Free
               </Link>
               {guides.map((g) => (
                 <Link
@@ -43,6 +55,25 @@ export default function Footer() {
                   {g.title}
                 </Link>
               ))}
+            </nav>
+          </div>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
+              Faith Journey
+            </p>
+            <nav className="mt-3 flex flex-col gap-2">
+              <Link
+                href="/faith"
+                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+              >
+                Explore Faith Journey
+              </Link>
+              <Link
+                href="/faith/women-who-seek"
+                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+              >
+                Women Who Seek
+              </Link>
             </nav>
           </div>
           <div>

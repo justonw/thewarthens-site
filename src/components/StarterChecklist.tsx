@@ -70,8 +70,10 @@ export default function StarterChecklist() {
         )}
       </div>
       <p className="mt-3 text-sm text-foreground-muted">
-        Most companies now screen resumes with an ATS, and a growing
-        number add an AI layer on top, before a human ever sees them.
+        Most companies now screen resumes with an ATS (Applicant
+        Tracking System, software that filters resumes before a person
+        reads them), and a growing number add an AI layer on top that
+        scores your resume the way an LLM (an AI language model) would.
         This checklist covers what the research says actually gets you
         past that screen and into recruiter searches. Check items off
         as you go, saved privately in your browser.
