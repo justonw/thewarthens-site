@@ -15,9 +15,34 @@ export const metadata: Metadata = {
   twitter: { title, description },
 };
 
+const videoJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  name: "Redeeming A Deconstructed Faith | Our Christian Journey",
+  description:
+    "We discuss our journey from being former church leaders to gaining a more proper context of the Christian faith and how we practically put our faith into practice.",
+  thumbnailUrl: ["https://i.ytimg.com/vi/-udk7605GZw/maxresdefault.jpg"],
+  uploadDate: "2024-01-04T09:00:00-08:00",
+  duration: "PT56M6S",
+  contentUrl: "https://youtu.be/-udk7605GZw",
+  embedUrl: "https://www.youtube.com/embed/-udk7605GZw",
+  publisher: {
+    "@type": "Organization",
+    name: "The Warthens",
+    logo: {
+      "@type": "ImageObject",
+      url: "https://thewarthens.com/brand/icon-square.png",
+    },
+  },
+};
+
 export default function FaithJourneyPage() {
   return (
     <section className="relative overflow-hidden">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(videoJsonLd) }}
+      />
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10"
