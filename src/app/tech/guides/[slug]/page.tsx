@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { guides, getGuide } from "@/lib/guides";
 import Reveal from "@/components/Reveal";
+import SourcesToggle from "@/components/SourcesToggle";
 
 export function generateStaticParams() {
   return guides.map((g) => ({ slug: g.slug }));
@@ -200,14 +201,7 @@ export default async function GuidePage({
 
       <section className="mx-auto max-w-3xl px-6 pb-10">
         <Reveal>
-          <p className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
-            Sources
-          </p>
-          <ul className="mt-3 space-y-1 text-xs text-foreground-muted">
-            {guide.sources.map((s, i) => (
-              <li key={i}>{s}</li>
-            ))}
-          </ul>
+          <SourcesToggle sources={guide.sources} />
         </Reveal>
       </section>
 

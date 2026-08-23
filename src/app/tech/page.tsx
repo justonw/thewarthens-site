@@ -189,9 +189,9 @@ export default function TechJourneyPage() {
         <Reveal>
           <EmailGatedDownload
             resourceId="job-search-toolkit"
-            eyebrow="Prefer an Offline Copy?"
-            title="Take Both With You"
-            description="The versions above live in your browser. Get a printable PDF of the checklist and an editable spreadsheet of the tracker instead, so you can print it, fill it out by hand, or customize it in Excel or Google Sheets."
+            eyebrow="Free Download"
+            title="Get the Printable PDF & Spreadsheet Versions"
+            description="You just used the interactive checklist and tracker above. Prefer an offline copy? We'll email you the resume & LinkedIn checklist as a PDF and the job tracker as an editable spreadsheet (XLSX), so you can print it, fill it out by hand, or customize it in Excel or Google Sheets."
             files={[
               { label: "Starter Kit (PDF)", href: "/downloads/career-changer-starter-kit.pdf" },
               { label: "Tracker (XLSX)", href: "/downloads/job-search-tracker.xlsx" },
