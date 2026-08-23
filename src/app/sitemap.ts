@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { guides } from "@/lib/guides";
 import { startHereGuides } from "@/lib/start-here";
+import { faithWritings } from "@/lib/faith-writings";
 
 // Bump this when you make a meaningful content change to a static page
 // (home, /tech, /faith, /faith/women-who-seek) so search engines get a
@@ -28,6 +29,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       path: `/tech/start-here/${g.slug}`,
       priority: 0.7,
       lastModified: parseUpdated(g.updated),
+    })),
+    ...faithWritings.map((w) => ({
+      path: `/faith/${w.category}/${w.slug}`,
+      priority: 0.7,
+      lastModified: parseUpdated(w.date),
     })),
   ];
 

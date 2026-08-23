@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import ScrollCue from "@/components/ScrollCue";
+import { faithWritings, categoryLabels } from "@/lib/faith-writings";
 
 const title = "Faith Journey | The Warthens";
 const description =
@@ -154,6 +155,37 @@ export default function FaithJourneyPage() {
           so you don&apos;t miss it.
         </p>
       </Reveal>
+
+      {faithWritings.length > 0 && (
+        <Reveal delay={50} className="mx-auto max-w-3xl px-6 pb-16 text-left">
+          <h2 className="text-xl font-semibold sm:text-2xl">Writings</h2>
+          <p className="mt-2 text-sm text-foreground-muted">
+            Story Time, Topical Study, and Wisdom &amp; Devotional pieces as
+            we publish them.
+          </p>
+          <div className="mt-6 space-y-4">
+            {faithWritings.map((w) => (
+              <Link
+                key={w.slug}
+                href={`/faith/${w.category}/${w.slug}`}
+                className="group block rounded-3xl border border-border-subtle bg-background-elevated p-6 transition-all hover:-translate-y-0.5 hover:border-purple-500/40 hover:shadow-lg hover:shadow-purple-950/5"
+              >
+                <p className="text-xs font-semibold uppercase tracking-wider text-purple-700">
+                  {categoryLabels[w.category]}
+                </p>
+                <p className="mt-2 text-lg font-semibold">{w.title}</p>
+                <p className="mt-2 text-sm text-foreground-muted">{w.dek}</p>
+                <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-purple-700">
+                  Read it
+                  <span aria-hidden className="transition-transform group-hover:translate-x-1">
+                    →
+                  </span>
+                </span>
+              </Link>
+            ))}
+          </div>
+        </Reveal>
+      )}
 
       <Reveal delay={100} className="mx-auto max-w-3xl px-6 pb-16 text-left">
         <h2 className="text-xl font-semibold sm:text-2xl">Quick Answers</h2>
