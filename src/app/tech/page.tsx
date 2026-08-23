@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { freeResources, techSections } from "@/lib/tech-links";
 import Reveal from "@/components/Reveal";
+import ScrollCue from "@/components/ScrollCue";
 
 export const metadata: Metadata = {
   title: "Tech Journey | The Warthens",
@@ -62,6 +63,7 @@ export default function TechJourneyPage() {
             hand a friend who&apos;s ready to think bigger than their
             current job.
           </p>
+          <ScrollCue className="mt-10" />
         </Reveal>
       </section>
 

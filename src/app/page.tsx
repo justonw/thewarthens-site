@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
+import ScrollCue from "@/components/ScrollCue";
 
 export default function Home() {
   return (
@@ -49,6 +50,7 @@ export default function Home() {
               Start the Tech Journey
             </Link>
           </div>
+          <ScrollCue className="mt-12" />
         </Reveal>
       </section>
 

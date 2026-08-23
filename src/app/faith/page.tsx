@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
+import ScrollCue from "@/components/ScrollCue";
 
 export const metadata: Metadata = {
   title: "Faith Journey | The Warthens",
@@ -34,6 +35,7 @@ export default function FaithJourneyPage() {
           along the way. This page is where we&apos;ll share that journey.
           For now, here&apos;s where it started.
         </p>
+        <ScrollCue className="mt-8" />
 
         <a
           href="https://youtu.be/-udk7605GZw"

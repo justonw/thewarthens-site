@@ -1,7 +1,18 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { Playfair_Display } from "next/font/google";
 import Reveal from "@/components/Reveal";
+import ScrollCue from "@/components/ScrollCue";
+import CrossDivider from "@/components/CrossDivider";
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  variable: "--font-playfair",
+});
+
+const serif = "font-[family-name:var(--font-playfair)]";
 
 export const metadata: Metadata = {
   title: "Women Who Seek | The Warthens",
@@ -15,7 +26,7 @@ const ZOOM_LINK =
 function Verse({ children, citation }: { children: React.ReactNode; citation: string }) {
   return (
     <Reveal className="mx-auto max-w-xl text-center">
-      <p className="text-balance text-lg italic text-foreground-muted">
+      <p className={`${serif} text-balance text-xl italic text-foreground-muted`}>
         &ldquo;{children}&rdquo;
       </p>
       <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-rose-700">
@@ -27,7 +38,7 @@ function Verse({ children, citation }: { children: React.ReactNode; citation: st
 
 export default function WomenWhoSeekPage() {
   return (
-    <>
+    <div className={playfair.variable}>
       <div className="border-b border-border-subtle/60 bg-background-elevated/30">
         <div className="mx-auto max-w-5xl px-6 py-3 text-sm text-foreground-muted">
           <Link href="/faith" className="hover:text-foreground">
@@ -48,22 +59,33 @@ export default function WomenWhoSeekPage() {
               "radial-gradient(55% 45% at 50% 0%, rgba(190,90,70,0.12), transparent)",
           }}
         />
-        <Reveal className="mx-auto max-w-3xl px-6 pt-16 pb-14 text-center sm:pt-20">
+        <Reveal className="relative mx-auto max-w-3xl px-6 pt-16 pb-10 text-center sm:pt-20">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute left-1/2 top-[52%] -z-10 -translate-x-1/2 -translate-y-1/2"
+          >
+            <div className="h-[420px] w-[420px] rounded-full border border-rose-300/50 sm:h-[560px] sm:w-[560px]" />
+            <div className="absolute inset-[14%] rounded-full border border-rose-300/40" />
+          </div>
           <p className="text-sm font-semibold uppercase tracking-wider text-rose-700">
             A Community of Women
           </p>
-          <h1 className="text-balance mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">
+          <h1
+            className={`${serif} text-balance mt-4 text-5xl font-medium tracking-tight sm:text-6xl`}
+          >
             Women Who Seek
           </h1>
-          <p className="mt-2 text-xl italic text-rose-700">
+          <p className={`${serif} mt-3 text-2xl italic text-rose-700 sm:text-3xl`}>
             Finding Jesus in the Scriptures
           </p>
-          <p className="mx-auto mt-6 max-w-xl text-balance text-lg text-foreground-muted">
+          <p className="mx-auto mt-8 max-w-xl text-balance text-lg text-foreground-muted">
             Wherever you are in your journey with Jesus, you are welcome
             here. Hosted by Atiya Warthen.
           </p>
+          <CrossDivider className="mt-10" />
+          <ScrollCue className="mt-8" />
         </Reveal>
-        <div className="mx-auto max-w-3xl px-6 pb-16">
+        <div className="mx-auto max-w-3xl px-6 pt-6 pb-16">
           <Verse citation="Matthew 6:33 · NLT">
             Seek the Kingdom of God above all else, and live righteously, and
             he will give you everything you need.
@@ -78,7 +100,7 @@ export default function WomenWhoSeekPage() {
             <p className="text-sm font-semibold uppercase tracking-wider text-rose-700">
               Who We Are
             </p>
-            <h2 className="mt-3 text-2xl font-semibold sm:text-3xl">
+            <h2 className={`${serif} mt-3 text-3xl font-medium sm:text-4xl`}>
               Seeking Jesus Together
             </h2>
             <p className="mt-4 text-foreground-muted">
@@ -129,7 +151,7 @@ export default function WomenWhoSeekPage() {
             <p className="text-sm font-semibold uppercase tracking-wider text-rose-700">
               What We Believe
             </p>
-            <h2 className="mt-3 text-2xl font-semibold sm:text-3xl">
+            <h2 className={`${serif} mt-3 text-3xl font-medium sm:text-4xl`}>
               Our Foundation
             </h2>
             <p className="mt-4 text-foreground-muted">
@@ -157,7 +179,7 @@ export default function WomenWhoSeekPage() {
             <p className="text-sm font-semibold uppercase tracking-wider text-rose-700">
               Join Us
             </p>
-            <h2 className="mt-3 text-2xl font-semibold sm:text-3xl">
+            <h2 className={`${serif} mt-3 text-3xl font-medium sm:text-4xl`}>
               Ways to Gather
             </h2>
             <p className="mt-4 text-foreground-muted">
@@ -182,7 +204,7 @@ export default function WomenWhoSeekPage() {
               <p className="text-xs font-semibold uppercase tracking-wider text-rose-700">
                 Monthly Bible Study
               </p>
-              <h3 className="mt-2 text-lg font-semibold">Seek the Word</h3>
+              <h3 className={`${serif} mt-2 text-xl font-medium`}>Seek the Word</h3>
               <ul className="mt-4 space-y-2 text-sm text-foreground-muted">
                 <li>Monthly virtual gathering</li>
                 <li>First Wednesday of every month</li>
@@ -207,7 +229,7 @@ export default function WomenWhoSeekPage() {
               <p className="text-xs font-semibold uppercase tracking-wider text-rose-700">
                 In-Person Gatherings
               </p>
-              <h3 className="mt-2 text-lg font-semibold">Seek Together</h3>
+              <h3 className={`${serif} mt-2 text-xl font-medium`}>Seek Together</h3>
               <ul className="mt-4 space-y-2 text-sm text-foreground-muted">
                 <li>Intimate gatherings held in someone&apos;s home</li>
                 <li>A time of community, encouragement, worship, and the Word</li>
@@ -227,7 +249,7 @@ export default function WomenWhoSeekPage() {
               <p className="text-xs font-semibold uppercase tracking-wider text-rose-700">
                 Annual Conference
               </p>
-              <h3 className="mt-2 text-lg font-semibold">
+              <h3 className={`${serif} mt-2 text-xl font-medium`}>
                 The Seekers Annual Conference
               </h3>
               <ul className="mt-4 space-y-2 text-sm text-foreground-muted">
@@ -260,7 +282,7 @@ export default function WomenWhoSeekPage() {
       {/* Closing */}
       <section className="border-t border-border-subtle">
         <Reveal className="mx-auto max-w-3xl px-6 py-16 text-center">
-          <p className="text-lg font-semibold">Women Who Seek</p>
+          <p className={`${serif} text-2xl font-medium`}>Women Who Seek</p>
           <p className="mt-1 text-sm text-foreground-muted">
             Finding Jesus in the Scriptures · All women welcome
           </p>
@@ -274,6 +296,6 @@ export default function WomenWhoSeekPage() {
           </a>
         </Reveal>
       </section>
-    </>
+    </div>
   );
 }
