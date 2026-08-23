@@ -13,27 +13,11 @@ export const freeResources: TechSection = {
   title: "Free Career Resources",
   links: [
     { label: "Trial Cold Call Simulator", href: "https://www.rithim.ai/r/pNWb22tV" },
-    {
-      label: "Cheap Tech Career Ideas",
-      href: "https://docs.google.com/document/d/15E2bkHvqqZAn5gCMKwZXcVfyrerSL0ZK5OXOHDFsTgQ/edit",
-    },
-    {
-      label: "Cheap Non-Tech Career Ideas",
-      href: "https://docs.google.com/document/d/15VBPsTDLze-jl0rgjXlKf4QafDHo5YkH79Ekh5mTBOg/edit",
-    },
-    {
-      label: "Free Job Hunt Guide",
-      href: "https://docs.google.com/document/d/10mcFVftZ5FSkvZ6Nh5rBdAtvsN5Nz0tLVN2D4oYoGag/edit?usp=sharing",
-    },
     { label: "Free Tech Courses", href: "https://perscholas.org/" },
     { label: "Learn to Code", href: "https://www.freecodecamp.org/" },
     {
       label: "Apollo.io Sales Engagement Platform",
       href: "https://get.apollo.io/yrc241daugd9",
-    },
-    {
-      label: "Job Prospecting Form",
-      href: "https://drive.google.com/file/d/1MsE41r0zcJ8qcghyVLh_qB2nznC9jsPh/view?usp=sharing",
     },
   ],
 };
