@@ -66,15 +66,6 @@ export async function POST(req: NextRequest) {
 <p>It's yours. Make a copy and edit it however fits your search. If you haven't taken the free 2-minute career-path quiz yet, it's at <a href="${SITE_URL}/tech">thewarthens.com/tech</a>.</p>
 <p>Juston &amp; Atiya</p>`,
     });
-
-    await sendEmail({
-      from: FROM_EMAIL,
-      to: NOTIFY_EMAIL,
-      subject: "New job tracker signup",
-      html: `<p>${escapeHtml(email)} requested the job search tracker.</p>`,
-    });
-
-    return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("tracker-signup email failed", err);
     return NextResponse.json(
@@ -82,4 +73,17 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
+
+  try {
+    await sendEmail({
+      from: FROM_EMAIL,
+      to: NOTIFY_EMAIL,
+      subject: "New job tracker signup",
+      html: `<p>${escapeHtml(email)} requested the job search tracker.</p>`,
+    });
+  } catch (err) {
+    console.error("tracker-signup notify copy failed (visitor email still sent)", err);
+  }
+
+  return NextResponse.json({ ok: true });
 }
