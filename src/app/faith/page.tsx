@@ -160,8 +160,8 @@ export default function FaithJourneyPage() {
         <Reveal delay={50} className="mx-auto max-w-3xl px-6 pb-16 text-left">
           <h2 className="text-xl font-semibold sm:text-2xl">Writings</h2>
           <p className="mt-2 text-sm text-foreground-muted">
-            Story Time, Topical Study, and Wisdom &amp; Devotional pieces as
-            we publish them.
+            Story Time, Topical Study, and Reflections pieces as we publish
+            them.
           </p>
           <div className="mt-6 space-y-4">
             {faithWritings.map((w) => (

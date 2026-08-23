@@ -1,9 +1,9 @@
-export type FaithWritingCategory = "topical-study" | "story-time" | "wisdom-devotional";
+export type FaithWritingCategory = "topical-study" | "story-time" | "reflections";
 
 export const categoryLabels: Record<FaithWritingCategory, string> = {
   "topical-study": "Topical Study",
   "story-time": "Story Time",
-  "wisdom-devotional": "Wisdom & Devotional",
+  "reflections": "Reflections",
 };
 
 export type FaithWritingBlock =
@@ -82,7 +82,7 @@ export const faithWritings: FaithWriting[] = [
   },
   {
     slug: "this-thing-is-spiritual",
-    category: "wisdom-devotional",
+    category: "reflections",
     title: "This Thing Is Spiritual",
     dek: "Everything we experience and perceive is spiritual first. A reflection on trusting the Spirit over intellect and emotion to bring true focus, even in the midst of change.",
     author: "Juston Warthen",
