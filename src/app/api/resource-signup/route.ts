@@ -1,10 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const FROM_EMAIL = process.env.TRACKER_FROM_EMAIL || "The Warthens <onboarding@resend.dev>";
+const FROM_EMAIL = process.env.TRACKER_FROM_EMAIL || "The Warthens <hello@thewarthens.com>";
 const NOTIFY_EMAIL = "justonwarthen@gmail.com";
 const SITE_URL = "https://thewarthens.com";
-const DOWNLOAD_URL = `${SITE_URL}/downloads/job-search-tracker.xlsx`;
+
+const RESOURCES: Record<
+  string,
+  { label: string; files: { label: string; fileUrl: string }[] }
+> = {
+  "job-search-toolkit": {
+    label: "Job Search Toolkit",
+    files: [
+      {
+        label: "Career-Changer Starter Kit (PDF)",
+        fileUrl: `${SITE_URL}/downloads/career-changer-starter-kit.pdf`,
+      },
+      {
+        label: "Job Search Tracker (XLSX)",
+        fileUrl: `${SITE_URL}/downloads/job-search-tracker.xlsx`,
+      },
+    ],
+  },
+};
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -37,7 +55,7 @@ async function sendEmail(payload: Record<string, unknown>) {
 }
 
 export async function POST(req: NextRequest) {
-  let body: { email?: string };
+  let body: { email?: string; resourceId?: string };
   try {
     body = await req.json();
   } catch {
@@ -49,6 +67,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Enter a valid email address." }, { status: 400 });
   }
 
+  const resource = body.resourceId ? RESOURCES[body.resourceId] : undefined;
+  if (!resource) {
+    return NextResponse.json({ error: "Unknown resource." }, { status: 400 });
+  }
+
   if (!RESEND_API_KEY) {
     return NextResponse.json(
       { error: "Email delivery isn't set up yet. Use the direct download link instead." },
@@ -57,17 +80,21 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    const fileList = resource.files
+      .map((f) => `<li><a href="${f.fileUrl}">${f.label}</a></li>`)
+      .join("");
     await sendEmail({
       from: FROM_EMAIL,
       to: email,
-      subject: "Your Job Search Tracker (from The Warthens)",
+      subject: `Your ${resource.label} (from The Warthens)`,
       html: `<p>Hi,</p>
-<p>Here's your Job Search Tracker template: <a href="${DOWNLOAD_URL}">${DOWNLOAD_URL}</a></p>
-<p>It's yours. Make a copy and edit it however fits your search. If you haven't taken the free 2-minute career-path quiz yet, it's at <a href="${SITE_URL}/tech">thewarthens.com/tech</a>.</p>
+<p>Here's your ${resource.label}:</p>
+<ul>${fileList}</ul>
+<p>They're yours. If you haven't taken the free 2-minute career-path quiz yet, it's at <a href="${SITE_URL}/tech">thewarthens.com/tech</a>.</p>
 <p>Juston &amp; Atiya</p>`,
     });
   } catch (err) {
-    console.error("tracker-signup email failed", err);
+    console.error("resource-signup email failed", err);
     return NextResponse.json(
       { error: "Something went wrong sending the email. Use the direct download link instead." },
       { status: 500 }
@@ -78,11 +105,11 @@ export async function POST(req: NextRequest) {
     await sendEmail({
       from: FROM_EMAIL,
       to: NOTIFY_EMAIL,
-      subject: "New job tracker signup",
-      html: `<p>${escapeHtml(email)} requested the job search tracker.</p>`,
+      subject: `New signup: ${resource.label}`,
+      html: `<p>${escapeHtml(email)} requested "${escapeHtml(resource.label)}".</p>`,
     });
   } catch (err) {
-    console.error("tracker-signup notify copy failed (visitor email still sent)", err);
+    console.error("resource-signup notify copy failed (visitor email still sent)", err);
   }
 
   return NextResponse.json({ ok: true });

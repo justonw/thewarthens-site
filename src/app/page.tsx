@@ -127,12 +127,12 @@ export default function Home() {
                 Reliance on God for discovering, understanding, and living out truth
               </h2>
               <p className="mt-3 text-foreground-muted">
-                Our story of deconstruction, restoration, and what we&apos;re
-                still learning after serving in local church leadership.
-                Coming soon.
+                Our story of deconstruction and restoration after serving in
+                local church leadership, plus Women Who Seek, a community
+                for women hosted by Atiya. More is on the way.
               </p>
               <span className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-purple-600">
-                See What&apos;s Coming
+                Watch Our Story
                 <span aria-hidden className="transition-transform group-hover:translate-x-1">
                   →
                 </span>

@@ -5,7 +5,7 @@ import ScrollCue from "@/components/ScrollCue";
 import CareerQuiz from "@/components/CareerQuiz";
 import IncomeSnapshot from "@/components/IncomeSnapshot";
 import JobTracker from "@/components/JobTracker";
-import TrackerEmailCapture from "@/components/TrackerEmailCapture";
+import EmailGatedDownload from "@/components/EmailGatedDownload";
 
 const title = "Tech Journey | The Warthens";
 const description =
@@ -18,6 +18,13 @@ export const metadata: Metadata = {
   openGraph: { title, description, url: "/tech" },
   twitter: { title, description },
 };
+
+const quickNav = [
+  { href: "#quiz", label: "Find Your Path" },
+  { href: "#pay", label: "See the Pay" },
+  { href: "#learn", label: "Learn a Skill" },
+  { href: "#toolkit", label: "Job Search Toolkit" },
+];
 
 function LinkGrid({ links }: { links: { label: string; href: string }[] }) {
   return (
@@ -56,7 +63,7 @@ export default function TechJourneyPage() {
               "radial-gradient(50% 40% at 20% 0%, rgba(56,189,248,0.16), transparent)",
           }}
         />
-        <Reveal className="mx-auto max-w-3xl px-6 pt-16 pb-12 text-center sm:pt-24 sm:pb-16">
+        <Reveal className="mx-auto max-w-3xl px-6 pt-16 pb-10 text-center sm:pt-24 sm:pb-12">
           <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
             Tech Journey
           </p>
@@ -73,11 +80,27 @@ export default function TechJourneyPage() {
             hand a friend who&apos;s ready to think bigger than their
             current job.
           </p>
-          <ScrollCue className="mt-10" />
+          <ScrollCue className="mt-8" />
+        </Reveal>
+        <Reveal delay={100} className="mx-auto max-w-3xl px-6 pb-16">
+          <nav
+            aria-label="Page sections"
+            className="flex flex-wrap items-center justify-center gap-2"
+          >
+            {quickNav.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                className="rounded-full border border-border-subtle bg-background-elevated px-4 py-2 text-xs font-semibold text-foreground-muted transition-colors hover:border-blue-500/40 hover:text-foreground"
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
         </Reveal>
       </section>
 
-      <section className="mx-auto max-w-3xl px-6 pb-16">
+      <section id="quiz" className="mx-auto max-w-3xl scroll-mt-20 px-6 pb-16">
         <Reveal>
           <p className="text-center text-sm text-foreground-muted">
             Not sure where to start? This takes about 2 minutes and looks
@@ -90,50 +113,13 @@ export default function TechJourneyPage() {
         </Reveal>
       </section>
 
-      <section className="mx-auto max-w-3xl px-6 pb-16">
+      <section id="pay" className="mx-auto max-w-3xl scroll-mt-20 px-6 pb-16">
         <Reveal>
           <IncomeSnapshot />
         </Reveal>
       </section>
 
-      <section className="mx-auto max-w-3xl px-6 pb-16">
-        <Reveal className="flex flex-col items-center gap-4 rounded-3xl border border-border-subtle bg-background-elevated p-6 text-center sm:flex-row sm:justify-between sm:text-left sm:p-8">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
-              Free Download
-            </p>
-            <p className="mt-1 text-lg font-semibold">
-              The Career-Changer Starter Kit
-            </p>
-            <p className="mt-1 text-sm text-foreground-muted">
-              A real resume &amp; LinkedIn checklist built for 2026&apos;s
-              AI screening, not generic advice from 2015.
-            </p>
-          </div>
-          <a
-            href="/downloads/career-changer-starter-kit.pdf"
-            download
-            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-semibold text-background transition-opacity hover:opacity-90"
-          >
-            Download PDF
-            <span aria-hidden>↓</span>
-          </a>
-        </Reveal>
-      </section>
-
-      <section className="mx-auto max-w-3xl px-6 pb-16">
-        <Reveal>
-          <JobTracker />
-        </Reveal>
-      </section>
-
-      <section className="mx-auto max-w-3xl px-6 pb-16">
-        <Reveal>
-          <TrackerEmailCapture />
-        </Reveal>
-      </section>
-
-      <section className="mx-auto max-w-5xl px-6 pb-10">
+      <section id="learn" className="mx-auto max-w-5xl scroll-mt-20 px-6 pb-10">
         <Reveal className="rounded-3xl border border-border-subtle bg-background-elevated p-6 sm:p-8">
           <h2 className="text-lg font-semibold">{freeResources.title}</h2>
           <div className="mt-5">
@@ -154,6 +140,44 @@ export default function TechJourneyPage() {
             </div>
           </Reveal>
         ))}
+      </section>
+
+      <section id="toolkit" className="mx-auto max-w-3xl scroll-mt-20 px-6 pb-16">
+        <Reveal className="text-center">
+          <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
+            Job Search Toolkit
+          </p>
+          <h2 className="mt-2 text-2xl font-semibold sm:text-3xl">
+            Once you&apos;re applying, stay organized
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-foreground-muted">
+            A resume &amp; LinkedIn checklist, plus a tracker for every
+            application and follow-up. Use the live version right on this
+            page, or get both files sent to your inbox.
+          </p>
+        </Reveal>
+      </section>
+
+      <section className="mx-auto max-w-3xl px-6 pb-16">
+        <Reveal>
+          <JobTracker />
+        </Reveal>
+      </section>
+
+      <section className="mx-auto max-w-3xl px-6 pb-16">
+        <Reveal>
+          <EmailGatedDownload
+            resourceId="job-search-toolkit"
+            eyebrow="Free Downloads"
+            title="Starter Kit + Tracker Template"
+            description="The resume & LinkedIn checklist (PDF) and the job tracker (XLSX), both in one email."
+            files={[
+              { label: "Starter Kit (PDF)", href: "/downloads/career-changer-starter-kit.pdf" },
+              { label: "Tracker (XLSX)", href: "/downloads/job-search-tracker.xlsx" },
+            ]}
+            ctaLabel="Email Me Both"
+          />
+        </Reveal>
       </section>
 
       <section className="mx-auto max-w-3xl px-6 pb-20">
