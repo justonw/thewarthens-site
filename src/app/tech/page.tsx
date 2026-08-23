@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { freeResources, techSections } from "@/lib/tech-links";
+import { guides } from "@/lib/guides";
 import Reveal from "@/components/Reveal";
 import ScrollCue from "@/components/ScrollCue";
 import CareerQuiz from "@/components/CareerQuiz";
@@ -24,6 +26,7 @@ export const metadata: Metadata = {
 const quickNav = [
   { href: "#quiz", label: "Find Your Path" },
   { href: "#pay", label: "See the Pay" },
+  { href: "#guides", label: "Hype vs. Reality" },
   { href: "#learn", label: "Learn a Skill" },
   { href: "#toolkit", label: "Job Search Toolkit" },
 ];
@@ -82,7 +85,7 @@ export default function TechJourneyPage() {
           <p className="text-center text-sm text-foreground-muted">
             Not sure where to start? This takes about 2 minutes and looks
             at how you like to work, what&apos;s pulling you toward a
-            change, and your pace — there&apos;s no wrong answer.
+            change, and your pace. There&apos;s no wrong answer.
           </p>
           <div className="mt-5">
             <CareerQuiz />
@@ -93,6 +96,42 @@ export default function TechJourneyPage() {
       <section id="pay" className="mx-auto max-w-3xl scroll-mt-20 px-6 pb-16">
         <Reveal>
           <IncomeSnapshot />
+        </Reveal>
+      </section>
+
+      <section id="guides" className="mx-auto max-w-5xl scroll-mt-20 px-6 pb-16">
+        <Reveal>
+          <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
+            Hype vs. Reality
+          </p>
+          <h2 className="mt-2 text-2xl font-semibold sm:text-3xl">
+            What course marketing says, versus what the data and real people say
+          </h2>
+          <p className="mt-3 max-w-2xl text-foreground-muted">
+            We researched what training programs, including our own partners,
+            claim about these paths, then checked it against real labor data
+            and accounts from people actually doing the job.
+          </p>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            {guides.map((guide) => (
+              <Link
+                key={guide.slug}
+                href={`/tech/guides/${guide.slug}`}
+                className="group flex flex-col justify-between rounded-3xl border border-border-subtle bg-background-elevated p-6 transition-all hover:-translate-y-0.5 hover:border-blue-500/40 hover:shadow-lg hover:shadow-blue-950/5"
+              >
+                <div>
+                  <p className="font-semibold">{guide.title}</p>
+                  <p className="mt-2 text-sm text-foreground-muted">{guide.dek}</p>
+                </div>
+                <span className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-blue-600">
+                  Read the guide
+                  <span aria-hidden className="transition-transform group-hover:translate-x-1">
+                    →
+                  </span>
+                </span>
+              </Link>
+            ))}
+          </div>
         </Reveal>
       </section>
 
@@ -150,9 +189,9 @@ export default function TechJourneyPage() {
         <Reveal>
           <EmailGatedDownload
             resourceId="job-search-toolkit"
-            eyebrow="Free Downloads"
-            title="Starter Kit + Tracker Template"
-            description="The resume & LinkedIn checklist (PDF) and the job tracker (XLSX), both in one email."
+            eyebrow="Prefer an Offline Copy?"
+            title="Take Both With You"
+            description="The versions above live in your browser. Get a printable PDF of the checklist and an editable spreadsheet of the tracker instead, so you can print it, fill it out by hand, or customize it in Excel or Google Sheets."
             files={[
               { label: "Starter Kit (PDF)", href: "/downloads/career-changer-starter-kit.pdf" },
               { label: "Tracker (XLSX)", href: "/downloads/job-search-tracker.xlsx" },

@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { quizQuestions, careerPaths, type PathId } from "@/lib/quiz";
+import { getGuideForPath } from "@/lib/guides";
 
 type Scores = Partial<Record<PathId, number>>;
 
@@ -40,6 +42,7 @@ export default function CareerQuiz() {
     const results = computeResults(scores);
     const [top, ...rest] = results;
     const alternates = rest.slice(0, 2);
+    const guide = getGuideForPath(top.id);
 
     return (
       <div className="rounded-3xl border border-border-subtle bg-background-elevated p-6 sm:p-8">
@@ -68,6 +71,15 @@ export default function CareerQuiz() {
             </a>
           ))}
         </div>
+        {guide && (
+          <Link
+            href={`/tech/guides/${guide.slug}`}
+            className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-foreground-muted underline decoration-border-subtle underline-offset-4 hover:text-foreground"
+          >
+            Before you commit, read our honest Hype vs. Reality guide on this path
+            <span aria-hidden>→</span>
+          </Link>
+        )}
 
         {alternates.length > 0 && (
           <div className="mt-8 border-t border-border-subtle pt-6">

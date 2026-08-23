@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { guides } from "@/lib/guides";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://thewarthens.com";
@@ -7,6 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/tech", priority: 0.9 },
     { path: "/faith", priority: 0.8 },
     { path: "/faith/women-who-seek", priority: 0.7 },
+    ...guides.map((g) => ({ path: `/tech/guides/${g.slug}`, priority: 0.7 })),
   ];
 
   return routes.map(({ path, priority }) => ({
