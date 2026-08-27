@@ -59,7 +59,7 @@ export default async function GuidePage({
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Tech Journey", item: "https://thewarthens.com/tech" },
-      { "@type": "ListItem", position: 2, name: "Hype vs. Reality" },
+      { "@type": "ListItem", position: 2, name: "Hype vs. Reality", item: "https://thewarthens.com/tech#guides" },
       { "@type": "ListItem", position: 3, name: guide.title, item: `https://thewarthens.com/tech/guides/${guide.slug}` },
     ],
   };

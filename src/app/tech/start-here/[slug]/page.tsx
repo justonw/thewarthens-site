@@ -43,7 +43,7 @@ export default async function StartHerePage({
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Tech Journey", item: "https://thewarthens.com/tech" },
-      { "@type": "ListItem", position: 2, name: "Start Here" },
+      { "@type": "ListItem", position: 2, name: "Start Here", item: "https://thewarthens.com/tech#start-here" },
       { "@type": "ListItem", position: 3, name: guide.title, item: `https://thewarthens.com/tech/start-here/${guide.slug}` },
     ],
   };

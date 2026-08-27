@@ -157,6 +157,7 @@ export default function FaithJourneyPage() {
       </Reveal>
 
       {faithWritings.length > 0 && (
+        <div id="writings" className="scroll-mt-32">
         <Reveal delay={50} className="mx-auto max-w-3xl px-6 pb-16 text-left">
           <h2 className="text-xl font-semibold sm:text-2xl">Writings</h2>
           <p className="mt-2 text-sm text-foreground-muted">
@@ -185,6 +186,7 @@ export default function FaithJourneyPage() {
             ))}
           </div>
         </Reveal>
+        </div>
       )}
 
       <Reveal delay={100} className="mx-auto max-w-3xl px-6 pb-16 text-left">

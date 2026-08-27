@@ -58,7 +58,7 @@ export default async function FaithWritingPage({
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "The Warthens", item: "https://thewarthens.com" },
       { "@type": "ListItem", position: 2, name: "Faith Journey", item: "https://thewarthens.com/faith" },
-      { "@type": "ListItem", position: 3, name: categoryLabel },
+      { "@type": "ListItem", position: 3, name: categoryLabel, item: "https://thewarthens.com/faith#writings" },
       {
         "@type": "ListItem",
         position: 4,
