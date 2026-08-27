@@ -151,7 +151,7 @@ export const faithWritings: FaithWriting[] = [
   {
     slug: "answering-common-tithing-arguments",
     category: "topical-study",
-    title: "Is Tithing Required? Answering the Most Common Arguments For It",
+    title: "Is Tithing Required? Answering Common Arguments",
     dek: "Answering real pushback we have received on tithing, one claim at a time, the storehouse, the whole Law, seed-faith giving, and more, along with how widespread these teachings actually are across Christian circles today.",
     author: "Juston Warthen",
     date: "August 2026",
