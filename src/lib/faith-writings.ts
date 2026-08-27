@@ -8,7 +8,8 @@ export const categoryLabels: Record<FaithWritingCategory, string> = {
 
 export type FaithWritingBlock =
   | { type: "p"; text: string }
-  | { type: "quote"; text: string };
+  | { type: "quote"; text: string }
+  | { type: "question"; text: string };
 
 export type FaithWriting = {
   slug: string;
@@ -17,7 +18,7 @@ export type FaithWriting = {
   dek: string;
   author: string;
   date: string;
-  heroImage: { src: string; alt: string };
+  heroImage?: { src: string; alt: string };
   body: FaithWritingBlock[];
 };
 
@@ -144,6 +145,52 @@ export const faithWritings: FaithWriting[] = [
       { type: "p", text: "Again, I'm not against you giving to a local church or a pastor; my concern is giving 10% of all your income to a local church because you feel your blessing is wrapped up in this obligation." },
       { type: "quote", text: "The atonement of Christ is enough to declare you blessed." },
       { type: "p", text: "I predominantly see the purpose of giving as for the well-being of those in need, and the means for financial provision as laboring with your own hands." },
+      { type: "p", text: "What are your thoughts?" },
+    ],
+  },
+  {
+    slug: "answering-common-tithing-arguments",
+    category: "topical-study",
+    title: "Is Tithing Required? Answering the Most Common Arguments For It",
+    dek: "Answering real pushback we have received on tithing, one claim at a time, the storehouse, the whole Law, seed-faith giving, and more, along with how widespread these teachings actually are across Christian circles today.",
+    author: "Juston Warthen",
+    date: "August 2026",
+    body: [
+      { type: "p", text: "This is real pushback we have received on tithing. It wasn't random; it reflects real teaching held across real, sizable parts of Christianity today. So before answering it point by point, here's some context on how widespread these views actually are." },
+      { type: "p", text: "Lifeway Research's 2023 study of American Protestant churchgoers found that 52% say their church teaches God will bless them if they give more money, up from 38% just six years earlier in 2017. And 76% of churchgoers now say they believe God wants them to prosper financially. This isn't a fringe position. It's the majority." },
+      { type: "p", text: "The teaching that a spiritual leader can transfer “the anointing” on their life to yours, often tied to giving or proximity, shows up in a number of apostolic and five-fold ministry networks." },
+      { type: "p", text: "With that context, here's what we were actually asked, and how we'd answer each point." },
+
+      { type: "question", text: "Didn't the tithe just change from crops and livestock to money?" },
+      { type: "p", text: "Scripture never actually describes that change happening. Leviticus 27:30-32 defines the tithe specifically as produce from the land and animals from the herd or flock. It's a produce-based system, not a percentage of money. Israel did have a monetary system (shekels are mentioned as early as Exodus 30:13), but God never redefines the tithe itself as a cut of income." },
+      { type: "p", text: "The money mentioned in Deuteronomy 14:23-26 isn't evidence of that shift either. Read closely: that money was for converting your tithe into cash for travel, then buying food and drink with it once you arrived at the place God chose, so you and your household could eat it together in celebration before the Lord (v26). And this particular tithe wasn't even earmarked for the priesthood. Verse 26 says it's for you to eat; verse 27 adds a separate instruction not to neglect the Levite in your town. It describes a festival meal eaten by the giver's own family, not a tax collected by religious professionals." },
+      { type: "p", text: "This matters practically today too. When Jesus rebuked the Pharisees for tithing mint, dill, and cumin (Matthew 23:23), or mint and rue (Luke 11:42), they could obey that literally. The Temple in Jerusalem was still standing and Levitical priests were there to receive actual crops. There's no Temple and no functioning Levitical priesthood today, and most of us aren't farmers. If the tithe is a command about produce and livestock delivered to a specific priesthood at a specific Temple, none of us are keeping it literally. Whatever we're doing when we give 10% of a paycheck to a nonprofit corporation, it isn't the tithe described in the Law." },
+
+      { type: "question", text: "Doesn't the “storehouse” in Malachi 3:10 mean I should give my tithe to my local church?" },
+      { type: "p", text: "Look at who God is actually addressing in that passage. Malachi 3:8 asks, “Will a man rob God?”, but the audience is “the sons of Levi” (Malachi 3:3), the priests responsible for handling Israel's offerings. This wasn't a message to ordinary Israelites about their personal giving habits. It was a rebuke of the priesthood's corruption." },
+      { type: "p", text: "Malachi 3:5 tells us what God's actual complaint was: sorcerers, adulterers, perjurers, and those who exploit wage earners, widows, and orphans. The tithe being withheld from the storehouse wasn't causing a shortfall in temple upkeep, it was leaving people without food, since the tithe was produce. Neglecting it was a form of neglecting the vulnerable, not a failure to fund an organization." },
+
+      { type: "question", text: "Didn't Ezra have to set out a chest to collect tithes because people stopped giving, proving the practice continued?" },
+      { type: "p", text: "This account seems to conflate two different stories, centuries apart. When Ezra returned to rebuild, his funding came from King Artaxerxes of Persia (Ezra 7:15-16), not from a tithe box." },
+      { type: "p", text: "The chest story belongs to King Joash, much earlier (2 Kings 12, 2 Chronicles 24). And that chest wasn't collecting the tithe either, it was collecting funds specifically for temple repairs, set up because the priests had been mishandling the money meant for maintenance (2 Kings 12:4-9). Different king, different problem, different purpose. Neither passage describes a church-style tithe collection being reinstated." },
+
+      { type: "question", text: "If breaking even one part of the Law makes you guilty of breaking all of it (James 2:10), doesn't that mean Christians still have to keep the whole Law, tithing included, or God won't hear their prayers?" },
+      { type: "p", text: "This argument proves too much for the people making it. If James 2:10 means we're still bound to the entire Law as one unit, that's not a Law you can pick and choose from. You can't keep the tithing command and the feast days while skipping animal sacrifice, dietary law, ritual purity requirements, and the other 600-plus commandments. Are you keeping all 613?" },
+      { type: "p", text: "Hebrews 8:13 says plainly that the old covenant is obsolete and growing old, ready to vanish away. The Levitical priesthood the tithe was designed to support doesn't function as an intermediary between people and God anymore, Jesus does, and Hebrews 7:11-12 makes this exact point: a change in priesthood necessarily means a change in the Law that established it." },
+
+      { type: "question", text: "Is giving a guaranteed “seed” that produces a guaranteed financial harvest?" },
+      { type: "p", text: "This is often called seed-faith teaching, popularized by Oral Roberts in the 1970s: give as a “seed” from your need, and expect God to multiply it back. It's still widely taught, but Scripture's actual pattern for New Testament giving looks different." },
+      { type: "p", text: "Paul's instructions in 2 Corinthians 8-9 aren't about a guaranteed personal return. He describes giving that was “fully supplying the needs of the saints” (2 Corinthians 9:12), and the goal he names is equality: “at this present time your abundance will serve as assistance for their need, so that their abundance also may serve as assistance for your need, so that there may be equality” (2 Corinthians 8:13-14). That's the same purpose we already see in Acts 4:34-35, funds distributed so that no one among the believers was in lack. It's a mutual-aid pattern for meeting real need, not a financial contract that guarantees your own return." },
+
+      { type: "question", text: "Does giving money or proximity to a leader let you receive the anointing that's on them?" },
+      { type: "p", text: "Simon the sorcerer tried exactly this in Acts 8, offering money to receive the ability to impart the Holy Spirit through the laying on of hands. Peter's response wasn't gentle: “May your silver perish with you, because you thought you could acquire the gift of God with money!” (Acts 8:20)." },
+      { type: "p", text: "Scripture's actual teaching runs the other direction. “The anointing which you received from Him remains in you, and you have no need for anyone to teach you” (1 John 2:26-27). Every believer already carries it. It isn't something transferred by giving to, or standing close to, a leader you admire." },
+
+      { type: "question", text: "Isn't giving 10% nothing compared to what Jesus asked of Peter, who left his boat and his whole livelihood to follow Him?" },
+      { type: "p", text: "Peter's boat wasn't a percentage, it was everything, and it wasn't given to an organization, it was given up to follow a person. That comparison actually undercuts the case for a mandatory 10%, not for it. If the standard is “give up everything and follow,” a fixed percentage of a paycheck isn't a stricter standard than that, it's a much smaller one." },
+      { type: "p", text: "And whether someone gives 10% or 100%, giving itself was never presented in Scripture as the mechanism that earns God's approval. “Having begun by the Spirit, are you now being perfected by the flesh?” Paul asked the Galatians, people who'd added law-keeping requirements on top of faith (Galatians 3:1-4). If withholding 10% means someone “doesn't know the Father,” that's the same move Paul was confronting: turning a work into the proof of relationship with God, rather than faith itself." },
+
+      { type: "p", text: "None of this is us saying don't give to your local church or support a pastor you trust. It's a narrower point: giving 10% of your income isn't the same thing as the tithe described in the Law, it isn't a financial contract that guarantees a return, and it isn't the measure of how much God loves you or hears you. The atonement of Christ already settled that." },
       { type: "p", text: "What are your thoughts?" },
     ],
   },

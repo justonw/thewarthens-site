@@ -30,13 +30,13 @@ export async function generateMetadata({
       title: writing.title,
       description: writing.dek,
       url: `/faith/${writing.category}/${writing.slug}`,
-      images: [{ url: writing.heroImage.src }],
+      ...(writing.heroImage && { images: [{ url: writing.heroImage.src }] }),
     },
     twitter: {
       card: "summary_large_image",
       title: writing.title,
       description: writing.dek,
-      images: [writing.heroImage.src],
+      ...(writing.heroImage && { images: [writing.heroImage.src] }),
     },
   };
 }
@@ -73,7 +73,7 @@ export default async function FaithWritingPage({
     "@type": "Article",
     headline: writing.title,
     description: writing.dek,
-    image: `https://thewarthens.com${writing.heroImage.src}`,
+    ...(writing.heroImage && { image: `https://thewarthens.com${writing.heroImage.src}` }),
     author: { "@type": "Person", name: writing.author },
     publisher: {
       "@type": "Organization",
@@ -126,35 +126,50 @@ export default async function FaithWritingPage({
         </Reveal>
       </section>
 
-      <section className="mx-auto max-w-3xl px-6 pb-10">
-        <Reveal className="overflow-hidden rounded-3xl border border-border-subtle">
-          <Image
-            src={writing.heroImage.src}
-            alt={writing.heroImage.alt}
-            width={896}
-            height={1195}
-            className="h-auto w-full object-cover"
-            priority
-          />
-        </Reveal>
-      </section>
+      {writing.heroImage && (
+        <section className="mx-auto max-w-3xl px-6 pb-10">
+          <Reveal className="overflow-hidden rounded-3xl border border-border-subtle">
+            <Image
+              src={writing.heroImage.src}
+              alt={writing.heroImage.alt}
+              width={896}
+              height={1195}
+              className="h-auto w-full object-cover"
+              priority
+            />
+          </Reveal>
+        </section>
+      )}
 
       <section className="mx-auto max-w-2xl px-6 pb-16">
         <Reveal className="space-y-5">
-          {writing.body.map((block, i) =>
-            block.type === "quote" ? (
-              <blockquote
-                key={i}
-                className="border-l-4 border-purple-500/40 pl-5 text-lg italic text-foreground"
-              >
-                &ldquo;{block.text}&rdquo;
-              </blockquote>
-            ) : (
+          {writing.body.map((block, i) => {
+            if (block.type === "quote") {
+              return (
+                <blockquote
+                  key={i}
+                  className="border-l-4 border-purple-500/40 pl-5 text-lg italic text-foreground"
+                >
+                  &ldquo;{block.text}&rdquo;
+                </blockquote>
+              );
+            }
+            if (block.type === "question") {
+              return (
+                <h2
+                  key={i}
+                  className="!mt-10 text-xl font-semibold text-foreground sm:text-2xl"
+                >
+                  {block.text}
+                </h2>
+              );
+            }
+            return (
               <p key={i} className="text-foreground-muted">
                 {block.text}
               </p>
-            )
-          )}
+            );
+          })}
         </Reveal>
       </section>
 
