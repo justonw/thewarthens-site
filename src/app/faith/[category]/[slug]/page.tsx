@@ -10,6 +10,19 @@ import {
 } from "@/lib/faith-writings";
 import Reveal from "@/components/Reveal";
 
+function renderInline(text: string) {
+  const parts = text.split(/(\*\*.+?\*\*|\*.+?\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return <strong key={i}>{part.slice(2, -2)}</strong>;
+    }
+    if (part.startsWith("*") && part.endsWith("*")) {
+      return <em key={i}>{part.slice(1, -1)}</em>;
+    }
+    return part;
+  });
+}
+
 export function generateStaticParams() {
   return faithWritings.map((w) => ({ category: w.category, slug: w.slug }));
 }
@@ -142,15 +155,15 @@ export default async function FaithWritingPage({
       )}
 
       <section className="mx-auto max-w-2xl px-6 pb-16">
-        <Reveal className="space-y-5">
+        <Reveal className="space-y-6">
           {writing.body.map((block, i) => {
             if (block.type === "quote") {
               return (
                 <blockquote
                   key={i}
-                  className="border-l-4 border-purple-500/40 pl-5 text-lg italic text-foreground"
+                  className="border-l-4 border-purple-500/40 pl-5 text-lg italic leading-relaxed text-foreground"
                 >
-                  &ldquo;{block.text}&rdquo;
+                  &ldquo;{renderInline(block.text)}&rdquo;
                 </blockquote>
               );
             }
@@ -158,15 +171,15 @@ export default async function FaithWritingPage({
               return (
                 <h2
                   key={i}
-                  className="!mt-10 text-xl font-semibold text-foreground sm:text-2xl"
+                  className="!mt-12 text-xl font-semibold text-foreground sm:text-2xl"
                 >
                   {block.text}
                 </h2>
               );
             }
             return (
-              <p key={i} className="text-foreground-muted">
-                {block.text}
+              <p key={i} className="leading-relaxed text-foreground-muted">
+                {renderInline(block.text)}
               </p>
             );
           })}
