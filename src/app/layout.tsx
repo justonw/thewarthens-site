@@ -58,6 +58,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        {/* Impact.com (affiliate network) domain verification for Coursera partnership. Uses `value` per Impact.com's own snippet, not the usual `content`. */}
+        <meta
+          {...({
+            name: "impact-site-verification",
+            value: "e22c3751-67fe-4f30-8483-d23a24530698",
+          } as React.DetailedHTMLProps<React.MetaHTMLAttributes<HTMLMetaElement>, HTMLMetaElement>)}
+        />
+      </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <Header />
         <main className="flex-1">{children}</main>
