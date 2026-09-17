@@ -32,6 +32,13 @@ export type StartHereProsCon = {
   source?: string;
 };
 
+export type StartHereLevelUp = {
+  timeline: string;
+  whatGetsYouPromoted: string;
+  jobHopVsStay: string;
+  icVsManagement?: string;
+};
+
 export type StartHereGuide = {
   slug: string;
   pathId: PathId;
@@ -42,6 +49,7 @@ export type StartHereGuide = {
   whatIsTheJob?: StartHereWhatIsTheJob;
   pros?: StartHereProsCon[];
   cons?: StartHereProsCon[];
+  levelUp?: StartHereLevelUp;
   steps: StartHereStep[];
   paidNote: string;
   paidLinks: { label: string; href: string }[];
@@ -128,6 +136,14 @@ export const startHereGuides: StartHereGuide[] = [
         text: "AI is absorbing exactly the list-building and first-draft outreach work that used to fill an SDR's day, which cuts both ways: less busywork, but also fewer seats needed per team to hit the same pipeline targets.",
       },
     ],
+    levelUp: {
+      timeline:
+        "The standard SDR-to-AE window is 12-24 months. Rushing it backfires in a documented way: promotions under 12 months fail 55% of the time, while waiting to 16+ months drops that failure rate to just 6%. Top performers at fast-growing companies do promote in 12-15 months, but that's earned readiness, not a rushed timeline.",
+      whatGetsYouPromoted:
+        "Hitting 90%+ of quota for two straight quarters is the baseline, not the differentiator. What actually separates people who get promoted is proving they can already do AE-level work: running real discovery conversations instead of just booking a meeting, and building visibility across teams like marketing and product so leadership sees your contribution beyond your own number.",
+      jobHopVsStay:
+        "The old advice to job-hop for a raise doesn't hold up anymore. The pay gap between switching jobs and staying has shrunk to just 1.9 percentage points, the smallest on record, and promoted employees now see meaningfully bigger raises than job-switchers. The better question isn't \"should I leave for a bump,\" it's \"am I positioned to move up a level, here or somewhere else.\"",
+    },
     steps: [
       {
         id: "watch-reality",
@@ -280,6 +296,16 @@ export const startHereGuides: StartHereGuide[] = [
         text: "It's a genuine treadmill: threats, tools, and attacker techniques change continuously, so the learning never really stops. Some people find that energizing; for others it's exhausting long-term.",
       },
     ],
+    levelUp: {
+      timeline:
+        "Analysts typically move up a tier roughly every two years, though high performers move faster, in as little as 12-18 months at fast-scaling MSSPs. There's no universal shortcut, tier progression is judged on demonstrated ability, not just time served.",
+      whatGetsYouPromoted:
+        "CompTIA CySA+ has become a near-mandatory signal for Tier 1-to-2 promotion at many organizations, but the cert alone isn't enough. What actually gets you moved up: investigating incidents end-to-end without needing senior help, real comfort with EDR tools and at least one scripting language, and having authored or improved actual detection rules and playbooks, not just followed them.",
+      jobHopVsStay:
+        "The old advice to job-hop for a raise doesn't hold up anymore. The pay gap between switching jobs and staying has shrunk to just 1.9 percentage points, the smallest on record, and promoted employees now see meaningfully bigger raises than job-switchers. The better question isn't \"should I leave for a bump,\" it's \"am I positioned to move up a level, here or somewhere else.\"",
+      icVsManagement:
+        "Once you're past entry level, cybersecurity has a real fork most people don't realize exists: a technical track (Senior Analyst, Detection Engineer, Security Architect) versus a management track (SOC Lead, Security Manager). Staff-level technical roles at many companies now pay 15-25% more than the equivalent manager role, so leveling up doesn't have to mean managing people if that's not what energizes you.",
+    },
     steps: [
       {
         id: "watch-interview",
@@ -448,6 +474,16 @@ export const startHereGuides: StartHereGuide[] = [
         text: "Remote work removes the physical separation between work and life that used to happen automatically. Without real discipline, \"just check one thing\" from the couch becomes a structural stressor, not just a personal failing.",
       },
     ],
+    levelUp: {
+      timeline:
+        "Junior to mid-level is the most predictable promotion in tech: it typically takes 1-2 years, with fairly consistent criteria across companies, unlike later-career jumps which get much less standardized.",
+      whatGetsYouPromoted:
+        "Promotions reward demonstrated impact at the next level, not just technical skill. Taking real ownership of a project, working across multiple teams, and contributing to actual architecture discussions matter more than simply writing more code. Ask your manager directly what promotion looks like and what would demonstrate readiness, ideally 6+ months before a promotion cycle, not right before it.",
+      jobHopVsStay:
+        "The old advice to job-hop for a raise doesn't hold up anymore. The pay gap between switching jobs and staying has shrunk to just 1.9 percentage points, the smallest on record, and promoted employees now see meaningfully bigger raises than job-switchers. The better question isn't \"should I leave for a bump,\" it's \"am I positioned to move up a level, here or somewhere else.\"",
+      icVsManagement:
+        "Every major tech company now runs a parallel individual-contributor (IC) track alongside management, worth knowing before you drift into management by default. Staff and Principal engineers regularly out-earn engineering managers by 15-25% at the same level. Pick IC if your best thinking happens alone on a hard problem and your worst thinking happens in back-to-back meetings; pick management if people problems energize you more than technical ones. Moving between the two is normal, coming back to IC within 18 months is straightforward, coming back after 3+ years costs real re-ramp time.",
+    },
     steps: [
       {
         id: "watch-swe",
@@ -600,6 +636,14 @@ export const startHereGuides: StartHereGuide[] = [
         text: "It's more reporting than discovery most of the time. If you're picturing constant, open-ended exploratory analysis, the reality of a lot of analyst work is recurring dashboards and requests, not a research project.",
       },
     ],
+    levelUp: {
+      timeline:
+        "There's less industry-wide benchmark data on analyst-to-senior timelines specifically than exists for sales or engineering promotion paths. What's consistent across sources: it's demonstrated business impact, not tenure alone, that respondents across the field say actually drives advancement.",
+      whatGetsYouPromoted:
+        "Moving beyond routine reporting toward interpreting trends, communicating insights clearly, and working effectively alongside AI tools is what current employers say separates a senior analyst from an entry-level one. The analysts most exposed to being automated are the ones whose entire value is running the same static reports, the ones who advance are the ones adding real business judgment on top of the numbers.",
+      jobHopVsStay:
+        "The old advice to job-hop for a raise doesn't hold up anymore. The pay gap between switching jobs and staying has shrunk to just 1.9 percentage points, the smallest on record, and promoted employees now see meaningfully bigger raises than job-switchers. The better question isn't \"should I leave for a bump,\" it's \"am I positioned to move up a level, here or somewhere else.\"",
+    },
     steps: [
       {
         id: "watch-interview",

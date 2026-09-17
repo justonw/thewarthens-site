@@ -288,6 +288,49 @@ export default async function StartHerePage({
         </Reveal>
       </section>
 
+      {guide.levelUp && (
+        <section className="mx-auto max-w-3xl px-6 pb-10">
+          <Reveal>
+            <h2 className="text-xl font-semibold sm:text-2xl">Ready to level up?</h2>
+            <p className="mt-2 text-sm text-foreground-muted">
+              Already in the role? Here's what actually moves you to the next one.
+            </p>
+            <div className="mt-5 space-y-4">
+              <div className="rounded-2xl border border-border-subtle bg-background-elevated p-5">
+                <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
+                  Realistic timeline
+                </p>
+                <p className="mt-2 text-sm text-foreground-muted">{guide.levelUp.timeline}</p>
+              </div>
+              <div className="rounded-2xl border border-border-subtle bg-background-elevated p-5">
+                <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
+                  What actually gets you promoted
+                </p>
+                <p className="mt-2 text-sm text-foreground-muted">
+                  {guide.levelUp.whatGetsYouPromoted}
+                </p>
+              </div>
+              <div className="rounded-2xl border border-border-subtle bg-background-elevated p-5">
+                <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
+                  Job-hop or stay?
+                </p>
+                <p className="mt-2 text-sm text-foreground-muted">{guide.levelUp.jobHopVsStay}</p>
+              </div>
+              {guide.levelUp.icVsManagement && (
+                <div className="rounded-2xl border border-border-subtle bg-background-elevated p-5">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
+                    Individual contributor or management?
+                  </p>
+                  <p className="mt-2 text-sm text-foreground-muted">
+                    {guide.levelUp.icVsManagement}
+                  </p>
+                </div>
+              )}
+            </div>
+          </Reveal>
+        </section>
+      )}
+
       <section className="mx-auto max-w-3xl px-6 pb-20">
         <Reveal className="flex flex-col items-center gap-4 rounded-3xl border border-border-subtle bg-background-elevated p-6 text-center sm:p-8">
           <p className="text-sm text-foreground-muted">
