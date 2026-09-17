@@ -131,7 +131,7 @@ export default function TechJourneyPage() {
       <div className="sticky top-14 z-40 border-y border-border-subtle bg-background/95 backdrop-blur sm:top-16">
         <nav
           aria-label="Page sections"
-          className="mx-auto flex max-w-5xl items-center gap-2 overflow-x-auto px-6 py-3"
+          className="mx-auto flex max-w-5xl flex-wrap items-center gap-2 px-6 py-3"
         >
           <span className="shrink-0 text-xs font-semibold uppercase tracking-wider text-foreground-muted">
             Jump to
@@ -140,7 +140,7 @@ export default function TechJourneyPage() {
             <a
               key={item.href}
               href={item.href}
-              className="shrink-0 whitespace-nowrap rounded-full border border-border-subtle bg-background-elevated px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:border-blue-500/50 hover:bg-blue-500/10 hover:text-blue-700"
+              className="whitespace-nowrap rounded-full border border-border-subtle bg-background-elevated px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:border-blue-500/50 hover:bg-blue-500/10 hover:text-blue-700"
             >
               {item.label}
             </a>

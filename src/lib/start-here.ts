@@ -13,6 +13,23 @@ export type StartHereFaq = {
   answer: string;
 };
 
+export type StartHereSpecialization = {
+  name: string;
+  description: string;
+  goodFor: string;
+};
+
+export type StartHereWhatIsTheJob = {
+  intro: string;
+  dayToDay: string;
+  specializations: StartHereSpecialization[];
+};
+
+export type StartHereProsCon = {
+  text: string;
+  source?: string;
+};
+
 export type StartHereGuide = {
   slug: string;
   pathId: PathId;
@@ -20,6 +37,9 @@ export type StartHereGuide = {
   dek: string;
   updated: string;
   video: { youtubeId: string; title: string };
+  whatIsTheJob?: StartHereWhatIsTheJob;
+  pros?: StartHereProsCon[];
+  cons?: StartHereProsCon[];
   steps: StartHereStep[];
   paidNote: string;
   paidLinks: { label: string; href: string }[];
@@ -109,17 +129,96 @@ export const startHereGuides: StartHereGuide[] = [
     pathId: "itsec",
     title: "Start Here: Breaking Into Cybersecurity",
     dek: "A free, in-order path to learn real cybersecurity fundamentals, before you spend a dollar on a cert or a course.",
-    updated: "August 2026",
+    updated: "September 2026",
     video: {
       youtubeId: "7i37OopJL74",
       title: "Interview with The Cyber Security Engineer | Break Into TECH",
     },
+    whatIsTheJob: {
+      intro:
+        "\"Cybersecurity\" isn't one job, it's several very different jobs that happen to share a job-posting keyword. Which one fits you matters more than the industry label.",
+      dayToDay:
+        "The most common entry point is a SOC (Security Operations Center) analyst: watching SIEM dashboards, triaging a queue of security alerts to sort real threats from false positives, investigating things like a phishing attempt or a malware infection, documenting what happened, and tuning detection rules so the same noise doesn't keep firing. It's shift-based work, 8-hour or 12-hour rotations (mornings, nights, weekends), and some employers add on-call rotations on top of that.",
+      specializations: [
+        {
+          name: "SOC / Blue Team",
+          description:
+            "Monitoring and defense. The most common first job, and the most shift-work-heavy, highest-pressure one.",
+          goodFor:
+            "People okay with rotating shifts and a real-time, reactive pace early on, in exchange for the most beginner-friendly on-ramp.",
+        },
+        {
+          name: "GRC (Governance, Risk, Compliance)",
+          description:
+            "Writing security policy, running risk assessments, and managing frameworks like NIST CSF, ISO 27001, or SOC 2, translating technical risk into language executives act on.",
+          goodFor:
+            "People who want into cybersecurity without a heavy technical or coding background. Often the fastest, most stable entry point for career-changers from a non-IT background, and typically no shift work.",
+        },
+        {
+          name: "Red Team / Penetration Testing",
+          description:
+            "Offensive security: simulating real attacks to find weaknesses before an actual attacker does.",
+          goodFor:
+            "People with real technical depth already, or willing to build it. Not a realistic first job, most sources describe a 24-36 month runway of hands-on skill-building before this is reachable.",
+        },
+        {
+          name: "Cloud Security",
+          description: "Securing AWS, Azure, and Google Cloud environments as companies move more infrastructure there.",
+          goodFor:
+            "People who already have some general IT or cloud fundamentals. Currently one of the fastest-growing, highest-paid specializations, but it's rarely a true zero-experience starting point.",
+        },
+      ],
+    },
+    pros: [
+      {
+        text: "Genuinely strong long-run demand: information security analyst roles are projected to grow 29% from 2024 to 2034, one of the fastest-growing occupations tracked.",
+        source: "BLS Occupational Outlook Handbook",
+      },
+      {
+        text: "Multiple real on-ramps depending on your personality, not just one path: hands-on technical (SOC, cloud), adversarial (red team), or process and policy-driven (GRC) if coding or shift work isn't for you.",
+      },
+      {
+        text: "No degree required for most entry paths. Hiring managers themselves say they're open to it: 90% would consider a candidate with only general IT experience, and 89% would consider someone with just an entry-level cert and no experience.",
+        source: "ISC2, 2025 Cybersecurity Hiring Trends Study",
+      },
+      {
+        text: "Real pay ceiling once you're established: Security Engineers average around $135K and Threat Intelligence Analysts around $148K. That's not a day-one number, but it's a real, earned destination.",
+      },
+    ],
+    cons: [
+      {
+        text: "The entry-level hiring gap is real, not just hype-vs-reality marketing spin: only 17% of employers actively recruit entry-level talent, and 31% made zero entry-level cybersecurity hires in the prior year despite reporting a shortage.",
+        source: "UK Cyber Security Skills in the Labour Market report, 2025",
+      },
+      {
+        text: "Burnout is concentrated exactly where most beginners start: SOC analyst, incident response, and digital forensics roles report the highest stress, with cybersecurity professionals working an average of 10.8 extra hours a week beyond their contracted schedule, effectively a sixth workday. GRC, identity management, and security architecture report meaningfully lower stress.",
+        source: "Help Net Security, 2026 workforce burnout reporting",
+      },
+      {
+        text: "AI is actively absorbing the Tier-1 SOC triage work, alert sorting, log correlation, that used to be the standard first job in this field, narrowing the classic on-ramp further.",
+      },
+      {
+        text: "It's a genuine treadmill: threats, tools, and attacker techniques change continuously, so the learning never really stops. Some people find that energizing; for others it's exhausting long-term.",
+      },
+    ],
     steps: [
       {
         id: "watch-interview",
         title: "Watch this first: a real cybersecurity engineer",
         description:
           "Before you study anything, watch the interview above to hear what the job is actually like from someone doing it.",
+      },
+      {
+        id: "pick-a-lane",
+        title: "Decide which specialization actually fits you",
+        description:
+          "Read the breakdown above before you pick a track. If shift work and reactive, high-pressure monitoring isn't for you, GRC is a real, often faster on-ramp that doesn't require a technical background, not a lesser path.",
+      },
+      {
+        id: "it-foundations",
+        title: "Build general IT experience first, if you can",
+        description:
+          "The most consistent advice from people already in the field: a helpdesk, IT support, or sysadmin role first makes you a far stronger candidate than jumping straight to a \"security analyst\" title with zero IT background. It's not required to start learning below, but budget for it in your realistic timeline.",
       },
       {
         id: "command-line",

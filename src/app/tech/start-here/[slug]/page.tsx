@@ -125,6 +125,79 @@ export default async function StartHerePage({
         </Reveal>
       </section>
 
+      {guide.whatIsTheJob && (
+        <section className="mx-auto max-w-3xl px-6 pb-10">
+          <Reveal>
+            <h2 className="text-xl font-semibold sm:text-2xl">What's the job, really?</h2>
+            <p className="mt-3 text-foreground-muted">{guide.whatIsTheJob.intro}</p>
+            <p className="mt-3 text-foreground-muted">{guide.whatIsTheJob.dayToDay}</p>
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              {guide.whatIsTheJob.specializations.map((spec) => (
+                <div
+                  key={spec.name}
+                  className="rounded-2xl border border-border-subtle bg-background-elevated p-5"
+                >
+                  <p className="font-semibold text-foreground">{spec.name}</p>
+                  <p className="mt-2 text-sm text-foreground-muted">{spec.description}</p>
+                  <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-blue-600">
+                    Good for
+                  </p>
+                  <p className="mt-1 text-sm text-foreground-muted">{spec.goodFor}</p>
+                </div>
+              ))}
+            </div>
+          </Reveal>
+        </section>
+      )}
+
+      {(guide.pros || guide.cons) && (
+        <section className="mx-auto max-w-3xl px-6 pb-10">
+          <Reveal>
+            <h2 className="text-xl font-semibold sm:text-2xl">Pros and cons to actually weigh</h2>
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              {guide.pros && (
+                <div className="rounded-2xl border border-border-subtle bg-background-elevated p-5">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
+                    Pros
+                  </p>
+                  <ul className="mt-3 space-y-3">
+                    {guide.pros.map((item, i) => (
+                      <li key={i} className="text-sm text-foreground-muted">
+                        {item.text}
+                        {item.source && (
+                          <span className="mt-1 block text-xs font-semibold text-foreground-muted/70">
+                            Source: {item.source}
+                          </span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {guide.cons && (
+                <div className="rounded-2xl border border-border-subtle bg-background-elevated p-5">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
+                    Cons
+                  </p>
+                  <ul className="mt-3 space-y-3">
+                    {guide.cons.map((item, i) => (
+                      <li key={i} className="text-sm text-foreground-muted">
+                        {item.text}
+                        {item.source && (
+                          <span className="mt-1 block text-xs font-semibold text-foreground-muted/70">
+                            Source: {item.source}
+                          </span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </Reveal>
+        </section>
+      )}
+
       <section className="mx-auto max-w-3xl px-6 pb-10">
         <Reveal>
           <div className="overflow-hidden rounded-3xl border border-border-subtle">
