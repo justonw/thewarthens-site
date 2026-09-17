@@ -16,6 +16,8 @@ const title = "Tech Journey | Career Change to Tech | The Warthens";
 const description =
   "Real steps for a career change to tech, no experience or degree needed for most paths. Take the free 2-minute career quiz, see real 2026 pay data, and read our honest Hype vs. Reality guides before you commit.";
 
+const videoThumbnail = "https://img.youtube.com/vi/gQjj5E4SIlI/maxresdefault.jpg";
+
 export const metadata: Metadata = {
   title,
   description,
@@ -30,8 +32,25 @@ export const metadata: Metadata = {
     "tech journey warthen",
   ],
   alternates: { canonical: "/tech" },
-  openGraph: { title, description, url: "/tech" },
-  twitter: { card: "summary_large_image", title, description },
+  openGraph: {
+    title,
+    description,
+    url: "/tech",
+    images: [
+      {
+        url: videoThumbnail,
+        width: 1280,
+        height: 720,
+        alt: "We Got It Wrong as Tech Influencers - Here's What We Missed",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: [videoThumbnail],
+  },
 };
 
 const quickNav = [
