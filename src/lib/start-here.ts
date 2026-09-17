@@ -516,6 +516,158 @@ export const startHereGuides: StartHereGuide[] = [
       },
     ],
   },
+  {
+    slug: "data-analytics",
+    pathId: "data",
+    title: "Start Here: Breaking Into Data Analytics",
+    dek: "A free, in-order path to build real data analyst skills, before you spend a dollar on a course.",
+    updated: "September 2026",
+    video: {
+      youtubeId: "I9ouZUvq3gA",
+      title: "How I became a Data Analyst (No CS Degree nor Exp)",
+    },
+    whatIsTheJob: {
+      intro:
+        "\"Data\" covers several different jobs. Data analyst is the accessible entry point; data engineer and data scientist are different, usually later, destinations, not competing starting points.",
+      dayToDay:
+        "As an entry-level analyst, your day follows a consistent loop: pulling data with SQL queries, cleaning messy spreadsheets so the numbers actually mean something, building or updating a dashboard in Tableau or Power BI, and meeting with other teams to understand what they actually need or explain what you found. Excel and SQL are the two non-negotiable skills almost every posting expects on day one.",
+      specializations: [
+        {
+          name: "Data Analyst",
+          description:
+            "Surfaces business insights from existing data: cleaning, querying, dashboards, and explaining what the numbers mean to non-technical teams.",
+          goodFor:
+            "Beginners. The lowest barrier to entry of the three, companies are used to hiring career switchers straight into this role with solid Excel, SQL, and a real portfolio.",
+        },
+        {
+          name: "Business Intelligence (BI) Analyst",
+          description:
+            "A close cousin of data analyst, focused specifically on building and maintaining recurring dashboards and reports for business decision-making.",
+          goodFor:
+            "People who like the dashboard and visualization side of analysis more than one-off deep dives.",
+        },
+        {
+          name: "Data Engineer",
+          description: "Builds and maintains the pipelines and infrastructure that move and store the data analysts and scientists use.",
+          goodFor:
+            "People who enjoy backend-style systems work more than interpreting the data itself. Usually not a zero-experience starting point, more often a move after some analyst or software experience.",
+        },
+        {
+          name: "Data Scientist",
+          description: "Builds predictive models instead of explaining what already happened, using Python, statistics, and machine learning.",
+          goodFor:
+            "People ready to go deeper into math, statistics, and programming. Almost never a realistic first job, most people arrive here after analyst experience or a more technical, quantitative background.",
+        },
+      ],
+    },
+    pros: [
+      {
+        text: "Real, strong entry-level pay for a no-degree path: entry-level data analyst pay has climbed to around $85K-$100K in major markets, and 85% of listings don't even specify required experience.",
+      },
+      {
+        text: "AI is genuinely freeing analysts from grunt work rather than replacing them: 70% report AI automation enhances their effectiveness, and 87% feel more strategically valuable than before, since AI increasingly handles the routine data-cleaning, freeing time for the higher-value storytelling and business-judgment side of the job.",
+      },
+      {
+        text: "A real, accessible on-ramp: companies are genuinely used to hiring fresh grads and career switchers straight into analyst roles, and a demonstrable portfolio (real queries, real dashboards) matters more than a specific degree.",
+      },
+      {
+        text: "Real growth path once you're in: analyst experience is a legitimate stepping stone toward senior analyst, analytics manager, or, with real upskilling, data scientist or data engineer.",
+      },
+    ],
+    cons: [
+      {
+        text: "The entry-level market is more competitive than the growth headlines suggest. \"23% projected growth\" describes the field overall, not how easy any single entry-level req is to land.",
+      },
+      {
+        text: "The skill bar has risen. Learning Excel and SQL used to be enough to stand out; employers now expect you to interpret trends, communicate insights clearly, and work alongside AI tools on top of the basics.",
+      },
+      {
+        text: "The roles most exposed to AI are the narrowest ones: if your entire value is writing SQL queries and pulling static reports with no business context, that specific slice of the job is genuinely at risk.",
+      },
+      {
+        text: "It's more reporting than discovery most of the time. If you're picturing constant, open-ended exploratory analysis, the reality of a lot of analyst work is recurring dashboards and requests, not a research project.",
+      },
+    ],
+    steps: [
+      {
+        id: "watch-interview",
+        title: "Watch this first: a real career-changer's path in",
+        description:
+          "Before you touch a tool, watch the video above. It's a real account of breaking in with no CS degree or prior experience, which is the realistic starting point for most people reading this.",
+      },
+      {
+        id: "pick-a-lane",
+        title: "Aim at Data Analyst first, not Data Scientist",
+        description:
+          "Read the breakdown above. Data Scientist is the job title most beginners fixate on, but it's rarely a realistic first job. Data Analyst is the accessible, well-documented on-ramp, and analyst experience is what actually opens the door to data science or engineering later, if you still want it.",
+      },
+      {
+        id: "sql-basics",
+        title: "Learn SQL for free, interactively",
+        description:
+          "SQL is one of the two non-negotiable skills for almost every entry-level posting. SQLBolt teaches it free, in the browser, one short interactive lesson at a time.",
+        href: "https://sqlbolt.com/",
+        linkLabel: "SQLBolt",
+      },
+      {
+        id: "excel-basics",
+        title: "Get genuinely fluent in Excel, not just familiar",
+        description:
+          "The other non-negotiable skill. GCFGlobal's free Excel tutorials, built by a nonprofit, cover real business use, not just formulas for their own sake.",
+        href: "https://edu.gcfglobal.org/en/excel/",
+        linkLabel: "GCFGlobal: Excel",
+      },
+      {
+        id: "visualization",
+        title: "Learn to build dashboards, not just spreadsheets",
+        description:
+          "Tableau Public is a free version of the tool most job postings name directly. Build something real with it, not just a tutorial project.",
+        href: "https://public.tableau.com/",
+        linkLabel: "Tableau Public (free)",
+      },
+      {
+        id: "portfolio-project",
+        title: "Build one real project with a real dataset",
+        description:
+          "Kaggle has thousands of free, real-world datasets and free short courses. Pick one dataset that genuinely interests you and turn it into a full analysis: cleaning, a few real findings, and a dashboard, that's your portfolio piece.",
+        href: "https://www.kaggle.com/",
+        linkLabel: "Kaggle",
+      },
+      {
+        id: "community",
+        title: "Join a community and start asking questions",
+        description:
+          "r/analytics and r/businessintelligence are both free and used to beginners asking exactly the questions you'll have.",
+        href: "https://www.reddit.com/r/analytics/",
+        linkLabel: "r/analytics",
+      },
+    ],
+    paidNote:
+      "You don't have to finish the free path above before considering this. A paid program makes sense whenever you want a packaged, structured way of learning and a designated community to talk through what you're building, whether that's day one or after you've already tried SQLBolt, Excel, and Tableau on your own. We partner with Springboard for that reason.",
+    paidLinks: [
+      {
+        label: "Data Analytics / Science Training (Springboard)",
+        href: "https://www.springboard.com/landing/influencer/thewarthens?utm_source=thewarthens&utm_medium=influencer&utm_campaign=non-ct&utm_term=paid&utm_content=firstyoutubelanpage8242023",
+      },
+    ],
+    faq: [
+      {
+        question: "How do I get started in data analytics with no experience, for free?",
+        answer:
+          "In order: learn SQL through SQLBolt's free interactive lessons, get genuinely fluent in Excel through GCFGlobal's free tutorials, learn to build dashboards with the free version of Tableau, then build one real portfolio project using a free Kaggle dataset. Join a community like r/analytics to start asking questions along the way.",
+      },
+      {
+        question: "Should I aim to become a data analyst, data scientist, or data engineer?",
+        answer:
+          "Data Analyst, if you're starting from zero. It's the most accessible entry point, companies are used to hiring career switchers directly into it, and it's the most common path toward data science or data engineering later. Aiming straight for data scientist as a first job isn't realistic for most beginners.",
+      },
+      {
+        question: "Do I need a degree for data analytics?",
+        answer:
+          "No. 85% of data analyst job listings don't even specify required experience, and employers consistently say a real, demonstrable portfolio (actual SQL queries, actual dashboards) matters more than a specific credential.",
+      },
+    ],
+  },
 ];
 
 export function getStartHere(slug: string) {
