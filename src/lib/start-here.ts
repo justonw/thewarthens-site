@@ -214,7 +214,7 @@ export const startHereGuides: StartHereGuide[] = [
       {
         question: "What should I do before paying for a tech sales course?",
         answer:
-          "Everything in this free path first: watch honest day-in-the-life content, follow a training program's free content to see what it actually teaches, learn the core vocabulary, and clean up your resume and LinkedIn. If you still want a structured program and community after that, paying then makes more sense than paying first.",
+          "Everything above first: watch honest day-in-the-life content, follow a training program's free content to see what it actually teaches, learn the core vocabulary, and clean up your resume and LinkedIn. If you still want a structured program and community after that, paying then makes more sense than paying first.",
       },
     ],
   },
@@ -376,7 +376,7 @@ export const startHereGuides: StartHereGuide[] = [
       },
     ],
     paidNote:
-      "You don't have to finish the free path above before considering this. A paid program makes sense whenever you want a packaged, structured way of learning and a designated community to talk through what you're working on, whether that's day one or after you've already tried the free fundamentals. We partner with Springboard for that reason, use code THEWARTHENS at enrollment for $1,000 off.",
+      "You don't have to finish the free steps above before considering this. A paid program makes sense whenever you want a packaged, structured way of learning and a designated community to talk through what you're working on, whether that's day one or after you've already tried the free fundamentals. We partner with Springboard for that reason, use code THEWARTHENS at enrollment for $1,000 off.",
     paidLinks: [
       {
         label: "Cybersecurity Training (Springboard)",
@@ -397,7 +397,7 @@ export const startHereGuides: StartHereGuide[] = [
       {
         question: "Do I need a degree or certification to start learning cybersecurity?",
         answer:
-          "No, all of the resources in this free path (OverTheWire, Professor Messer, TryHackMe, picoCTF) require nothing but time and a computer. A cert like CompTIA Security+ becomes useful later, once you've built real fundamentals and want something to show employers.",
+          "No, all of the resources listed above (OverTheWire, Professor Messer, TryHackMe, picoCTF) require nothing but time and a computer. A cert like CompTIA Security+ becomes useful later, once you've built real fundamentals and want something to show employers.",
       },
     ],
   },
@@ -538,7 +538,7 @@ export const startHereGuides: StartHereGuide[] = [
       },
     ],
     paidNote:
-      "You don't have to finish the free path above before considering this. A paid bootcamp makes sense whenever you want a packaged, structured way of learning and a designated community to talk through what you're building, whether that's day one or after you've already tried freeCodeCamp on your own. We partner with Springboard for that reason, use code THEWARTHENS at enrollment for $1,000 off.",
+      "You don't have to finish the free steps above before considering this. A paid bootcamp makes sense whenever you want a packaged, structured way of learning and a designated community to talk through what you're building, whether that's day one or after you've already tried freeCodeCamp on your own. We partner with Springboard for that reason, use code THEWARTHENS at enrollment for $1,000 off.",
     paidLinks: [
       {
         label: "Software Engineering Course (Springboard)",
@@ -559,7 +559,7 @@ export const startHereGuides: StartHereGuide[] = [
       {
         question: "Do I need a bootcamp to become a software engineer?",
         answer:
-          "No, not to start. Everything in this free path (freeCodeCamp, The Odin Project, building and shipping your own project on GitHub Pages) can get you real, demonstrable skill before you spend a dollar. A bootcamp can still make sense later for structure and community, but it's not required to begin.",
+          "No, not to start. Everything in the steps above (freeCodeCamp, The Odin Project, building and shipping your own project on GitHub Pages) can get you real, demonstrable skill before you spend a dollar. A bootcamp can still make sense later for structure and community, but it's not required to begin.",
       },
     ],
   },
@@ -692,7 +692,7 @@ export const startHereGuides: StartHereGuide[] = [
       },
     ],
     paidNote:
-      "You don't have to finish the free path above before considering this. A paid program makes sense whenever you want a packaged, structured way of learning and a designated community to talk through what you're building, whether that's day one or after you've already tried SQLBolt, Excel, and Tableau on your own. We partner with Springboard for that reason, use code THEWARTHENS at enrollment for $1,000 off.",
+      "You don't have to finish the free steps above before considering this. A paid program makes sense whenever you want a packaged, structured way of learning and a designated community to talk through what you're building, whether that's day one or after you've already tried SQLBolt, Excel, and Tableau on your own. We partner with Springboard for that reason, use code THEWARTHENS at enrollment for $1,000 off.",
     paidLinks: [
       {
         label: "Data Analytics / Science Training (Springboard)",

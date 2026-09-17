@@ -267,7 +267,7 @@ export default function TechJourneyPage() {
                   <p className="mt-2 text-sm text-foreground-muted">{g.dek}</p>
                 </div>
                 <span className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-blue-600">
-                  Start the free path
+                  Start here
                   <span aria-hidden className="transition-transform group-hover:translate-x-1">
                     →
                   </span>

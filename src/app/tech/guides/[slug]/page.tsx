@@ -259,7 +259,7 @@ export default async function GuidePage({
         <section className="mx-auto max-w-3xl px-6 pb-10">
           <Reveal className="rounded-3xl border border-border-subtle bg-background-elevated p-6 sm:p-8">
             <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
-              If You Want Structure On Top Of The Free Path
+              If You Want Structure On Top Of The Basics
             </p>
             <p className="mt-3 text-sm text-foreground-muted">{startHere.paidNote}</p>
             <div className="mt-5 flex flex-wrap gap-3">
