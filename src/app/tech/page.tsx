@@ -57,7 +57,7 @@ const quickNav = [
   { href: "#quiz", label: "Find Your Path" },
   { href: "#pay", label: "See the Pay" },
   { href: "#guides", label: "Hype vs. Reality" },
-  { href: "#start-here", label: "Start Here (Free)" },
+  { href: "#start-here", label: "Start Here" },
   { href: "#learn", label: "Learn a Skill" },
   { href: "#checklist", label: "Beat the AI Scan" },
   { href: "#tracker", label: "Track Applications" },
@@ -244,15 +244,16 @@ export default function TechJourneyPage() {
       <section id="start-here" className="mx-auto max-w-5xl scroll-mt-32 px-6 pb-16">
         <Reveal>
           <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
-            Start Here, For Free
+            Start Here
           </p>
           <h2 className="mt-2 text-2xl font-semibold sm:text-3xl">
-            Free, step-by-step paths to actually start learning
+            Step-by-step paths to actually start learning
           </h2>
           <p className="mt-3 max-w-2xl text-foreground-muted">
-            Concrete, free first steps for three paths, including real
-            video from people actually doing the job, before you spend a
-            dollar on any course.
+            Concrete first steps for four paths, including real video from
+            people actually doing the job, what the work is really like,
+            and where a paid program can take you further when you're
+            ready.
           </p>
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {startHereGuides.map((g) => (

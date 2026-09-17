@@ -62,7 +62,7 @@ export const startHereGuides: StartHereGuide[] = [
     slug: "tech-sales",
     pathId: "sales",
     title: "Start Here: Breaking Into Tech Sales",
-    dek: "Free steps to figure out if tech sales is actually for you, before you spend a dollar.",
+    dek: "Concrete steps to figure out if tech sales is actually for you, plus where to go for more structure.",
     updated: "September 2026",
     video: {
       youtubeId: "L4j5ffFpnLo",
@@ -222,7 +222,7 @@ export const startHereGuides: StartHereGuide[] = [
     slug: "cybersecurity",
     pathId: "itsec",
     title: "Start Here: Breaking Into Cybersecurity",
-    dek: "A free, in-order path to learn real cybersecurity fundamentals, before you spend a dollar on a cert or a course.",
+    dek: "A concrete, in-order path to learn real cybersecurity fundamentals, plus where a paid cert or program fits in.",
     updated: "September 2026",
     video: {
       youtubeId: "7i37OopJL74",
@@ -405,7 +405,7 @@ export const startHereGuides: StartHereGuide[] = [
     slug: "coding",
     pathId: "swe",
     title: "Start Here: Learning to Code",
-    dek: "A free, in-order path to start coding for real, before you spend a dollar on a bootcamp.",
+    dek: "A concrete, in-order path to start coding for real, plus where a paid bootcamp fits in.",
     updated: "September 2026",
     video: {
       youtubeId: "FT47fvHIvTs",
@@ -567,7 +567,7 @@ export const startHereGuides: StartHereGuide[] = [
     slug: "data-analytics",
     pathId: "data",
     title: "Start Here: Breaking Into Data Analytics",
-    dek: "A free, in-order path to build real data analyst skills, before you spend a dollar on a course.",
+    dek: "A concrete, in-order path to build real data analyst skills, plus where a paid course fits in.",
     updated: "September 2026",
     whatIsTheJob: {
       intro:
