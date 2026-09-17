@@ -143,6 +143,17 @@ export default async function StartHerePage({
                     Good for
                   </p>
                   <p className="mt-1 text-sm text-foreground-muted">{spec.goodFor}</p>
+                  {spec.href && (
+                    <a
+                      href={spec.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-blue-700 hover:text-blue-800"
+                    >
+                      {spec.linkLabel}
+                      <span aria-hidden>→</span>
+                    </a>
+                  )}
                 </div>
               ))}
             </div>

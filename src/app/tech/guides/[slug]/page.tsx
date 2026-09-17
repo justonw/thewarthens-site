@@ -255,6 +255,31 @@ export default async function GuidePage({
         </div>
       </Section>
 
+      {startHere && startHere.paidLinks.length > 0 && (
+        <section className="mx-auto max-w-3xl px-6 pb-10">
+          <Reveal className="rounded-3xl border border-border-subtle bg-background-elevated p-6 sm:p-8">
+            <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
+              If You Want Structure On Top Of The Free Path
+            </p>
+            <p className="mt-3 text-sm text-foreground-muted">{startHere.paidNote}</p>
+            <div className="mt-5 flex flex-wrap gap-3">
+              {startHere.paidLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 rounded-full bg-foreground px-5 py-2.5 text-sm font-semibold text-background transition-opacity hover:opacity-90"
+                >
+                  {link.label}
+                  <span aria-hidden>→</span>
+                </a>
+              ))}
+            </div>
+          </Reveal>
+        </section>
+      )}
+
       <Section title="Quick Answers">
         <div className="space-y-3">
           {guide.faq.map((f, i) => (

@@ -17,6 +17,8 @@ export type StartHereSpecialization = {
   name: string;
   description: string;
   goodFor: string;
+  href?: string;
+  linkLabel?: string;
 };
 
 export type StartHereWhatIsTheJob = {
@@ -69,6 +71,8 @@ export const startHereGuides: StartHereGuide[] = [
             "Outbound prospecting and booking meetings. The standard entry point and training ground for almost every AE in the industry.",
           goodFor:
             "People okay with daily rejection at volume and quota pressure from day one, in exchange for the most accessible, degree-blind entry point in tech.",
+          href: "https://higherlevels.com/?via=journey",
+          linkLabel: "Sales Development Representative (Higher Levels)",
         },
         {
           name: "Account Executive (AE)",
@@ -76,6 +80,8 @@ export const startHereGuides: StartHereGuide[] = [
             "Closes the deals SDRs set up: discovery calls, product demos, negotiation. Sub-tracks include Mid-Market, Enterprise, and Strategic/Global AE, each with bigger deals and longer sales cycles.",
           goodFor:
             "People who've proven themselves as an SDR and want to own the full deal cycle and the bigger commission that comes with it.",
+          href: "https://higherlevels.com/?via=journey",
+          linkLabel: "SDR to Account Executive (Higher Levels)",
         },
         {
           name: "Sales Engineer (SE)",
@@ -217,6 +223,8 @@ export const startHereGuides: StartHereGuide[] = [
             "Monitoring and defense. The most common first job, and the most shift-work-heavy, highest-pressure one.",
           goodFor:
             "People okay with rotating shifts and a real-time, reactive pace early on, in exchange for the most beginner-friendly on-ramp.",
+          href: "https://www.springboard.com/landing/influencer/thewarthens?utm_source=thewarthens&utm_medium=influencer&utm_campaign=non-ct&utm_term=paid&utm_content=firstyoutubelanpage8242023",
+          linkLabel: "Cybersecurity Training (Springboard)",
         },
         {
           name: "GRC (Governance, Risk, Compliance)",
@@ -399,6 +407,8 @@ export const startHereGuides: StartHereGuide[] = [
           description: "Both frontend and backend. The generalist option.",
           goodFor:
             "People who want the shortest overall learning curve to strong entry-level demand, without narrowing down to one specialization right away.",
+          href: "https://www.springboard.com/landing/influencer/thewarthens?utm_source=thewarthens&utm_medium=influencer&utm_campaign=non-ct&utm_term=paid&utm_content=firstyoutubelanpage8242023",
+          linkLabel: "Software Engineering Course (Springboard)",
         },
         {
           name: "DevOps / Cloud",
@@ -538,6 +548,8 @@ export const startHereGuides: StartHereGuide[] = [
             "Surfaces business insights from existing data: cleaning, querying, dashboards, and explaining what the numbers mean to non-technical teams.",
           goodFor:
             "Beginners. The lowest barrier to entry of the three, companies are used to hiring career switchers straight into this role with solid Excel, SQL, and a real portfolio.",
+          href: "https://www.springboard.com/landing/influencer/thewarthens?utm_source=thewarthens&utm_medium=influencer&utm_campaign=non-ct&utm_term=paid&utm_content=firstyoutubelanpage8242023",
+          linkLabel: "Data Analytics / Science Training (Springboard)",
         },
         {
           name: "Business Intelligence (BI) Analyst",
