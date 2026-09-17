@@ -602,6 +602,8 @@ export const startHereGuides: StartHereGuide[] = [
           description: "Builds predictive models instead of explaining what already happened, using Python, statistics, and machine learning.",
           goodFor:
             "People ready to go deeper into math, statistics, and programming. Almost never a realistic first job, most people arrive here after analyst experience or a more technical, quantitative background.",
+          href: "https://www.springboard.com/landing/influencer/thewarthens?utm_source=thewarthens&utm_medium=influencer&utm_campaign=non-ct&utm_term=paid&utm_content=firstyoutubelanpage8242023",
+          linkLabel: "Data Science Training (Springboard)",
         },
       ],
     },
