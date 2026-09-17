@@ -52,17 +52,88 @@ export const startHereGuides: StartHereGuide[] = [
     pathId: "sales",
     title: "Start Here: Breaking Into Tech Sales",
     dek: "Free steps to figure out if tech sales is actually for you, before you spend a dollar.",
-    updated: "August 2026",
+    updated: "September 2026",
     video: {
       youtubeId: "L4j5ffFpnLo",
       title: "Tech Sales Exposed: Prepare Yourself for the Harsh Reality!",
     },
+    whatIsTheJob: {
+      intro:
+        "\"Tech sales\" almost always means starting as an SDR (Sales Development Rep) or BDR, a specific, distinct first job, not a general sales career. The role you're promoted into, Account Executive, is genuinely a different job with different daily work, worth knowing that going in.",
+      dayToDay:
+        "As an SDR, your day is built around outbound: building prospect lists, running email, phone, and LinkedIn outreach sequences, logging every touch in a CRM, and hitting a monthly quota for meetings booked. The strongest reps front-load prospecting in the morning, personalize outreach instead of blasting templates, and treat objections as something to get curious about, not a script to fight through. In 2026, AI increasingly handles the grunt work, list-building, first-draft messages, research, shifting human SDRs toward account selection and judgment calls instead of pure volume.",
+      specializations: [
+        {
+          name: "SDR / BDR",
+          description:
+            "Outbound prospecting and booking meetings. The standard entry point and training ground for almost every AE in the industry.",
+          goodFor:
+            "People okay with daily rejection at volume and quota pressure from day one, in exchange for the most accessible, degree-blind entry point in tech.",
+        },
+        {
+          name: "Account Executive (AE)",
+          description:
+            "Closes the deals SDRs set up: discovery calls, product demos, negotiation. Sub-tracks include Mid-Market, Enterprise, and Strategic/Global AE, each with bigger deals and longer sales cycles.",
+          goodFor:
+            "People who've proven themselves as an SDR and want to own the full deal cycle and the bigger commission that comes with it.",
+        },
+        {
+          name: "Sales Engineer (SE)",
+          description:
+            "The technical counterpart on a sales team: runs technical demos, answers hard product questions, and de-risks complex deals.",
+          goodFor:
+            "People with some technical background who like being part of sales without living entirely on a cold-outreach quota.",
+        },
+        {
+          name: "Customer Success Manager (CSM)",
+          description:
+            "Owns the relationship after the deal closes: onboarding, retention, renewals, and account growth, not new-business hunting.",
+          goodFor:
+            "People who'd rather build long-term relationships than chase new logos. A real, respected destination, not a fallback for people who \"couldn't hack\" new business.",
+        },
+      ],
+    },
+    pros: [
+      {
+        text: "A real, fast promotion path exists: the standard SDR-to-AE window is 12-18 months, with high performers reaching it in 10-12, and AE on-target earnings run roughly double SDR pay.",
+      },
+      {
+        text: "One of the most degree-blind entry points in the economy. Retail, hospitality, service, or military experience transfers directly, since the core skill is handling daily rejection at volume and communicating clearly.",
+      },
+      {
+        text: "Multiple real destinations beyond pure cold-calling if that's not your personality long-term: Sales Engineer (technical) and Customer Success (relationship-based, no new-business quota) are both legitimate career tracks, not consolation prizes.",
+      },
+      {
+        text: "Genuinely remote-friendly, and some sources note skills like empathy and listening matter more than raw charisma, which opens the door to a wider range of personality types than the stereotype suggests.",
+      },
+    ],
+    cons: [
+      {
+        text: "Burnout is the single most common reason SDRs quit (35%), ahead of feeling stuck (28%) or unrealistic quotas (18%).",
+      },
+      {
+        text: "This is the highest-turnover role in the sales ladder: year-one SDR turnover runs 35-40%, with an average tenure around 14 months. Only 60% of SDRs hit quota in a given year, per the most rigorous industry benchmark, and some other sources report the miss rate running even higher.",
+        source: "The Bridge Group, 2025 SDR Models, Metrics & Compensation Report",
+      },
+      {
+        text: "The mental health cost is documented, not just anecdotal: one 2024 study found sales teams scored meaningfully worse than R&D teams on measures of depression, anxiety, and hostility.",
+      },
+      {
+        text: "AI is absorbing exactly the list-building and first-draft outreach work that used to fill an SDR's day, which cuts both ways: less busywork, but also fewer seats needed per team to hit the same pipeline targets.",
+      },
+    ],
     steps: [
       {
         id: "watch-reality",
         title: "Watch this first: what the job actually looks like",
         description:
           "Before anything else, watch the video above. It's the most honest look at day-to-day tech sales we've put out, cold calls, quota pressure, and all. If this doesn't scare you off, keep going.",
+      },
+      {
+        id: "pick-a-lane",
+        title: "Know which lane you're actually aiming for",
+        description:
+          "Read the breakdown above. Almost everyone starts as an SDR, but if quota-driven cold outreach isn't sustainable for you long-term, Sales Engineer and Customer Success are real destinations worth knowing about now, not just discovering by accident later.",
       },
       {
         id: "follow-higher-levels",
@@ -300,11 +371,73 @@ export const startHereGuides: StartHereGuide[] = [
     pathId: "swe",
     title: "Start Here: Learning to Code",
     dek: "A free, in-order path to start coding for real, before you spend a dollar on a bootcamp.",
-    updated: "August 2026",
+    updated: "September 2026",
     video: {
       youtubeId: "FT47fvHIvTs",
       title: "Microsoft Software Engineer Answers 12 Questions about Tech Career",
     },
+    whatIsTheJob: {
+      intro:
+        "\"Software engineer\" covers genuinely different day-to-day jobs depending on specialization. Which lane you eventually target matters, both for what your day looks like and for how competitive the job search actually is.",
+      dayToDay:
+        "As a junior engineer, your day is mentorship-heavy, not solo: checking overnight code review comments, a daily standup to share progress and blockers, working an assigned feature or bug fix, and often a pair-programming session with a senior engineer on something more complex. You'll write code, but you'll spend real time in code review, testing, and debugging too. Success early on is measured by growth rate, not raw output, you're expected to need guidance.",
+      specializations: [
+        {
+          name: "Backend",
+          description: "Server-side logic, databases, and the APIs that power an application.",
+          goodFor:
+            "Beginners who want a friendlier path to actually getting hired: fewer entry-level candidates target backend than frontend, and you can prove skill with one strong project.",
+        },
+        {
+          name: "Frontend",
+          description: "The visible, interactive part of an app that users actually click on and see.",
+          goodFor:
+            "The most beginner-friendly way to learn (you see results in a browser immediately), but it's also the most crowded specialization to get hired into, worth knowing before you assume it's the easy path end to end.",
+        },
+        {
+          name: "Full-Stack",
+          description: "Both frontend and backend. The generalist option.",
+          goodFor:
+            "People who want the shortest overall learning curve to strong entry-level demand, without narrowing down to one specialization right away.",
+        },
+        {
+          name: "DevOps / Cloud",
+          description: "Deployment pipelines, infrastructure, and cloud operations (AWS, Azure, GCP).",
+          goodFor:
+            "People who want a lane that's currently reporting some of the highest job satisfaction in the field, partly because it relies on judgment AI tools can't fully replace yet.",
+        },
+      ],
+    },
+    pros: [
+      {
+        text: "Real, strong long-run demand and pay: the Bureau of Labor Statistics projects 15% job growth through 2034, well above average, with a median software developer salary of $133,080 (though that reflects the whole employed workforce, not a first-day number).",
+        source: "BLS Occupational Outlook Handbook",
+      },
+      {
+        text: "Backend and data engineering specifically have friendlier entry-level competition than frontend, a real, specific, actionable fact for choosing where to focus your first project, not just generic career advice.",
+      },
+      {
+        text: "Career satisfaction varies a lot by lane, and that's useful, not discouraging: DevOps and cloud roles report meaningfully higher satisfaction (63-81%) than the field average, so \"software engineer\" isn't one fixed experience.",
+      },
+      {
+        text: "It remains one of the highest-paying knowledge careers available without a specific degree requirement in many companies, if you can build a real, demonstrable project.",
+      },
+    ],
+    cons: [
+      {
+        text: "New-grad and junior hiring is genuinely harder right now: hiring at the largest tech companies fell 25% from 2023 to 2024, and entry-level postings were still declining year over year even as the broader market recovered in 2025-2026.",
+        source: "SignalFire, State of Tech Talent Report",
+      },
+      {
+        text: "AI hasn't reduced the workload the way many assume, for a lot of engineers it's increased it: 65% report burnout despite AI handling more of the routine coding, because reviewing AI-generated code is often more mentally tiring than writing it yourself was.",
+      },
+      {
+        text: "Frontend, the most common beginner starting point for learning, is also the most crowded lane once you're actually job-hunting, worth planning around rather than discovering after months of study.",
+      },
+      {
+        text: "Remote work removes the physical separation between work and life that used to happen automatically. Without real discipline, \"just check one thing\" from the couch becomes a structural stressor, not just a personal failing.",
+      },
+    ],
     steps: [
       {
         id: "watch-swe",
@@ -316,7 +449,7 @@ export const startHereGuides: StartHereGuide[] = [
         id: "pick-a-lane",
         title: "Pick web development as your starting lane",
         description:
-          "Web dev is the most beginner-friendly starting point: you write code, refresh a browser, and see it work immediately. Start with JavaScript. If data or AI interests you more, Python is the better first language instead.",
+          "Web dev is the most beginner-friendly starting point: you write code, refresh a browser, and see it work immediately. Start with JavaScript. If data or AI interests you more, Python is the better first language instead. Just know this is about what's easiest to learn first, not what's easiest to get hired into, see the breakdown above once you're comfortable with the basics.",
       },
       {
         id: "freecodecamp",
