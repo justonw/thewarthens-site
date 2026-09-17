@@ -209,22 +209,24 @@ export default async function StartHerePage({
         </section>
       )}
 
-      <section className="mx-auto max-w-3xl px-6 pb-10">
-        <Reveal>
-          <div className="overflow-hidden rounded-3xl border border-border-subtle">
-            <div className="aspect-video w-full">
-              <iframe
-                className="h-full w-full"
-                src={`https://www.youtube.com/embed/${guide.video.youtubeId}`}
-                title={guide.video.title}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-              />
+      {guide.video && (
+        <section className="mx-auto max-w-3xl px-6 pb-10">
+          <Reveal>
+            <div className="overflow-hidden rounded-3xl border border-border-subtle">
+              <div className="aspect-video w-full">
+                <iframe
+                  className="h-full w-full"
+                  src={`https://www.youtube.com/embed/${guide.video.youtubeId}`}
+                  title={guide.video.title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+              </div>
             </div>
-          </div>
-          <p className="mt-3 text-sm text-foreground-muted">{guide.video.title}</p>
-        </Reveal>
-      </section>
+            <p className="mt-3 text-sm text-foreground-muted">{guide.video.title}</p>
+          </Reveal>
+        </section>
+      )}
 
       <section className="mx-auto max-w-3xl px-6 pb-10">
         <Reveal>

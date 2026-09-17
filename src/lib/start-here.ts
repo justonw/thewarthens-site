@@ -45,7 +45,8 @@ export type StartHereGuide = {
   title: string;
   dek: string;
   updated: string;
-  video: { youtubeId: string; title: string };
+  /** A video from our own channel (@thewarthens) only. Never a third-party creator's video without explicit approval. */
+  video?: { youtubeId: string; title: string };
   whatIsTheJob?: StartHereWhatIsTheJob;
   pros?: StartHereProsCon[];
   cons?: StartHereProsCon[];
@@ -375,7 +376,7 @@ export const startHereGuides: StartHereGuide[] = [
       },
     ],
     paidNote:
-      "You don't have to finish the free path above before considering this. A paid program makes sense whenever you want a packaged, structured way of learning and a designated community to talk through what you're working on, whether that's day one or after you've already tried the free fundamentals. We partner with Springboard for that reason.",
+      "You don't have to finish the free path above before considering this. A paid program makes sense whenever you want a packaged, structured way of learning and a designated community to talk through what you're working on, whether that's day one or after you've already tried the free fundamentals. We partner with Springboard for that reason, use code THEWARTHENS at enrollment for $1,000 off.",
     paidLinks: [
       {
         label: "Cybersecurity Training (Springboard)",
@@ -537,7 +538,7 @@ export const startHereGuides: StartHereGuide[] = [
       },
     ],
     paidNote:
-      "You don't have to finish the free path above before considering this. A paid bootcamp makes sense whenever you want a packaged, structured way of learning and a designated community to talk through what you're building, whether that's day one or after you've already tried freeCodeCamp on your own. We partner with Springboard for that reason.",
+      "You don't have to finish the free path above before considering this. A paid bootcamp makes sense whenever you want a packaged, structured way of learning and a designated community to talk through what you're building, whether that's day one or after you've already tried freeCodeCamp on your own. We partner with Springboard for that reason, use code THEWARTHENS at enrollment for $1,000 off.",
     paidLinks: [
       {
         label: "Software Engineering Course (Springboard)",
@@ -568,10 +569,6 @@ export const startHereGuides: StartHereGuide[] = [
     title: "Start Here: Breaking Into Data Analytics",
     dek: "A free, in-order path to build real data analyst skills, before you spend a dollar on a course.",
     updated: "September 2026",
-    video: {
-      youtubeId: "I9ouZUvq3gA",
-      title: "How I became a Data Analyst (No CS Degree nor Exp)",
-    },
     whatIsTheJob: {
       intro:
         "\"Data\" covers several different jobs. Data analyst is the accessible entry point; data engineer and data scientist are different, usually later, destinations, not competing starting points.",
@@ -646,12 +643,6 @@ export const startHereGuides: StartHereGuide[] = [
     },
     steps: [
       {
-        id: "watch-interview",
-        title: "Watch this first: a real career-changer's path in",
-        description:
-          "Before you touch a tool, watch the video above. It's a real account of breaking in with no CS degree or prior experience, which is the realistic starting point for most people reading this.",
-      },
-      {
         id: "pick-a-lane",
         title: "Aim at Data Analyst first, not Data Scientist",
         description:
@@ -699,7 +690,7 @@ export const startHereGuides: StartHereGuide[] = [
       },
     ],
     paidNote:
-      "You don't have to finish the free path above before considering this. A paid program makes sense whenever you want a packaged, structured way of learning and a designated community to talk through what you're building, whether that's day one or after you've already tried SQLBolt, Excel, and Tableau on your own. We partner with Springboard for that reason.",
+      "You don't have to finish the free path above before considering this. A paid program makes sense whenever you want a packaged, structured way of learning and a designated community to talk through what you're building, whether that's day one or after you've already tried SQLBolt, Excel, and Tableau on your own. We partner with Springboard for that reason, use code THEWARTHENS at enrollment for $1,000 off.",
     paidLinks: [
       {
         label: "Data Analytics / Science Training (Springboard)",
