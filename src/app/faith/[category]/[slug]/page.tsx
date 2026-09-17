@@ -9,6 +9,7 @@ import {
   type FaithWritingCategory,
 } from "@/lib/faith-writings";
 import Reveal from "@/components/Reveal";
+import RaceStatChart from "@/components/RaceStatChart";
 
 function renderInline(text: string) {
   const parts = text.split(/(\*\*.+?\*\*|\*.+?\*)/g);
@@ -157,6 +158,16 @@ export default async function FaithWritingPage({
       <section className="mx-auto max-w-2xl px-6 pb-16">
         <Reveal className="space-y-6">
           {writing.body.map((block, i) => {
+            if (block.type === "chart") {
+              return (
+                <RaceStatChart
+                  key={i}
+                  title={block.title}
+                  sourceNote={block.sourceNote}
+                  data={block.data}
+                />
+              );
+            }
             if (block.type === "quote") {
               return (
                 <blockquote
