@@ -54,6 +54,11 @@ export const techSections: TechSection[] = [
     ],
   },
   {
+    title: "AI Tools & Workflows",
+    note: "What we actually use building with Claude and AI workflows",
+    links: [{ label: "ElevenLabs (AI Voice)", href: "https://try.elevenlabs.io/vtjpcxt9gvt1" }],
+  },
+  {
     title: "Trades, Business & Supply Chain Careers",
     note: "via CourseCareers, browse all paths and pick what fits",
     links: [
