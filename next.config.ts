@@ -19,6 +19,16 @@ const nextConfig: NextConfig = {
         permanent: false,
       },
       {
+        source: "/coach",
+        destination: "/tech/coaching?from=coach-link",
+        permanent: false,
+      },
+      {
+        source: "/coaching",
+        destination: "/tech/coaching?from=coaching-link",
+        permanent: false,
+      },
+      {
         source: "/start",
         destination: "/tech#start-here",
         permanent: false,

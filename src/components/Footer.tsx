@@ -58,6 +58,12 @@ export default function Footer() {
                   {g.title}
                 </Link>
               ))}
+              <Link
+                href="/tech/coaching"
+                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+              >
+                1:1 Coaching with Jermell
+              </Link>
             </nav>
           </div>
           <div>

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { usePersistentState } from "@/lib/use-persistent-state";
 
 const STORAGE_KEY = "warthens-job-tracker-v1";
 
@@ -26,15 +27,7 @@ type Entry = {
   notes: string;
 };
 
-function loadEntries(): Entry[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as Entry[]) : [];
-  } catch {
-    return [];
-  }
-}
+const NO_ENTRIES: Entry[] = [];
 
 const statusColor: Record<Status, string> = {
   "Not Yet Applied": "bg-background-elevated-2 text-foreground-muted",
@@ -48,20 +41,9 @@ const statusColor: Record<Status, string> = {
 };
 
 export default function JobTracker() {
-  const [entries, setEntries] = useState<Entry[]>([]);
-  const [loaded, setLoaded] = useState(false);
+  const [entries, setEntries, loaded] = usePersistentState<Entry[]>(STORAGE_KEY, NO_ENTRIES);
   const [company, setCompany] = useState("");
   const [role, setRole] = useState("");
-
-  useEffect(() => {
-    setEntries(loadEntries());
-    setLoaded(true);
-  }, []);
-
-  useEffect(() => {
-    if (!loaded) return;
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
-  }, [entries, loaded]);
 
   function addEntry(e: React.FormEvent) {
     e.preventDefault();

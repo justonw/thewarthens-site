@@ -2,9 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 
 const links = [
-  { href: "/", label: "Home" },
-  { href: "/tech", label: "Tech Journey" },
-  { href: "/faith", label: "Faith Journey" },
+  { href: "/", label: "Home", wideOnly: false },
+  { href: "/tech", label: "Tech Journey", wideOnly: false },
+  { href: "/faith", label: "Faith Journey", wideOnly: false },
+  // Hidden on phones, where the three main links already fill the bar.
+  { href: "/tech/coaching", label: "1:1 Coaching", wideOnly: true },
 ];
 
 export default function Header() {
@@ -29,7 +31,9 @@ export default function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="whitespace-nowrap rounded-full px-2.5 py-2 text-xs font-medium text-foreground-muted transition-colors hover:bg-background-elevated hover:text-foreground sm:px-4 sm:text-sm"
+              className={`whitespace-nowrap rounded-full px-2.5 py-2 text-xs font-medium text-foreground-muted transition-colors hover:bg-background-elevated hover:text-foreground sm:px-4 sm:text-sm ${
+                link.wideOnly ? "hidden sm:inline-block" : ""
+              }`}
             >
               {link.label}
             </Link>

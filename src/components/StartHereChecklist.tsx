@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import type { StartHereStep } from "@/lib/start-here";
+import { usePersistentState } from "@/lib/use-persistent-state";
+
+const NOTHING_CHECKED: Record<string, boolean> = {};
 
 export default function StartHereChecklist({
   slug,
@@ -11,24 +13,10 @@ export default function StartHereChecklist({
   steps: StartHereStep[];
 }) {
   const storageKey = `warthens-start-here-${slug}-v1`;
-  const [checked, setChecked] = useState<Record<string, boolean>>({});
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem(storageKey);
-      if (raw) setChecked(JSON.parse(raw));
-    } catch {
-      // ignore
-    }
-    setLoaded(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (!loaded) return;
-    window.localStorage.setItem(storageKey, JSON.stringify(checked));
-  }, [checked, loaded, storageKey]);
+  const [checked, setChecked] = usePersistentState<Record<string, boolean>>(
+    storageKey,
+    NOTHING_CHECKED
+  );
 
   function toggle(id: string) {
     setChecked((prev) => ({ ...prev, [id]: !prev[id] }));

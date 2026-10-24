@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { startHereGuides, getStartHere } from "@/lib/start-here";
 import { getGuideForPath } from "@/lib/guides";
 import Reveal from "@/components/Reveal";
+import CoachingCallout from "@/components/coaching/CoachingCallout";
 import StartHereChecklist from "@/components/StartHereChecklist";
 
 export function generateStaticParams() {
@@ -128,7 +129,7 @@ export default async function StartHerePage({
       {guide.whatIsTheJob && (
         <section className="mx-auto max-w-3xl px-6 pb-10">
           <Reveal>
-            <h2 className="text-xl font-semibold sm:text-2xl">What's the job, really?</h2>
+            <h2 className="text-xl font-semibold sm:text-2xl">What&apos;s the job, really?</h2>
             <p className="mt-3 text-foreground-muted">{guide.whatIsTheJob.intro}</p>
             <p className="mt-3 text-foreground-muted">{guide.whatIsTheJob.dayToDay}</p>
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -295,7 +296,7 @@ export default async function StartHerePage({
           <Reveal>
             <h2 className="text-xl font-semibold sm:text-2xl">Ready to level up?</h2>
             <p className="mt-2 text-sm text-foreground-muted">
-              Already in the role? Here's what actually moves you to the next one.
+              Already in the role? Here&apos;s what actually moves you to the next one.
             </p>
             <div className="mt-5 space-y-4">
               <div className="rounded-2xl border border-border-subtle bg-background-elevated p-5">
@@ -332,6 +333,12 @@ export default async function StartHerePage({
           </Reveal>
         </section>
       )}
+
+      <section className="mx-auto max-w-3xl px-6 pb-10">
+        <Reveal>
+          <CoachingCallout from={`start-${guide.slug}`} />
+        </Reveal>
+      </section>
 
       <section className="mx-auto max-w-3xl px-6 pb-20">
         <Reveal className="flex flex-col items-center gap-4 rounded-3xl border border-border-subtle bg-background-elevated p-6 text-center sm:p-8">

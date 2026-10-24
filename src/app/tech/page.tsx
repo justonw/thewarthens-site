@@ -11,6 +11,7 @@ import JobTracker from "@/components/JobTracker";
 import StarterChecklist from "@/components/StarterChecklist";
 import EmailGatedDownload from "@/components/EmailGatedDownload";
 import CourseSection from "@/components/CourseSection";
+import CoachingCallout from "@/components/coaching/CoachingCallout";
 
 const title = "Tech Journey | Career Change to Tech | The Warthens";
 const description =
@@ -53,6 +54,14 @@ export const metadata: Metadata = {
   },
 };
 
+// Each Start Here path gets its own accent color so the four read as clearly different.
+const startHereAccents = [
+  "border-blue-500",
+  "border-violet-500",
+  "border-emerald-500",
+  "border-amber-500",
+];
+
 const quickNav = [
   { href: "#quiz", label: "Find Your Path" },
   { href: "#pay", label: "See the Pay" },
@@ -62,6 +71,7 @@ const quickNav = [
   { href: "#checklist", label: "Beat the AI Scan" },
   { href: "#tracker", label: "Track Applications" },
   { href: "#toolkit", label: "Get the Files" },
+  { href: "/tech/coaching", label: "1:1 Coaching" },
 ];
 
 const hubFaq = [
@@ -150,20 +160,25 @@ export default function TechJourneyPage() {
       <div className="sticky top-14 z-40 border-y border-border-subtle bg-background/95 backdrop-blur sm:top-16">
         <nav
           aria-label="Page sections"
-          className="mx-auto flex max-w-5xl flex-wrap items-center gap-2 px-6 py-3"
+          className="mx-auto flex max-w-6xl flex-nowrap items-center gap-2 overflow-x-auto px-6 py-3 [-ms-overflow-style:none] [scrollbar-width:none] lg:flex-wrap lg:overflow-visible [&::-webkit-scrollbar]:hidden"
         >
           <span className="shrink-0 text-xs font-semibold uppercase tracking-wider text-foreground-muted">
             Jump to
           </span>
-          {quickNav.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="whitespace-nowrap rounded-full border border-border-subtle bg-background-elevated px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:border-blue-500/50 hover:bg-blue-500/10 hover:text-blue-700"
-            >
-              {item.label}
-            </a>
-          ))}
+          {quickNav.map((item) => {
+            const className =
+              "shrink-0 whitespace-nowrap rounded-full border border-border-subtle bg-background-elevated px-3.5 py-1.5 text-sm font-semibold text-foreground transition-colors hover:border-blue-500/50 hover:bg-blue-500/10 hover:text-blue-700";
+            // In-page anchors use <a>; the coaching page is a separate route, so it uses <Link>.
+            return item.href.startsWith("#") ? (
+              <a key={item.href} href={item.href} className={className}>
+                {item.label}
+              </a>
+            ) : (
+              <Link key={item.href} href={`${item.href}?from=tech-hub`} className={className}>
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
       </div>
 
@@ -241,41 +256,54 @@ export default function TechJourneyPage() {
         </Reveal>
       </section>
 
-      <section id="start-here" className="mx-auto max-w-5xl scroll-mt-32 px-6 pb-16">
-        <Reveal>
-          <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
-            Start Here
-          </p>
-          <h2 className="mt-2 text-2xl font-semibold sm:text-3xl">
-            Step-by-step paths to actually start learning
-          </h2>
-          <p className="mt-3 max-w-2xl text-foreground-muted">
-            Concrete first steps for four paths, including real video from
-            people actually doing the job, what the work is really like,
-            and where a paid program can take you further when you're
-            ready.
-          </p>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {startHereGuides.map((g) => (
-              <Link
-                key={g.slug}
-                href={`/tech/start-here/${g.slug}`}
-                className="group flex flex-col justify-between rounded-3xl border border-border-subtle bg-background-elevated p-6 transition-all hover:-translate-y-0.5 hover:border-blue-500/40 hover:shadow-lg hover:shadow-blue-950/5"
-              >
-                <div>
-                  <p className="font-semibold">{g.title}</p>
-                  <p className="mt-2 text-sm text-foreground-muted">{g.dek}</p>
-                </div>
-                <span className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-blue-600">
-                  Start here
-                  <span aria-hidden className="transition-transform group-hover:translate-x-1">
-                    →
+      <section
+        id="start-here"
+        className="relative mb-16 scroll-mt-32 overflow-hidden text-white"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 12% 0%, rgba(56,189,248,0.35), transparent 45%), radial-gradient(circle at 92% 100%, rgba(167,139,250,0.4), transparent 45%), linear-gradient(135deg, #1d4ed8, #4338ca 55%, #6d28d9)",
+        }}
+      >
+        <div className="mx-auto max-w-5xl px-6 py-16 sm:py-20">
+          <Reveal className="text-center">
+            <p className="text-sm font-semibold uppercase tracking-wider text-sky-200">
+              Start Here
+            </p>
+            <h2 className="text-balance mt-2 text-2xl font-semibold sm:text-4xl">
+              Step-by-step paths to actually start learning
+            </h2>
+            <p className="mx-auto mt-3 max-w-2xl text-blue-100">
+              Concrete first steps for four paths, including real video from
+              people actually doing the job, what the work is really like,
+              and where a paid program can take you further when you&apos;re
+              ready.
+            </p>
+          </Reveal>
+          <div className="mt-10 grid gap-4 sm:grid-cols-2">
+            {startHereGuides.map((g, i) => (
+              <Reveal key={g.slug} delay={Math.min(i, 3) * 60}>
+                <Link
+                  href={`/tech/start-here/${g.slug}`}
+                  className={`group flex h-full flex-col justify-between rounded-3xl border-t-4 ${startHereAccents[i % startHereAccents.length]} bg-white p-6 text-foreground shadow-xl shadow-black/15 transition-transform hover:-translate-y-1`}
+                >
+                  <div>
+                    <span className="text-sm font-semibold tabular-nums text-foreground-muted/60">
+                      0{i + 1}
+                    </span>
+                    <p className="mt-2 text-lg font-semibold">{g.title}</p>
+                    <p className="mt-2 text-sm text-foreground-muted">{g.dek}</p>
+                  </div>
+                  <span className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-blue-600">
+                    Start here
+                    <span aria-hidden className="transition-transform group-hover:translate-x-1">
+                      →
+                    </span>
                   </span>
-                </span>
-              </Link>
+                </Link>
+              </Reveal>
             ))}
           </div>
-        </Reveal>
+        </div>
       </section>
 
       <section id="learn" className="mx-auto max-w-5xl scroll-mt-32 px-6 pb-4">
@@ -341,6 +369,12 @@ export default function TechJourneyPage() {
             ]}
             ctaLabel="Email Me Both"
           />
+        </Reveal>
+      </section>
+
+      <section className="mx-auto max-w-3xl px-6 pb-16">
+        <Reveal>
+          <CoachingCallout from="tech-hub" />
         </Reveal>
       </section>
 

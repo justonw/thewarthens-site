@@ -1,36 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { starterChecklist } from "@/lib/starter-checklist";
+import { usePersistentState } from "@/lib/use-persistent-state";
 
 const STORAGE_KEY = "warthens-starter-checklist-v1";
 
 const totalItems = starterChecklist.reduce((sum, g) => sum + g.items.length, 0);
 
-function loadChecked(): Record<string, boolean> {
-  if (typeof window === "undefined") return {};
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as Record<string, boolean>) : {};
-  } catch {
-    return {};
-  }
-}
+const NOTHING_CHECKED: Record<string, boolean> = {};
 
 export default function StarterChecklist() {
-  const [checked, setChecked] = useState<Record<string, boolean>>({});
+  const [checked, setChecked] = usePersistentState<Record<string, boolean>>(
+    STORAGE_KEY,
+    NOTHING_CHECKED
+  );
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    setChecked(loadChecked());
-    setLoaded(true);
-  }, []);
-
-  useEffect(() => {
-    if (!loaded) return;
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(checked));
-  }, [checked, loaded]);
 
   function toggle(id: string) {
     setChecked((prev) => ({ ...prev, [id]: !prev[id] }));

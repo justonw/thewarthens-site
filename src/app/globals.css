@@ -70,3 +70,94 @@ body {
 .text-balance {
   text-wrap: balance;
 }
+
+/* Scroll reveal (see components/Reveal.tsx). Visible by default; only blocks that start below
+   the fold are hidden after load, then shown as they scroll into view. */
+.reveal {
+  transition:
+    opacity 0.7s ease-out,
+    transform 0.7s ease-out;
+}
+
+.reveal[data-reveal="hidden"] {
+  opacity: 0;
+  transform: translateY(2rem);
+  transition-delay: 0ms !important;
+}
+
+.reveal[data-reveal="shown"] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    transition: none;
+  }
+
+  .reveal[data-reveal="hidden"] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Career-day kiosk (/career-day): playful motion, all switched off for reduced-motion users. */
+@keyframes cd-pop {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes cd-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes cd-fall {
+  0% {
+    transform: translateY(-8vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(108vh) rotate(540deg);
+    opacity: 1;
+  }
+}
+
+.cd-pop {
+  animation: cd-pop 0.45s ease-out both;
+}
+
+.cd-float {
+  animation: cd-float 3.2s ease-in-out infinite;
+}
+
+.cd-confetti {
+  animation-name: cd-fall;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cd-pop,
+  .cd-float {
+    animation: none !important;
+  }
+
+  .cd-confetti {
+    display: none;
+  }
+}

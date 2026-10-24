@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { guides, getGuide } from "@/lib/guides";
 import { getStartHereForPath } from "@/lib/start-here";
 import Reveal from "@/components/Reveal";
+import CoachingCallout from "@/components/coaching/CoachingCallout";
 import SourcesToggle from "@/components/SourcesToggle";
 
 export function generateStaticParams() {
@@ -305,6 +306,12 @@ export default async function GuidePage({
       <section className="mx-auto max-w-3xl px-6 pb-10">
         <Reveal>
           <SourcesToggle sources={guide.sources} />
+        </Reveal>
+      </section>
+
+      <section className="mx-auto max-w-3xl px-6 pb-10">
+        <Reveal>
+          <CoachingCallout from={`guide-${guide.slug}`} />
         </Reveal>
       </section>
 
