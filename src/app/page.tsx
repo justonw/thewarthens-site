@@ -16,6 +16,18 @@ const jsonLd = {
   logo: "https://thewarthens.com/brand/icon-square.png",
   description:
     "Juston and Atiya Warthen, known as Tech Journey, share practical steps for a career change into tech, plus their journey of relying on God to discover, understand, and live out truth.",
+  founder: [
+    {
+      "@type": "Person",
+      name: "Juston Warthen",
+      sameAs: ["https://www.linkedin.com/in/juston-warthen-96aa13167"],
+    },
+    {
+      "@type": "Person",
+      name: "Atiya Warthen",
+      sameAs: ["https://www.linkedin.com/in/atiya-warthen-4062881b0"],
+    },
+  ],
   sameAs: [
     "https://youtube.com/@thewarthens",
     "https://www.instagram.com/thewarthens",

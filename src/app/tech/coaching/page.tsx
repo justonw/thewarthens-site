@@ -17,9 +17,9 @@ import {
   type ServiceIcon,
 } from "@/lib/coaching";
 
-const title = "1:1 Career & Sales Coaching with Jermell Mitchell | Tech Journey";
+const title = "Sales, Interview & Negotiation Coaching | Jermell Mitchell";
 const description =
-  "Paid 1:1 coaching on interviewing, networking, negotiation, and sales from enterprise Account Executive Jermell Mitchell. Start with a free 15-minute intro call.";
+  "1:1 coaching on tech sales, interviewing, networking, and offer negotiation from enterprise Account Executive Jermell Mitchell. Free 15-minute intro call.";
 
 export const metadata: Metadata = {
   title,
@@ -129,38 +129,84 @@ function Check({ className = "text-blue-600" }: { className?: string }) {
 }
 
 export default function CoachingPage() {
-  const breadcrumbJsonLd = {
+  const site = "https://thewarthens.com";
+  const pageUrl = `${site}${COACHING_PATH}`;
+  const personId = `${pageUrl}#jermell`;
+  const serviceId = `${pageUrl}#coaching`;
+
+  // One connected graph so search and AI engines can tell who the person is, what the
+  // service covers, and who it is for. It only states things that are visible on the page.
+  const graphJsonLd = {
     "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "The Warthens", item: "https://thewarthens.com" },
-      { "@type": "ListItem", position: 2, name: "Tech Journey", item: "https://thewarthens.com/tech" },
+    "@graph": [
       {
-        "@type": "ListItem",
-        position: 3,
-        name: "1:1 Coaching",
-        item: `https://thewarthens.com${COACHING_PATH}`,
+        "@type": "ProfilePage",
+        "@id": `${pageUrl}#webpage`,
+        url: pageUrl,
+        name: title,
+        description,
+        dateModified: "2026-10-24",
+        isPartOf: { "@type": "WebSite", name: "The Warthens", url: site },
+        breadcrumb: { "@id": `${pageUrl}#breadcrumb` },
+        about: { "@id": serviceId },
+        mainEntity: { "@id": personId },
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": `${pageUrl}#breadcrumb`,
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "The Warthens", item: site },
+          { "@type": "ListItem", position: 2, name: "Tech Journey", item: `${site}/tech` },
+          { "@type": "ListItem", position: 3, name: "1:1 Coaching", item: pageUrl },
+        ],
+      },
+      {
+        "@type": "Person",
+        "@id": personId,
+        name: coach.name,
+        jobTitle: "Account Executive",
+        url: pageUrl,
+        image: `${site}${coach.photo}`,
+        sameAs: [coach.linkedin],
+        description:
+          "Account Executive at a leading CRM software company who offers 1:1 coaching on sales, networking, interviewing, and negotiation.",
+        knowsAbout: [
+          "Tech sales",
+          "Cold calling and prospecting",
+          "Interview preparation",
+          "Job offer and salary negotiation",
+          "Networking and relationship building",
+          "Personal positioning",
+        ],
+      },
+      {
+        "@type": "ProfessionalService",
+        "@id": serviceId,
+        name: "1:1 sales, interview, and negotiation coaching with Jermell Mitchell",
+        url: pageUrl,
+        description,
+        provider: { "@id": personId },
+        serviceType: ["Sales coaching", "Interview coaching", "Negotiation coaching", "Networking coaching"],
+        audience: {
+          "@type": "Audience",
+          audienceType:
+            "Career changers moving into tech sales, sales professionals aiming for their next level, and anyone preparing to interview or negotiate an offer",
+        },
+        hasOfferCatalog: {
+          "@type": "OfferCatalog",
+          name: "Areas of coaching focus",
+          itemListElement: services.map((svc) => ({
+            "@type": "Offer",
+            itemOffered: { "@type": "Service", name: svc.title, description: svc.body },
+          })),
+        },
       },
     ],
   };
 
-  const profileJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "ProfilePage",
-    mainEntity: {
-      "@type": "Person",
-      name: coach.name,
-      jobTitle: "Account Executive",
-      image: `https://thewarthens.com${coach.photo}`,
-      sameAs: [coach.linkedin],
-      description:
-        "Enterprise Account Executive with more than eight years in fintech and SaaS sales who offers paid 1:1 coaching on sales, networking, interviewing, and negotiation.",
-    },
-  };
-
   return (
     <>
-      {[breadcrumbJsonLd, profileJsonLd].map((data, i) => (
+      {[graphJsonLd].map((data, i) => (
         <script
           key={i}
           type="application/ld+json"
@@ -260,8 +306,10 @@ export default function CoachingPage() {
               Questions worth talking through with a real person
             </h2>
             <p className="mt-4 text-foreground-muted">
-              Everyone&apos;s situation is a little different. These are the questions people most
-              often want help thinking through.
+              Everyone&apos;s situation is a little different. Coaching tends to help career changers
+              heading into tech sales, reps aiming for their next level, and anyone preparing to
+              interview or negotiate an offer. These are the questions people most often want help
+              thinking through.
             </p>
           </Reveal>
           <Reveal delay={100}>

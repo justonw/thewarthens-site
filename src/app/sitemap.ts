@@ -6,7 +6,7 @@ import { faithWritings } from "@/lib/faith-writings";
 // Bump this when you make a meaningful content change to a static page
 // (home, /tech, /faith, /faith/women-who-seek) so search engines get a
 // real freshness signal instead of "just now" on every single crawl.
-const SITE_LAST_UPDATED = new Date("2026-08-23");
+const SITE_LAST_UPDATED = new Date("2026-10-24");
 
 function parseUpdated(updated: string): Date {
   const parsed = new Date(`1 ${updated}`);
@@ -18,7 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const routes: { path: string; priority: number; lastModified: Date }[] = [
     { path: "", priority: 1, lastModified: SITE_LAST_UPDATED },
     { path: "/tech", priority: 0.9, lastModified: SITE_LAST_UPDATED },
-    { path: "/tech/coaching", priority: 0.8, lastModified: new Date("2026-10-22") },
+    { path: "/tech/coaching", priority: 0.8, lastModified: new Date("2026-10-24") },
     { path: "/faith", priority: 0.8, lastModified: SITE_LAST_UPDATED },
     { path: "/faith/women-who-seek", priority: 0.7, lastModified: SITE_LAST_UPDATED },
     ...guides.map((g) => ({
