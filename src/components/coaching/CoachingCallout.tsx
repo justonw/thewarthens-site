@@ -18,10 +18,10 @@ export default function CoachingCallout({ from }: { from: string }) {
         <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
           1:1 coaching
         </p>
-        <p className="mt-1 text-lg font-semibold">Paid 1:1 coaching with {coach.name}</p>
+        <p className="mt-1 text-lg font-semibold">1:1 coaching with {coach.name}</p>
         <p className="mt-1 text-sm text-foreground-muted">
           Personal coaching on interviewing, networking, and negotiation from an enterprise Account
-          Executive. This is a paid service, and it starts with a free 15-minute intro call.
+          Executive. It starts with a free 15-minute intro call.
         </p>
       </div>
       <Link
