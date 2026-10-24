@@ -537,8 +537,7 @@ export default function CoachingPage() {
         <Reveal className="mt-16">
           <h3 className="text-xl font-semibold sm:text-2xl">In his own words</h3>
           <p className="mt-2 max-w-2xl text-sm text-foreground-muted">
-            Real texts from {coach.firstName} while he was coaching me. The highlights are mine.
-            Other messages are blurred for privacy.
+            Real texts from {coach.firstName} while he was coaching me.
           </p>
         </Reveal>
         <div className="mt-6 grid gap-6 md:grid-cols-2">
