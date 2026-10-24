@@ -2,11 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 
 const links = [
-  { href: "/", label: "Home", wideOnly: false },
-  { href: "/tech", label: "Tech Journey", wideOnly: false },
-  { href: "/faith", label: "Faith Journey", wideOnly: false },
-  // Hidden on phones, where the three main links already fill the bar.
-  { href: "/tech/coaching", label: "1:1 Coaching", wideOnly: true },
+  // On phones the logo already goes home, so this makes room for the coaching link.
+  { href: "/", label: "Home", short: "Home", wideOnly: true },
+  { href: "/tech", label: "Tech Journey", short: "Tech Journey", wideOnly: false },
+  { href: "/faith", label: "Faith Journey", short: "Faith Journey", wideOnly: false },
+  { href: "/tech/coaching", label: "1:1 Coaching", short: "Coaching", wideOnly: false },
 ];
 
 export default function Header() {
@@ -35,7 +35,8 @@ export default function Header() {
                 link.wideOnly ? "hidden sm:inline-block" : ""
               }`}
             >
-              {link.label}
+              <span className="sm:hidden">{link.short}</span>
+              <span className="hidden sm:inline">{link.label}</span>
             </Link>
           ))}
         </nav>
