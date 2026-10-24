@@ -300,17 +300,15 @@ export default function CoachingPage() {
             </p>
           </Reveal>
 
-          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-6 xl:grid-cols-5">
+          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-5 lg:gap-3 xl:gap-4">
             {services.map((svc, i) => (
               <Reveal
                 key={svc.title}
                 delay={Math.min(i, 4) * 60}
-                className={`${
-                  i === services.length - 1 ? "sm:col-span-2" : ""
-                } ${i < 3 ? "lg:col-span-2" : "lg:col-span-3"} xl:col-span-1`}
+                className={i === services.length - 1 ? "sm:col-span-2 lg:col-span-1" : ""}
               >
                 <div
-                  className={`flex h-full flex-col rounded-3xl border-t-4 ${svc.border} bg-white p-6 text-foreground shadow-xl shadow-black/15 transition-transform hover:-translate-y-1`}
+                  className={`flex h-full flex-col rounded-3xl border-t-4 ${svc.border} bg-white p-6 text-foreground shadow-xl shadow-black/15 transition-transform hover:-translate-y-1 lg:p-5 xl:p-6`}
                 >
                   <div className="flex items-center justify-between">
                     <span
@@ -322,14 +320,14 @@ export default function CoachingPage() {
                       0{i + 1}
                     </span>
                   </div>
-                  <p className="mt-5 text-lg font-semibold leading-snug">{svc.title}</p>
-                  <p className="mt-2 text-sm text-foreground-muted">{svc.body}</p>
+                  <p className="mt-5 text-lg font-semibold leading-snug lg:text-[17px] xl:text-lg">{svc.title}</p>
+                  <p className="mt-2 text-sm text-foreground-muted lg:text-[13px] xl:text-sm">{svc.body}</p>
                   <div className="mt-auto pt-5">
                     <div className="border-t border-border-subtle pt-4">
                       <p className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
                         Good when
                       </p>
-                      <p className="mt-1 text-sm font-medium">{svc.goodWhen}</p>
+                      <p className="mt-1 text-sm font-medium lg:text-[13px] xl:text-sm">{svc.goodWhen}</p>
                     </div>
                   </div>
                 </div>

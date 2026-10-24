@@ -8,8 +8,8 @@ export function isLiveHost(rawHost: string | null | undefined) {
   return host === "thewarthens.com" || host === "www.thewarthens.com";
 }
 
-// Live requests go to Jermell with Juston copied. Everything else goes to Juston only,
-// so testing the form never emails Jermell.
+// Live requests go to Jermell only. Everything else (localhost, Netlify test links) goes to
+// Juston only, so testing the form never emails Jermell.
 export function recipientsFor(live: boolean, extra: string[] = []) {
-  return live ? [JERMELL_EMAIL, JUSTON_EMAIL, ...extra] : [JUSTON_EMAIL];
+  return live ? [JERMELL_EMAIL, ...extra] : [JUSTON_EMAIL];
 }

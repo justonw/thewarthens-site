@@ -17,6 +17,14 @@ const QUESTION_COUNT = intakeQuestions.length;
 const CONTACT_STEP = QUESTION_COUNT;
 const TOTAL_STEPS = QUESTION_COUNT + 1;
 
+// "sales", "sales and negotiating", "sales, negotiating, and networking"
+function joinNatural(items: string[]) {
+  const lower = items.map((i) => i.toLowerCase());
+  if (lower.length <= 1) return lower.join("");
+  if (lower.length === 2) return `${lower[0]} and ${lower[1]}`;
+  return `${lower.slice(0, -1).join(", ")}, and ${lower[lower.length - 1]}`;
+}
+
 const fieldClass =
   "w-full rounded-2xl border border-border-subtle bg-background px-4 py-3 text-base text-foreground outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10";
 
@@ -301,6 +309,16 @@ export default function IntakeForm() {
                     );
                   })}
                 </div>
+                <p
+                  aria-live="polite"
+                  className={`mt-3 text-sm font-semibold text-blue-700 transition-opacity ${
+                    areas.length > 0 ? "opacity-100" : "opacity-0"
+                  }`}
+                >
+                  {areas.length > 0
+                    ? `Tell us more about ${joinNatural(areas)} in the box below.`
+                    : "\u00a0"}
+                </p>
               </div>
             )}
 
@@ -315,7 +333,11 @@ export default function IntakeForm() {
               rows={7}
               aria-describedby={`hint-${step}`}
               aria-invalid={fieldError ? true : undefined}
-              placeholder="Type your answer here"
+              placeholder={
+                step === 1 && areas.length > 0
+                  ? "Tell us more: what is going on, and what would help most?"
+                  : "Type your answer here"
+              }
               className={`${fieldClass} mt-4 min-h-44 resize-y leading-relaxed`}
             />
             <p className="mt-1 text-right text-xs text-foreground-muted">

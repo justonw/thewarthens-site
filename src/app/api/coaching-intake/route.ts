@@ -23,7 +23,7 @@ const EXTRA_EMAILS = (process.env.COACHING_NOTIFY_EMAILS ?? "")
 const WIN_EVERY_LIVE = 25;
 const WIN_EVERY_TEST = 2;
 
-// Which host did this request come in on? Real-site requests email Jermell; anything else
+// Which host did this request come in on? Real-site requests email Jermell only; anything else
 // (localhost, a Netlify test link) emails Juston only, and uses a separate test counter.
 function isLiveSite(req: NextRequest) {
   return isLiveHost(req.headers.get("x-forwarded-host") ?? req.headers.get("host"));
