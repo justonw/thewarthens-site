@@ -599,8 +599,7 @@ export default function CoachingPage() {
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-slate-300">
               Answer seven questions so {coach.firstName} can see where he can actually help. If it
-              looks like a fit, you&apos;ll be contacted to schedule the call. The coaching itself
-              is a paid service, and nothing here commits you to it.
+              looks like a fit, you&apos;ll be contacted to schedule the call.
             </p>
           </Reveal>
           <Reveal className="mt-10 text-foreground" delay={100}>
