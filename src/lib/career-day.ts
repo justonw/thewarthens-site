@@ -41,6 +41,8 @@ export const missions = [
 
 export type MissionId = (typeof missions)[number]["id"];
 
+export const homeIntro = "Be a tech pro for a day! Pick a mission, earn stars, and get a sticker.";
+
 export const badgeVerse = {
   text: "Whatever you do, work at it with all your heart.",
   ref: "Colossians 3:23",
@@ -69,6 +71,11 @@ export type HelperRound = {
 
 export const helperIntro =
   "In tech sales, you help people find tools that fix their problems. In customer success, you make sure people are happy after they buy. Let's practice!";
+
+export const helperRoundSpoken = (round: HelperRound) =>
+  `${round.who} ${round.says} ${round.question} ${round.options
+    .map((o, i) => `${String.fromCharCode(65 + i)}. ${o.text}`)
+    .join(" ")}`;
 
 export const helperRounds: HelperRound[] = [
   {
@@ -233,6 +240,12 @@ export const creatorIntro =
 export const creatorSafety =
   "Kids make shows for family and class. Ask a grown-up first, and never share your name, school, or address online. When you are older, with your parents' OK, you can share your gift with more people.";
 
+export const powerPrompt = "What are you really good at? Tap one.";
+export const whoPrompt = "Who is your show for? Tap all that fit, or tap Select all. Then tap Next.";
+export const lookPrompt =
+  "Make a character that looks like you. Pick a boy or a girl. Then pick your skin, your hair, and your hair color.";
+export const namePrompt = "Type your first name if you want. Then pick a name for your show.";
+
 export type Superpower = {
   id: string;
   emoji: string;
@@ -362,8 +375,16 @@ export const audiences: Audience[] = [
   { id: "friends", emoji: "🧒🏾", label: "My friends", phrase: "my friends" },
 ];
 
-export const skinTones = ["🏻", "🏼", "🏽", "🏾", "🏿"] as const;
-export const defaultSkinTone = "🏾";
+// "my family", "my family and my class", "my family, my class, and my friends".
+// Picking everyone reads as "everyone I know".
+export function audienceLine(ids: string[]) {
+  const picked = audiences.filter((a) => ids.includes(a.id));
+  if (picked.length === audiences.length) return "everyone I know";
+  const phrases = picked.map((a) => a.phrase);
+  if (phrases.length <= 1) return phrases[0] ?? "my family";
+  if (phrases.length === 2) return `${phrases[0]} and ${phrases[1]}`;
+  return `${phrases.slice(0, -1).join(", ")}, and ${phrases[phrases.length - 1]}`;
+}
 
 /* ------------------------------------------------------------------ */
 /* Mission 3: Find Your Gift                                           */
@@ -507,6 +528,15 @@ export const giftResults: Record<GiftId, GiftResult> = {
   },
 };
 
+export const giftQuestionSpoken = (q: GiftQuestion) =>
+  `${q.question} ${q.options.map((o, i) => `${String.fromCharCode(65 + i)}. ${o.text}`).join(". ")}`;
+
+export const giftResultSpoken = (result: GiftResult) => {
+  const names = result.careers.map((c) => c.name);
+  const list = `${names.slice(0, -1).join(", ")}, and ${names[names.length - 1]}`;
+  return `You have the gift of being a ${result.title}! ${result.blurb} Grown-ups with your gift can do jobs like ${list}. Try this today: ${result.tryToday}`;
+};
+
 export const giftVerse = {
   text: "Each of you should use whatever gift you have received to serve others.",
   ref: "1 Peter 4:10",
@@ -514,3 +544,122 @@ export const giftVerse = {
 
 export const giftWrapUp =
   "Every gift is needed. You get to choose your road, and every road starts with learning to read, write, and do math.";
+
+/* ------------------------------------------------------------------ */
+/* Cool Facts. Every fact here was checked against more than one       */
+/* source. Keep claims plain and avoid "the first ever" unless the     */
+/* record is clear.                                                    */
+/* ------------------------------------------------------------------ */
+
+export type CoolFact = { id: string; emoji: string; hook: string; answer: string };
+export type FactGroup = { id: string; emoji: string; title: string; blurb: string; facts: CoolFact[] };
+
+export const factsIntro =
+  "Here are some wild true facts about the people and ideas behind tech. Tap a card to see the answer!";
+
+export const factGroups: FactGroup[] = [
+  {
+    id: "helpers",
+    emoji: "🤝",
+    title: "Tech Helpers",
+    blurb: "Tech sales and customer success",
+    facts: [
+      {
+        id: "laser",
+        emoji: "🔦",
+        hook: "What was one of the very first things sold on eBay?",
+        answer:
+          "A broken laser pointer! It sold to a person who collects broken laser pointers. There is a right customer for almost anything, and good helpers find them by listening.",
+      },
+      {
+        id: "bug",
+        emoji: "🐛",
+        hook: "Was there ever a REAL bug inside a computer?",
+        answer:
+          "Yes! In 1947, a team found a moth stuck inside a big computer at Harvard. They taped it in their notebook and wrote, “First actual case of bug being found.” Today, finding and fixing tech problems is still called debugging.",
+      },
+      {
+        id: "vending",
+        emoji: "🪙",
+        hook: "What is one of the oldest coin machines?",
+        answer:
+          "About 2,000 years ago, an inventor named Hero built a machine in Egypt. You dropped in a coin and out came water. Many people call it the first vending machine.",
+      },
+    ],
+  },
+  {
+    id: "creators",
+    emoji: "🎥",
+    title: "Creators",
+    blurb: "Content creation",
+    facts: [
+      {
+        id: "youtube",
+        emoji: "🐘",
+        hook: "What was the very first YouTube video about?",
+        answer:
+          "Elephants! It was only about 19 seconds long and was filmed at a zoo in 2005. Every big creator started with a first video.",
+      },
+      {
+        id: "lightsaber",
+        emoji: "⚔️",
+        hook: "How was the lightsaber sound made?",
+        answer:
+          "A sound artist named Ben Burtt mixed the hum of an old movie projector with the buzz of a TV. Creators can make something brand new out of everyday things.",
+      },
+      {
+        id: "babyshark",
+        emoji: "🦈",
+        hook: "Which video was the first to reach 10 billion views?",
+        answer:
+          "Baby Shark Dance! A kids' music company made it. In 2022 it became the first YouTube video to pass 10 billion views. A simple idea can reach the whole world.",
+      },
+      {
+        id: "emoji",
+        emoji: "😀",
+        hook: "Who drew some of the very first emoji?",
+        answer:
+          "A designer in Japan named Shigetaka Kurita, in 1999. That first set had 176 tiny pictures. Each one was drawn on a grid of 12 by 12 little squares.",
+      },
+    ],
+  },
+  {
+    id: "heroes",
+    emoji: "🌟",
+    title: "Tech Heroes",
+    blurb: "People who built things you use",
+    facts: [
+      {
+        id: "lawson",
+        emoji: "🎮",
+        hook: "Who helped make it possible to swap video games?",
+        answer:
+          "Jerry Lawson, a Black engineer. In 1976 he led the team that built a home game system with game cartridges. Before that, a game system only played the games built inside it.",
+      },
+      {
+        id: "dean",
+        emoji: "💻",
+        hook: "Who helped invent the home computer?",
+        answer:
+          "Dr. Mark Dean, a Black engineer at IBM. He helped invent the IBM PC, a computer many families used at home. He is named on 3 of its first 9 patents.",
+      },
+    ],
+  },
+];
+
+// Everything the "Read it to me" buttons can say, so recorded clips can be made for all of it.
+export const allSpokenLines: string[] = [
+  homeIntro,
+  helperIntro,
+  ...helperRounds.map(helperRoundSpoken),
+  creatorIntro,
+  powerPrompt,
+  whoPrompt,
+  lookPrompt,
+  namePrompt,
+  giftIntro,
+  ...giftQuestions.map(giftQuestionSpoken),
+  ...Object.values(giftResults).map(giftResultSpoken),
+  factsIntro,
+  ...factGroups.flatMap((g) => g.facts.map((f) => `${f.hook} ${f.answer}`)),
+];

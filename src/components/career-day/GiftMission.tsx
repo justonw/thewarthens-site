@@ -3,7 +3,9 @@
 import { useState } from "react";
 import {
   giftIntro,
+  giftQuestionSpoken,
   giftQuestions,
+  giftResultSpoken,
   giftResults,
   giftVerse,
   giftWrapUp,
@@ -68,9 +70,7 @@ export default function GiftMission({ onFinish }: { onFinish: () => void }) {
 
   if (step === "result") {
     const result = giftResults[pickWinner(picks)];
-    const spoken = `You have the gift of being a ${result.title}! ${result.blurb} Grown-ups with your gift can be ${result.careers
-      .map((c) => `a ${c.name}`)
-      .join(", ")}. Try this today: ${result.tryToday}`;
+    const spoken = giftResultSpoken(result);
     return (
       <div className="mx-auto max-w-3xl space-y-5">
         <Confetti />
@@ -142,7 +142,7 @@ export default function GiftMission({ onFinish }: { onFinish: () => void }) {
   }
 
   const q = giftQuestions[index];
-  const spoken = `${q.question} ${q.options.map((o, i) => `${String.fromCharCode(65 + i)}. ${o.text}`).join(". ")}`;
+  const spoken = giftQuestionSpoken(q);
 
   return (
     <div className="mx-auto max-w-3xl space-y-5">

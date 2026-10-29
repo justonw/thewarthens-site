@@ -2,19 +2,30 @@
 
 import { useState } from "react";
 import {
+  audienceLine,
   audiences,
   creatorCard,
   creatorIntro,
   creatorSafety,
-  defaultSkinTone,
-  skinTones,
+  lookPrompt,
+  namePrompt,
+  powerPrompt,
   superpowers,
-  type Audience,
+  whoPrompt,
   type Superpower,
 } from "@/lib/career-day";
+import {
+  avatarHairColors,
+  avatarSkins,
+  defaultLook,
+  hairStylesFor,
+  type AvatarGender,
+  type AvatarLook,
+} from "@/lib/career-avatar";
+import Avatar from "./Avatar";
 import { BigButton, CareerCard, Confetti, Panel, ReadAloud } from "./ui";
 
-type Step = "intro" | "power" | "who" | "name" | "poster" | "card";
+type Step = "intro" | "power" | "who" | "look" | "name" | "poster" | "card";
 
 function BackButton({ onClick }: { onClick: () => void }) {
   return (
@@ -33,22 +44,33 @@ function ChoiceTile({
   label,
   onClick,
   selected,
+  multi,
 }: {
   emoji: string;
   label: string;
   onClick: () => void;
   selected?: boolean;
+  multi?: boolean;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`flex min-h-32 flex-col items-center justify-center gap-2 rounded-3xl border-4 p-4 text-center shadow-md transition active:scale-95 ${
+      aria-pressed={multi ? selected : undefined}
+      className={`relative flex min-h-32 flex-col items-center justify-center gap-2 rounded-3xl border-4 p-4 text-center shadow-md transition active:scale-95 ${
         selected
           ? "border-blue-500 bg-blue-50"
           : "border-white bg-white hover:border-blue-300"
       }`}
     >
+      {multi && selected && (
+        <span
+          aria-hidden
+          className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-lg font-extrabold text-white"
+        >
+          ✓
+        </span>
+      )}
       <span aria-hidden className="text-5xl">
         {emoji}
       </span>
@@ -60,12 +82,22 @@ function ChoiceTile({
 export default function CreatorMission({ onFinish }: { onFinish: () => void }) {
   const [step, setStep] = useState<Step>("intro");
   const [power, setPower] = useState<Superpower | null>(null);
-  const [audience, setAudience] = useState<Audience | null>(null);
-  const [tone, setTone] = useState<string>(defaultSkinTone);
+  const [audienceIds, setAudienceIds] = useState<string[]>([]);
+  const [look, setLook] = useState<AvatarLook>(defaultLook);
   const [name, setName] = useState("");
   const [show, setShow] = useState<string | null>(null);
 
-  const avatar = `🧒${tone}`;
+  const allPicked = audienceIds.length === audiences.length;
+  const audienceText = audienceLine(audienceIds);
+
+  function toggleAudience(id: string) {
+    setAudienceIds((ids) => (ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id]));
+  }
+
+  function chooseGender(gender: AvatarGender) {
+    if (gender === look.gender) return;
+    setLook((l) => ({ ...l, gender, hair: hairStylesFor(gender)[0].id }));
+  }
   const cleanName = name.trim();
   const nameOptions = power
     ? [...power.showNames, ...(cleanName ? [`${cleanName}'s ${power.label} Show`] : [])]
@@ -91,14 +123,13 @@ export default function CreatorMission({ onFinish }: { onFinish: () => void }) {
   }
 
   if (step === "power") {
-    const prompt = "What are you really good at? Tap one.";
     return (
       <div className="mx-auto max-w-3xl space-y-5">
         <Panel className="text-center">
           <h2 className="text-3xl font-extrabold text-slate-900">1. What are you really good at?</h2>
           <p className="mt-1 text-lg text-slate-600">Tap one.</p>
           <div className="mt-3 flex justify-center">
-            <ReadAloud text={prompt} />
+            <ReadAloud text={powerPrompt} />
           </div>
         </Panel>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -122,14 +153,13 @@ export default function CreatorMission({ onFinish }: { onFinish: () => void }) {
   }
 
   if (step === "who") {
-    const prompt = "Who is your show for? Tap one.";
     return (
       <div className="mx-auto max-w-3xl space-y-5">
         <Panel className="text-center">
           <h2 className="text-3xl font-extrabold text-slate-900">2. Who is your show for?</h2>
-          <p className="mt-1 text-lg text-slate-600">Tap one.</p>
+          <p className="mt-1 text-lg text-slate-600">Tap all that fit.</p>
           <div className="mt-3 flex justify-center">
-            <ReadAloud text={prompt} />
+            <ReadAloud text={whoPrompt} />
           </div>
         </Panel>
         <div className="grid grid-cols-2 gap-3">
@@ -138,44 +168,143 @@ export default function CreatorMission({ onFinish }: { onFinish: () => void }) {
               key={a.id}
               emoji={a.emoji}
               label={a.label}
-              selected={audience?.id === a.id}
-              onClick={() => {
-                setAudience(a);
-                setStep("name");
-              }}
+              multi
+              selected={audienceIds.includes(a.id)}
+              onClick={() => toggleAudience(a.id)}
             />
           ))}
         </div>
-        <BackButton onClick={() => setStep("power")} />
+        <div className="flex justify-center">
+          <button
+            type="button"
+            aria-pressed={allPicked}
+            onClick={() => setAudienceIds(allPicked ? [] : audiences.map((a) => a.id))}
+            className={`min-h-14 rounded-full border-4 px-6 py-2 text-lg font-extrabold transition active:scale-95 ${
+              allPicked
+                ? "border-blue-500 bg-blue-50 text-blue-900"
+                : "border-white bg-white text-slate-700 hover:border-blue-300"
+            }`}
+          >
+            {allPicked ? "✅ Everyone!" : "🙌 Select all"}
+          </button>
+        </div>
+        <div className="flex items-center justify-between gap-3">
+          <BackButton onClick={() => setStep("power")} />
+          <BigButton disabled={audienceIds.length === 0} onClick={() => setStep("look")}>
+            Next ➡️
+          </BigButton>
+        </div>
       </div>
     );
   }
 
-  if (step === "name" && power && audience) {
-    const prompt = "Pick the one that looks like you. Then pick a name for your show.";
+  if (step === "look") {
+    const styles = hairStylesFor(look.gender);
+    const pick = (selected: boolean) =>
+      `rounded-3xl border-4 transition active:scale-95 ${
+        selected ? "border-blue-500 bg-blue-50" : "border-white bg-white hover:border-blue-300"
+      }`;
     return (
       <div className="mx-auto max-w-3xl space-y-5">
         <Panel className="text-center">
-          <h2 className="text-3xl font-extrabold text-slate-900">3. Name your show</h2>
+          <h2 className="text-3xl font-extrabold text-slate-900">3. Make your character</h2>
           <div className="mt-3 flex justify-center">
-            <ReadAloud text={prompt} />
+            <ReadAloud text={lookPrompt} />
           </div>
+          <div className="cd-pop mt-5 flex justify-center">
+            <Avatar look={look} size={168} label="Your character" className="drop-shadow-lg" />
+          </div>
+        </Panel>
 
-          <p className="mt-5 text-lg font-bold text-slate-700">Pick the one that looks like you</p>
-          <div className="mt-2 flex flex-wrap justify-center gap-2">
-            {skinTones.map((t) => (
+        <Panel>
+          <p className="text-center text-lg font-bold text-slate-700">I am a</p>
+          <div className="mt-2 grid grid-cols-2 gap-3">
+            {(["boy", "girl"] as const).map((g) => (
               <button
-                key={t}
+                key={g}
                 type="button"
-                onClick={() => setTone(t)}
-                aria-label={`Choose this look`}
-                className={`flex h-20 w-20 items-center justify-center rounded-3xl border-4 text-5xl transition active:scale-95 ${
-                  tone === t ? "border-blue-500 bg-blue-50" : "border-white bg-white hover:border-blue-300"
-                }`}
+                aria-pressed={look.gender === g}
+                onClick={() => chooseGender(g)}
+                className={`flex min-h-24 items-center justify-center gap-3 p-2 ${pick(look.gender === g)}`}
               >
-                {`🧒${t}`}
+                <Avatar
+                  look={{ ...look, gender: g, hair: hairStylesFor(g)[0].id }}
+                  size={64}
+                />
+                <span className="text-xl font-extrabold capitalize text-slate-800">{g}</span>
               </button>
             ))}
+          </div>
+
+          <p className="mt-6 text-center text-lg font-bold text-slate-700">My skin</p>
+          <div className="mx-auto mt-2 grid max-w-md grid-cols-6 justify-items-center gap-2">
+            {avatarSkins.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                aria-label={t.label}
+                aria-pressed={look.skin === t.id}
+                onClick={() => setLook((l) => ({ ...l, skin: t.id }))}
+                className={`aspect-square w-full max-w-14 rounded-full border-4 transition active:scale-95 ${
+                  look.skin === t.id ? "border-blue-500 ring-4 ring-blue-200" : "border-white"
+                }`}
+                style={{ backgroundColor: t.hex }}
+              />
+            ))}
+          </div>
+
+          <p className="mt-6 text-center text-lg font-bold text-slate-700">My hair</p>
+          <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {styles.map((h) => (
+              <button
+                key={h.id}
+                type="button"
+                aria-pressed={look.hair === h.id}
+                onClick={() => setLook((l) => ({ ...l, hair: h.id }))}
+                className={`flex flex-col items-center gap-1 p-2 ${pick(look.hair === h.id)}`}
+              >
+                <Avatar look={{ ...look, hair: h.id }} size={84} />
+                <span className="text-base font-extrabold text-slate-800">{h.label}</span>
+              </button>
+            ))}
+          </div>
+
+          <p className="mt-6 text-center text-lg font-bold text-slate-700">My hair color</p>
+          <div className="mx-auto mt-2 grid max-w-md grid-cols-5 justify-items-center gap-2">
+            {avatarHairColors.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                aria-label={c.label}
+                aria-pressed={look.hairColor === c.id}
+                onClick={() => setLook((l) => ({ ...l, hairColor: c.id }))}
+                className={`aspect-square w-full max-w-14 rounded-full border-4 transition active:scale-95 ${
+                  look.hairColor === c.id ? "border-blue-500 ring-4 ring-blue-200" : "border-white"
+                }`}
+                style={{ backgroundColor: c.hex }}
+              />
+            ))}
+          </div>
+        </Panel>
+
+        <div className="flex items-center justify-between gap-3">
+          <BackButton onClick={() => setStep("who")} />
+          <BigButton onClick={() => setStep("name")}>Next ➡️</BigButton>
+        </div>
+      </div>
+    );
+  }
+
+  if (step === "name" && power && audienceIds.length > 0) {
+    return (
+      <div className="mx-auto max-w-3xl space-y-5">
+        <Panel className="text-center">
+          <h2 className="text-3xl font-extrabold text-slate-900">4. Name your show</h2>
+          <div className="mt-3 flex justify-center">
+            <ReadAloud text={namePrompt} />
+          </div>
+          <div className="mt-4 flex justify-center">
+            <Avatar look={look} size={96} />
           </div>
 
           <label className="mt-6 block text-lg font-bold text-slate-700" htmlFor="creator-name">
@@ -219,7 +348,7 @@ export default function CreatorMission({ onFinish }: { onFinish: () => void }) {
         </Panel>
 
         <div className="flex items-center justify-between gap-3">
-          <BackButton onClick={() => setStep("who")} />
+          <BackButton onClick={() => setStep("look")} />
           <BigButton disabled={!selectedShow} onClick={() => setStep("poster")}>
             Make my poster ✨
           </BigButton>
@@ -228,23 +357,23 @@ export default function CreatorMission({ onFinish }: { onFinish: () => void }) {
     );
   }
 
-  if (step === "poster" && power && audience && selectedShow) {
+  if (step === "poster" && power && audienceIds.length > 0 && selectedShow) {
     const who = cleanName || "a future creator";
-    const pitch = `Hi, I'm ${who}! On my show, I help ${audience.phrase} with ${power.topic}.`;
+    const pitch = `Hi, I'm ${who}! On my show, I help ${audienceText} with ${power.topic}.`;
     return (
       <div className="mx-auto max-w-2xl space-y-5">
         <Confetti />
         <div className="cd-pop rounded-[2.2rem] bg-gradient-to-br from-violet-500 via-fuchsia-500 to-amber-400 p-1.5 shadow-2xl">
           <div className="rounded-[2rem] bg-white p-6 text-center sm:p-8">
-            <div aria-hidden className="text-8xl">
-              {avatar}
+            <div className="flex justify-center">
+              <Avatar look={look} size={144} label="Your character" />
             </div>
             <p className="mt-2 text-sm font-extrabold uppercase tracking-[0.25em] text-fuchsia-600">
               Brand new show
             </p>
             <h2 className="mt-1 text-5xl font-extrabold text-slate-900">{selectedShow}</h2>
             <p className="mt-3 text-2xl font-bold text-slate-700">
-              Helping {audience.phrase} with {power.topic}!
+              Helping {audienceText} with {power.topic}!
             </p>
             <div className="mt-5 rounded-3xl bg-slate-50 p-5 text-left">
               <p className="text-lg font-extrabold text-slate-800">

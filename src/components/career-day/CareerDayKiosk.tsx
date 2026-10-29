@@ -1,15 +1,16 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { missions, type MissionId, type SoftSkillId } from "@/lib/career-day";
+import { homeIntro, missions, type MissionId, type SoftSkillId } from "@/lib/career-day";
 import BadgeScreen from "./BadgeScreen";
 import CreatorMission from "./CreatorMission";
+import FactsScreen from "./FactsScreen";
 import HelperMission from "./HelperMission";
 import GiftMission from "./GiftMission";
 import { stopSpeech } from "./speech";
 import { BigButton, ReadAloud } from "./ui";
 
-type Screen = "home" | MissionId | "badge";
+type Screen = "home" | MissionId | "badge" | "facts";
 type DoneMap = Record<MissionId, boolean>;
 
 const emptyDone: DoneMap = { helper: false, creator: false, gift: false };
@@ -17,8 +18,6 @@ const emptyDone: DoneMap = { helper: false, creator: false, gift: false };
 // If nobody touches the screen, go back to the start so the next child gets a fresh one.
 const IDLE_MS = 120_000;
 const IDLE_BADGE_MS = 60_000;
-
-const homeIntro = "Be a tech pro for a day! Pick a mission, earn stars, and get a sticker.";
 
 export default function CareerDayKiosk() {
   const [screen, setScreen] = useState<Screen>("home");
@@ -167,6 +166,16 @@ export default function CareerDayKiosk() {
               ))}
             </div>
 
+            <div className="mt-6">
+              <button
+                type="button"
+                onClick={() => setScreen("facts")}
+                className="min-h-16 rounded-3xl border-4 border-white bg-white px-8 py-3 text-xl font-extrabold text-slate-800 shadow-lg shadow-slate-900/10 transition hover:-translate-y-0.5 hover:border-amber-300 active:scale-95"
+              >
+                🤯 Cool Facts
+              </button>
+            </div>
+
             {stars > 0 && (
               <div className="mt-8">
                 <BigButton tone="amber" onClick={() => setScreen("badge")}>
@@ -191,6 +200,7 @@ export default function CareerDayKiosk() {
         {screen === "gift" && (
           <GiftMission key={`gift-${runKey}`} onFinish={() => finishMission("gift")} />
         )}
+        {screen === "facts" && <FactsScreen onHome={goHome} />}
         {screen === "badge" && (
           <BadgeScreen stars={stars} skills={skills} onMore={goHome} onNext={resetAll} />
         )}

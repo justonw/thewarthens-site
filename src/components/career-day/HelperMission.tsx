@@ -3,6 +3,7 @@
 import { useState } from "react";
 import {
   helperIntro,
+  helperRoundSpoken,
   helperRounds,
   techSalesCard,
   type SoftSkillId,
@@ -79,9 +80,7 @@ export default function HelperMission({ onFinish }: { onFinish: (skills: SoftSki
     );
   }
 
-  const spoken = `${round.who} ${round.says} ${round.question} ${round.options
-    .map((o, i) => `${String.fromCharCode(65 + i)}. ${o.text}`)
-    .join(" ")}`;
+  const spoken = helperRoundSpoken(round);
 
   return (
     <div className="mx-auto max-w-3xl space-y-5">
