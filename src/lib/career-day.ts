@@ -22,6 +22,8 @@ export const missions = [
     title: "Be the Helper",
     blurb: "Help customers solve problems",
     tag: "Tech Sales & Customer Success",
+    about:
+      "In tech sales and customer success, you listen to people and find the right tool to fix their problem. Then you make sure it keeps working for them.",
   },
   {
     id: "creator",
@@ -29,6 +31,8 @@ export const missions = [
     title: "Make a Show",
     blurb: "Share what you are great at",
     tag: "Content Creation",
+    about:
+      "Content creators make videos and shows that teach people and share what they love. They plan their ideas, film them, and keep getting better.",
   },
   {
     id: "gift",
@@ -36,6 +40,8 @@ export const missions = [
     title: "Find Your Gift",
     blurb: "Discover how you like to help",
     tag: "Careers & You",
+    about:
+      "Everyone is good at something. Answer a few questions to find how you like to help, and see grown-up jobs that use your gift.",
   },
 ] as const;
 
@@ -650,6 +656,7 @@ export const factGroups: FactGroup[] = [
 // Everything the "Read it to me" buttons can say, so recorded clips can be made for all of it.
 export const allSpokenLines: string[] = [
   homeIntro,
+  ...missions.map((m) => m.about),
   helperIntro,
   ...helperRounds.map(helperRoundSpoken),
   creatorIntro,

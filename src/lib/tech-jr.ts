@@ -95,7 +95,7 @@ export const creatorSafety = [
 
 export const hostingNeeds = [
   "One tablet, laptop, or touchscreen with a modern web browser and an internet connection.",
-  "The speaker turned up. The game reads each screen aloud with a recorded voice.",
+  "The speaker turned up. After a child's first tap, the game reads every screen aloud with a recorded voice, so children can go through it on their own. The speaker button at the top turns the voice off.",
   "A volunteer or two who can say hello, point at the screen, and ask a follow-up question.",
   "Optional: stickers or a small prize to match the game's badge at the end.",
 ] as const;

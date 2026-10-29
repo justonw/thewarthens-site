@@ -8,6 +8,14 @@ import { clipUrl, speechText } from "@/lib/career-day-audio";
 
 let currentAudio: HTMLAudioElement | null = null;
 
+// Browsers block sound until someone has tapped the page, so automatic reading waits for that.
+let userHasTapped = false;
+if (typeof window !== "undefined") {
+  window.addEventListener("pointerdown", () => (userHasTapped = true), { capture: true, once: true });
+  window.addEventListener("keydown", () => (userHasTapped = true), { capture: true, once: true });
+}
+export const hasUserTapped = () => userHasTapped;
+
 export function stopSpeech() {
   if (currentAudio) {
     currentAudio.onended = null;
@@ -75,8 +83,8 @@ export function useSpeech() {
   }, []);
 
   const speak = useCallback(
-    (text: string) => {
-      if (speaking) {
+    (text: string, restart = false) => {
+      if (speaking && !restart) {
         stopSpeech();
         setSpeaking(false);
         return;

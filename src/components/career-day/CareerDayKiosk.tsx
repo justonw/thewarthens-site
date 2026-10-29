@@ -8,7 +8,7 @@ import FactsScreen from "./FactsScreen";
 import HelperMission from "./HelperMission";
 import GiftMission from "./GiftMission";
 import { stopSpeech } from "./speech";
-import { BigButton, ReadAloud } from "./ui";
+import { AutoReadContext, BigButton, ReadAloud } from "./ui";
 
 type Screen = "home" | MissionId | "badge" | "facts";
 type DoneMap = Record<MissionId, boolean>;
@@ -25,6 +25,8 @@ export default function CareerDayKiosk() {
   const [skills, setSkills] = useState<SoftSkillId[]>([]);
   const [runKey, setRunKey] = useState(0);
   const [toast, setToast] = useState<string | null>(null);
+  // A setting for the device, not information about a child, so it survives "Start over".
+  const [autoRead, setAutoRead] = useState(true);
 
   const stars = Object.values(done).filter(Boolean).length;
 
@@ -35,6 +37,11 @@ export default function CareerDayKiosk() {
     setToast(null);
     setScreen("home");
     setRunKey((k) => k + 1);
+  }, []);
+
+  const toggleAutoRead = useCallback(() => {
+    stopSpeech();
+    setAutoRead((on) => !on);
   }, []);
 
   const goHome = useCallback(() => {
@@ -91,6 +98,7 @@ export default function CareerDayKiosk() {
   }, [screen, stars, resetAll]);
 
   return (
+    <AutoReadContext.Provider value={autoRead}>
     <div className="min-h-dvh bg-gradient-to-b from-sky-100 via-white to-amber-50 text-slate-900">
       <header className="sticky top-0 z-30 border-b border-white/70 bg-white/80 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3">
@@ -108,6 +116,17 @@ export default function CareerDayKiosk() {
               </span>
             ))}
           </div>
+          <button
+            type="button"
+            onClick={toggleAutoRead}
+            aria-pressed={autoRead}
+            aria-label={autoRead ? "Voice is on. Tap to turn it off." : "Voice is off. Tap to turn it on."}
+            className={`min-h-12 min-w-12 rounded-full px-3 py-2 text-xl font-bold shadow transition active:scale-95 ${
+              autoRead ? "bg-sky-500 text-white hover:bg-sky-600" : "bg-white text-slate-500 hover:bg-slate-50"
+            }`}
+          >
+            <span aria-hidden>{autoRead ? "🔊" : "🔇"}</span>
+          </button>
           <button
             type="button"
             onClick={resetAll}
@@ -138,16 +157,19 @@ export default function CareerDayKiosk() {
             </h1>
             <p className="mx-auto mt-3 max-w-xl text-2xl font-semibold text-slate-700">{homeIntro}</p>
             <div className="mt-4 flex justify-center">
-              <ReadAloud text={homeIntro} />
+              <ReadAloud text={homeIntro} auto={false} />
             </div>
+            <p className="mt-2 text-base font-semibold text-slate-500">
+              {autoRead
+                ? "The voice is on. Every screen will read itself. Tap 🔊 at the top to turn it off."
+                : "The voice is off. Tap 🔇 at the top to turn it on."}
+            </p>
 
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
               {missions.map((m) => (
-                <button
+                <div
                   key={m.id}
-                  type="button"
-                  onClick={() => setScreen(m.id)}
-                  className="relative flex min-h-64 flex-col items-center justify-start gap-2 rounded-[2rem] pt-10 border-4 border-white bg-white p-6 text-center shadow-xl shadow-slate-900/10 transition hover:-translate-y-1 hover:border-blue-300 active:scale-95"
+                  className="relative flex flex-col items-center gap-2 rounded-[2rem] border-4 border-white bg-white p-6 pt-10 text-center shadow-xl shadow-slate-900/10"
                 >
                   {done[m.id] && (
                     <span className="absolute right-4 top-4 rounded-full bg-emerald-100 px-3 py-1 text-sm font-extrabold text-emerald-800">
@@ -158,11 +180,20 @@ export default function CareerDayKiosk() {
                     {m.emoji}
                   </span>
                   <span className="text-2xl font-extrabold text-slate-900">{m.title}</span>
-                  <span className="text-lg font-semibold text-slate-600">{m.blurb}</span>
-                  <span className="mt-1 rounded-full bg-blue-50 px-3 py-1 text-sm font-bold text-blue-800">
+                  <span className="rounded-full bg-blue-50 px-3 py-1 text-sm font-bold text-blue-800">
                     {m.tag}
                   </span>
-                </button>
+                  <span className="mt-1 text-lg font-semibold text-slate-700">{m.about}</span>
+                  <div className="mt-2">
+                    <ReadAloud text={m.about} auto={false} />
+                  </div>
+                  <BigButton
+                    onClick={() => setScreen(m.id)}
+                    className="mt-auto w-full"
+                  >
+                    {done[m.id] ? "Play again" : "Start"}
+                  </BigButton>
+                </div>
               ))}
             </div>
 
@@ -206,5 +237,6 @@ export default function CareerDayKiosk() {
         )}
       </main>
     </div>
+    </AutoReadContext.Provider>
   );
 }

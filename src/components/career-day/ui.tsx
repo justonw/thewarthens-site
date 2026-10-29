@@ -1,9 +1,13 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef, type ReactNode } from "react";
 import type { CareerCardData, SoftSkillId } from "@/lib/career-day";
 import { softSkills } from "@/lib/career-day";
-import { useSpeech } from "./speech";
+import { hasUserTapped, useSpeech } from "./speech";
+
+// When on, each screen reads itself aloud as soon as it appears, so a child can go through the
+// whole game by tapping alone. The Read it to me button still works either way.
+export const AutoReadContext = createContext(false);
 
 const tones = {
   blue: "bg-blue-600 text-white shadow-blue-900/20 hover:bg-blue-700",
@@ -53,8 +57,18 @@ export function Panel({
   );
 }
 
-export function ReadAloud({ text }: { text: string }) {
+export function ReadAloud({ text, auto = true }: { text: string; auto?: boolean }) {
   const { supported, speaking, speak } = useSpeech();
+  const autoRead = useContext(AutoReadContext);
+  const speakRef = useRef(speak);
+  useEffect(() => {
+    speakRef.current = speak;
+  });
+  useEffect(() => {
+    if (!autoRead || !auto || !hasUserTapped()) return;
+    const id = setTimeout(() => speakRef.current(text, true), 400);
+    return () => clearTimeout(id);
+  }, [autoRead, auto, text]);
   if (!supported) return null;
   return (
     <button
