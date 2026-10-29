@@ -64,6 +64,12 @@ export default function Footer() {
               >
                 1:1 Coaching with Jermell
               </Link>
+              <Link
+                href="/techjr"
+                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+              >
+                Tech Journey Jr. (for kids)
+              </Link>
             </nav>
           </div>
           <div>

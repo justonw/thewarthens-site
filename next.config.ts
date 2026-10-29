@@ -29,6 +29,21 @@ const nextConfig: NextConfig = {
         permanent: false,
       },
       {
+        source: "/career-day",
+        destination: "/techjr/play",
+        permanent: false,
+      },
+      {
+        source: "/careerday",
+        destination: "/techjr/play",
+        permanent: false,
+      },
+      {
+        source: "/tech-jr",
+        destination: "/techjr",
+        permanent: false,
+      },
+      {
         source: "/start",
         destination: "/tech#start-here",
         permanent: false,

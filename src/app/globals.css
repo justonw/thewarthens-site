@@ -101,7 +101,7 @@ body {
   }
 }
 
-/* Career-day kiosk (/career-day): playful motion, all switched off for reduced-motion users. */
+/* Tech Journey Jr. kiosk (/techjr/play): playful motion, all switched off for reduced-motion users. */
 @keyframes cd-pop {
   0% {
     transform: scale(0.6);

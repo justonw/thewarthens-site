@@ -1,4 +1,4 @@
-// Content for the /career-day kiosk, built for a K-5 school career fair.
+// Content for the /techjr/play kiosk, built for a K-5 school career fair.
 // Rules for anything added here:
 //  - Keep the reading level around 2nd grade. Short sentences.
 //  - No em dashes.
