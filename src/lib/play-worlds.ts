@@ -139,7 +139,7 @@ export const worlds: World[] = [
   },
   {
     id: "data",
-    emoji: "🔮",
+    emoji: "📊",
     title: "Data & AI Lab",
     tag: "Data & AI",
     about: "Find patterns, ask big questions, and see how computers learn.",
