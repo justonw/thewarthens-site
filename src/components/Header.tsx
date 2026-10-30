@@ -5,7 +5,8 @@ const links = [
   // On phones the logo already goes home, so this makes room for the coaching link.
   { href: "/", label: "Home", short: "Home", wideOnly: true },
   { href: "/tech", label: "Tech Journey", short: "Tech Journey", wideOnly: false },
-  { href: "/faith", label: "Faith Journey", short: "Faith Journey", wideOnly: false },
+  { href: "/techjr", label: "Tech Jr.", short: "Tech Jr.", wideOnly: false },
+  { href: "/faith", label: "Faith Journey", short: "Faith", wideOnly: false },
   { href: "/tech/coaching", label: "1:1 Coaching", short: "Coaching", wideOnly: false },
 ];
 
