@@ -1,12 +1,29 @@
 "use client";
 
-import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useId, useSyncExternalStore } from "react";
 import { clipUrl, speechText } from "@/lib/career-day-audio";
 
 // Read-aloud plays a recorded voice clip when there is one. If not, it falls back to the
 // browser's built-in speech. Nothing is sent anywhere.
 
 let currentAudio: HTMLAudioElement | null = null;
+
+// Only one thing is read at a time. This remembers which button or box it is, so that one
+// can light up, and so starting a new reading clears the old one.
+let activeId: string | null = null;
+let readingNumber = 0;
+const listeners = new Set<() => void>();
+function setActive(id: string | null) {
+  if (activeId === id) return;
+  activeId = id;
+  listeners.forEach((l) => l());
+}
+const subscribe = (listener: () => void) => {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+};
 
 // Browsers block sound until someone has tapped the page, so automatic reading waits for that.
 let userHasTapped = false;
@@ -26,6 +43,7 @@ export function stopSpeech() {
   if (typeof window !== "undefined" && "speechSynthesis" in window) {
     window.speechSynthesis.cancel();
   }
+  setActive(null);
 }
 
 // Friendly, natural-sounding US male voices that ship with common devices, best first.
@@ -60,40 +78,52 @@ const detectSupport = () => typeof Audio !== "undefined" || "speechSynthesis" in
 const serverSupport = () => false;
 
 export function useSpeech() {
+  const id = useId();
   const supported = useSyncExternalStore(subscribeNever, detectSupport, serverSupport);
-  const [speaking, setSpeaking] = useState(false);
+  const speaking = useSyncExternalStore(subscribe, () => activeId === id, () => false);
 
-  useEffect(() => () => stopSpeech(), []);
+  useEffect(
+    () => () => {
+      if (activeId === id) stopSpeech();
+    },
+    [id]
+  );
 
-  const speakWithBrowserVoice = useCallback((text: string) => {
-    if (!("speechSynthesis" in window)) {
-      setSpeaking(false);
-      return;
-    }
-    const synth = window.speechSynthesis;
-    const utterance = new SpeechSynthesisUtterance(speechText(text));
-    utterance.lang = "en-US";
-    const voice = pickVoice();
-    if (voice) utterance.voice = voice;
-    utterance.rate = 1;
-    utterance.pitch = 0.95;
-    utterance.onend = () => setSpeaking(false);
-    utterance.onerror = () => setSpeaking(false);
-    synth.speak(utterance);
-  }, []);
+  const speakWithBrowserVoice = useCallback(
+    (text: string, reading: number) => {
+      const finish = () => {
+        if (reading === readingNumber && activeId === id) setActive(null);
+      };
+      if (!("speechSynthesis" in window)) {
+        finish();
+        return;
+      }
+      const synth = window.speechSynthesis;
+      const utterance = new SpeechSynthesisUtterance(speechText(text));
+      utterance.lang = "en-US";
+      const voice = pickVoice();
+      if (voice) utterance.voice = voice;
+      utterance.rate = 1;
+      utterance.pitch = 0.95;
+      utterance.onend = finish;
+      utterance.onerror = finish;
+      synth.speak(utterance);
+    },
+    [id]
+  );
 
   const speak = useCallback(
     (text: string, restart = false) => {
       if (speaking && !restart) {
         stopSpeech();
-        setSpeaking(false);
         return;
       }
       stopSpeech();
-      setSpeaking(true);
+      const reading = ++readingNumber;
+      setActive(id);
 
       if (typeof Audio === "undefined") {
-        speakWithBrowserVoice(text);
+        speakWithBrowserVoice(text, reading);
         return;
       }
       const audio = new Audio(clipUrl(text));
@@ -103,16 +133,16 @@ export function useSpeech() {
         if (fellBack || currentAudio !== audio) return;
         fellBack = true;
         currentAudio = null;
-        speakWithBrowserVoice(text);
+        speakWithBrowserVoice(text, reading);
       };
       audio.onended = () => {
         currentAudio = null;
-        setSpeaking(false);
+        if (reading === readingNumber && activeId === id) setActive(null);
       };
       audio.onerror = fallBack;
       audio.play().catch(fallBack);
     },
-    [speaking, speakWithBrowserVoice]
+    [id, speaking, speakWithBrowserVoice]
   );
 
   return { supported, speaking, speak };

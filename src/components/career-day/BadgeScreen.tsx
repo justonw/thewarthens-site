@@ -1,7 +1,7 @@
 "use client";
 
-import { badgeVerse, type SoftSkillId } from "@/lib/career-day";
-import { BigButton, Confetti, Panel, SkillChips } from "./ui";
+import { badgeSpoken, badgeVerse, type SoftSkillId } from "@/lib/career-day";
+import { BigButton, Confetti, Panel, ReadAloud, SkillChips } from "./ui";
 
 export default function BadgeScreen({
   stars,
@@ -47,6 +47,10 @@ export default function BadgeScreen({
         <p className="mt-6 text-base italic text-slate-600">
           &ldquo;{badgeVerse.text}&rdquo; {badgeVerse.ref}
         </p>
+
+        <div className="mt-5 flex justify-center">
+          <ReadAloud text={badgeSpoken(stars)} />
+        </div>
       </Panel>
 
       <div className="flex flex-wrap justify-center gap-4">

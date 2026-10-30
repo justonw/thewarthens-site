@@ -1,8 +1,8 @@
 "use client";
 
-import { createContext, useContext, useEffect, useRef, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef, type KeyboardEvent, type ReactNode } from "react";
 import type { CareerCardData, SoftSkillId } from "@/lib/career-day";
-import { softSkills } from "@/lib/career-day";
+import { cardSpoken, softSkills } from "@/lib/career-day";
 import { hasUserTapped, useSpeech } from "./speech";
 
 // When on, each screen reads itself aloud as soon as it appears, so a child can go through the
@@ -83,6 +83,64 @@ export function ReadAloud({ text, auto = true }: { text: string; auto?: boolean 
   );
 }
 
+// A box that reads itself aloud when a child taps it. With the voice on, it also reads when it
+// is reached with the keyboard or when the mouse rests on it for a moment.
+export function ReadBox({
+  text,
+  children,
+  className = "",
+}: {
+  text: string;
+  children: ReactNode;
+  className?: string;
+}) {
+  const { speaking, speak } = useSpeech();
+  const autoRead = useContext(AutoReadContext);
+  const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const clearHover = () => {
+    if (hoverTimer.current) clearTimeout(hoverTimer.current);
+    hoverTimer.current = null;
+  };
+  useEffect(() => clearHover, []);
+
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      aria-pressed={speaking}
+      onClick={() => speak(text)}
+      onKeyDown={(e: KeyboardEvent<HTMLDivElement>) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          speak(text);
+        }
+      }}
+      onFocus={(e) => {
+        if (autoRead && hasUserTapped() && e.currentTarget.matches(":focus-visible")) speak(text, true);
+      }}
+      onPointerEnter={(e) => {
+        if (!autoRead || e.pointerType !== "mouse" || !hasUserTapped()) return;
+        clearHover();
+        hoverTimer.current = setTimeout(() => speak(text, true), 700);
+      }}
+      onPointerLeave={clearHover}
+      className={`relative cursor-pointer rounded-3xl p-5 text-left outline-none transition focus-visible:ring-4 focus-visible:ring-blue-400 ${
+        speaking ? "bg-sky-100 ring-4 ring-sky-400" : "bg-slate-50 hover:bg-sky-50"
+      } ${className}`}
+    >
+      <span
+        aria-hidden
+        className={`absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full text-lg ${
+          speaking ? "bg-sky-500 text-white" : "bg-white text-sky-700 shadow"
+        }`}
+      >
+        {speaking ? "⏹️" : "🔊"}
+      </span>
+      {children}
+    </div>
+  );
+}
+
 const confettiColors = [
   "bg-rose-400",
   "bg-amber-400",
@@ -131,14 +189,16 @@ function CardSection({
   emoji,
   title,
   items,
+  text,
 }: {
   emoji: string;
   title: string;
   items: string[];
+  text: string;
 }) {
   return (
-    <div className="rounded-3xl bg-slate-50 p-5">
-      <p className="text-lg font-extrabold text-slate-800">
+    <ReadBox text={text}>
+      <p className="pr-10 text-lg font-extrabold text-slate-800">
         <span aria-hidden>{emoji} </span>
         {title}
       </p>
@@ -152,11 +212,11 @@ function CardSection({
           </li>
         ))}
       </ul>
-    </div>
+    </ReadBox>
   );
 }
 
-export function CareerCard({ data }: { data: CareerCardData }) {
+export function CareerCard({ data, lead = "" }: { data: CareerCardData; lead?: string }) {
   return (
     <Panel className="text-left">
       <div className="text-center">
@@ -165,24 +225,31 @@ export function CareerCard({ data }: { data: CareerCardData }) {
         </div>
         <h2 className="mt-2 text-3xl font-extrabold text-slate-900">{data.title}</h2>
         <p className="mt-1 text-lg text-slate-600">{data.tagline}</p>
+        <div className="mt-4 flex justify-center">
+          <ReadAloud text={cardSpoken.intro(data, lead)} />
+        </div>
+        <p className="mt-3 text-base font-bold text-sky-800">👆 Tap any box to hear it read out loud.</p>
       </div>
       <div className="mt-5 grid gap-4 sm:grid-cols-2">
-        <CardSection emoji="💬" title="People skills" items={data.soft} />
-        <CardSection emoji="🧠" title="Tech skills" items={data.hard} />
-        <div className="rounded-3xl bg-slate-50 p-5">
-          <p className="text-lg font-extrabold text-slate-800">
+        <CardSection emoji="💬" title="People skills" items={data.soft} text={cardSpoken.soft(data)} />
+        <CardSection emoji="🧠" title="Tech skills" items={data.hard} text={cardSpoken.hard(data)} />
+        <ReadBox text={cardSpoken.school(data)}>
+          <p className="pr-10 text-lg font-extrabold text-slate-800">
             <span aria-hidden>🎓 </span>
             School
           </p>
           <p className="mt-2 text-base text-slate-700">{data.school}</p>
-        </div>
-        <CardSection emoji="🚪" title="Ways in" items={data.ways} />
+        </ReadBox>
+        <CardSection emoji="🚪" title="Ways in" items={data.ways} text={cardSpoken.ways(data)} />
       </div>
       {data.honest && (
-        <p className="mt-4 rounded-3xl bg-amber-50 p-5 text-base font-semibold text-amber-900">
+        <ReadBox
+          text={cardSpoken.honest(data)}
+          className="mt-4 !bg-amber-50 text-base font-semibold text-amber-900 hover:!bg-amber-100"
+        >
           <span aria-hidden>💡 </span>
-          {data.honest}
-        </p>
+          <span className="pr-10">{data.honest}</span>
+        </ReadBox>
       )}
     </Panel>
   );

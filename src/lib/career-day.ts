@@ -236,6 +236,22 @@ export const creatorCard: CareerCardData = {
     "Some creators do not get many viewers at first. It takes time, practice, and patience. Kids should always ask a parent before sharing anything online.",
 };
 
+// What each box on the "what it takes" card says when a child taps it.
+const sentences = (items: string[]) => items.map((i) => (/[.!?]$/.test(i) ? i : `${i}.`)).join(" ");
+
+export const cardSpoken = {
+  intro: (data: CareerCardData, lead = "") =>
+    `${lead}${data.title}. ${data.tagline} Tap any box to hear what it takes.`,
+  soft: (data: CareerCardData) => `People skills. ${sentences(data.soft)}`,
+  hard: (data: CareerCardData) => `Tech skills. ${sentences(data.hard)}`,
+  school: (data: CareerCardData) => `School. ${data.school}`,
+  ways: (data: CareerCardData) => `Ways in. ${sentences(data.ways)}`,
+  honest: (data: CareerCardData) => (data.honest ? `Good to know. ${data.honest}` : ""),
+};
+
+export const helperCardLead = "Mission complete! ";
+export const creatorCardCloser = "Your voice can help someone else's world get bigger.";
+
 /* ------------------------------------------------------------------ */
 /* Mission 2: Make a Show (family and class, never posted online)      */
 /* ------------------------------------------------------------------ */
@@ -636,6 +652,27 @@ export const factGroups: FactGroup[] = [
     blurb: "People who built things you use",
     facts: [
       {
+        id: "ada",
+        emoji: "🧮",
+        hook: "Who wrote a computer program before computers were built?",
+        answer:
+          "Ada Lovelace, a mathematician from England. In the 1840s she wrote steps for a machine that had not been finished yet. Many people call her the first computer programmer.",
+      },
+      {
+        id: "johnson",
+        emoji: "🚀",
+        hook: "Who helped astronauts get to space and back safely?",
+        answer:
+          "Katherine Johnson, a Black mathematician at NASA. She did math by hand to plan flights. In 1962, an astronaut named John Glenn asked her to check the computer's numbers before he flew.",
+      },
+      {
+        id: "ochoa",
+        emoji: "🛰️",
+        hook: "Who invented tools that help computers see, then flew to space?",
+        answer:
+          "Dr. Ellen Ochoa, an engineer. She earned patents for tools that help computers see. In 1993 she flew on the space shuttle, the first Hispanic woman to go to space.",
+      },
+      {
         id: "lawson",
         emoji: "🎮",
         hook: "Who helped make it possible to swap video games?",
@@ -653,6 +690,14 @@ export const factGroups: FactGroup[] = [
   },
 ];
 
+export const posterSpoken = (power: Superpower) =>
+  `Your brand new show is ready! Here are your first 3 episodes. ${sentences(power.episodeIdeas)} Now say your show pitch out loud to a grown-up. Real creators practice, show up often, and stay kind and honest. Stay safe. ${creatorSafety}`;
+
+export const badgeSpoken = (stars: number) =>
+  `You earned ${stars} of 3 stars! Show this screen to Mr. or Mrs. Warthen for your sticker. ${
+    stars < 3 ? "You can do another mission to earn more stars. " : "You earned every star. "
+  }${badgeVerse.text} ${badgeVerse.ref}.`;
+
 // Everything the "Read it to me" buttons can say, so recorded clips can be made for all of it.
 export const allSpokenLines: string[] = [
   homeIntro,
@@ -664,6 +709,19 @@ export const allSpokenLines: string[] = [
   whoPrompt,
   lookPrompt,
   namePrompt,
+  ...superpowers.map(posterSpoken),
+  ...[techSalesCard, creatorCard].flatMap((card, i) =>
+    [
+      cardSpoken.intro(card, i === 0 ? helperCardLead : ""),
+      cardSpoken.soft(card),
+      cardSpoken.hard(card),
+      cardSpoken.school(card),
+      cardSpoken.ways(card),
+      cardSpoken.honest(card),
+    ].filter(Boolean)
+  ),
+  creatorCardCloser,
+  ...[1, 2, 3].map(badgeSpoken),
   giftIntro,
   ...giftQuestions.map(giftQuestionSpoken),
   ...Object.values(giftResults).map(giftResultSpoken),

@@ -19,11 +19,13 @@ function backHair(style: HairStyle, c: string): ReactNode {
     case "locs":
       return (
         <g stroke={c} strokeWidth="6" strokeLinecap="round" fill="none">
-          {[30, 36, 42].map((x) => (
-            <path key={x} d={`M${x + 4} 40 C${x - 4} 56 ${x - 4} 72 ${x - 2} 92`} />
-          ))}
-          {[78, 84, 90].map((x) => (
-            <path key={x} d={`M${x - 4} 40 C${x + 4} 56 ${x + 4} 72 ${x + 2} 92`} />
+          {[
+            [27, 25],
+            [33, 31],
+            [87, 89],
+            [93, 95],
+          ].map(([x, end]) => (
+            <path key={x} d={`M${x} 44 C${end - 4} 62 ${end - 4} 80 ${end} 102`} />
           ))}
         </g>
       );
@@ -65,6 +67,27 @@ function backHair(style: HairStyle, c: string): ReactNode {
       return (
         <path d="M80 34 C108 26 118 62 102 98 C98 72 92 58 80 52 Z" fill={c} />
       );
+    case "bob":
+      return (
+        <path
+          d="M29 52 C25 30 42 18 60 18 C78 18 95 30 91 52 L93 84 C93 90 88 92 82 90 L38 90 C32 92 27 90 27 84 Z"
+          fill={c}
+        />
+      );
+    case "long-wavy":
+      return (
+        <path
+          d="M30 50 C26 28 42 17 60 17 C78 17 94 28 90 50 C98 64 90 76 97 90 C93 98 99 104 96 110 L24 110 C21 104 27 98 23 90 C30 76 22 64 30 50 Z"
+          fill={c}
+        />
+      );
+    case "braid":
+      return null;
+    case "shaggy":
+    case "wavy":
+    case "spiky":
+    case "short":
+      return null;
     case "pigtail-braids":
       return null;
     default:
@@ -140,11 +163,21 @@ function frontHair(style: HairStyle, c: string): ReactNode {
         <g>
           <path d={CAP_HIGH} fill={c} />
           <g stroke={c} strokeWidth="6" strokeLinecap="round" fill="none">
-            {[40, 48, 56, 64, 72, 80].map((x, i) => (
-              <path key={x} d={`M${x} 38 L${x + (i - 2.5) * 1.8} 24`} />
-            ))}
-            <path d="M33 46 C29 62 29 76 31 90" />
-            <path d="M87 46 C91 62 91 76 89 90" />
+            <path d="M33 46 C29 62 29 78 30 96" />
+            <path d="M87 46 C91 62 91 78 90 96" />
+          </g>
+          <g
+            stroke="#fff"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeDasharray="1.2 4"
+            opacity="0.35"
+            fill="none"
+          >
+            <path d="M33 46 C29 62 29 78 30 96" />
+            <path d="M87 46 C91 62 91 78 90 96" />
+            <path d="M42 44 C44 38 50 34 60 34" />
+            <path d="M78 44 C76 38 70 34 60 34" />
           </g>
         </g>
       );
@@ -255,6 +288,91 @@ function frontHair(style: HairStyle, c: string): ReactNode {
           ))}
         </g>
       );
+    case "short":
+      return (
+        <g>
+          <path
+            d="M33 57 C29 36 44 26 62 26 C79 26 91 38 87 57 C85 47 80 41 70 40 C60 43 46 41 38 46 C35 49 34 53 33 57 Z"
+            fill={c}
+          />
+          <path d="M48 33 C54 30 62 29 70 31" stroke="#fff" strokeOpacity="0.2" strokeWidth="2" strokeLinecap="round" fill="none" />
+        </g>
+      );
+    case "shaggy":
+      return (
+        <g>
+          <path
+            d="M31 62 C26 34 44 24 60 24 C76 24 94 34 89 62 C88 52 84 46 78 44 C68 49 52 49 42 44 C36 46 32 52 31 62 Z"
+            fill={c}
+          />
+          <path d="M31 62 L33 50 L38 60 Z M89 62 L87 50 L82 60 Z" fill={c} />
+        </g>
+      );
+    case "wavy":
+      return (
+        <g>
+          <path d={CAP_HIGH} fill={c} />
+          <g stroke={c} strokeWidth="7" strokeLinecap="round" fill="none">
+            <path d="M36 44 C40 34 46 40 50 32 C54 26 58 34 62 28 C66 24 72 34 76 30 C82 28 84 38 85 44" />
+          </g>
+          <path d="M40 38 C46 34 50 40 56 34" stroke="#fff" strokeOpacity="0.18" strokeWidth="1.8" strokeLinecap="round" fill="none" />
+        </g>
+      );
+    case "spiky":
+      return (
+        <path
+          d="M34 54 L35 36 L43 43 L46 28 L54 40 L60 24 L66 40 L74 28 L77 43 L85 36 L86 54 C82 46 72 42 60 42 C48 42 38 46 34 54 Z"
+          fill={c}
+          stroke={c}
+          strokeWidth="2"
+          strokeLinejoin="round"
+        />
+      );
+    case "bob":
+      return (
+        <g>
+          <path d={CAP} fill={c} />
+          <path d="M33 52 L28 86 L41 88 L38 60 Z" fill={c} />
+          <path d="M87 52 L92 86 L79 88 L82 60 Z" fill={c} />
+        </g>
+      );
+    case "long-wavy":
+      return (
+        <g>
+          <path d={CAP} fill={c} />
+          <path d="M33 52 C27 64 35 74 28 90 C27 98 31 102 33 106 L43 106 C39 94 45 86 39 74 C36 68 38 62 38 58 Z" fill={c} />
+          <path d="M87 52 C93 64 85 74 92 90 C93 98 89 102 87 106 L77 106 C81 94 75 86 81 74 C84 68 82 62 82 58 Z" fill={c} />
+        </g>
+      );
+    case "space-buns":
+      return (
+        <g>
+          <circle cx="36" cy="26" r="11" fill={c} />
+          <circle cx="84" cy="26" r="11" fill={c} />
+          <path d={CAP} fill={c} />
+          <ellipse cx="38" cy="35" rx="7" ry="2.6" fill={TIE} />
+          <ellipse cx="82" cy="35" rx="7" ry="2.6" fill={TIE} />
+        </g>
+      );
+    case "braid":
+      return (
+        <g>
+          <path d={CAP} fill={c} />
+          <g fill={c}>
+            {[0, 1, 2, 3, 4, 5, 6].map((i) => (
+              <ellipse
+                key={i}
+                cx={i % 2 ? 91 : 87}
+                cy={52 + i * 8}
+                rx="5.5"
+                ry="5"
+                transform={`rotate(${i % 2 ? 20 : -20} ${i % 2 ? 91 : 87} ${52 + i * 8})`}
+              />
+            ))}
+          </g>
+          <circle cx="89" cy="108" r="3.6" fill={TIE} />
+        </g>
+      );
     case "pigtail-braids":
       return (
         <g>
@@ -278,6 +396,8 @@ function frontHair(style: HairStyle, c: string): ReactNode {
           <circle cx="86" cy="50" r="4" fill={TIE} />
         </g>
       );
+    default:
+      return null;
   }
 }
 
@@ -292,7 +412,7 @@ export default function Avatar({
   label?: string;
   className?: string;
 }) {
-  const skin = avatarSkins.find((s) => s.id === look.skin)?.hex ?? avatarSkins[3].hex;
+  const skin = avatarSkins.find((s) => s.id === look.skin)?.hex ?? avatarSkins[2].hex;
   const hair = avatarHairColors.find((h) => h.id === look.hairColor)?.hex ?? avatarHairColors[0].hex;
   const clip = `avatar-clip-${look.gender}-${look.skin}-${look.hair}-${look.hairColor}`;
 
@@ -320,8 +440,12 @@ export default function Avatar({
         <circle cx="34" cy="62" r="5.5" fill={skin} />
         <circle cx="86" cy="62" r="5.5" fill={skin} />
         <ellipse cx="60" cy="58" rx="27" ry="29" fill={skin} />
-        <circle cx="42" cy="70" r="5" fill="#F2788F" opacity="0.28" />
-        <circle cx="78" cy="70" r="5" fill="#F2788F" opacity="0.28" />
+        {look.gender === "girl" && (
+          <>
+            <circle cx="42" cy="70" r="5" fill="#F2788F" opacity="0.22" />
+            <circle cx="78" cy="70" r="5" fill="#F2788F" opacity="0.22" />
+          </>
+        )}
         <ellipse cx="49" cy="60" rx="4.3" ry="4.8" fill="#fff" />
         <ellipse cx="71" cy="60" rx="4.3" ry="4.8" fill="#fff" />
         <circle cx="49.4" cy="60.6" r="2.9" fill="#1D1411" />

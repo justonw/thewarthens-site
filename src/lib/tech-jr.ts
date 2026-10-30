@@ -34,7 +34,7 @@ export const gameParts = [
     emoji: "🤯",
     title: "Cool Facts",
     topic: "Tech and creator history",
-    body: "Tap-to-reveal facts kids actually repeat at lunch, like the first video ever put on YouTube and the first emoji, plus two Black inventors who shaped the computers we use.",
+    body: "Tap-to-reveal facts kids actually repeat at lunch, like the first video ever put on YouTube and the first emoji, plus real tech heroes from many backgrounds, like the mathematician who helped astronauts get home safely.",
   },
 ] as const;
 

@@ -5,10 +5,12 @@ import {
   audienceLine,
   audiences,
   creatorCard,
+  creatorCardCloser,
   creatorIntro,
   creatorSafety,
   lookPrompt,
   namePrompt,
+  posterSpoken,
   powerPrompt,
   superpowers,
   whoPrompt,
@@ -23,7 +25,7 @@ import {
   type AvatarLook,
 } from "@/lib/career-avatar";
 import Avatar from "./Avatar";
-import { BigButton, CareerCard, Confetti, Panel, ReadAloud } from "./ui";
+import { BigButton, CareerCard, Confetti, Panel, ReadAloud, ReadBox } from "./ui";
 
 type Step = "intro" | "power" | "who" | "look" | "name" | "poster" | "card";
 
@@ -237,7 +239,7 @@ export default function CreatorMission({ onFinish }: { onFinish: () => void }) {
           </div>
 
           <p className="mt-6 text-center text-lg font-bold text-slate-700">My skin</p>
-          <div className="mx-auto mt-2 grid max-w-md grid-cols-6 justify-items-center gap-2">
+          <div className="mx-auto mt-2 grid max-w-lg grid-cols-8 justify-items-center gap-2">
             {avatarSkins.map((t) => (
               <button
                 key={t.id}
@@ -363,6 +365,9 @@ export default function CreatorMission({ onFinish }: { onFinish: () => void }) {
     return (
       <div className="mx-auto max-w-2xl space-y-5">
         <Confetti />
+        <div className="flex justify-center">
+          <ReadAloud text={posterSpoken(power)} />
+        </div>
         <div className="cd-pop rounded-[2.2rem] bg-gradient-to-br from-violet-500 via-fuchsia-500 to-amber-400 p-1.5 shadow-2xl">
           <div className="rounded-[2rem] bg-white p-6 text-center sm:p-8">
             <div className="flex justify-center">
@@ -416,7 +421,9 @@ export default function CreatorMission({ onFinish }: { onFinish: () => void }) {
       <div className="mx-auto max-w-3xl space-y-5">
         <CareerCard data={creatorCard} />
         <Panel className="text-center">
-          <p className="text-xl font-extrabold text-slate-900">Your voice can help someone else&apos;s world get bigger. 🌍</p>
+          <ReadBox text={creatorCardCloser} className="!bg-white">
+            <p className="px-8 text-xl font-extrabold text-slate-900">Your voice can help someone else&apos;s world get bigger. 🌍</p>
+          </ReadBox>
         </Panel>
         <div className="text-center">
           <BigButton tone="amber" onClick={onFinish}>

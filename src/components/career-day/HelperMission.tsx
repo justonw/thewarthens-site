@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import {
+  helperCardLead,
   helperIntro,
   helperRoundSpoken,
   helperRounds,
@@ -70,7 +71,7 @@ export default function HelperMission({ onFinish }: { onFinish: (skills: SoftSki
             <SkillChips skills={earned} />
           </div>
         </Panel>
-        <CareerCard data={techSalesCard} />
+        <CareerCard data={techSalesCard} lead={helperCardLead} />
         <div className="text-center">
           <BigButton tone="amber" onClick={() => onFinish(earned)}>
             ⭐ Earn my star!
