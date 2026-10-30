@@ -15,39 +15,17 @@ export const softSkills: Record<SoftSkillId, { emoji: string; label: string }> =
   "problem-solving": { emoji: "🧩", label: "Problem Solving" },
 };
 
-export const missions = [
-  {
-    id: "helper",
-    emoji: "🤝",
-    title: "Be the Helper",
-    blurb: "Help customers solve problems",
-    tag: "Tech Sales & Customer Success",
-    about:
-      "In tech sales and customer success, you listen to people and find the right tool to fix their problem. Then you make sure it keeps working for them.",
-  },
-  {
-    id: "creator",
-    emoji: "🎥",
-    title: "Make a Show",
-    blurb: "Share what you are great at",
-    tag: "Content Creation",
-    about:
-      "Content creators make videos and shows that teach people and share what they love. They plan their ideas, film them, and keep getting better.",
-  },
-  {
-    id: "gift",
-    emoji: "🎁",
-    title: "Find Your Gift",
-    blurb: "Discover how you like to help",
-    tag: "Careers & You",
-    about:
-      "Everyone is good at something. Answer a few questions to find how you like to help, and see grown-up jobs that use your gift.",
-  },
-] as const;
+// What each world says about itself. The map in play-worlds.ts shows these and reads them aloud.
+export const worldAbout = {
+  helper:
+    "In tech sales and customer success, you listen to people and find the right tool to fix their problem. Then you make sure it keeps working for them.",
+  creator:
+    "Content creators make videos and shows that teach people and share what they love. They plan their ideas, film them, and keep getting better.",
+  gift: "Everyone is good at something. Answer a few questions to find how you like to help, and see grown-up jobs that use your gift.",
+  facts: "Wild true facts about tech and the people who built it. Tap a card to see the answer.",
+} as const;
 
-export type MissionId = (typeof missions)[number]["id"];
-
-export const homeIntro = "Be a tech pro for a day! Pick a mission, earn stars, and get a sticker.";
+export const homeIntro = "Pick a world and start exploring! Earn stars, level up, and become a Tech Pro.";
 
 export const badgeVerse = {
   text: "Whatever you do, work at it with all your heart.",
@@ -694,14 +672,14 @@ export const posterSpoken = (power: Superpower) =>
   `Your brand new show is ready! Here are your first 3 episodes. ${sentences(power.episodeIdeas)} Now say your show pitch out loud to a grown-up. Real creators practice, show up often, and stay kind and honest. Stay safe. ${creatorSafety}`;
 
 export const badgeSpoken = (stars: number) =>
-  `You earned ${stars} of 3 stars! Show this screen to Mr. or Mrs. Warthen for your sticker. ${
-    stars < 3 ? "You can do another mission to earn more stars. " : "You earned every star. "
+  `You earned ${stars} of 3 stars! Show this screen to a grown-up and tell them what you learned. ${
+    stars < 3 ? "You can play another world to earn more stars. " : "You earned every star. "
   }${badgeVerse.text} ${badgeVerse.ref}.`;
 
 // Everything the "Read it to me" buttons can say, so recorded clips can be made for all of it.
 export const allSpokenLines: string[] = [
   homeIntro,
-  ...missions.map((m) => m.about),
+  ...Object.values(worldAbout),
   helperIntro,
   ...helperRounds.map(helperRoundSpoken),
   creatorIntro,

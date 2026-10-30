@@ -103,19 +103,19 @@ export const hostingNeeds = [
 export const hostingSteps = [
   {
     title: "Open the game",
-    body: "Go to thewarthens.com/techjr/play and put the browser in full screen. On an iPad or iPhone, Guided Access keeps kids from leaving the page.",
+    body: "Go to thewarthens.com/techjr/play?kiosk=1 and put the browser in full screen. On an iPad or iPhone, Guided Access keeps kids from leaving the page.",
   },
   {
     title: "Let kids tap through",
-    body: "Each child picks a mission, earns a star, and can earn all three for a badge. Missions are short, so a line can keep moving.",
+    body: "Each child picks a world, earns a star, and can earn all three to become a Tech Pro. Each world is short, so a line can keep moving.",
   },
   {
     title: "Ask one question",
-    body: "After a mission, ask the child one thing from the conversation starters, like what kind of show they would make. The short chat is where kids remember the careers.",
+    body: "After a world, ask the child one thing from the conversation starters, like what kind of show they would make. The short chat is where kids remember the careers.",
   },
   {
     title: "It resets itself",
-    body: "If nobody touches the screen for a couple of minutes, the game returns to the start so the next child begins fresh. Nothing about the last child is kept.",
+    body: "With ?kiosk=1 on the address, the game returns to the start after a couple of minutes with no touches, so the next child begins fresh. Nothing about the last child is kept. At home it never resets on its own.",
   },
 ] as const;
 

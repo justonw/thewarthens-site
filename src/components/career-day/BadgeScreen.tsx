@@ -41,7 +41,7 @@ export default function BadgeScreen({
         )}
 
         <p className="mt-6 rounded-3xl bg-amber-100 p-5 text-2xl font-extrabold text-amber-900">
-          🎉 Show this screen to Mr. or Mrs. Warthen for your sticker!
+          🎉 Show this screen to a grown-up and tell them what you learned!
         </p>
 
         <p className="mt-6 text-base italic text-slate-600">
@@ -56,7 +56,7 @@ export default function BadgeScreen({
       <div className="flex flex-wrap justify-center gap-4">
         {stars < 3 && (
           <BigButton tone="white" onClick={onMore}>
-            Do another mission
+            Pick another world
           </BigButton>
         )}
         <BigButton onClick={onNext}>Next player ➡️</BigButton>

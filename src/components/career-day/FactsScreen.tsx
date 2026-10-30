@@ -68,11 +68,11 @@ export default function FactsScreen({ onHome }: { onHome: () => void }) {
       {factGroups.map((group) => (
         <section key={group.id} className="space-y-3">
           <div className="text-center">
-            <h3 className="text-2xl font-extrabold text-slate-900">
+            <h3 className="text-2xl font-extrabold text-white">
               <span aria-hidden>{group.emoji} </span>
               {group.title}
             </h3>
-            <p className="text-base font-semibold text-slate-600">{group.blurb}</p>
+            <p className="text-base font-semibold text-indigo-200">{group.blurb}</p>
           </div>
           {group.facts.map((fact) => (
             <FactCard
@@ -86,7 +86,7 @@ export default function FactsScreen({ onHome }: { onHome: () => void }) {
       ))}
 
       <div className="text-center">
-        <BigButton onClick={onHome}>🏠 Back to the missions</BigButton>
+        <BigButton onClick={onHome}>🗺️ Back to the map</BigButton>
       </div>
     </div>
   );

@@ -152,7 +152,7 @@ export default function HelperMission({ onFinish }: { onFinish: (skills: SoftSki
       {solved && (
         <div className="space-y-4 text-center">
           <SkillChips skills={round.earns} />
-          <p className="mx-auto max-w-xl text-lg font-semibold text-slate-700">💡 {round.lesson}</p>
+          <p className="mx-auto max-w-xl rounded-3xl bg-white p-4 text-lg font-semibold text-slate-800 shadow-lg">💡 {round.lesson}</p>
           <BigButton onClick={next}>
             {roundIndex + 1 < helperRounds.length ? "Next ➡️" : "See what it takes ➡️"}
           </BigButton>

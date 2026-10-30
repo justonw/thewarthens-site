@@ -194,7 +194,7 @@ export default function TechJrPage() {
         <Reveal>
           <h2 className="text-2xl font-semibold sm:text-3xl">What children do in the game</h2>
           <p className="mt-3 max-w-2xl text-foreground-muted">
-            Three short missions and a page of facts. Every screen can be read aloud, buttons are
+            Three short worlds to play, a lab of facts, and more worlds on the way. Every screen can be read aloud, buttons are
             big enough for small fingers, and it works on phones, tablets, and computers.
           </p>
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -384,7 +384,7 @@ export default function TechJrPage() {
               <p className="font-semibold">Table address</p>
               <p className="mt-1 text-sm text-foreground-muted">
                 Put this on your sign or flyer, or make a QR code for it:{" "}
-                <span className="font-semibold text-foreground">thewarthens.com/techjr/play</span>
+                <span className="font-semibold text-foreground">thewarthens.com/techjr/play?kiosk=1</span>
               </p>
             </div>
             <Link href={TECHJR_PLAY_PATH} className={primaryButton}>

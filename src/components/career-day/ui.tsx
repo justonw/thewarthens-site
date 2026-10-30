@@ -9,11 +9,12 @@ import { hasUserTapped, useSpeech } from "./speech";
 // whole game by tapping alone. The Read it to me button still works either way.
 export const AutoReadContext = createContext(false);
 
+// Chunky buttons with a thick bottom edge that squashes when pressed, like a game controller.
 const tones = {
-  blue: "bg-blue-600 text-white shadow-blue-900/20 hover:bg-blue-700",
-  green: "bg-emerald-500 text-white shadow-emerald-900/20 hover:bg-emerald-600",
-  amber: "bg-amber-400 text-slate-900 shadow-amber-900/20 hover:bg-amber-500",
-  white: "bg-white text-slate-800 shadow-slate-900/10 hover:bg-slate-50",
+  blue: "border-blue-900 bg-blue-500 text-white hover:bg-blue-400",
+  green: "border-emerald-800 bg-emerald-500 text-white hover:bg-emerald-400",
+  amber: "border-amber-700 bg-amber-400 text-slate-900 hover:bg-amber-300",
+  white: "border-slate-300 bg-white text-slate-800 hover:bg-slate-50",
 };
 
 export function BigButton({
@@ -34,7 +35,7 @@ export function BigButton({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`min-h-16 rounded-3xl px-8 py-4 text-xl font-extrabold shadow-lg transition active:scale-95 focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-blue-400 disabled:cursor-not-allowed disabled:opacity-50 ${tones[tone]} ${className}`}
+      className={`min-h-16 rounded-2xl border-b-[6px] px-8 py-4 text-xl font-extrabold shadow-lg transition active:translate-y-1 active:border-b-2 focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-50 ${tones[tone]} ${className}`}
     >
       {children}
     </button>
@@ -50,7 +51,7 @@ export function Panel({
 }) {
   return (
     <div
-      className={`rounded-[2rem] border-4 border-white bg-white/90 p-5 shadow-xl shadow-slate-900/10 sm:p-8 ${className}`}
+      className={`rounded-[2rem] border-4 border-white/80 bg-white p-5 text-slate-900 shadow-2xl shadow-indigo-950/40 sm:p-8 ${className}`}
     >
       {children}
     </div>
