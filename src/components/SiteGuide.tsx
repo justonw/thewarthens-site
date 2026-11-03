@@ -8,13 +8,16 @@ import {
   guideNodes,
   guideWelcome,
   searchGuide,
+  searchIndex,
   type GuideChoice,
   type SearchEntry,
 } from "@/lib/site-guide";
 
 // The chat bubble in the corner. It asks what a visitor is here for, shows buttons, and takes
-// them straight to the right page or section. It is a set of questions and a small keyword
-// search, not AI. Nothing a visitor types is sent anywhere or saved.
+// them straight to the right page or section. The buttons are a fixed set of questions. The
+// "type what you're looking for" box asks an AI (see /api/guide) to pick from the site's real
+// pages, and falls back to a built-in keyword search when the AI is off or does not answer.
+// Typed questions go to the AI service to get an answer and are not saved on this site.
 //
 // It opens by itself on the main landing pages for first-time visitors (once a week at most),
 // and never on a page that was reached through a #section link. It does not render in the kids'
@@ -217,12 +220,41 @@ export default function SiteGuide() {
     if (!text || typing || leaving) return;
     setQuery("");
     addMe(text);
-    const found = searchGuide(text);
     setResults(null);
-    // With no match, the question's own buttons come back so the visitor is never stuck.
-    botSay(found.length > 0 ? "Here is what I found:" : NO_MATCH, () =>
-      setResults(found.length > 0 ? found : null)
-    );
+    setTyping(true);
+    void answerQuestion(text);
+  };
+
+  // Ask the AI first. If it is off, slow, or fails, use the built-in search so the visitor still
+  // gets an answer. With no match at all, the question's own buttons come back so nobody is stuck.
+  const answerQuestion = async (text: string) => {
+    let reply: string | null = null;
+    let found: SearchEntry[] = [];
+    try {
+      const res = await fetch("/api/guide", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ message: text }),
+        signal: AbortSignal.timeout(10_000),
+      });
+      if (res.ok) {
+        const data = (await res.json()) as { reply?: unknown; pages?: unknown };
+        if (typeof data.reply === "string") {
+          reply = data.reply;
+          const hrefs = Array.isArray(data.pages) ? data.pages : [];
+          found = hrefs.flatMap((h) => searchIndex.find((e) => e.href === h) ?? []);
+        }
+      }
+    } catch {
+      // Fall through to the built-in search.
+    }
+    if (reply === null) {
+      found = searchGuide(text);
+      reply = found.length > 0 ? "Here is what I found:" : NO_MATCH;
+    }
+    const said = reply;
+    setTyping(false);
+    botSay(said, () => setResults(found.length > 0 ? found : null));
   };
 
   const node = guideNodes[nodeId];
@@ -357,7 +389,7 @@ export default function SiteGuide() {
               placeholder="Or type what you're looking for"
               autoComplete="off"
               enterKeyHint="search"
-              maxLength={80}
+              maxLength={200}
               className="min-w-0 flex-1 rounded-full border border-border-subtle bg-background px-4 py-2.5 text-base text-foreground placeholder:text-foreground-muted focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-600 sm:text-sm"
             />
             <button
@@ -368,6 +400,9 @@ export default function SiteGuide() {
               Go
             </button>
           </form>
+          <p className="border-t border-border-subtle bg-background-elevated/60 px-4 pb-2.5 pt-0 text-[11px] leading-snug text-foreground-muted">
+            Typed questions are sent to an AI to find the right page. Please don&apos;t include personal details.
+          </p>
         </div>
       ) : (
         <button

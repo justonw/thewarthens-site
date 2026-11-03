@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { boyHairStyles, girlHairStyles } from "@/lib/career-avatar";
 import CrewStrip from "@/components/career-day/CrewStrip";
 import Reveal from "@/components/Reveal";
 import { guides } from "@/lib/guides";
@@ -45,6 +46,8 @@ export const metadata: Metadata = {
   },
   twitter: { card: "summary_large_image", title: techJrTitle, description: techJrDescription },
 };
+
+const hairstyleCount = boyHairStyles.length + girlHairStyles.length;
 
 const primaryButton =
   "inline-flex items-center justify-center gap-2 rounded-full bg-blue-600 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/25 transition-colors hover:bg-blue-500 sm:text-base";
@@ -204,8 +207,8 @@ export default function TechJrPage() {
           <h2 className="text-2xl font-semibold sm:text-3xl">Every child can see themselves</h2>
           <p className="mt-3 max-w-2xl text-foreground-muted">
             Meet the Tech Crew, the kids who show up around the game. They have many skin tones,
-            hairstyles, and backgrounds, and some wear glasses, a hijab, headphones, or hearing aids.
-            In Make a Show, a child builds a character of their own from 8 skin tones, 24 hairstyles
+            hairstyles, and backgrounds, and some have freckles or wear glasses, headphones, or hearing aids.
+            In Make a Show, a child builds a character of their own from 8 skin tones, {hairstyleCount} hairstyles
             (including twists, locs, braids, puffs, and knots), and the same extras. The Cool Facts
             also tell the true stories of inventors and builders from many places and backgrounds.
           </p>

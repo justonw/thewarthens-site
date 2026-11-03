@@ -51,18 +51,23 @@ export const girlHairStyles = [
   { id: "big-curls", label: "Big curls" },
   { id: "bantu-knots", label: "Knots" },
   { id: "box-braids", label: "Long braids" },
+  { id: "afro", label: "Afro" },
+  { id: "locs", label: "Locs" },
+  { id: "twists", label: "Twists" },
+  { id: "cornrows", label: "Braids" },
 ] as const;
 
 export type BoyHairStyle = (typeof boyHairStyles)[number]["id"];
 export type GirlHairStyle = (typeof girlHairStyles)[number]["id"];
 export type HairStyle = BoyHairStyle | GirlHairStyle;
 
-// Things a child can add to their character: just like real kids, some wear glasses, a hijab,
-// headphones, or hearing aids. "none" is the plain look.
+// Things a child can add to their character: just like real kids, some have freckles or wear
+// glasses, headphones, or hearing aids. "none" is the plain look. Keep this list to everyday things;
+// nothing that signals a particular religion.
 export const avatarAccessories = [
   { id: "none", label: "Plain" },
+  { id: "freckles", label: "Freckles" },
   { id: "glasses", label: "Glasses" },
-  { id: "hijab", label: "Hijab" },
   { id: "headphones", label: "Headphones" },
   { id: "hearing-aids", label: "Hearing aids" },
 ] as const;
@@ -102,9 +107,9 @@ export const crew: CrewMember[] = [
   {
     id: "amira",
     name: "Amira",
-    look: { gender: "girl", skin: "olive", hair: "long-straight", hairColor: "black", accessory: "hijab" },
+    look: { gender: "girl", skin: "olive", hair: "long-straight", hairColor: "black" },
   },
-  { id: "jamal", name: "Jamal", look: { gender: "boy", skin: "deep", hair: "twists", hairColor: "black" } },
+  { id: "jamal", name: "Jamal", look: { gender: "boy", skin: "deep", hair: "cornrows", hairColor: "black" } },
   {
     id: "sofia",
     name: "Sofia",
@@ -129,6 +134,11 @@ export const crew: CrewMember[] = [
     id: "arjun",
     name: "Arjun",
     look: { gender: "boy", skin: "caramel", hair: "short", hairColor: "black", accessory: "hearing-aids" },
+  },
+  {
+    id: "elijah",
+    name: "Elijah",
+    look: { gender: "boy", skin: "brown", hair: "locs", hairColor: "black", accessory: "freckles" },
   },
   { id: "noah", name: "Noah", look: { gender: "boy", skin: "fair", hair: "shaggy", hairColor: "blonde" } },
 ];

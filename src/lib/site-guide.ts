@@ -492,8 +492,13 @@ const matches = (a: string, b: string) =>
 const MAX_RESULTS = 4;
 
 export function searchGuide(query: string): SearchEntry[] {
-  const terms = words(query).filter((w) => !STOP_WORDS.has(w));
-  if (terms.length === 0) return [];
+  const all = words(query);
+  const terms = all.filter((w) => !STOP_WORDS.has(w));
+  // "How to get a job" is only generic words, so try again keeping the ones that carry meaning here.
+  if (terms.length === 0) {
+    const kept = all.filter((w) => w === "tech" || w === "job" || w === "jobs");
+    return kept.length > 0 ? searchGuide("resume apply quiz") : [];
+  }
   const scored = searchIndex.map((entry, order) => {
     const titleWords = words(entry.title);
     const otherWords = words(`${entry.keywords} ${entry.blurb}`);

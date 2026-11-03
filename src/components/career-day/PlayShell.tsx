@@ -232,7 +232,7 @@ export default function PlayShell({ children }: { children: ReactNode }) {
                       <span aria-hidden>{level.emoji}</span>
                       {level.name}
                     </span>
-                    <div className="flex items-center gap-1 text-2xl sm:text-3xl" aria-hidden>
+                    <div className="flex items-center gap-1.5 text-2xl sm:text-3xl" aria-hidden>
                       {starWorlds.map((w) => (
                         <span
                           key={w.id}
@@ -241,6 +241,9 @@ export default function PlayShell({ children }: { children: ReactNode }) {
                           ⭐
                         </span>
                       ))}
+                      <span className="ml-1 whitespace-nowrap text-sm font-extrabold text-amber-200 sm:text-base">
+                        {stars} of {starWorlds.length}
+                      </span>
                     </div>
                   </>
                 )}

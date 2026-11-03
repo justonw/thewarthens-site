@@ -16,6 +16,36 @@ const BG = "#E0F2FE";
 // Hair that sits behind the head and shoulders.
 function backHair(style: HairStyle, c: string): ReactNode {
   switch (style) {
+    case "twists":
+      return (
+        <g>
+          <ellipse cx="60" cy="46" rx="33" ry="30" fill={c} />
+          <g stroke={c} strokeWidth="5.5" strokeLinecap="round" fill="none">
+            {[
+              [30, 24],
+              [36, 31],
+              [23, 18],
+            ].map(([x, end]) => (
+              <g key={x}>
+                <path d={`M${x} 48 C${end - 3} 62 ${end - 3} 76 ${end} 94`} />
+                <path d={`M${120 - x} 48 C${123 - end} 62 ${123 - end} 76 ${120 - end} 94`} />
+              </g>
+            ))}
+          </g>
+          <g stroke="#fff" strokeWidth="1.3" strokeLinecap="round" strokeDasharray="1.2 3.6" opacity="0.4" fill="none">
+            {[
+              [30, 24],
+              [36, 31],
+              [23, 18],
+            ].map(([x, end]) => (
+              <g key={x}>
+                <path d={`M${x} 48 C${end - 3} 62 ${end - 3} 76 ${end} 94`} />
+                <path d={`M${120 - x} 48 C${123 - end} 62 ${123 - end} 76 ${120 - end} 94`} />
+              </g>
+            ))}
+          </g>
+        </g>
+      );
     case "locs":
       return (
         <g stroke={c} strokeWidth="6" strokeLinecap="round" fill="none">
@@ -122,26 +152,12 @@ function frontHair(style: HairStyle, c: string): ReactNode {
       return (
         <g>
           <path d={CAP_HIGH} fill={c} />
-          <g stroke={c} strokeWidth="6.5" strokeLinecap="round" fill="none">
-            {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => {
-              const x = 38 + i * 5.5;
-              const lean = (i - 4) * 1.6;
-              return <path key={i} d={`M${x} 40 L${x + lean} 21`} />;
-            })}
-          </g>
-          <g
-            stroke="#fff"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-            strokeDasharray="1.2 4"
-            opacity="0.4"
-            fill="none"
-          >
-            {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => {
-              const x = 38 + i * 5.5;
-              const lean = (i - 4) * 1.6;
-              return <path key={i} d={`M${x} 40 L${x + lean} 21`} />;
-            })}
+          <path d="M60 31 L60 43" stroke="#000" strokeOpacity="0.22" strokeWidth="1.4" />
+          <g stroke="#fff" strokeWidth="1.6" strokeLinecap="round" strokeDasharray="1.2 3.8" opacity="0.4" fill="none">
+            <path d="M38 50 C39 41 46 35 55 33" />
+            <path d="M44 46 C46 40 51 37 57 36" />
+            <path d="M82 50 C81 41 74 35 65 33" />
+            <path d="M76 46 C74 40 69 37 63 36" />
           </g>
         </g>
       );
@@ -401,30 +417,19 @@ function frontHair(style: HairStyle, c: string): ReactNode {
   }
 }
 
-const SCARF = "#0D9488";
-const SCARF_DARK = "#0F766E";
-
-// A scarf that wraps the head and drapes over the shoulders, leaving the face open.
-function hijabBack(): ReactNode {
+function freckles(): ReactNode {
   return (
-    <g>
-      <path
-        d="M20 62 C18 22 42 11 60 11 C78 11 102 22 100 62 C100 84 106 98 112 118 L8 118 C14 98 20 84 20 62 Z"
-        fill={SCARF}
-      />
-      <path d="M26 96 C40 104 80 104 94 96" stroke={SCARF_DARK} strokeWidth="2" fill="none" opacity="0.6" />
-    </g>
-  );
-}
-
-function hijabFront(): ReactNode {
-  return (
-    <g>
-      <path
-        d="M32 56 C30 36 44 27 60 27 C76 27 90 36 88 56 C82 44 72 40 60 40 C48 40 38 44 32 56 Z"
-        fill={SCARF}
-      />
-      <path d="M44 33 C52 30 68 30 76 33" stroke="#fff" strokeOpacity="0.25" strokeWidth="2" strokeLinecap="round" fill="none" />
+    <g fill="#6B3A22" opacity="0.6">
+      {[
+        [44, 69],
+        [49, 72],
+        [54, 69],
+        [66, 69],
+        [71, 72],
+        [76, 69],
+      ].map(([x, y]) => (
+        <circle key={`${x}-${y}`} cx={x} cy={y} r="1.6" />
+      ))}
     </g>
   );
 }
@@ -479,7 +484,6 @@ export default function Avatar({
   const skin = avatarSkins.find((s) => s.id === look.skin)?.hex ?? avatarSkins[2].hex;
   const hair = avatarHairColors.find((h) => h.id === look.hairColor)?.hex ?? avatarHairColors[0].hex;
   const accessory = look.accessory ?? "none";
-  const hijab = accessory === "hijab";
   const clip = `avatar-clip-${look.gender}-${look.skin}-${look.hair}-${look.hairColor}`;
 
   return (
@@ -499,18 +503,12 @@ export default function Avatar({
       </defs>
       <circle cx="60" cy="60" r="60" fill={BG} />
       <g clipPath={`url(#${clip})`}>
-        {!hijab && backHair(look.hair, hair)}
+        {backHair(look.hair, hair)}
         <path d="M16 124 C16 100 38 92 60 92 C82 92 104 100 104 124 Z" fill={SHIRT} />
-        {hijab ? (
-          hijabBack()
-        ) : (
-          <>
-            <rect x="52" y="80" width="16" height="16" rx="6" fill={skin} />
-            <rect x="52" y="80" width="16" height="16" rx="6" fill="#000" opacity="0.12" />
-            <circle cx="34" cy="62" r="5.5" fill={skin} />
-            <circle cx="86" cy="62" r="5.5" fill={skin} />
-          </>
-        )}
+        <rect x="52" y="80" width="16" height="16" rx="6" fill={skin} />
+        <rect x="52" y="80" width="16" height="16" rx="6" fill="#000" opacity="0.12" />
+        <circle cx="34" cy="62" r="5.5" fill={skin} />
+        <circle cx="86" cy="62" r="5.5" fill={skin} />
         <ellipse cx="60" cy="58" rx="27" ry="29" fill={skin} />
         {look.gender === "girl" && (
           <>
@@ -528,7 +526,8 @@ export default function Avatar({
         <path d="M65 52 Q71 49 77 52" stroke="#2B1B13" strokeOpacity="0.8" strokeWidth="2" strokeLinecap="round" fill="none" />
         <path d="M58 66 Q60 69 62 66" stroke="#000" strokeOpacity="0.22" strokeWidth="1.6" strokeLinecap="round" fill="none" />
         <path d="M50 72 Q60 83 70 72 Q60 76 50 72 Z" fill="#8B2F2F" />
-        {hijab ? hijabFront() : frontHair(look.hair, hair)}
+        {frontHair(look.hair, hair)}
+        {accessory === "freckles" && freckles()}
         {accessory === "glasses" && glasses()}
         {accessory === "headphones" && headphones()}
         {accessory === "hearing-aids" && hearingAids()}
