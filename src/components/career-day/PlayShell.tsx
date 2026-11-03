@@ -7,24 +7,45 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useMemo,
   useState,
   type ReactNode,
 } from "react";
 import type { SoftSkillId } from "@/lib/career-day";
-import { levelFor, starWorlds } from "@/lib/play-worlds";
+import {
+  PLAY_PATH,
+  badgePath,
+  bandById,
+  bandPath,
+  bands,
+  levelFor,
+  starWorldsFor,
+  type Band,
+  type BandId,
+  type World,
+} from "@/lib/play-worlds";
 import { stopSpeech } from "./speech";
+import { SkyDecor } from "./Scenery";
 import { AutoReadContext } from "./ui";
 
 // Everything a family's session remembers lives here, in memory only. Nothing is saved or sent.
-// It sits above all the world pages, so moving between worlds keeps the stars.
+// It sits above all the world pages, so moving between worlds keeps the stars. Each age group
+// keeps its own stars, so a child who tries the other group starts fresh there.
 
 type PlayState = {
+  /** The age group being played, or null on the "How old are you?" screen. */
+  band: Band | null;
+  /** Where "back to the map" goes: this age group's map, or the age picker. */
+  mapPath: string;
   done: Record<string, boolean>;
   skills: SoftSkillId[];
   stars: number;
   runKey: number;
+  /** Cool Facts this age group has opened, by fact id. */
+  foundFacts: Record<string, boolean>;
+  markFactFound: (id: string) => void;
   finishWorld: (id: string, earned?: SoftSkillId[]) => void;
+  /** For bonus worlds that do not earn a star toward the badge. */
+  completeWorld: (id: string, message: string) => void;
   resetAll: () => void;
 };
 
@@ -36,7 +57,24 @@ export function usePlay() {
   return ctx;
 }
 
-export const PLAY_PATH = "/techjr/play";
+const NO_SKILLS: SoftSkillId[] = [];
+const NO_WORLDS: World[] = [];
+
+// The worlds finished in one age group, from the "<age group>:<world>" keys.
+const doneInBand = (all: Record<string, boolean>, band: BandId | null): Record<string, boolean> =>
+  band
+    ? Object.fromEntries(
+        Object.keys(all)
+          .filter((key) => key.startsWith(`${band}:`))
+          .map((key) => [key.slice(band.length + 1), true])
+      )
+    : {};
+
+// "/techjr/play/ages-5-7/helper" -> "ages-5-7". Anything else (like the age picker) -> null.
+const bandIdFromPath = (pathname: string | null): BandId | null => {
+  const segment = pathname?.split("/")[3];
+  return bands.some((b) => b.id === segment) ? (segment as BandId) : null;
+};
 
 // Kiosk mode (for a career day table): add ?kiosk=1 to the address and the game starts over
 // by itself when nobody touches the screen. At home it never resets on its own.
@@ -46,8 +84,11 @@ const IDLE_BADGE_MS = 60_000;
 export default function PlayShell({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [done, setDone] = useState<Record<string, boolean>>({});
-  const [skills, setSkills] = useState<SoftSkillId[]>([]);
+  // Keyed "<age group>:<world>" so each age group keeps its own progress.
+  const [doneAll, setDoneAll] = useState<Record<string, boolean>>({});
+  const [skillsAll, setSkillsAll] = useState<Partial<Record<BandId, SoftSkillId[]>>>({});
+  // Cool Facts opened so far, also keyed "<age group>:<fact>".
+  const [factsAll, setFactsAll] = useState<Record<string, boolean>>({});
   const [runKey, setRunKey] = useState(0);
   const [toast, setToast] = useState<string | null>(null);
   // Read once when the game opens. It only controls the idle timer, never what is drawn.
@@ -57,34 +98,58 @@ export default function PlayShell({ children }: { children: ReactNode }) {
   // A setting for the device, not information about a child, so it survives "Start over".
   const [autoRead, setAutoRead] = useState(true);
 
+  const bandId = bandIdFromPath(pathname);
+  const band = bandId ? (bandById(bandId) ?? null) : null;
+  const starWorlds = bandId ? starWorldsFor(bandId) : NO_WORLDS;
+  const done = doneInBand(doneAll, bandId);
+  const foundFacts = doneInBand(factsAll, bandId);
+  const skills = (bandId && skillsAll[bandId]) || NO_SKILLS;
   const stars = starWorlds.filter((w) => done[w.id]).length;
   const level = levelFor(stars);
-  const onBadge = pathname === `${PLAY_PATH}/badge`;
-  const atHome = pathname === PLAY_PATH;
+  const onBadge = !!bandId && pathname === badgePath(bandId);
+  const atPicker = pathname === PLAY_PATH;
+  const anyProgress = Object.keys(doneAll).length > 0 || Object.keys(factsAll).length > 0;
+  const mapPath = band ? bandPath(band.id) : PLAY_PATH;
 
   const resetAll = useCallback(() => {
     stopSpeech();
-    setDone({});
-    setSkills([]);
+    setDoneAll({});
+    setSkillsAll({});
+    setFactsAll({});
     setToast(null);
     setRunKey((k) => k + 1);
     router.push(PLAY_PATH);
   }, [router]);
 
-  const finishWorld = useCallback(
-    (id: string, earned: SoftSkillId[] = []) => {
-      const nextDone = { ...done, [id]: true };
-      setDone(nextDone);
-      if (earned.length > 0) setSkills((s) => Array.from(new Set([...s, ...earned])));
-      if (starWorlds.every((w) => nextDone[w.id])) {
-        router.push(`${PLAY_PATH}/badge`);
-      } else {
-        setToast("⭐ Star earned! Pick your next world.");
-        router.push(PLAY_PATH);
-      }
-    },
-    [done, router]
-  );
+  const finishWorld = (id: string, earned: SoftSkillId[] = []) => {
+    if (!bandId) return;
+    const nextDone = { ...doneAll, [`${bandId}:${id}`]: true };
+    setDoneAll(nextDone);
+    if (earned.length > 0) {
+      setSkillsAll((all) => ({
+        ...all,
+        [bandId]: Array.from(new Set([...(all[bandId] ?? []), ...earned])),
+      }));
+    }
+    if (starWorldsFor(bandId).every((w) => nextDone[`${bandId}:${w.id}`])) {
+      router.push(badgePath(bandId));
+    } else {
+      setToast("⭐ Star earned! Pick your next world.");
+      router.push(bandPath(bandId));
+    }
+  };
+
+  const markFactFound = (id: string) => {
+    if (!bandId) return;
+    setFactsAll((f) => (f[`${bandId}:${id}`] ? f : { ...f, [`${bandId}:${id}`]: true }));
+  };
+
+  const completeWorld = (id: string, message: string) => {
+    if (!bandId) return;
+    setDoneAll((d) => ({ ...d, [`${bandId}:${id}`]: true }));
+    setToast(message);
+    router.push(bandPath(bandId));
+  };
 
   // Whenever the page changes, stop any voice that was still talking.
   useEffect(() => {
@@ -98,7 +163,7 @@ export default function PlayShell({ children }: { children: ReactNode }) {
   }, [toast]);
 
   useEffect(() => {
-    if (!kiosk || (atHome && stars === 0)) return;
+    if (!kiosk || (atPicker && !anyProgress)) return;
     const limit = onBadge ? IDLE_BADGE_MS : IDLE_MS;
     let timer = setTimeout(resetAll, limit);
     const bump = () => {
@@ -115,49 +180,70 @@ export default function PlayShell({ children }: { children: ReactNode }) {
       window.removeEventListener("keydown", bump);
       window.removeEventListener("scroll", bump);
     };
-  }, [kiosk, atHome, onBadge, stars, resetAll]);
+  }, [kiosk, atPicker, onBadge, anyProgress, resetAll]);
 
-  const value = useMemo(
-    () => ({ done, skills, stars, runKey, finishWorld, resetAll }),
-    [done, skills, stars, runKey, finishWorld, resetAll]
-  );
+  const value = {
+    band,
+    mapPath,
+    done,
+    skills,
+    stars,
+    runKey,
+    foundFacts,
+    markFactFound,
+    finishWorld,
+    completeWorld,
+    resetAll,
+  };
 
   return (
     <PlayContext.Provider value={value}>
       <AutoReadContext.Provider value={autoRead}>
         <div className="cd-sky relative min-h-dvh overflow-x-clip text-slate-900">
           <div aria-hidden className="cd-stars pointer-events-none absolute inset-0" />
+          <SkyDecor />
 
           <header className="sticky top-0 z-30 border-b border-white/15 bg-indigo-950/70 backdrop-blur-md">
             <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-3 py-2.5 sm:gap-4 sm:px-5">
-              <Link
-                href={PLAY_PATH}
-                onClick={stopSpeech}
-                className="flex min-h-12 items-center gap-2 whitespace-nowrap rounded-2xl bg-white/10 px-3 py-2 text-base font-extrabold text-white ring-1 ring-white/20 transition hover:bg-white/20 active:scale-95 sm:px-4"
-              >
-                <span aria-hidden>🗺️</span>
-                <span className="hidden sm:inline">All worlds</span>
-                <span className="sm:hidden">Map</span>
-              </Link>
+              {band ? (
+                <Link
+                  href={mapPath}
+                  onClick={stopSpeech}
+                  className="flex min-h-12 items-center gap-2 whitespace-nowrap rounded-2xl bg-white/10 px-3 py-2 text-base font-extrabold text-white ring-1 ring-white/20 transition hover:bg-white/20 active:scale-95 sm:px-4"
+                >
+                  <span aria-hidden>🗺️</span>
+                  <span className="hidden sm:inline">All worlds</span>
+                  <span className="sm:hidden">Map</span>
+                </Link>
+              ) : (
+                <span className="flex min-h-12 items-center gap-2 whitespace-nowrap rounded-2xl px-3 py-2 text-base font-extrabold text-white sm:px-4">
+                  <span aria-hidden>🌟</span>
+                  Tech Journey Jr.
+                </span>
+              )}
 
               <div
-                aria-label={`Level ${level.name}, ${stars} of ${starWorlds.length} stars`}
+                aria-label={band ? `Level ${level.name}, ${stars} of ${starWorlds.length} stars` : undefined}
                 className="flex min-w-0 flex-1 items-center justify-center gap-3"
               >
-                <span className="hidden items-center gap-1.5 whitespace-nowrap rounded-full bg-white/10 px-3 py-1.5 text-sm font-extrabold text-amber-200 ring-1 ring-white/15 sm:inline-flex">
-                  <span aria-hidden>{level.emoji}</span>
-                  {level.name}
-                </span>
-                <div className="flex items-center gap-1 text-2xl sm:text-3xl" aria-hidden>
-                  {starWorlds.map((w) => (
-                    <span
-                      key={w.id}
-                      className={done[w.id] ? "cd-pop drop-shadow-[0_0_10px_rgba(253,224,71,0.9)]" : "opacity-30 grayscale"}
-                    >
-                      ⭐
+                {band && (
+                  <>
+                    <span className="hidden items-center gap-1.5 whitespace-nowrap rounded-full bg-white/10 px-3 py-1.5 text-sm font-extrabold text-amber-200 ring-1 ring-white/15 sm:inline-flex">
+                      <span aria-hidden>{level.emoji}</span>
+                      {level.name}
                     </span>
-                  ))}
-                </div>
+                    <div className="flex items-center gap-1 text-2xl sm:text-3xl" aria-hidden>
+                      {starWorlds.map((w) => (
+                        <span
+                          key={w.id}
+                          className={done[w.id] ? "cd-pop drop-shadow-[0_0_10px_rgba(253,224,71,0.9)]" : "opacity-30 grayscale"}
+                        >
+                          ⭐
+                        </span>
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
 
               <button

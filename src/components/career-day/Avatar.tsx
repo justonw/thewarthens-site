@@ -401,6 +401,70 @@ function frontHair(style: HairStyle, c: string): ReactNode {
   }
 }
 
+const SCARF = "#0D9488";
+const SCARF_DARK = "#0F766E";
+
+// A scarf that wraps the head and drapes over the shoulders, leaving the face open.
+function hijabBack(): ReactNode {
+  return (
+    <g>
+      <path
+        d="M20 62 C18 22 42 11 60 11 C78 11 102 22 100 62 C100 84 106 98 112 118 L8 118 C14 98 20 84 20 62 Z"
+        fill={SCARF}
+      />
+      <path d="M26 96 C40 104 80 104 94 96" stroke={SCARF_DARK} strokeWidth="2" fill="none" opacity="0.6" />
+    </g>
+  );
+}
+
+function hijabFront(): ReactNode {
+  return (
+    <g>
+      <path
+        d="M32 56 C30 36 44 27 60 27 C76 27 90 36 88 56 C82 44 72 40 60 40 C48 40 38 44 32 56 Z"
+        fill={SCARF}
+      />
+      <path d="M44 33 C52 30 68 30 76 33" stroke="#fff" strokeOpacity="0.25" strokeWidth="2" strokeLinecap="round" fill="none" />
+    </g>
+  );
+}
+
+function glasses(): ReactNode {
+  return (
+    <g fill="none" stroke="#1F2937" strokeWidth="2.4" strokeLinecap="round">
+      <circle cx="49" cy="60.5" r="8.6" fill="#fff" fillOpacity="0.18" />
+      <circle cx="71" cy="60.5" r="8.6" fill="#fff" fillOpacity="0.18" />
+      <path d="M57.6 59.5 Q60 57.5 62.4 59.5" />
+      <path d="M40.5 59 L33 56.5" />
+      <path d="M79.5 59 L87 56.5" />
+    </g>
+  );
+}
+
+function headphones(): ReactNode {
+  return (
+    <g>
+      <path d="M31 58 C28 20 92 20 89 58" stroke="#334155" strokeWidth="5" fill="none" strokeLinecap="round" />
+      <rect x="24" y="52" width="11" height="22" rx="5.5" fill="#F43F5E" />
+      <rect x="85" y="52" width="11" height="22" rx="5.5" fill="#F43F5E" />
+      <rect x="27" y="56" width="4" height="14" rx="2" fill="#fff" opacity="0.35" />
+      <rect x="89" y="56" width="4" height="14" rx="2" fill="#fff" opacity="0.35" />
+    </g>
+  );
+}
+
+// A small colorful hearing aid curving over each ear.
+function hearingAids(): ReactNode {
+  return (
+    <g>
+      <path d="M32 54 C25 56 25 70 33 74 L36 70 C31 66 31 59 35 57 Z" fill="#38BDF8" />
+      <path d="M88 54 C95 56 95 70 87 74 L84 70 C89 66 89 59 85 57 Z" fill="#38BDF8" />
+      <circle cx="30" cy="62" r="1.6" fill="#fff" opacity="0.7" />
+      <circle cx="90" cy="62" r="1.6" fill="#fff" opacity="0.7" />
+    </g>
+  );
+}
+
 export default function Avatar({
   look,
   size = 96,
@@ -414,6 +478,8 @@ export default function Avatar({
 }) {
   const skin = avatarSkins.find((s) => s.id === look.skin)?.hex ?? avatarSkins[2].hex;
   const hair = avatarHairColors.find((h) => h.id === look.hairColor)?.hex ?? avatarHairColors[0].hex;
+  const accessory = look.accessory ?? "none";
+  const hijab = accessory === "hijab";
   const clip = `avatar-clip-${look.gender}-${look.skin}-${look.hair}-${look.hairColor}`;
 
   return (
@@ -433,12 +499,18 @@ export default function Avatar({
       </defs>
       <circle cx="60" cy="60" r="60" fill={BG} />
       <g clipPath={`url(#${clip})`}>
-        {backHair(look.hair, hair)}
+        {!hijab && backHair(look.hair, hair)}
         <path d="M16 124 C16 100 38 92 60 92 C82 92 104 100 104 124 Z" fill={SHIRT} />
-        <rect x="52" y="80" width="16" height="16" rx="6" fill={skin} />
-        <rect x="52" y="80" width="16" height="16" rx="6" fill="#000" opacity="0.12" />
-        <circle cx="34" cy="62" r="5.5" fill={skin} />
-        <circle cx="86" cy="62" r="5.5" fill={skin} />
+        {hijab ? (
+          hijabBack()
+        ) : (
+          <>
+            <rect x="52" y="80" width="16" height="16" rx="6" fill={skin} />
+            <rect x="52" y="80" width="16" height="16" rx="6" fill="#000" opacity="0.12" />
+            <circle cx="34" cy="62" r="5.5" fill={skin} />
+            <circle cx="86" cy="62" r="5.5" fill={skin} />
+          </>
+        )}
         <ellipse cx="60" cy="58" rx="27" ry="29" fill={skin} />
         {look.gender === "girl" && (
           <>
@@ -456,7 +528,10 @@ export default function Avatar({
         <path d="M65 52 Q71 49 77 52" stroke="#2B1B13" strokeOpacity="0.8" strokeWidth="2" strokeLinecap="round" fill="none" />
         <path d="M58 66 Q60 69 62 66" stroke="#000" strokeOpacity="0.22" strokeWidth="1.6" strokeLinecap="round" fill="none" />
         <path d="M50 72 Q60 83 70 72 Q60 76 50 72 Z" fill="#8B2F2F" />
-        {frontHair(look.hair, hair)}
+        {hijab ? hijabFront() : frontHair(look.hair, hair)}
+        {accessory === "glasses" && glasses()}
+        {accessory === "headphones" && headphones()}
+        {accessory === "hearing-aids" && hearingAids()}
       </g>
     </svg>
   );

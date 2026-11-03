@@ -1,5 +1,5 @@
-import WorldMap from "@/components/career-day/WorldMap";
+import AgePicker from "@/components/career-day/AgePicker";
 
 export default function TechJrPlayPage() {
-  return <WorldMap />;
+  return <AgePicker />;
 }

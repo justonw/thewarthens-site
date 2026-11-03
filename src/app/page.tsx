@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import CrewStrip from "@/components/career-day/CrewStrip";
 import Reveal from "@/components/Reveal";
 
 export const metadata: Metadata = {
@@ -113,6 +114,7 @@ export default function Home() {
             "radial-gradient(circle at 12% 8%, rgba(139,92,246,0.38), transparent 42%), radial-gradient(circle at 88% 0%, rgba(56,189,248,0.32), transparent 42%), radial-gradient(circle at 60% 100%, rgba(217,70,239,0.18), transparent 45%)",
         }}
       >
+        <div aria-hidden className="dot-grid pointer-events-none absolute inset-0" />
         <div className="mx-auto grid max-w-6xl items-center gap-14 px-6 pb-20 pt-14 sm:pb-28 sm:pt-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12">
           <div>
             <p className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-sky-300">
@@ -316,6 +318,55 @@ export default function Home() {
             </Link>
           </Reveal>
         </div>
+      </section>
+
+      {/* Tech Journey Jr. */}
+      <section className="mx-auto max-w-6xl px-6 pb-20 sm:pb-24">
+        <Reveal>
+          <div
+            className="relative overflow-hidden rounded-[2rem] p-8 text-white shadow-xl shadow-indigo-950/20 sm:p-12"
+            style={{
+              backgroundImage:
+                "radial-gradient(circle at 90% 0%, rgba(244,114,182,0.45), transparent 45%), radial-gradient(circle at 0% 100%, rgba(56,189,248,0.35), transparent 45%), linear-gradient(135deg, #261a68, #3b1f8f 55%, #1e3a8a)",
+            }}
+          >
+            <div aria-hidden className="dot-grid pointer-events-none absolute inset-0" />
+            <div className="relative grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-wider text-amber-200">
+                  For the kids
+                </p>
+                <h2 className="text-balance mt-3 text-3xl font-semibold leading-tight sm:text-4xl">
+                  Tech Journey Jr.
+                </h2>
+                <p className="mt-4 max-w-xl text-indigo-100">
+                  A free career and online-safety game for ages 5 to 10. Two age groups, a voice that
+                  reads every screen, Cool Facts about the real people who built tech, and a crew of
+                  kids who look like the kids who play. No sign-in, and nothing a child picks is saved.
+                </p>
+                <div className="mt-7 flex flex-wrap items-center gap-3">
+                  <Link
+                    href="/techjr/play"
+                    className="rounded-full bg-amber-300 px-6 py-3 text-sm font-semibold text-slate-900 shadow-lg shadow-black/20 transition-transform hover:scale-[1.03]"
+                  >
+                    Play the game
+                  </Link>
+                  <Link
+                    href="/techjr"
+                    className="rounded-full border border-white/30 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/20"
+                  >
+                    For parents and teachers
+                  </Link>
+                </div>
+              </div>
+              <CrewStrip
+                ids={["maya", "kai", "amira", "jamal", "sofia", "zuri", "diego", "naya"]}
+                size={84}
+                className="mx-auto max-w-sm"
+              />
+            </div>
+          </div>
+        </Reveal>
       </section>
 
       {/* About */}

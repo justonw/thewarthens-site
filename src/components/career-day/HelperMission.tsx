@@ -1,26 +1,29 @@
 "use client";
 
 import { useState } from "react";
-import {
-  helperCardLead,
-  helperIntro,
-  helperRoundSpoken,
-  helperRounds,
-  techSalesCard,
-  type SoftSkillId,
-} from "@/lib/career-day";
+import { helperCardLead, helperRoundSpoken, type SoftSkillId } from "@/lib/career-day";
+import { helperContent } from "@/lib/play-content";
+import { littleHelperFeedbackSpoken } from "@/lib/play-little";
+import type { BandId } from "@/lib/play-worlds";
 import { BigButton, CareerCard, Panel, ReadAloud, SkillChips } from "./ui";
 
 type Step = "intro" | "round" | "card";
 
-export default function HelperMission({ onFinish }: { onFinish: (skills: SoftSkillId[]) => void }) {
+export default function HelperMission({
+  band,
+  onFinish,
+}: {
+  band: BandId;
+  onFinish: (skills: SoftSkillId[]) => void;
+}) {
+  const { intro, rounds, card, readFeedback } = helperContent[band];
   const [step, setStep] = useState<Step>("intro");
   const [roundIndex, setRoundIndex] = useState(0);
   const [tried, setTried] = useState<number[]>([]);
   const [solved, setSolved] = useState(false);
   const [earned, setEarned] = useState<SoftSkillId[]>([]);
 
-  const round = helperRounds[roundIndex];
+  const round = rounds[roundIndex];
   const lastTried = tried.length > 0 ? tried[tried.length - 1] : null;
   const lastOption = lastTried !== null ? round.options[lastTried] : null;
 
@@ -34,7 +37,7 @@ export default function HelperMission({ onFinish }: { onFinish: (skills: SoftSki
   }
 
   function next() {
-    if (roundIndex + 1 < helperRounds.length) {
+    if (roundIndex + 1 < rounds.length) {
       setRoundIndex(roundIndex + 1);
       setTried([]);
       setSolved(false);
@@ -50,9 +53,9 @@ export default function HelperMission({ onFinish }: { onFinish: (skills: SoftSki
           🤝
         </div>
         <h2 className="mt-3 text-4xl font-extrabold text-slate-900">Be the Helper</h2>
-        <p className="mt-4 text-xl leading-relaxed text-slate-700">{helperIntro}</p>
+        <p className="mt-4 text-xl leading-relaxed text-slate-700">{intro}</p>
         <div className="mt-5 flex justify-center">
-          <ReadAloud text={helperIntro} />
+          <ReadAloud text={intro} />
         </div>
         <div className="mt-6">
           <BigButton onClick={() => setStep("round")}>Let&apos;s go! 🚀</BigButton>
@@ -71,7 +74,7 @@ export default function HelperMission({ onFinish }: { onFinish: (skills: SoftSki
             <SkillChips skills={earned} />
           </div>
         </Panel>
-        <CareerCard data={techSalesCard} lead={helperCardLead} />
+        <CareerCard data={card} lead={helperCardLead} />
         <div className="text-center">
           <BigButton tone="amber" onClick={() => onFinish(earned)}>
             ⭐ Earn my star!
@@ -85,8 +88,8 @@ export default function HelperMission({ onFinish }: { onFinish: (skills: SoftSki
 
   return (
     <div className="mx-auto max-w-3xl space-y-5">
-      <div className="flex items-center justify-center gap-2" aria-label={`Round ${roundIndex + 1} of ${helperRounds.length}`}>
-        {helperRounds.map((_, i) => (
+      <div className="flex items-center justify-center gap-2" aria-label={`Round ${roundIndex + 1} of ${rounds.length}`}>
+        {rounds.map((_, i) => (
           <span
             key={i}
             className={`h-3 w-10 rounded-full ${
@@ -146,6 +149,11 @@ export default function HelperMission({ onFinish }: { onFinish: (skills: SoftSki
         >
           {lastOption.correct ? "✅ " : "🤔 "}
           {lastOption.feedback}
+          {readFeedback && (
+            <div className="mt-4 flex justify-center">
+              <ReadAloud text={littleHelperFeedbackSpoken(round, lastOption)} />
+            </div>
+          )}
         </div>
       )}
 
@@ -154,7 +162,7 @@ export default function HelperMission({ onFinish }: { onFinish: (skills: SoftSki
           <SkillChips skills={round.earns} />
           <p className="mx-auto max-w-xl rounded-3xl bg-white p-4 text-lg font-semibold text-slate-800 shadow-lg">💡 {round.lesson}</p>
           <BigButton onClick={next}>
-            {roundIndex + 1 < helperRounds.length ? "Next ➡️" : "See what it takes ➡️"}
+            {roundIndex + 1 < rounds.length ? "Next ➡️" : "See what it takes ➡️"}
           </BigButton>
         </div>
       )}

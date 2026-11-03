@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import CrewStrip from "@/components/career-day/CrewStrip";
 import Reveal from "@/components/Reveal";
 import { guides } from "@/lib/guides";
 import {
+  ageGroups,
   careerExplainers,
   conversationStarters,
   creatorSafety,
@@ -113,16 +115,17 @@ export default function TechJrPage() {
         "@id": `${pageUrl}#game`,
         name: "Tech Journey Jr.",
         description:
-          "A free career game for kindergarten through 5th grade about tech sales, customer success, and content creation, with a parent guide and a kit for running a career day table.",
+          "A free career and online-safety game for ages 5 to 10, in two versions: Tech Sprouts for ages 5 to 7 and Tech Trailblazers for ages 8 to 10. It covers tech sales, customer success, content creation, and cybersecurity, with a parent guide and a kit for running a career day table.",
         url: `${site}${TECHJR_PLAY_PATH}`,
         learningResourceType: "Educational game",
         educationalLevel: "Elementary school",
-        typicalAgeRange: "5-11",
+        typicalAgeRange: "5-10",
         isAccessibleForFree: true,
         inLanguage: "en",
         teaches: [
           "What tech sales and customer success are",
           "What content creators do",
+          "How to stay safe online: spotting tricks, keeping passwords secret, and telling a grown-up",
           "Listening, honesty, kindness, and problem solving",
         ],
         audience: [
@@ -163,14 +166,15 @@ export default function TechJrPage() {
         />
         <div className="mx-auto max-w-4xl px-6 pt-16 pb-14 text-center sm:pt-24 sm:pb-20">
           <p className="inline-flex items-center gap-2 rounded-full border border-blue-600/25 bg-blue-600/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-blue-700">
-            Tech Journey Jr. · Kindergarten to 5th Grade
+            Tech Journey Jr. · Ages 5 to 10
           </p>
           <h1 className="text-balance mt-6 text-4xl font-semibold tracking-tight sm:text-5xl">
             Tech and creator careers for kids, made simple and fun
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-balance text-lg text-foreground-muted">
-            A free career game for children, a plain-language guide for parents, and a ready-to-use
-            kit for teachers and organizers who want to run a career day table.
+            A free career and online-safety game for children in two age groups, a plain-language
+            guide for parents, and a ready-to-use kit for teachers and organizers who want to run a
+            career day table.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link href={TECHJR_PLAY_PATH} className={primaryButton}>
@@ -186,18 +190,80 @@ export default function TechJrPage() {
           <p className="mt-4 text-sm text-foreground-muted">
             No sign-in. Nothing a child types or picks is saved.
           </p>
+          <CrewStrip
+            ids={["maya", "kai", "amira", "jamal", "sofia", "zuri", "diego", "naya"]}
+            size={72}
+            className="mt-10"
+          />
         </div>
       </header>
+
+      {/* The Tech Crew */}
+      <section id="crew" className="mx-auto max-w-5xl scroll-mt-24 px-6 pb-16">
+        <Reveal>
+          <h2 className="text-2xl font-semibold sm:text-3xl">Every child can see themselves</h2>
+          <p className="mt-3 max-w-2xl text-foreground-muted">
+            Meet the Tech Crew, the kids who show up around the game. They have many skin tones,
+            hairstyles, and backgrounds, and some wear glasses, a hijab, headphones, or hearing aids.
+            In Make a Show, a child builds a character of their own from 8 skin tones, 24 hairstyles
+            (including twists, locs, braids, puffs, and knots), and the same extras. The Cool Facts
+            also tell the true stories of inventors and builders from many places and backgrounds.
+          </p>
+        </Reveal>
+        <Reveal delay={80}>
+          <div className="mt-8 rounded-3xl border border-border-subtle bg-background-elevated p-6 sm:p-8">
+            <CrewStrip size={92} showNames className="mx-auto max-w-xl" />
+          </div>
+        </Reveal>
+      </section>
+
+      {/* Two age groups */}
+      <section id="ages" className="mx-auto max-w-5xl scroll-mt-24 px-6 pb-16">
+        <Reveal>
+          <h2 className="text-2xl font-semibold sm:text-3xl">Pick an age group</h2>
+          <p className="mt-3 max-w-2xl text-foreground-muted">
+            A five-year-old and a ten-year-old read and think in very different ways, so the game
+            comes in two versions. Each has its own words, its own questions, and its own stars.
+          </p>
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
+            {ageGroups.map((g) => (
+              <div key={g.id} className={`${card} flex flex-col`}>
+                <p className="text-4xl" aria-hidden>
+                  {g.emoji}
+                </p>
+                <h3 className="mt-3 text-xl font-semibold">
+                  {g.name}: ages {g.ages}
+                </h3>
+                <p className="text-xs font-semibold uppercase tracking-wider text-blue-700">
+                  {g.grades}
+                </p>
+                <p className="mt-3 text-sm text-foreground-muted sm:text-base">{g.summary}</p>
+                <div className="mt-4 flex-1">
+                  <CheckList items={g.details} />
+                </div>
+                <div className="mt-5">
+                  <Link href={g.path} className={primaryButton}>
+                    Play {g.name}
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="mt-4 text-sm text-foreground-muted">
+            Not sure which one? Choose by reading comfort, not only age. You can switch any time.
+          </p>
+        </Reveal>
+      </section>
 
       {/* What kids do */}
       <section className="mx-auto max-w-5xl px-6 pb-16">
         <Reveal>
           <h2 className="text-2xl font-semibold sm:text-3xl">What children do in the game</h2>
           <p className="mt-3 max-w-2xl text-foreground-muted">
-            Three short worlds to play, a lab of facts, and more worlds on the way. Every screen can be read aloud, buttons are
+            Short worlds to play, a lab of facts, and more worlds on the way. Every screen can be read aloud, buttons are
             big enough for small fingers, and it works on phones, tablets, and computers.
           </p>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {gameParts.map((part) => (
               <div key={part.title} className={card}>
                 <p className="text-3xl" aria-hidden>

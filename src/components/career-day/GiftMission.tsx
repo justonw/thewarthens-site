@@ -1,16 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import {
-  giftIntro,
-  giftQuestionSpoken,
-  giftQuestions,
-  giftResultSpoken,
-  giftResults,
-  giftVerse,
-  giftWrapUp,
-  type GiftId,
-} from "@/lib/career-day";
+import { giftQuestionSpoken, giftVerse, type GiftId } from "@/lib/career-day";
+import { giftContent } from "@/lib/play-content";
+import type { BandId } from "@/lib/play-worlds";
 import { BigButton, Confetti, Panel, ReadAloud } from "./ui";
 
 type Step = "intro" | "quiz" | "result";
@@ -26,7 +19,14 @@ function pickWinner(picks: GiftId[]): GiftId {
   return picks[picks.length - 1];
 }
 
-export default function GiftMission({ onFinish }: { onFinish: () => void }) {
+export default function GiftMission({ band, onFinish }: { band: BandId; onFinish: () => void }) {
+  const {
+    intro: giftIntro,
+    questions: giftQuestions,
+    results: giftResults,
+    resultSpoken: giftResultSpoken,
+    wrapUp: giftWrapUp,
+  } = giftContent[band];
   const [step, setStep] = useState<Step>("intro");
   const [index, setIndex] = useState(0);
   const [picks, setPicks] = useState<GiftId[]>([]);

@@ -1,4 +1,6 @@
-// Content for the /techjr/play kiosk, built for a K-5 school career fair.
+// Content for the /techjr/play kiosk, built for a K-5 school career fair. This file is what the
+// ages 8 to 10 group (Tech Trailblazers) sees. The ages 5 to 7 group (Tech Sprouts) uses
+// play-little.ts for its own words, and shares Make a Show and Cool Facts from here.
 // Rules for anything added here:
 //  - Keep the reading level around 2nd grade. Short sentences.
 //  - No em dashes.
@@ -63,7 +65,7 @@ export const helperRoundSpoken = (round: HelperRound) =>
 
 export const helperRounds: HelperRound[] = [
   {
-    sceneEmoji: "🧁",
+    sceneEmoji: "👩🏾‍🍳🧁",
     who: "Miss Tasha owns a bakery.",
     says: "My orders are a MESS!",
     question: "What should you do FIRST?",
@@ -90,7 +92,7 @@ export const helperRounds: HelperRound[] = [
       "You cannot fix a problem until you understand it. Real tech sellers ask lots of questions first.",
   },
   {
-    sceneEmoji: "🧢",
+    sceneEmoji: "👨🏿‍💼🧢",
     who: "Mr. James is thinking about buying your tool.",
     says: "Can it do EVERYTHING?",
     question: "Your tool does a lot, but not everything. What do you say?",
@@ -116,7 +118,7 @@ export const helperRounds: HelperRound[] = [
     lesson: "Trust is a seller's best tool. Honest people keep their customers for life.",
   },
   {
-    sceneEmoji: "💻",
+    sceneEmoji: "👩🏽‍💻",
     who: "Ms. Renee's app stopped working. She is upset.",
     says: "This is NOT okay!",
     question: "What do you do?",
@@ -235,7 +237,7 @@ export const creatorCardCloser = "Your voice can help someone else's world get b
 /* ------------------------------------------------------------------ */
 
 export const creatorIntro =
-  "A creator shares what they know to help people. Real creators are grown-ups with a team. Kids stay safe by making shows for family and class. Let's plan YOUR show!";
+  "A creator shares what they know to help people. Many creators are grown-ups who work with a team. Kids stay safe by making shows for family and class. Let's plan YOUR show!";
 
 export const creatorSafety =
   "Kids make shows for family and class. Ask a grown-up first, and never share your name, school, or address online. When you are older, with your parents' OK, you can share your gift with more people.";
@@ -300,7 +302,7 @@ export const superpowers: Superpower[] = [
     showNames: ["Little Chef Corner", "Sweet Treats Club", "Kitchen Kids"],
     episodeIdeas: [
       "The Easiest Cookies Ever",
-      "A Breakfast You Can Make by Yourself",
+      "A Breakfast You Can Make With a Grown-Up",
       "Taste Test Time!",
     ],
   },

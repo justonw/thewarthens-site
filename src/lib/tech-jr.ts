@@ -9,7 +9,44 @@ export const TECHJR_UPDATED = "2026-10-29";
 
 export const techJrTitle = "Tech & Creator Careers for Kids | Free Career Day Game";
 export const techJrDescription =
-  "A free career game for kindergarten through 5th grade, plus a parent guide to tech sales and content creation careers and a simple kit for running your own career day table.";
+  "A free career and online-safety game in two versions, for ages 5 to 7 and ages 8 to 10, plus a parent guide to tech sales and content creation careers and a simple kit for running your own career day table.";
+
+// The two versions of the game. A child picks one first, and the words, the questions, and how much
+// there is to read are all made for that group.
+export const ageGroups = [
+  {
+    id: "ages-5-7",
+    emoji: "🌻",
+    name: "Tech Sprouts",
+    ages: "5 to 7",
+    grades: "Kindergarten to 2nd grade",
+    path: "/techjr/play/ages-5-7",
+    summary:
+      "Short stories, big pictures, and a voice that reads every screen aloud, so a child who is still learning to read can play alone or with a grown-up.",
+    details: [
+      "Every choice has a picture, and story questions have just three choices",
+      "First grade words and very short sentences",
+      "Be the Helper, Make a Show, Find Your Gift, Cyber Defenders, and Cool Facts",
+      "Online safety in simple rules: do not tap pop-ups, keep passwords secret, and tell a grown-up",
+    ],
+  },
+  {
+    id: "ages-8-10",
+    emoji: "⚡",
+    name: "Tech Trailblazers",
+    ages: "8 to 10",
+    grades: "3rd to 5th grade",
+    path: "/techjr/play/ages-8-10",
+    summary:
+      "Real jobs, trickier choices, and bigger challenges for children who read on their own and like to figure things out.",
+    details: [
+      "More to think about in every question, with hints when a first guess is wrong",
+      "The same five worlds, with fuller stories and career cards",
+      "Online safety topics like phishing, strong passwords, two-step login, and malware, in kid words",
+      "More worlds are on the way, including coding and data",
+    ],
+  },
+] as const;
 
 export const gameParts = [
   {
@@ -34,7 +71,13 @@ export const gameParts = [
     emoji: "🤯",
     title: "Cool Facts",
     topic: "Tech and creator history",
-    body: "Tap-to-reveal facts kids actually repeat at lunch, like the first video ever put on YouTube and the first emoji, plus real tech heroes from many backgrounds, like the mathematician who helped astronauts get home safely.",
+    body: "Dozens of tap-to-reveal facts in groups like games, robots, space, and kid inventors, plus real tech heroes from many backgrounds, like the mathematician who helped astronauts get home safely. Kids collect facts to rank up from Curious Kid to Fact Master, and play True or Made Up? to test what they learned.",
+  },
+  {
+    emoji: "🛡️",
+    title: "Cyber Defenders",
+    topic: "Cybersecurity and staying safe online",
+    body: "A child solves short cases about the things kids really see online, like a pop-up prize, a friend asking for a password, or a link that looks wrong. Every question is something a child can do, and the answer to the big ones is to tell a grown-up. Parents get a short list of things to do at home.",
   },
 ] as const;
 
@@ -103,11 +146,11 @@ export const hostingNeeds = [
 export const hostingSteps = [
   {
     title: "Open the game",
-    body: "Go to thewarthens.com/techjr/play?kiosk=1 and put the browser in full screen. On an iPad or iPhone, Guided Access keeps kids from leaving the page.",
+    body: "Go to thewarthens.com/techjr/play?kiosk=1 and put the browser in full screen. Each child taps their age group first. If your table is for one grade range, use thewarthens.com/techjr/play/ages-5-7?kiosk=1 or thewarthens.com/techjr/play/ages-8-10?kiosk=1 instead. On an iPad or iPhone, Guided Access keeps kids from leaving the page.",
   },
   {
     title: "Let kids tap through",
-    body: "Each child picks a world, earns a star, and can earn all three to become a Tech Pro. Each world is short, so a line can keep moving.",
+    body: "Each child picks a world, earns a star, and can earn all three to become a Tech Pro. Each world is short, so a line can keep moving. Each age group keeps its own stars.",
   },
   {
     title: "Ask one question",
@@ -138,7 +181,12 @@ export const techJrFaq: TechJrFaq[] = [
   {
     question: "What ages is Tech Journey Jr. for?",
     answer:
-      "It is written for kindergarten through 5th grade, at about a second grade reading level. Every screen can be read aloud, so younger children can play with a grown-up and older children can play on their own.",
+      "It comes in two versions. Tech Sprouts is for ages 5 to 7 (kindergarten to 2nd grade), with short stories and a voice that reads every screen. Tech Trailblazers is for ages 8 to 10 (3rd to 5th grade), with trickier choices and more to think about.",
+  },
+  {
+    question: "Which age group should my child pick?",
+    answer:
+      "Pick by how comfortable your child is with reading, not only by age. If a child is still sounding out words, start with Tech Sprouts. If it feels too easy or too hard, tap Start over at the top of the game and try the other group. Each group keeps its own stars.",
   },
   {
     question: "Is it free?",

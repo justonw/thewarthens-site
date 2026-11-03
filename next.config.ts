@@ -38,6 +38,12 @@ const nextConfig: NextConfig = {
         destination: "/techjr/play",
         permanent: false,
       },
+      // The game used to have one map. Those addresses now live under the ages 8 to 10 group.
+      {
+        source: "/techjr/play/:world(helper|creator|gift|facts|cyber|coding|data|badge)",
+        destination: "/techjr/play/ages-8-10/:world",
+        permanent: false,
+      },
       {
         source: "/tech-jr",
         destination: "/techjr",

@@ -57,11 +57,24 @@ export type BoyHairStyle = (typeof boyHairStyles)[number]["id"];
 export type GirlHairStyle = (typeof girlHairStyles)[number]["id"];
 export type HairStyle = BoyHairStyle | GirlHairStyle;
 
+// Things a child can add to their character: just like real kids, some wear glasses, a hijab,
+// headphones, or hearing aids. "none" is the plain look.
+export const avatarAccessories = [
+  { id: "none", label: "Plain" },
+  { id: "glasses", label: "Glasses" },
+  { id: "hijab", label: "Hijab" },
+  { id: "headphones", label: "Headphones" },
+  { id: "hearing-aids", label: "Hearing aids" },
+] as const;
+
+export type AccessoryId = (typeof avatarAccessories)[number]["id"];
+
 export type AvatarLook = {
   gender: AvatarGender;
   skin: string; // an avatarSkins id
   hair: HairStyle;
   hairColor: string; // an avatarHairColors id
+  accessory?: AccessoryId;
 };
 
 export const hairStylesFor = (gender: AvatarGender) =>
@@ -73,3 +86,51 @@ export const defaultLook: AvatarLook = {
   hair: "short",
   hairColor: "brown",
 };
+
+// The Tech Crew: friendly kids who show up around the game and the Tech Jr. pages. They are
+// drawn with the same pieces a child can pick, so every child can find someone who looks like
+// them. Names come from many backgrounds.
+export type CrewMember = { id: string; name: string; look: AvatarLook };
+
+export const crew: CrewMember[] = [
+  { id: "maya", name: "Maya", look: { gender: "girl", skin: "brown", hair: "puffs", hairColor: "black" } },
+  {
+    id: "kai",
+    name: "Kai",
+    look: { gender: "boy", skin: "light", hair: "short", hairColor: "black", accessory: "glasses" },
+  },
+  {
+    id: "amira",
+    name: "Amira",
+    look: { gender: "girl", skin: "olive", hair: "long-straight", hairColor: "black", accessory: "hijab" },
+  },
+  { id: "jamal", name: "Jamal", look: { gender: "boy", skin: "deep", hair: "twists", hairColor: "black" } },
+  {
+    id: "sofia",
+    name: "Sofia",
+    look: { gender: "girl", skin: "caramel", hair: "long-wavy", hairColor: "brown" },
+  },
+  {
+    id: "zuri",
+    name: "Zuri",
+    look: { gender: "girl", skin: "dark", hair: "box-braids", hairColor: "black", accessory: "headphones" },
+  },
+  {
+    id: "diego",
+    name: "Diego",
+    look: { gender: "boy", skin: "tan", hair: "curly-top", hairColor: "black", accessory: "glasses" },
+  },
+  {
+    id: "naya",
+    name: "Naya",
+    look: { gender: "girl", skin: "caramel", hair: "pigtail-braids", hairColor: "black" },
+  },
+  {
+    id: "arjun",
+    name: "Arjun",
+    look: { gender: "boy", skin: "caramel", hair: "short", hairColor: "black", accessory: "hearing-aids" },
+  },
+  { id: "noah", name: "Noah", look: { gender: "boy", skin: "fair", hair: "shaggy", hairColor: "blonde" } },
+];
+
+export const crewById = (id: string) => crew.find((c) => c.id === id);

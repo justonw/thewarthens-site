@@ -4,19 +4,15 @@ import { useState } from "react";
 import {
   audienceLine,
   audiences,
-  creatorCard,
-  creatorCardCloser,
-  creatorIntro,
-  creatorSafety,
   lookPrompt,
   namePrompt,
-  posterSpoken,
   powerPrompt,
   superpowers,
   whoPrompt,
   type Superpower,
 } from "@/lib/career-day";
 import {
+  avatarAccessories,
   avatarHairColors,
   avatarSkins,
   defaultLook,
@@ -24,6 +20,8 @@ import {
   type AvatarGender,
   type AvatarLook,
 } from "@/lib/career-avatar";
+import { creatorContent } from "@/lib/play-content";
+import type { BandId } from "@/lib/play-worlds";
 import Avatar from "./Avatar";
 import { BigButton, CareerCard, Confetti, Panel, ReadAloud, ReadBox } from "./ui";
 
@@ -81,7 +79,16 @@ function ChoiceTile({
   );
 }
 
-export default function CreatorMission({ onFinish }: { onFinish: () => void }) {
+export default function CreatorMission({ band, onFinish }: { band: BandId; onFinish: () => void }) {
+  const {
+    intro: creatorIntro,
+    safety: creatorSafety,
+    practice,
+    card: creatorCard,
+    cardCloser: creatorCardCloser,
+    episodeIdeas,
+    posterSpoken,
+  } = creatorContent[band];
   const [step, setStep] = useState<Step>("intro");
   const [power, setPower] = useState<Superpower | null>(null);
   const [audienceIds, setAudienceIds] = useState<string[]>([]);
@@ -230,7 +237,7 @@ export default function CreatorMission({ onFinish }: { onFinish: () => void }) {
                 className={`flex min-h-24 items-center justify-center gap-3 p-2 ${pick(look.gender === g)}`}
               >
                 <Avatar
-                  look={{ ...look, gender: g, hair: hairStylesFor(g)[0].id }}
+                  look={{ ...look, gender: g, hair: hairStylesFor(g)[0].id, accessory: "none" }}
                   size={64}
                 />
                 <span className="text-xl font-extrabold capitalize text-slate-800">{g}</span>
@@ -265,7 +272,7 @@ export default function CreatorMission({ onFinish }: { onFinish: () => void }) {
                 onClick={() => setLook((l) => ({ ...l, hair: h.id }))}
                 className={`flex flex-col items-center gap-1 p-2 ${pick(look.hair === h.id)}`}
               >
-                <Avatar look={{ ...look, hair: h.id }} size={84} />
+                <Avatar look={{ ...look, hair: h.id, accessory: "none" }} size={84} />
                 <span className="text-base font-extrabold text-slate-800">{h.label}</span>
               </button>
             ))}
@@ -285,6 +292,22 @@ export default function CreatorMission({ onFinish }: { onFinish: () => void }) {
                 }`}
                 style={{ backgroundColor: c.hex }}
               />
+            ))}
+          </div>
+
+          <p className="mt-6 text-center text-lg font-bold text-slate-700">My extras</p>
+          <div className="mt-2 grid grid-cols-3 gap-3 sm:grid-cols-5">
+            {avatarAccessories.map((a) => (
+              <button
+                key={a.id}
+                type="button"
+                aria-pressed={(look.accessory ?? "none") === a.id}
+                onClick={() => setLook((l) => ({ ...l, accessory: a.id }))}
+                className={`flex flex-col items-center gap-1 p-2 ${pick((look.accessory ?? "none") === a.id)}`}
+              >
+                <Avatar look={{ ...look, accessory: a.id }} size={72} />
+                <span className="text-sm font-extrabold text-slate-800">{a.label}</span>
+              </button>
             ))}
           </div>
         </Panel>
@@ -386,7 +409,7 @@ export default function CreatorMission({ onFinish }: { onFinish: () => void }) {
                 My first 3 episodes:
               </p>
               <ol className="mt-2 list-decimal space-y-1 pl-6 text-lg font-semibold text-slate-700">
-                {power.episodeIdeas.map((idea) => (
+                {episodeIdeas(power).map((idea) => (
                   <li key={idea}>{idea}</li>
                 ))}
               </ol>
@@ -400,7 +423,7 @@ export default function CreatorMission({ onFinish }: { onFinish: () => void }) {
             &ldquo;{pitch}&rdquo;
           </p>
           <p className="mt-3 text-base text-slate-600">
-            Real creators practice, show up often, and stay kind and honest.
+            {practice}
           </p>
         </Panel>
 
@@ -422,7 +445,7 @@ export default function CreatorMission({ onFinish }: { onFinish: () => void }) {
         <CareerCard data={creatorCard} />
         <Panel className="text-center">
           <ReadBox text={creatorCardCloser} className="!bg-white">
-            <p className="px-8 text-xl font-extrabold text-slate-900">Your voice can help someone else&apos;s world get bigger. 🌍</p>
+            <p className="px-8 text-xl font-extrabold text-slate-900">{creatorCardCloser} 🌍</p>
           </ReadBox>
         </Panel>
         <div className="text-center">
