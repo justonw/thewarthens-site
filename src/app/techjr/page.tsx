@@ -4,6 +4,7 @@ import { boyHairStyles, girlHairStyles } from "@/lib/career-avatar";
 import CrewStrip from "@/components/career-day/CrewStrip";
 import Reveal from "@/components/Reveal";
 import { guides } from "@/lib/guides";
+import { articles } from "@/lib/techjr-articles";
 import {
   ageGroups,
   careerExplainers,
@@ -28,6 +29,12 @@ export const metadata: Metadata = {
   title: techJrTitle,
   description: techJrDescription,
   keywords: [
+    "free educational games for kids",
+    "educational games for kids no ads",
+    "games for kids when they are bored",
+    "free games for 6 year olds",
+    "internet safety game for kids",
+    "games for kids who can't read yet",
     "career day activities for elementary students",
     "career day ideas",
     "tech careers for kids",
@@ -139,6 +146,17 @@ export default function TechJrPage() {
         author: { "@type": "Organization", name: "The Warthens", url: site },
       },
       {
+        "@type": "ItemList",
+        "@id": `${pageUrl}#guides`,
+        name: "Guides for parents",
+        itemListElement: articles.map((g, i) => ({
+          "@type": "ListItem",
+          position: i + 1,
+          name: g.short,
+          url: `${site}/techjr/${g.slug}`,
+        })),
+      },
+      {
         "@type": "FAQPage",
         "@id": `${pageUrl}#faq`,
         mainEntity: techJrFaq.map((f) => ({
@@ -172,12 +190,13 @@ export default function TechJrPage() {
             Tech Journey Jr. · Ages 5 to 10
           </p>
           <h1 className="text-balance mt-6 text-4xl font-semibold tracking-tight sm:text-5xl">
-            Tech and creator careers for kids, made simple and fun
+            Free games that teach kids tech, online safety, and careers
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-balance text-lg text-foreground-muted">
-            A free career and online-safety game for children in two age groups, a plain-language
-            guide for parents, and a ready-to-use kit for teachers and organizers who want to run a
-            career day table.
+            A free game to hand your child when they are bored: two age groups, a voice that reads
+            every screen aloud, and nothing to buy. It teaches online safety, what tech and creator
+            careers really are, and cool facts. Also here: plain-language guides for parents and a
+            ready-to-use kit for career day tables.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link href={TECHJR_PLAY_PATH} className={primaryButton}>
@@ -200,6 +219,42 @@ export default function TechJrPage() {
           />
         </div>
       </header>
+
+      {/* Guides for parents */}
+      <section id="guides" className="mx-auto max-w-5xl scroll-mt-24 px-6 pb-16">
+        <Reveal>
+          <h2 className="text-2xl font-semibold sm:text-3xl">Guides for parents</h2>
+          <p className="mt-3 max-w-2xl text-foreground-muted">
+            Straight answers to the questions parents ask when they are choosing what to put in front of
+            their child: what is safe, what is worth the time, and what to do when a child says they are
+            bored.
+          </p>
+        </Reveal>
+        <ul className="mt-8 grid gap-4 sm:grid-cols-2">
+          {articles.map((a, i) => (
+            <Reveal key={a.slug} delay={i * 50}>
+              <li className="h-full">
+                <Link
+                  href={`/techjr/${a.slug}`}
+                  className="group block h-full rounded-2xl border border-border-subtle bg-background-elevated p-5 transition-all hover:-translate-y-0.5 hover:border-blue-500/50"
+                >
+                  <span className="text-xs font-semibold uppercase tracking-wider text-blue-600">
+                    {a.eyebrow}
+                  </span>
+                  <span className="mt-1 block text-lg font-semibold text-foreground">{a.short}</span>
+                  <span className="mt-2 block text-sm text-foreground-muted">{a.blurb}</span>
+                  <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-blue-600">
+                    Read the guide
+                    <span aria-hidden className="transition-transform group-hover:translate-x-1">
+                      →
+                    </span>
+                  </span>
+                </Link>
+              </li>
+            </Reveal>
+          ))}
+        </ul>
+      </section>
 
       {/* The Tech Crew */}
       <section id="crew" className="mx-auto max-w-5xl scroll-mt-24 px-6 pb-16">

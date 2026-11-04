@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://thewarthens.com"),
   title: "The Warthens | Tech Journey & Faith Journey",
   description:
-    "Juston & Atiya Warthen, known as Tech Journey: real steps for a career change into tech, plus our journey of relying on God to discover, understand, and live out truth.",
+    "Juston & Atiya Warthen share real steps for a career change into tech, plus their faith journey of relying on God to discover, understand, and live out truth.",
   keywords: [
     "tech journey warthen",
     "career change to tech",

@@ -70,6 +70,18 @@ export default function Footer() {
               >
                 Tech Journey Jr. (for kids)
               </Link>
+              <Link
+                href="/techjr/internet-safety-for-kids"
+                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+              >
+                Internet safety for kids
+              </Link>
+              <Link
+                href="/techjr/cool-tech-facts-for-kids"
+                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+              >
+                Cool tech facts for kids
+              </Link>
             </nav>
           </div>
           <div>

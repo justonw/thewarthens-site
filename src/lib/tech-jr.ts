@@ -7,9 +7,9 @@ export const TECHJR_PATH = "/techjr";
 export const TECHJR_PLAY_PATH = "/techjr/play";
 export const TECHJR_UPDATED = "2026-10-29";
 
-export const techJrTitle = "Tech & Creator Careers for Kids | Free Career Day Game";
+export const techJrTitle = "Free Educational Games for Kids Ages 5-10 | Tech Journey Jr.";
 export const techJrDescription =
-  "A free career and online-safety game in two versions, for ages 5 to 7 and ages 8 to 10, plus a parent guide to tech sales and content creation careers and a simple kit for running your own career day table.";
+  "Free games for kids ages 5 to 10 that teach online safety, tech careers, and cool facts. No ads, no sign-in. Plus parent guides and a kit for a career day table.";
 
 // The two versions of the game. A child picks one first, and the words, the questions, and how much
 // there is to read are all made for that group.
@@ -189,6 +189,21 @@ export const techJrFaq: TechJrFaq[] = [
       "Pick by how comfortable your child is with reading, not only by age. If a child is still sounding out words, start with Tech Sprouts. If it feels too easy or too hard, tap Start over at the top of the game and try the other group. Each group keeps its own stars.",
   },
   {
+    question: "What can I give my child to play on my phone that is educational and safe?",
+    answer:
+      "Tech Journey Jr. is made for exactly that. It is free, has no ads or sign-in, runs in the browser on any phone or tablet, and the worlds are short missions so there is a natural place to stop. Add it to your home screen and your child can open it in one tap. Our guide to safe educational games has an 8-point checklist you can use on any game.",
+  },
+  {
+    question: "Does it work on phones and tablets? Do I need to download anything?",
+    answer:
+      "It works on phones, tablets, and computers in the browser. There is nothing to download or install. To make it open like an app, add the page to your home screen: in Safari tap Share and then Add to Home Screen, and in Chrome tap the menu and then Add to Home screen.",
+  },
+  {
+    question: "Can my child play if they cannot read yet?",
+    answer:
+      "Yes. Tech Sprouts, the ages 5 to 7 version, puts a picture on every choice and has a voice that reads each screen aloud, so a child who is still sounding out words can play alone or with a grown-up. Turn the volume up and make sure the phone is not on silent.",
+  },
+  {
     question: "Is it free?",
     answer:
       "Yes. The game, the facts, and the guides on this page are free to use at home, in a classroom, or at a career day table. There is nothing to buy and no account to make.",
@@ -224,3 +239,24 @@ export const techJrFaq: TechJrFaq[] = [
       "Juston and Atiya Warthen, who run The Warthens and Tech Journey, built it for a school career fair and kept it online so families and other organizers can use it too.",
   },
 ];
+
+// What search engines and link previews show for the game pages. Titles stay near 60 characters.
+export const playSeo = {
+  picker: {
+    title: "Free Games for Kids Ages 5 to 10: Play Tech Journey Jr.",
+    description:
+      "Free online games for kids ages 5 to 10 that teach online safety, tech careers, and cool facts. No ads, no sign-in, nothing saved. Works on phones and tablets.",
+  },
+  "ages-5-7": {
+    title: "Free Games for 5, 6 & 7 Year Olds: Tech Sprouts",
+    description:
+      "Free games for ages 5 to 7 (K to 2nd grade). A voice reads every screen and every choice has a picture. Online safety, careers, cool facts. No ads, no sign-in.",
+    h1: "Free games for 5, 6 and 7 year olds",
+  },
+  "ages-8-10": {
+    title: "Free Games for 8, 9 & 10 Year Olds: Tech Trailblazers",
+    description:
+      "Free online games for ages 8 to 10 (3rd to 5th grade). Trickier choices, real jobs, online safety, and 55 cool facts. No ads, no sign-in, nothing saved.",
+    h1: "Free games for 8, 9 and 10 year olds",
+  },
+} as const;

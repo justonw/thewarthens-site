@@ -23,6 +23,13 @@ import { AutoReadContext, ReadAloud } from "./ui";
 
 const heroes = ["maya", "kenji", "emma", "jamal", "joy", "jackson"];
 
+const parentGuides = [
+  { href: "/techjr/internet-safety-for-kids", label: "Internet safety for kids" },
+  { href: "/techjr/how-to-choose-safe-educational-games", label: "Safe educational games checklist" },
+  { href: "/techjr/things-to-do-when-kids-are-bored", label: "When your kid is bored" },
+  { href: "/techjr/cool-tech-facts-for-kids", label: "Cool tech facts for kids" },
+];
+
 function WorldCard({ world, band, done }: { world: World; band: Band; done: boolean }) {
   const about = aboutFor(world, band.id);
   const theme = worldThemes[world.theme];
@@ -190,6 +197,19 @@ export default function WorldMap({ band }: { band: Band }) {
             How this helps kids learn
           </Link>
         </p>
+        <p className="mt-3 text-base text-indigo-100">
+          Add this page to your phone&apos;s home screen (Safari: Share, then Add to Home Screen. Chrome: menu,
+          then Add to Home screen) and your child can open the game in one tap.
+        </p>
+        <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold">
+          {parentGuides.map((g) => (
+            <li key={g.href}>
+              <Link href={g.href} className="text-sky-200 underline underline-offset-4 hover:text-white">
+                {g.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <p className="mx-auto mt-10 max-w-md text-center text-sm text-indigo-200">

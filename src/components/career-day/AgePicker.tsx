@@ -10,6 +10,13 @@ import { ReadAloud } from "./ui";
 
 const heroes = ["maya", "kenji", "emma", "jamal", "joy", "jackson"];
 
+const parentGuides = [
+  { href: "/techjr/internet-safety-for-kids", label: "Internet safety for kids" },
+  { href: "/techjr/how-to-choose-safe-educational-games", label: "Safe educational games checklist" },
+  { href: "/techjr/things-to-do-when-kids-are-bored", label: "When your kid is bored" },
+  { href: "/techjr/cool-tech-facts-for-kids", label: "Cool tech facts for kids" },
+];
+
 function BandCard({ band }: { band: Band }) {
   const theme = worldThemes[band.theme];
   const names = worldsFor(band.id)
@@ -90,11 +97,25 @@ export default function AgePicker() {
           think about. If it feels too easy or too hard, tap Start over at the top and try the other group.
         </p>
         <p className="mt-3 text-base text-indigo-100">
+          Want it on your phone? Add this page to your home screen: in Safari tap Share, then Add to Home
+          Screen. In Chrome tap the menu, then Add to Home screen. Your child can then open the game in one
+          tap, with no store and no download.
+        </p>
+        <p className="mt-3 text-base text-indigo-100">
           No sign-in, no ads, and nothing a child picks or types is saved or sent.{" "}
           <Link href="/techjr#parents" className="font-bold text-amber-200 underline underline-offset-4">
             How this helps kids learn
           </Link>
         </p>
+        <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold">
+          {parentGuides.map((g) => (
+            <li key={g.href}>
+              <Link href={g.href} className="text-sky-200 underline underline-offset-4 hover:text-white">
+                {g.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <p className="mx-auto mt-10 max-w-md text-center text-sm text-indigo-200">
