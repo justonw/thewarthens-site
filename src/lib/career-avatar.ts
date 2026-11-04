@@ -74,12 +74,44 @@ export const avatarAccessories = [
 
 export type AccessoryId = (typeof avatarAccessories)[number]["id"];
 
+// Clothes and eye colors, so a character can look like the child who made it.
+export const avatarOutfits = [
+  { id: "hoodie", label: "Hoodie" },
+  { id: "tee", label: "T-shirt" },
+  { id: "jacket", label: "Jacket" },
+  { id: "stripes", label: "Stripes" },
+] as const;
+
+export const avatarOutfitColors = [
+  { id: "blue", hex: "#3B82F6", label: "Blue" },
+  { id: "red", hex: "#EF4444", label: "Red" },
+  { id: "green", hex: "#10B981", label: "Green" },
+  { id: "yellow", hex: "#F59E0B", label: "Yellow" },
+  { id: "purple", hex: "#8B5CF6", label: "Purple" },
+  { id: "pink", hex: "#EC4899", label: "Pink" },
+  { id: "black", hex: "#374151", label: "Black" },
+  { id: "orange", hex: "#F97316", label: "Orange" },
+] as const;
+
+export const avatarEyeColors = [
+  { id: "brown", hex: "#5B3A22", label: "Brown eyes" },
+  { id: "dark", hex: "#2A1A12", label: "Dark brown eyes" },
+  { id: "hazel", hex: "#8A6A2F", label: "Hazel eyes" },
+  { id: "green", hex: "#3F8F5A", label: "Green eyes" },
+  { id: "blue", hex: "#3B82C4", label: "Blue eyes" },
+] as const;
+
+export type OutfitId = (typeof avatarOutfits)[number]["id"];
+
 export type AvatarLook = {
   gender: AvatarGender;
   skin: string; // an avatarSkins id
   hair: HairStyle;
   hairColor: string; // an avatarHairColors id
   accessory?: AccessoryId;
+  outfit?: OutfitId;
+  outfitColor?: string; // an avatarOutfitColors id
+  eyes?: string; // an avatarEyeColors id
 };
 
 export const hairStylesFor = (gender: AvatarGender) =>
@@ -98,49 +130,76 @@ export const defaultLook: AvatarLook = {
 export type CrewMember = { id: string; name: string; look: AvatarLook };
 
 export const crew: CrewMember[] = [
-  { id: "maya", name: "Maya", look: { gender: "girl", skin: "brown", hair: "puffs", hairColor: "black" } },
   {
-    id: "kai",
-    name: "Kai",
-    look: { gender: "boy", skin: "light", hair: "short", hairColor: "black", accessory: "glasses" },
+    id: "maya",
+    name: "Maya",
+    look: { gender: "girl", skin: "brown", hair: "puffs", hairColor: "black", eyes: "dark", outfit: "hoodie", outfitColor: "yellow" },
   },
   {
-    id: "amira",
-    name: "Amira",
-    look: { gender: "girl", skin: "olive", hair: "long-straight", hairColor: "black" },
+    id: "kenji",
+    name: "Kenji",
+    look: { gender: "boy", skin: "light", hair: "short", hairColor: "black", eyes: "dark", accessory: "glasses", outfit: "jacket", outfitColor: "green" },
   },
-  { id: "jamal", name: "Jamal", look: { gender: "boy", skin: "deep", hair: "cornrows", hairColor: "black" } },
+  {
+    id: "emma",
+    name: "Emma",
+    look: { gender: "girl", skin: "fair", hair: "long-wavy", hairColor: "blonde", eyes: "blue", outfit: "tee", outfitColor: "pink" },
+  },
+  {
+    id: "jamal",
+    name: "Jamal",
+    look: { gender: "boy", skin: "deep", hair: "cornrows", hairColor: "black", eyes: "dark", outfit: "stripes", outfitColor: "red" },
+  },
   {
     id: "sofia",
     name: "Sofia",
-    look: { gender: "girl", skin: "caramel", hair: "long-wavy", hairColor: "brown" },
+    look: { gender: "girl", skin: "caramel", hair: "long-wavy", hairColor: "brown", eyes: "brown", outfit: "jacket", outfitColor: "purple" },
   },
   {
     id: "zuri",
     name: "Zuri",
-    look: { gender: "girl", skin: "dark", hair: "box-braids", hairColor: "black", accessory: "headphones" },
+    look: { gender: "girl", skin: "dark", hair: "box-braids", hairColor: "black", eyes: "dark", accessory: "headphones", outfit: "hoodie", outfitColor: "orange" },
   },
   {
     id: "diego",
     name: "Diego",
-    look: { gender: "boy", skin: "tan", hair: "curly-top", hairColor: "black", accessory: "glasses" },
+    look: { gender: "boy", skin: "tan", hair: "curly-top", hairColor: "black", eyes: "brown", accessory: "glasses", outfit: "tee", outfitColor: "blue" },
   },
   {
     id: "naya",
     name: "Naya",
-    look: { gender: "girl", skin: "caramel", hair: "pigtail-braids", hairColor: "black" },
+    look: { gender: "girl", skin: "caramel", hair: "pigtail-braids", hairColor: "black", eyes: "dark", outfit: "stripes", outfitColor: "green" },
   },
   {
     id: "arjun",
     name: "Arjun",
-    look: { gender: "boy", skin: "caramel", hair: "short", hairColor: "black", accessory: "hearing-aids" },
+    look: { gender: "boy", skin: "caramel", hair: "short", hairColor: "black", eyes: "dark", accessory: "hearing-aids", outfit: "hoodie", outfitColor: "purple" },
   },
   {
-    id: "elijah",
-    name: "Elijah",
-    look: { gender: "boy", skin: "brown", hair: "locs", hairColor: "black", accessory: "freckles" },
+    id: "lily",
+    name: "Lily",
+    look: { gender: "girl", skin: "fair", hair: "braid", hairColor: "red", eyes: "green", accessory: "freckles", outfit: "jacket", outfitColor: "red" },
   },
-  { id: "noah", name: "Noah", look: { gender: "boy", skin: "fair", hair: "shaggy", hairColor: "blonde" } },
+  {
+    id: "joshua",
+    name: "Joshua",
+    look: { gender: "boy", skin: "brown", hair: "low-cut", hairColor: "black", eyes: "dark", outfit: "hoodie", outfitColor: "blue" },
+  },
+  {
+    id: "jackson",
+    name: "Jackson",
+    look: { gender: "boy", skin: "light", hair: "wavy", hairColor: "brown", eyes: "blue", accessory: "freckles", outfit: "tee", outfitColor: "red" },
+  },
+  {
+    id: "joy",
+    name: "Joy",
+    look: { gender: "girl", skin: "deep", hair: "afro", hairColor: "black", eyes: "dark", outfit: "tee", outfitColor: "yellow" },
+  },
+  {
+    id: "john",
+    name: "John",
+    look: { gender: "boy", skin: "olive", hair: "spiky", hairColor: "black", eyes: "brown", outfit: "stripes", outfitColor: "orange" },
+  },
 ];
 
 export const crewById = (id: string) => crew.find((c) => c.id === id);

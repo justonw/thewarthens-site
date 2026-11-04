@@ -21,7 +21,7 @@ import { crewById } from "@/lib/career-avatar";
 import Avatar from "./Avatar";
 import { AutoReadContext, ReadAloud } from "./ui";
 
-const heroes = ["maya", "kai", "amira", "jamal", "sofia", "zuri"];
+const heroes = ["maya", "kenji", "emma", "jamal", "joy", "jackson"];
 
 function WorldCard({ world, band, done }: { world: World; band: Band; done: boolean }) {
   const about = aboutFor(world, band.id);

@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import {
+  avatarEyeColors,
   avatarHairColors,
+  avatarOutfitColors,
   avatarSkins,
   type AvatarLook,
   type HairStyle,
@@ -9,12 +11,20 @@ import {
 // A friendly cartoon kid, drawn in SVG so every skin tone and hairstyle looks right
 // (emoji cannot show twists, braids, locs, or puffs).
 
-const SHIRT = "#4F8DF7";
 const TIE = "#F472B6";
-const BG = "#E0F2FE";
+
+// Small color helpers so shading (lighter skin on the cheeks, darker under the chin, a pastel
+// backdrop that matches the shirt) follows whatever colors a child picks.
+function mix(a: string, b: string, t: number) {
+  const n = (h: string, i: number) => parseInt(h.slice(1 + i * 2, 3 + i * 2), 16);
+  const c = (i: number) => Math.round(n(a, i) + (n(b, i) - n(a, i)) * t);
+  return `#${[0, 1, 2].map((i) => c(i).toString(16).padStart(2, "0")).join("")}`;
+}
+const lighten = (hex: string, t: number) => mix(hex, "#ffffff", t);
+const darken = (hex: string, t: number) => mix(hex, "#000000", t);
 
 // Hair that sits behind the head and shoulders.
-function backHair(style: HairStyle, c: string): ReactNode {
+function backHair(style: HairStyle, c: string, boy: boolean): ReactNode {
   switch (style) {
     case "twists":
       return (
@@ -27,8 +37,8 @@ function backHair(style: HairStyle, c: string): ReactNode {
               [23, 18],
             ].map(([x, end]) => (
               <g key={x}>
-                <path d={`M${x} 48 C${end - 3} 62 ${end - 3} 76 ${end} 94`} />
-                <path d={`M${120 - x} 48 C${123 - end} 62 ${123 - end} 76 ${120 - end} 94`} />
+                <path d={`M${x} 48 C${end - 3} 60 ${end - 3} ${boy ? 62 : 76} ${end} ${boy ? 70 : 94}`} />
+                <path d={`M${120 - x} 48 C${123 - end} 60 ${123 - end} ${boy ? 62 : 76} ${120 - end} ${boy ? 70 : 94}`} />
               </g>
             ))}
           </g>
@@ -39,8 +49,8 @@ function backHair(style: HairStyle, c: string): ReactNode {
               [23, 18],
             ].map(([x, end]) => (
               <g key={x}>
-                <path d={`M${x} 48 C${end - 3} 62 ${end - 3} 76 ${end} 94`} />
-                <path d={`M${120 - x} 48 C${123 - end} 62 ${123 - end} 76 ${120 - end} 94`} />
+                <path d={`M${x} 48 C${end - 3} 60 ${end - 3} ${boy ? 62 : 76} ${end} ${boy ? 70 : 94}`} />
+                <path d={`M${120 - x} 48 C${123 - end} 60 ${123 - end} ${boy ? 62 : 76} ${120 - end} ${boy ? 70 : 94}`} />
               </g>
             ))}
           </g>
@@ -55,7 +65,7 @@ function backHair(style: HairStyle, c: string): ReactNode {
             [87, 89],
             [93, 95],
           ].map(([x, end]) => (
-            <path key={x} d={`M${x} 44 C${end - 4} 62 ${end - 4} 80 ${end} 102`} />
+            <path key={x} d={`M${x} 44 C${end - 4} ${boy ? 54 : 62} ${end - 4} ${boy ? 64 : 80} ${end} ${boy ? 74 : 102}`} />
           ))}
         </g>
       );
@@ -129,7 +139,7 @@ function backHair(style: HairStyle, c: string): ReactNode {
 const CAP = "M33 58 C30 36 44 27 60 27 C76 27 90 36 87 58 C84 48 78 43 70 41 C62 45 52 45 46 41 C40 44 35 50 33 58 Z";
 const CAP_HIGH = "M34 54 C32 40 44 31 60 31 C76 31 88 40 86 54 C82 47 74 43 66 42 C60 44 54 44 54 44 C46 43 38 47 34 54 Z";
 
-function frontHair(style: HairStyle, c: string): ReactNode {
+function frontHair(style: HairStyle, c: string, boy: boolean): ReactNode {
   switch (style) {
     case "low-cut":
       return <path d={CAP_HIGH} fill={c} />;
@@ -179,8 +189,8 @@ function frontHair(style: HairStyle, c: string): ReactNode {
         <g>
           <path d={CAP_HIGH} fill={c} />
           <g stroke={c} strokeWidth="6" strokeLinecap="round" fill="none">
-            <path d="M33 46 C29 62 29 78 30 96" />
-            <path d="M87 46 C91 62 91 78 90 96" />
+            <path d={boy ? "M33 46 C30 54 30 62 31 72" : "M33 46 C29 62 29 78 30 96"} />
+            <path d={boy ? "M87 46 C90 54 90 62 89 72" : "M87 46 C91 62 91 78 90 96"} />
           </g>
           <g
             stroke="#fff"
@@ -190,8 +200,8 @@ function frontHair(style: HairStyle, c: string): ReactNode {
             opacity="0.35"
             fill="none"
           >
-            <path d="M33 46 C29 62 29 78 30 96" />
-            <path d="M87 46 C91 62 91 78 90 96" />
+            <path d={boy ? "M33 46 C30 54 30 62 31 72" : "M33 46 C29 62 29 78 30 96"} />
+            <path d={boy ? "M87 46 C90 54 90 62 89 72" : "M87 46 C91 62 91 78 90 96"} />
             <path d="M42 44 C44 38 50 34 60 34" />
             <path d="M78 44 C76 38 70 34 60 34" />
           </g>
@@ -436,7 +446,7 @@ function freckles(): ReactNode {
 
 function glasses(): ReactNode {
   return (
-    <g fill="none" stroke="#1F2937" strokeWidth="2.4" strokeLinecap="round">
+    <g fill="none" stroke="#1F2937" strokeWidth="1.9" strokeLinecap="round">
       <circle cx="49" cy="60.5" r="8.6" fill="#fff" fillOpacity="0.18" />
       <circle cx="71" cy="60.5" r="8.6" fill="#fff" fillOpacity="0.18" />
       <path d="M57.6 59.5 Q60 57.5 62.4 59.5" />
@@ -470,6 +480,44 @@ function hearingAids(): ReactNode {
   );
 }
 
+function Outfit({ kind, color }: { kind: string; color: string }) {
+  const dark = darken(color, 0.22);
+  const light = lighten(color, 0.35);
+  return (
+    <g>
+      {kind === "hoodie" && <path d="M28 100 C28 80 44 74 60 74 C76 74 92 80 92 100 Z" fill={dark} />}
+      <path d="M14 124 C14 100 36 92 60 92 C84 92 106 100 106 124 Z" fill={color} />
+      <clipPath id="avatar-torso">
+        <path d="M14 124 C14 100 36 92 60 92 C84 92 106 100 106 124 Z" />
+      </clipPath>
+      {kind === "stripes" && (
+        <g clipPath="url(#avatar-torso)" stroke={light} strokeWidth="3.2" opacity="0.9">
+          <path d="M10 103 H110" />
+          <path d="M10 111 H110" />
+          <path d="M10 119 H110" />
+        </g>
+      )}
+      {kind === "hoodie" && (
+        <g>
+          <path d="M47 93 Q60 108 73 93 Q60 100 47 93 Z" fill={dark} />
+          <path d="M54 98 L53 110 M66 98 L67 110" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" />
+          <path d="M38 124 L41 112 Q60 107 79 112 L82 124" stroke={dark} strokeWidth="1.6" fill="none" />
+        </g>
+      )}
+      {kind === "jacket" && (
+        <g>
+          <path d="M47 93 L60 113 L73 93 Z" fill="#F8FAFC" />
+          <path d="M47 93 L60 114 L38 124 M73 93 L60 114 L82 124" stroke={dark} strokeWidth="2.2" fill={dark} fillOpacity="0.35" strokeLinejoin="round" />
+          <path d="M60 114 V124" stroke={dark} strokeWidth="1.6" />
+        </g>
+      )}
+      {(kind === "tee" || kind === "stripes") && (
+        <path d="M46 93 Q60 107 74 93" stroke={dark} strokeWidth="2.2" fill="none" strokeLinecap="round" />
+      )}
+    </g>
+  );
+}
+
 export default function Avatar({
   look,
   size = 96,
@@ -481,10 +529,21 @@ export default function Avatar({
   label?: string;
   className?: string;
 }) {
+  const boy = look.gender === "boy";
   const skin = avatarSkins.find((s) => s.id === look.skin)?.hex ?? avatarSkins[2].hex;
   const hair = avatarHairColors.find((h) => h.id === look.hairColor)?.hex ?? avatarHairColors[0].hex;
+  const outfitColor =
+    avatarOutfitColors.find((c) => c.id === look.outfitColor)?.hex ?? avatarOutfitColors[0].hex;
+  const eye = avatarEyeColors.find((e) => e.id === look.eyes)?.hex ?? avatarEyeColors[0].hex;
   const accessory = look.accessory ?? "none";
-  const clip = `avatar-clip-${look.gender}-${look.skin}-${look.hair}-${look.hairColor}`;
+
+  const faceId = `avatar-face-${look.skin}`;
+  const hairId = `avatar-hair-${look.hairColor}`;
+  const bgId = `avatar-bg-${look.outfitColor ?? "blue"}`;
+  const hairFill = `url(#${hairId})`;
+  const brow = darken(hair, 0.25);
+  const lip = mix(skin, "#A8323F", 0.55);
+  const deepShade = darken(skin, 0.18);
 
   return (
     <svg
@@ -497,36 +556,86 @@ export default function Avatar({
       className={className}
     >
       <defs>
-        <clipPath id={clip}>
+        <clipPath id="avatar-clip">
           <circle cx="60" cy="60" r="60" />
         </clipPath>
+        <radialGradient id={faceId} cx="45%" cy="38%" r="70%">
+          <stop offset="0" stopColor={lighten(skin, 0.14)} />
+          <stop offset="0.7" stopColor={skin} />
+          <stop offset="1" stopColor={darken(skin, 0.1)} />
+        </radialGradient>
+        <linearGradient id={hairId} gradientUnits="userSpaceOnUse" x1="0" y1="10" x2="0" y2="112">
+          <stop offset="0" stopColor={lighten(hair, 0.22)} />
+          <stop offset="0.45" stopColor={hair} />
+          <stop offset="1" stopColor={darken(hair, 0.2)} />
+        </linearGradient>
+        <linearGradient id={bgId} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor={lighten(outfitColor, 0.88)} />
+          <stop offset="1" stopColor={lighten(outfitColor, 0.7)} />
+        </linearGradient>
       </defs>
-      <circle cx="60" cy="60" r="60" fill={BG} />
-      <g clipPath={`url(#${clip})`}>
-        {backHair(look.hair, hair)}
-        <path d="M16 124 C16 100 38 92 60 92 C82 92 104 100 104 124 Z" fill={SHIRT} />
-        <rect x="52" y="80" width="16" height="16" rx="6" fill={skin} />
-        <rect x="52" y="80" width="16" height="16" rx="6" fill="#000" opacity="0.12" />
+      <circle cx="60" cy="60" r="60" fill={`url(#${bgId})`} />
+      <g clipPath="url(#avatar-clip)">
+        {backHair(look.hair, hairFill, boy)}
+        <Outfit kind={look.outfit ?? "hoodie"} color={outfitColor} />
+        <rect x="52" y="78" width="16" height="18" rx="6" fill={skin} />
+        <path d="M52 86 Q60 94 68 86 L68 92 L52 92 Z" fill="#000" opacity="0.12" />
         <circle cx="34" cy="62" r="5.5" fill={skin} />
         <circle cx="86" cy="62" r="5.5" fill={skin} />
-        <ellipse cx="60" cy="58" rx="27" ry="29" fill={skin} />
-        {look.gender === "girl" && (
+        <circle cx="34" cy="62.5" r="2.6" fill={deepShade} opacity="0.55" />
+        <circle cx="86" cy="62.5" r="2.6" fill={deepShade} opacity="0.55" />
+        <path
+          d={
+            boy
+              ? "M33 56 C33 37 45 28 60 28 C75 28 87 37 87 56 C87 77 77 90 60 90 C43 90 33 77 33 56 Z"
+              : "M33 56 C33 37 45 28 60 28 C75 28 87 37 87 56 C87 75 76 89 60 89 C44 89 33 75 33 56 Z"
+          }
+          fill={`url(#${faceId})`}
+        />
+        <path d="M36 70 C40 84 51 89 60 89 C69 89 80 84 84 70 C79 80 70 85 60 85 C50 85 41 80 36 70 Z" fill="#000" opacity="0.07" />
+        {!boy && (
           <>
-            <circle cx="42" cy="70" r="5" fill="#F2788F" opacity="0.22" />
-            <circle cx="78" cy="70" r="5" fill="#F2788F" opacity="0.22" />
+            <circle cx="42" cy="70" r="5.5" fill="#F2788F" opacity="0.22" />
+            <circle cx="78" cy="70" r="5.5" fill="#F2788F" opacity="0.22" />
           </>
         )}
-        <ellipse cx="49" cy="60" rx="4.3" ry="4.8" fill="#fff" />
-        <ellipse cx="71" cy="60" rx="4.3" ry="4.8" fill="#fff" />
-        <circle cx="49.4" cy="60.6" r="2.9" fill="#1D1411" />
-        <circle cx="71.4" cy="60.6" r="2.9" fill="#1D1411" />
-        <circle cx="50.3" cy="59.5" r="0.9" fill="#fff" />
-        <circle cx="72.3" cy="59.5" r="0.9" fill="#fff" />
-        <path d="M43 52 Q49 49 55 52" stroke="#2B1B13" strokeOpacity="0.8" strokeWidth="2" strokeLinecap="round" fill="none" />
-        <path d="M65 52 Q71 49 77 52" stroke="#2B1B13" strokeOpacity="0.8" strokeWidth="2" strokeLinecap="round" fill="none" />
-        <path d="M58 66 Q60 69 62 66" stroke="#000" strokeOpacity="0.22" strokeWidth="1.6" strokeLinecap="round" fill="none" />
-        <path d="M50 72 Q60 83 70 72 Q60 76 50 72 Z" fill="#8B2F2F" />
-        {frontHair(look.hair, hair)}
+        {[49, 71].map((cx, i) => (
+          <g key={cx}>
+            <ellipse cx={cx} cy="60" rx="5.2" ry="4.4" fill="#fff" />
+            <circle cx={cx + 0.3} cy="60.3" r="3.3" fill={eye} />
+            <circle cx={cx + 0.3} cy="60.3" r="1.6" fill="#120C09" />
+            <circle cx={cx + 1.5} cy="59" r="1" fill="#fff" />
+            <path
+              d={`M${cx - 5.4} 60 Q${cx} 54.6 ${cx + 5.4} 60`}
+              stroke="#1D1411"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              fill="none"
+            />
+            {!boy && (
+              <path
+                d={i === 0 ? "M43.6 59.4 L41.4 57" : "M76.4 59.4 L78.6 57"}
+                stroke="#1D1411"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+              />
+            )}
+            <path
+              d={`M${cx - 6} ${boy ? 51.5 : 52.5} Q${cx} ${boy ? 47.5 : 48.5} ${cx + 6.2} ${boy ? 51 : 52}`}
+              stroke={brow}
+              strokeWidth={boy ? 3 : 2.3}
+              strokeLinecap="round"
+              fill="none"
+            />
+          </g>
+        ))}
+        <path d="M60 60 L59 67" stroke={lighten(skin, 0.35)} strokeWidth="2.2" strokeLinecap="round" opacity="0.55" />
+        <path d="M55.5 69 Q60 72.5 64.5 69" stroke={darken(skin, 0.28)} strokeWidth="1.7" strokeLinecap="round" fill="none" />
+        <path d="M50.5 74 Q60 85 69.5 74 Q60 78 50.5 74 Z" fill="#7B2D33" />
+        <path d="M52.6 75 Q60 80.5 67.4 75 Q60 77.6 52.6 75 Z" fill="#fff" />
+        <path d="M49.6 73.4 Q60 78.6 70.4 73.4" stroke={lip} strokeWidth="1.8" strokeLinecap="round" fill="none" />
+        <path d="M54 81 Q60 85 66 81" stroke={lip} strokeWidth="1.6" strokeLinecap="round" fill="none" opacity="0.7" />
+        {frontHair(look.hair, hairFill, boy)}
         {accessory === "freckles" && freckles()}
         {accessory === "glasses" && glasses()}
         {accessory === "headphones" && headphones()}

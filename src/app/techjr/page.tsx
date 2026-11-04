@@ -194,7 +194,7 @@ export default function TechJrPage() {
             No sign-in. Nothing a child types or picks is saved.
           </p>
           <CrewStrip
-            ids={["maya", "kai", "amira", "jamal", "sofia", "zuri", "diego", "naya"]}
+            ids={["maya", "kenji", "emma", "jamal", "joy", "joshua", "lily", "diego"]}
             size={72}
             className="mt-10"
           />
@@ -209,7 +209,7 @@ export default function TechJrPage() {
             Meet the Tech Crew, the kids who show up around the game. They have many skin tones,
             hairstyles, and backgrounds, and some have freckles or wear glasses, headphones, or hearing aids.
             In Make a Show, a child builds a character of their own from 8 skin tones, {hairstyleCount} hairstyles
-            (including twists, locs, braids, puffs, and knots), and the same extras. The Cool Facts
+            (including twists, locs, braids, puffs, and knots), five eye colors, clothes, and the same extras. The Cool Facts
             also tell the true stories of inventors and builders from many places and backgrounds.
           </p>
         </Reveal>

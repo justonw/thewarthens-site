@@ -8,7 +8,7 @@ import Avatar from "./Avatar";
 import { CardArt } from "./Scenery";
 import { ReadAloud } from "./ui";
 
-const heroes = ["maya", "kai", "amira", "jamal", "sofia", "zuri"];
+const heroes = ["maya", "kenji", "emma", "jamal", "joy", "jackson"];
 
 function BandCard({ band }: { band: Band }) {
   const theme = worldThemes[band.theme];

@@ -375,7 +375,7 @@ export const cyberCases: CyberCase[] = [
       {
         sceneEmoji: "🏆",
         who: "A kid at school says:",
-        speaker: "kai",
+        speaker: "kenji",
         says: "I know a trick to change your game score from 500 to 5,000!",
         question: "What do you do?",
         options: [

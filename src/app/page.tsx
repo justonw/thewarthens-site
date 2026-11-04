@@ -360,7 +360,7 @@ export default function Home() {
                 </div>
               </div>
               <CrewStrip
-                ids={["maya", "kai", "amira", "jamal", "sofia", "zuri", "diego", "naya"]}
+                ids={["maya", "kenji", "emma", "jamal", "joy", "joshua", "lily", "diego"]}
                 size={84}
                 className="mx-auto max-w-sm"
               />

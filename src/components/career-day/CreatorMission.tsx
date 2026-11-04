@@ -13,7 +13,10 @@ import {
 } from "@/lib/career-day";
 import {
   avatarAccessories,
+  avatarEyeColors,
   avatarHairColors,
+  avatarOutfitColors,
+  avatarOutfits,
   avatarSkins,
   defaultLook,
   hairStylesFor,
@@ -308,6 +311,54 @@ export default function CreatorMission({ band, onFinish }: { band: BandId; onFin
                 <Avatar look={{ ...look, accessory: a.id }} size={72} />
                 <span className="text-sm font-extrabold text-slate-800">{a.label}</span>
               </button>
+            ))}
+          </div>
+
+          <p className="mt-6 text-center text-lg font-bold text-slate-700">My eyes</p>
+          <div className="mx-auto mt-2 grid max-w-md grid-cols-5 justify-items-center gap-2">
+            {avatarEyeColors.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                aria-label={c.label}
+                aria-pressed={(look.eyes ?? "brown") === c.id}
+                onClick={() => setLook((l) => ({ ...l, eyes: c.id }))}
+                className={`aspect-square w-full max-w-14 rounded-full border-4 transition active:scale-95 ${
+                  (look.eyes ?? "brown") === c.id ? "border-blue-500 ring-4 ring-blue-200" : "border-white"
+                }`}
+                style={{ backgroundColor: c.hex }}
+              />
+            ))}
+          </div>
+
+          <p className="mt-6 text-center text-lg font-bold text-slate-700">My clothes</p>
+          <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {avatarOutfits.map((o) => (
+              <button
+                key={o.id}
+                type="button"
+                aria-pressed={(look.outfit ?? "hoodie") === o.id}
+                onClick={() => setLook((l) => ({ ...l, outfit: o.id }))}
+                className={`flex flex-col items-center gap-1 p-2 ${pick((look.outfit ?? "hoodie") === o.id)}`}
+              >
+                <Avatar look={{ ...look, outfit: o.id, accessory: "none" }} size={72} />
+                <span className="text-sm font-extrabold text-slate-800">{o.label}</span>
+              </button>
+            ))}
+          </div>
+          <div className="mx-auto mt-3 grid max-w-lg grid-cols-8 justify-items-center gap-2">
+            {avatarOutfitColors.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                aria-label={c.label}
+                aria-pressed={(look.outfitColor ?? "blue") === c.id}
+                onClick={() => setLook((l) => ({ ...l, outfitColor: c.id }))}
+                className={`aspect-square w-full max-w-14 rounded-full border-4 transition active:scale-95 ${
+                  (look.outfitColor ?? "blue") === c.id ? "border-blue-500 ring-4 ring-blue-200" : "border-white"
+                }`}
+                style={{ backgroundColor: c.hex }}
+              />
             ))}
           </div>
         </Panel>
