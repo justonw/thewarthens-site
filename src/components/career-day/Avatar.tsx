@@ -346,13 +346,18 @@ function frontHair(style: HairStyle, c: string, boy: boolean): ReactNode {
       );
     case "spiky":
       return (
-        <path
-          d="M34 54 L35 36 L43 43 L46 28 L54 40 L60 24 L66 40 L74 28 L77 43 L85 36 L86 54 C82 46 72 42 60 42 C48 42 38 46 34 54 Z"
-          fill={c}
-          stroke={c}
-          strokeWidth="2"
-          strokeLinejoin="round"
-        />
+        <g fill={c}>
+          <path d="M33 57 C30 38 44 28 60 28 C77 28 90 38 87 57 C85 48 80 43 70 42 C60 45 47 44 39 47 C36 50 34 53 33 57 Z" />
+          {[
+            [44, 30, 7, 4.6, -25],
+            [57, 26, 8, 5, -6],
+            [71, 28, 7, 4.6, 14],
+            [81, 35, 6, 4, 32],
+          ].map(([x, y, rx, ry, rot]) => (
+            <ellipse key={`${x}-${y}`} cx={x} cy={y} rx={rx} ry={ry} transform={`rotate(${rot} ${x} ${y})`} />
+          ))}
+          <path d="M48 36 C54 33 62 33 70 35" stroke="#fff" strokeOpacity="0.2" strokeWidth="2" strokeLinecap="round" fill="none" />
+        </g>
       );
     case "bob":
       return (
@@ -580,6 +585,7 @@ export default function Avatar({
         <Outfit kind={look.outfit ?? "hoodie"} color={outfitColor} />
         <rect x="52" y="78" width="16" height="18" rx="6" fill={skin} />
         <path d="M52 86 Q60 94 68 86 L68 92 L52 92 Z" fill="#000" opacity="0.12" />
+        <path d="M31 58 C29 31 44 21 60 21 C76 21 91 31 89 58 Z" fill={hairFill} />
         <circle cx="34" cy="62" r="5.5" fill={skin} />
         <circle cx="86" cy="62" r="5.5" fill={skin} />
         <circle cx="34" cy="62.5" r="2.6" fill={deepShade} opacity="0.55" />

@@ -29,7 +29,7 @@ export const boyHairStyles = [
   { id: "fade", label: "Fade" },
   { id: "shaggy", label: "Shaggy" },
   { id: "wavy", label: "Wavy" },
-  { id: "spiky", label: "Spiky" },
+  { id: "spiky", label: "Messy" },
   { id: "curly-top", label: "Curly top" },
   { id: "high-top", label: "High top" },
   { id: "twists", label: "Twists" },
