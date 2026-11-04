@@ -20,14 +20,16 @@ import {
 // Typed questions go to the AI service to get an answer and are not saved on this site.
 //
 // It opens by itself on the main landing pages for first-time visitors (once a week at most),
-// and never on a page that was reached through a #section link. It does not render in the kids'
-// game (which hides the site chrome) or on the coaching page, which has its own call to action
-// and should keep a visitor's attention on its form.
+// and never on a page that was reached through a #section link. It shows on every page of the site except the kids'
+// game, which is a chrome-free kiosk for children (the guide's typed box sends questions to an AI,
+// and the game promises that nothing a child does is sent anywhere). On the coaching page the
+// launcher sits above that page's sticky call-to-action bar and never opens by itself.
 
 type Msg = { id: number; from: "bot" | "me"; text: string };
 
 const AUTO_OPEN_PATHS = ["/", "/tech", "/faith", "/techjr"];
-const HIDDEN_PREFIXES = ["/tech/coaching"];
+// The coaching page has a sticky "book a call" bar, so the launcher sits above it there.
+const LIFTED_PREFIXES = ["/tech/coaching"];
 const AUTO_OPEN_DELAY_MS = 1200;
 const COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 const STORAGE_KEY = "warthens-guide-seen";
@@ -259,10 +261,8 @@ export default function SiteGuide() {
 
   const node = guideNodes[nodeId];
   const busy = typing || leaving;
-  const hidden = !!pathname && HIDDEN_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+  const lifted = !!pathname && LIFTED_PREFIXES.some((prefix) => pathname.startsWith(prefix));
   const inResults = results !== null;
-
-  if (hidden) return null;
 
   return (
     <div className="print:hidden">
@@ -409,7 +409,7 @@ export default function SiteGuide() {
           ref={launcherRef}
           type="button"
           onClick={openByVisitor}
-          className={`fixed right-4 z-[60] inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-950/25 transition-colors hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 bottom-4 sm:right-6 sm:bottom-6`}
+          className={`fixed right-4 z-[60] inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-950/25 transition-colors hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ${lifted ? "bottom-24 sm:right-6 sm:bottom-24" : "bottom-4 sm:right-6 sm:bottom-6"}`}
         >
           <span aria-hidden>💬</span>
           Where to start?
