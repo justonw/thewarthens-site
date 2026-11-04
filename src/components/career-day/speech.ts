@@ -1,12 +1,33 @@
 "use client";
 
 import { useCallback, useEffect, useId, useSyncExternalStore } from "react";
-import { clipUrl, speechText } from "@/lib/career-day-audio";
+import { clipId, clipUrl, speechText } from "@/lib/career-day-audio";
+import { hasRecordedClip } from "@/lib/clip-manifest";
 
 // Read-aloud plays a recorded voice clip when there is one. If not, it falls back to the
 // browser's built-in speech. Nothing is sent anywhere.
 
+// One audio element is reused for every clip. Phones only let a page play sound after a tap, and
+// they treat a fresh element as locked, so the first tap "unlocks" this one with a silent sound.
+// After that, clips can start by themselves on later screens.
 let currentAudio: HTMLAudioElement | null = null;
+let sharedAudio: HTMLAudioElement | null = null;
+const SILENT_WAV = "data:audio/wav;base64,UklGRsQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YaAAAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA";
+
+function unlockAudio() {
+  if (typeof Audio === "undefined") return;
+  if (!sharedAudio) sharedAudio = new Audio();
+  sharedAudio.src = SILENT_WAV;
+  sharedAudio.play().catch(() => {});
+}
+
+// iPhones also keep the device voice locked until it speaks once as the direct result of a tap.
+function unlockSpeech() {
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+  const quiet = new SpeechSynthesisUtterance(" ");
+  quiet.volume = 0;
+  window.speechSynthesis.speak(quiet);
+}
 
 // Only one thing is read at a time. This remembers which button or box it is, so that one
 // can light up, and so starting a new reading clears the old one.
@@ -29,7 +50,18 @@ const subscribe = (listener: () => void) => {
 let userHasTapped = false;
 if (typeof window !== "undefined") {
   window.addEventListener("pointerdown", () => (userHasTapped = true), { capture: true, once: true });
-  window.addEventListener("keydown", () => (userHasTapped = true), { capture: true, once: true });
+  // iPhones only count a finished tap or click (not the first touch) as permission to play sound.
+  let unlocked = false;
+  const unlock = () => {
+    userHasTapped = true;
+    if (unlocked) return;
+    unlocked = true;
+    unlockAudio();
+    unlockSpeech();
+  };
+  for (const type of ["touchend", "click", "keydown"] as const) {
+    window.addEventListener(type, unlock, { capture: true, once: true });
+  }
 }
 export const hasUserTapped = () => userHasTapped;
 
@@ -39,6 +71,11 @@ export function stopSpeech() {
     currentAudio.onerror = null;
     currentAudio.pause();
     currentAudio = null;
+  }
+  if (sharedAudio) {
+    sharedAudio.onended = null;
+    sharedAudio.onerror = null;
+    sharedAudio.pause();
   }
   if (typeof window !== "undefined" && "speechSynthesis" in window) {
     window.speechSynthesis.cancel();
@@ -69,7 +106,33 @@ function pickVoice(): SpeechSynthesisVoice | null {
     const match = pool.find((v) => v.name.includes(name));
     if (match) return match;
   }
-  return pool.find((v) => /male/i.test(v.name) && !/female/i.test(v.name)) ?? null;
+  const male = pool.find((v) => /male/i.test(v.name) && !/female/i.test(v.name));
+  if (male) return male;
+  // No known male voice: at least avoid the well-known female defaults, so a device that has any
+  // other English voice uses that instead.
+  return pool.find((v) => !FEMALE_VOICES.test(v.name)) ?? null;
+}
+
+const FEMALE_VOICES =
+  /samantha|victoria|karen|moira|tessa|fiona|veena|allison|ava|susan|zira|aria|jenny|hazel|libby|sonia|emma|female|siri/i;
+
+// Some browsers load their voice list a moment after the page opens. Wait briefly for it, so the
+// first reading does not fall back to the device's default (often a woman's) voice.
+function whenVoicesReady(run: () => void) {
+  const synth = window.speechSynthesis;
+  if (synth.getVoices().length > 0) {
+    run();
+    return;
+  }
+  let done = false;
+  const go = () => {
+    if (done) return;
+    done = true;
+    synth.removeEventListener("voiceschanged", go);
+    run();
+  };
+  synth.addEventListener("voiceschanged", go);
+  window.setTimeout(go, 800);
 }
 
 // Browser support never changes while the page is open, so there is nothing to subscribe to.
@@ -99,15 +162,18 @@ export function useSpeech() {
         return;
       }
       const synth = window.speechSynthesis;
-      const utterance = new SpeechSynthesisUtterance(speechText(text));
-      utterance.lang = "en-US";
-      const voice = pickVoice();
-      if (voice) utterance.voice = voice;
-      utterance.rate = 1;
-      utterance.pitch = 0.95;
-      utterance.onend = finish;
-      utterance.onerror = finish;
-      synth.speak(utterance);
+      whenVoicesReady(() => {
+        if (reading !== readingNumber) return;
+        const utterance = new SpeechSynthesisUtterance(speechText(text));
+        utterance.lang = "en-US";
+        const voice = pickVoice();
+        if (voice) utterance.voice = voice;
+        utterance.rate = 1;
+        utterance.pitch = 0.95;
+        utterance.onend = finish;
+        utterance.onerror = finish;
+        synth.speak(utterance);
+      });
     },
     [id]
   );
@@ -122,15 +188,19 @@ export function useSpeech() {
       const reading = ++readingNumber;
       setActive(id);
 
-      if (typeof Audio === "undefined") {
+      // No recording for this line: speak with the device voice right now, while the tap that
+      // asked for it still counts (phones refuse speech that starts a moment later).
+      if (typeof Audio === "undefined" || !hasRecordedClip(clipId(text))) {
         speakWithBrowserVoice(text, reading);
         return;
       }
-      const audio = new Audio(clipUrl(text));
+      if (!sharedAudio) sharedAudio = new Audio();
+      const audio = sharedAudio;
       currentAudio = audio;
+      audio.src = clipUrl(text);
       let fellBack = false;
       const fallBack = () => {
-        if (fellBack || currentAudio !== audio) return;
+        if (fellBack || reading !== readingNumber) return;
         fellBack = true;
         currentAudio = null;
         speakWithBrowserVoice(text, reading);
