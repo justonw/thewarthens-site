@@ -4,12 +4,14 @@ import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import {
   LESSON_LABEL,
+  LESSON_LEAD,
   LESSON_SUBTITLE,
   LESSON_TITLE,
   MAX_NOTE_LENGTH,
   actionFor,
   contexts,
   explanation,
+  faq,
   synopsis,
   versionNotice,
   type Verse,
@@ -293,6 +295,7 @@ export default function PresentMissingLesson() {
           {LESSON_TITLE}
         </h1>
         <p className="mt-2 text-xl text-foreground-muted">{LESSON_SUBTITLE}</p>
+        <p className="mt-5 max-w-2xl text-lg leading-relaxed text-foreground">{LESSON_LEAD}</p>
         <p className="mt-5 rounded-2xl bg-background-elevated px-5 py-4 text-sm text-foreground-muted">
           Follow along and write in the boxes. What you write is saved only on this phone or computer.
           At the end, you can email yourself a PDF of the lesson with your notes.
@@ -481,6 +484,62 @@ export default function PresentMissingLesson() {
             </button>
           </p>
         </div>
+      </section>
+
+      <section id="faq" className="mt-16 scroll-mt-24">
+        <h2 className={sectionTitle}>Common questions</h2>
+        <div className="mt-6 space-y-3">
+          {faq.map((f) => (
+            <details key={f.question} className="group/faq rounded-2xl border border-border-subtle bg-background-elevated">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-2xl p-5 text-base font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-700 [&::-webkit-details-marker]:hidden">
+                {f.question}
+                <svg
+                  viewBox="0 0 20 20"
+                  className="h-5 w-5 shrink-0 text-foreground-muted transition-transform group-open/faq:rotate-180"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden
+                >
+                  <path d="m5 8 5 5 5-5" />
+                </svg>
+              </summary>
+              <p className="px-5 pb-5 text-base leading-relaxed text-foreground-muted">{f.answer}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      <section aria-labelledby="more-faith" className="mt-14">
+        <h2 id="more-faith" className="text-xl font-semibold text-blue-950">
+          More from Faith Journey
+        </h2>
+        <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+          <li>
+            <Link
+              href="/faith"
+              className="block h-full rounded-2xl border border-border-subtle bg-background-elevated p-5 transition-colors hover:border-blue-700/40"
+            >
+              <span className="font-semibold text-blue-800">Faith Journey</span>
+              <span className="mt-1 block text-sm text-foreground-muted">
+                Our story, writings, and lessons on relying on God to discover, understand, and live out truth.
+              </span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/faith/women-who-seek"
+              className="block h-full rounded-2xl border border-border-subtle bg-background-elevated p-5 transition-colors hover:border-blue-700/40"
+            >
+              <span className="font-semibold text-blue-800">Women Who Seek</span>
+              <span className="mt-1 block text-sm text-foreground-muted">
+                A Bible study community for women, hosted by Atiya Warthen.
+              </span>
+            </Link>
+          </li>
+        </ul>
       </section>
 
       <footer className="mt-12 space-y-3 text-xs text-foreground-muted">

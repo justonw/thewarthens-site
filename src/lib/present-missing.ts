@@ -7,6 +7,53 @@ export const LESSON_TITLE = "Present but Missing";
 export const LESSON_SUBTITLE = "When a Man Provides Everything but Himself";
 export const LESSON_LABEL = "A lesson and exercise for men";
 
+// Search and sharing copy for the lesson page. The FAQ is shown on the page and also sent to search
+// engines as FAQ data, so keep every answer true to what the page actually does.
+export const LESSON_PUBLISHED = "2026-11-06";
+export const LESSON_MODIFIED = "2026-11-07";
+export const seoTitle = "Present but Missing: A Bible Lesson for Men | Faith Journey";
+export const seoDescription =
+  "A free Bible lesson for men on being fully present, not just providing. Isaiah 58, Matthew 23, reflection questions, and a PDF of your notes.";
+export const LESSON_LEAD =
+  "A free Bible lesson for men on being fully present, not only providing. Built on Isaiah 58 and Matthew 23, it walks through four places a man can be there but missing: under pressure, at home, at church, and in the community.";
+
+export const faq: { question: string; answer: string }[] = [
+  {
+    question: "What does “present but missing” mean?",
+    answer:
+      "Being present but missing means a man is physically there, perhaps even doing his duties, but is not faithfully engaging the person or situation in front of him. Being fully present means paying attention to what is actually happening, discerning it in light of God’s truth, and responding faithfully in love.",
+  },
+  {
+    question: "Who is this lesson for?",
+    answer:
+      "It is written for men: husbands, fathers, and men who serve in their church or community. It looks at four places a man can be there without being engaged: under personal pressure, at home, at church, and in the community.",
+  },
+  {
+    question: "Which Scripture does it use?",
+    answer:
+      "The lesson centers on Isaiah 58:3-10 and Matthew 23:23-24, then draws on Philippians, 1 Peter, Ephesians, Colossians, 1 John, Psalm 119, John 8, Acts 17, Esther 4, and Galatians 2. Quotations are from the NASB 2020 and the NLT.",
+  },
+  {
+    question: "How can a men’s group or session use it?",
+    answer:
+      "Open thewarthens.com/present on a phone or laptop and follow along. Each of the four topics has a question to reflect on, a short way to respond, and a next step to write down, so a leader can walk through one topic at a time.",
+  },
+  {
+    question: "Is it free, and do I need an account?",
+    answer: "It is free, and there is nothing to sign up for. You can read it and write your notes right on the page.",
+  },
+  {
+    question: "Are my notes saved or shared?",
+    answer:
+      "What you write is saved only in your own browser, on the device you are using. If you ask for the PDF, it is emailed only to the address you type, and we do not keep a copy of your notes.",
+  },
+  {
+    question: "How do I get a PDF with my notes?",
+    answer:
+      "At the bottom of the page, type your email and choose Email me the PDF. It includes the lesson, the Scripture, and everything you wrote.",
+  },
+];
+
 export type Version = "NASB2020" | "NLT";
 export type Verse = { ref: string; version: Version; text: string };
 
