@@ -72,8 +72,8 @@ export async function POST(req: NextRequest) {
         from: FROM_EMAIL,
         to: email,
         subject: "Your Present but Missing notes",
-        text: "Here is your copy of the Present but Missing lesson, with the notes you wrote. It is attached as a PDF.\n\nThis email was sent only to you. We did not keep a copy of your notes.\n\nJuston & Atiya Warthen\nthewarthens.com",
-        html: "<p>Here is your copy of the <strong>Present but Missing</strong> lesson, with the notes you wrote. It is attached as a PDF.</p><p>This email was sent only to you. We did not keep a copy of your notes.</p><p>Juston &amp; Atiya Warthen<br>thewarthens.com</p>",
+        text: "Here is your copy of the Present but Missing lesson, with the notes you wrote. It is attached as a PDF.\n\nJuston & Atiya Warthen\nthewarthens.com",
+        html: "<p>Here is your copy of the <strong>Present but Missing</strong> lesson, with the notes you wrote. It is attached as a PDF.</p><p>Juston &amp; Atiya Warthen<br>thewarthens.com</p>",
         attachments: [
           { filename: "Present-but-Missing-notes.pdf", content: Buffer.from(pdf).toString("base64") },
         ],
