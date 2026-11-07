@@ -317,7 +317,7 @@ export default function PresentMissingLesson() {
 
       <section id="synopsis" className="mt-14 scroll-mt-24">
         <h2 className={sectionTitle}>Synopsis</h2>
-        <div className="mt-5 space-y-4 rounded-3xl bg-gradient-to-br from-blue-600/10 to-sky-300/20 p-6 text-xl leading-relaxed text-foreground sm:p-8">
+        <div className="mt-5 space-y-4 rounded-3xl bg-blue-900 p-6 text-xl leading-relaxed text-white sm:p-8">
           {synopsis.map((p) => (
             <p key={p}>{p}</p>
           ))}
@@ -466,7 +466,7 @@ export default function PresentMissingLesson() {
             <button
               type="submit"
               disabled={status === "sending" || email.trim() === ""}
-              className="rounded-full bg-white px-7 py-3 text-base font-semibold text-blue-950 transition-colors hover:bg-blue-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:opacity-60"
+              className="rounded-full bg-white px-7 py-3 text-base font-semibold text-slate-900 transition-colors hover:bg-blue-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:opacity-60"
             >
               {status === "sending" ? "Sending..." : "Email me the PDF"}
             </button>

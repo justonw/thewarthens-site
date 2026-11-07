@@ -105,14 +105,28 @@ article a[class*="rounded-3xl"] {
   --foreground-muted: #85685e;
 }
 
-/* The men's lesson: a cool blue variant of the Faith Journey light theme */
+/* The men's lesson: a light, cool page with deep navy and steel blue, and squarer corners. The
+   blue-* and a few other color variables are re-pointed here so the page classes pick them up. */
 .theme-men {
-  --background: #f2f6fc;
-  --background-elevated: #e7eef9;
-  --background-elevated-2: #dbe6f5;
-  --border-subtle: #cddbee;
-  --foreground: #172033;
-  --foreground-muted: #53617a;
+  --background: #f4f6fa;
+  --background-elevated: #ffffff;
+  --background-elevated-2: #e9eef6;
+  --border-subtle: #d3dbe8;
+  --foreground: #111a2b;
+  --foreground-muted: #53617b;
+
+  --color-blue-950: #0e1a33;
+  --color-blue-900: #14284c;
+  --color-blue-800: #1c3a73;
+  --color-blue-700: #2a5aa8;
+  --color-blue-600: #2a5aa8;
+  --color-blue-50: #e8effb;
+  --color-indigo-800: #2f3a8f;
+  --color-indigo-700: #3a45b0;
+  --color-emerald-800: #14633e;
+
+  --radius-3xl: 0.6rem;
+  --radius-2xl: 0.45rem;
 }
 
 .text-balance {
