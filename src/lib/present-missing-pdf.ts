@@ -6,6 +6,7 @@ import {
   actionFor,
   contexts,
   explanation,
+  morePresent,
   synopsis,
   versionNotice,
   type Verse,
@@ -148,6 +149,11 @@ export async function buildLessonPdf(answers: Record<string, string>) {
     answerBox("My next step", answers[`a-${action.id}`]);
     y -= 10;
   });
+
+  for (const group of morePresent) {
+    heading(`More Scripture on being present: ${group.heading}`);
+    group.verses.forEach(verse);
+  }
 
   // Scripture notices
   heading("Scripture notices");

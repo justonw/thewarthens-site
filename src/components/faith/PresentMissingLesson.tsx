@@ -11,6 +11,7 @@ import {
   actionFor,
   contexts,
   explanation,
+  morePresent,
   faq,
   synopsis,
   versionNotice,
@@ -305,6 +306,7 @@ export default function PresentMissingLesson() {
             ["#synopsis", "Synopsis"],
             ["#explanation", "Explanation"],
             ["#questions", "Questions"],
+            ["#more-scripture", "More Scripture"],
             ["#notes", "Get notes"],
           ].map(([href, label]) => (
             <a
@@ -432,6 +434,23 @@ export default function PresentMissingLesson() {
               </div>
             );
           })}
+        </div>
+      </section>
+
+      <section id="more-scripture" className="mt-16 scroll-mt-24">
+        <h2 className={sectionTitle}>More Scripture on being present</h2>
+        <p className="mt-2 text-foreground-muted">
+          Passages to keep reading after the session, on showing up with the heart and not only the appearance.
+        </p>
+        <div className="mt-6 space-y-8">
+          {morePresent.map((group) => (
+            <div key={group.heading}>
+              <h3 className="text-lg font-semibold text-blue-950">{group.heading}</h3>
+              <div className="mt-3">
+                <Scripture verses={group.verses} />
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 

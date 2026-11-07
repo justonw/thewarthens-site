@@ -31,7 +31,7 @@ export const faq: { question: string; answer: string }[] = [
   {
     question: "Which Scripture does it use?",
     answer:
-      "The lesson centers on Isaiah 58:3-10 and Matthew 23:23-24, then draws on Philippians, 1 Peter, Ephesians, Colossians, 1 John, Psalm 119, John 8, Acts 17, Esther 4, and Galatians 2. Quotations are from the NASB 2020 and the NLT.",
+      "The lesson centers on Isaiah 58:3-10 and Matthew 23:23-24, then draws on Philippians, 1 Peter, Ephesians, Colossians, 1 John, Psalm 119, John 8, Acts 17, Esther 4, and Galatians 2. A closing section adds 2 Corinthians 8, Mark 12 and 13, and Matthew 15 on being present. Quotations are from the NASB 2020 and the NLT.",
   },
   {
     question: "How can a men’s group or session use it?",
@@ -122,6 +122,91 @@ export const explanation: VerseGroup[] = [
         ref: "Matthew 23:24",
         version: "NLT",
         text: "Blind guides! You strain your water so you won’t accidentally swallow a gnat, but you swallow a camel!",
+      },
+    ],
+  },
+];
+
+// Extra reading on "being present", at the end of the lesson. In 2 Corinthians 8:13 the NASB runs
+// into the next verse with a dash; here it is a colon, because the site uses no em dashes.
+export const morePresent: VerseGroup[] = [
+  {
+    heading: "Willingness, and giving what you have",
+    verses: [
+      {
+        ref: "2 Corinthians 8:12",
+        version: "NASB2020",
+        text: "For if the willingness is present, it is acceptable according to what a person has, not according to what he does not have.",
+      },
+      {
+        ref: "2 Corinthians 8:13",
+        version: "NASB2020",
+        text: "For this is not for the relief of others and for your hardship, but by way of equality:",
+      },
+      {
+        ref: "2 Corinthians 8:14",
+        version: "NASB2020",
+        text: "at this present time your abundance will serve as assistance for their need, so that their abundance also may serve as assistance for your need, so that there may be equality;",
+      },
+      {
+        ref: "2 Corinthians 8:15",
+        version: "NASB2020",
+        text: "as it is written: “THE ONE WHO HAD GATHERED MUCH DID NOT HAVE TOO MUCH, AND THE ONE WHO HAD GATHERED LITTLE DID NOT HAVE TOO LITTLE.”",
+      },
+    ],
+  },
+  {
+    heading: "Appearance versus the heart",
+    verses: [
+      {
+        ref: "Mark 12:38",
+        version: "NASB2020",
+        text: "And in His teaching He was saying: “Beware of the scribes who like to walk around in long robes, and like personal greetings in the marketplaces,",
+      },
+      {
+        ref: "Mark 12:39",
+        version: "NASB2020",
+        text: "and seats of honor in the synagogues, and places of honor at banquets,",
+      },
+      {
+        ref: "Mark 12:40",
+        version: "NASB2020",
+        text: "who devour widows’ houses, and for appearance’s sake offer long prayers. These will receive all the more condemnation.”",
+      },
+      {
+        ref: "Mark 12:41",
+        version: "NASB2020",
+        text: "And Jesus sat down opposite the treasury, and began watching how the people were putting money into the treasury; and many rich people were putting in large amounts.",
+      },
+      {
+        ref: "Mark 12:42",
+        version: "NASB2020",
+        text: "And a poor widow came and put in two lepta coins, which amount to a quadrans.",
+      },
+      {
+        ref: "Mark 12:43",
+        version: "NASB2020",
+        text: "Calling His disciples to Him, He said to them, “Truly I say to you, this poor widow put in more than all the contributors to the treasury;",
+      },
+      {
+        ref: "Mark 12:44",
+        version: "NASB2020",
+        text: "for they all put in out of their surplus, but she, out of her poverty, put in all she owned, all she had to live on.”",
+      },
+      {
+        ref: "Mark 13:1",
+        version: "NASB2020",
+        text: "As He was going out of the temple, one of His disciples said to Him, “Teacher, look! What wonderful stones and what wonderful buildings!”",
+      },
+      {
+        ref: "Mark 13:2",
+        version: "NASB2020",
+        text: "And Jesus said to him, “Do you see these great buildings? Not one stone will be left upon another, which will not be torn down.”",
+      },
+      {
+        ref: "Matthew 15:8",
+        version: "NASB2020",
+        text: "‘THIS PEOPLE HONORS ME WITH THEIR LIPS, BUT THEIR HEART IS FAR AWAY FROM ME.",
       },
     ],
   },
