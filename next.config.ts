@@ -49,6 +49,12 @@ const nextConfig: NextConfig = {
         destination: "/techjr",
         permanent: false,
       },
+      // Short link to say out loud or put on a QR code in a men's session.
+      {
+        source: "/present",
+        destination: "/faith/present-but-missing",
+        permanent: false,
+      },
       {
         source: "/start",
         destination: "/tech#start-here",
