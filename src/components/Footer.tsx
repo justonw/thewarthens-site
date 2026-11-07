@@ -101,6 +101,12 @@ export default function Footer() {
               >
                 Women Who Seek
               </Link>
+              <Link
+                href="/faith/present-but-missing"
+                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+              >
+                Present but Missing
+              </Link>
             </nav>
           </div>
           <div>

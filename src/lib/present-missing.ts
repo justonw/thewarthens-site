@@ -69,7 +69,7 @@ export const explanation: VerseGroup[] = [
       {
         ref: "Matthew 23:23",
         version: "NLT",
-        text: "What sorrow awaits you teachers of religious law and you Pharisees. Hypocrites! For you are careful to tithe even the tiniest income from your herb gardens, but you ignore the more important aspects of the law—justice, mercy, and faith. You should tithe, yes, but do not neglect the more important things.",
+        text: "What sorrow awaits you teachers of religious law and you Pharisees. Hypocrites! For you are careful to tithe even the tiniest income from your herb gardens, but you ignore the more important aspects of the law: justice, mercy, and faith. You should tithe, yes, but do not neglect the more important things.",
       },
       {
         ref: "Matthew 23:24",
@@ -140,7 +140,7 @@ export const contexts: Context[] = [
     question:
       "Am I avoiding involvement because nothing is happening, or because involvement will cost me?",
     respond:
-      "Clarify the facts, support the affected person, and take an appropriate next step.",
+      "Don’t turn a blind eye.",
     references: [
       {
         ref: "John 8:3",
