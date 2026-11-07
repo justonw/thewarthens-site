@@ -12,7 +12,7 @@ const links = [
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-50 border-b border-border-subtle/80 bg-background/80 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-border-subtle/60 bg-background/70 backdrop-blur-xl backdrop-saturate-150">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
         <Link href="/" className="flex shrink-0 items-center gap-2">
           <Image

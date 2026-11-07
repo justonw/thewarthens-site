@@ -276,6 +276,17 @@ export const actions: ActionGroup[] = [
   },
 ];
 
+// Each question is taught with its own "What to do about it", so the page and the PDF show the two
+// together. Only the Personal Pressure question is paired with a differently named action.
+const ACTION_FOR_CONTEXT: Record<string, string> = { pressure: "overwhelmed" };
+
+export function actionFor(context: Context): ActionGroup {
+  const id = ACTION_FOR_CONTEXT[context.id] ?? context.id;
+  const found = actions.find((a) => a.id === id);
+  if (!found) throw new Error(`No action group for ${context.id}`);
+  return found;
+}
+
 // Every place a man can write. The ids are what the page saves and what the PDF is built from.
 export const noteFields = [
   ...contexts.map((c) => ({

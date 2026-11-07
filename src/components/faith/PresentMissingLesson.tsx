@@ -7,7 +7,7 @@ import {
   LESSON_SUBTITLE,
   LESSON_TITLE,
   MAX_NOTE_LENGTH,
-  actions,
+  actionFor,
   contexts,
   explanation,
   synopsis,
@@ -30,6 +30,118 @@ function VerseBlock({ verse }: { verse: Verse }) {
         {verse.ref} <span className="font-normal">({verse.version})</span>
       </footer>
     </blockquote>
+  );
+}
+
+// Consecutive verses from the same chapter and translation read as one passage with small verse
+// numbers (Isaiah 58:3-10), instead of a stack of one-line blocks. The words are not changed.
+type Passage = { ref: string; version: Verse["version"]; parts: { n: string; text: string }[] };
+
+function mergePassages(verses: Verse[]): Passage[] {
+  const out: (Passage & { book: string; chapter: string; last: number })[] = [];
+  for (const v of verses) {
+    const m = /^(.+) (\d+):(\d+)(?:-(\d+))?$/.exec(v.ref);
+    if (!m) {
+      out.push({ ref: v.ref, version: v.version, parts: [{ n: "", text: v.text }], book: v.ref, chapter: "", last: -1 });
+      continue;
+    }
+    const [, book, chapter, start, end] = m;
+    const first = Number(start);
+    const last = Number(end ?? start);
+    const prev = out[out.length - 1];
+    if (prev && prev.book === book && prev.chapter === chapter && prev.version === v.version && prev.last === first - 1) {
+      prev.parts.push({ n: end ? `${start}-${end}` : start, text: v.text });
+      prev.last = last;
+      prev.ref = `${book} ${chapter}:${prev.ref.split(":")[1].split("-")[0]}-${last}`;
+    } else {
+      out.push({ ref: v.ref, version: v.version, parts: [{ n: end ? `${start}-${end}` : start, text: v.text }], book, chapter, last });
+    }
+  }
+  return out;
+}
+
+function PassageBlock({ passage }: { passage: Passage }) {
+  const numbered = passage.parts.length > 1;
+  // Short passages run together; long ones get one line per verse so they stay easy to follow.
+  const perLine = passage.parts.length > 3;
+  const verseNumber = (n: string) =>
+    numbered && n ? <sup className="mr-1 text-[0.65em] font-semibold text-purple-700">{n.split("-")[0]}</sup> : null;
+  return (
+    <blockquote className="border-l-4 border-purple-700/40 pl-4">
+      {perLine ? (
+        <div className="space-y-2.5 text-lg leading-relaxed text-foreground">
+          {passage.parts.map((part, i) => (
+            <p key={i}>
+              {verseNumber(part.n)}
+              {part.text}
+            </p>
+          ))}
+        </div>
+      ) : (
+        <p className="text-lg leading-relaxed text-foreground">
+          {passage.parts.map((part, i) => (
+            <span key={i}>
+              {verseNumber(part.n)}
+              {part.text}{" "}
+            </span>
+          ))}
+        </p>
+      )}
+      <footer className="mt-1 text-sm font-semibold text-foreground-muted">
+        {passage.ref} <span className="font-normal">({passage.version})</span>
+      </footer>
+    </blockquote>
+  );
+}
+
+// Scripture for a topic. Short sets stay open. Long ones (John 8, Galatians 2) fold up so the
+// question and the next-step box stay close together; one tap opens them.
+function Scripture({ verses, collapsible = true }: { verses: Verse[]; collapsible?: boolean }) {
+  const passages = mergePassages(verses);
+  const total = passages.reduce((n, p) => n + p.parts.length, 0);
+  const list = (
+    <div className="space-y-5">
+      {passages.map((p) => (
+        <PassageBlock key={p.ref} passage={p} />
+      ))}
+    </div>
+  );
+  if (!collapsible || total <= 3) return list;
+  return (
+    <details className="group/passage rounded-2xl border border-border-subtle bg-background">
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-2xl px-4 py-3 text-base font-semibold text-purple-800 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-purple-700 [&::-webkit-details-marker]:hidden">
+        <span>Read {passages.map((p) => p.ref).join(" and ")}</span>
+        <svg
+          viewBox="0 0 20 20"
+          className="h-5 w-5 shrink-0 transition-transform group-open/passage:rotate-180"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden
+        >
+          <path d="m5 8 5 5 5-5" />
+        </svg>
+      </summary>
+      <div className="border-t border-border-subtle px-4 py-5">{list}</div>
+    </details>
+  );
+}
+
+const stageStyles = {
+  reflect: { chip: "bg-purple-700", text: "text-purple-700", panel: "" },
+  respond: { chip: "bg-mauve-800", text: "text-mauve-800", panel: "border-l-4 border-mauve-800/45 bg-background/70" },
+  act: { chip: "bg-emerald-700", text: "text-emerald-800", panel: "border-l-4 border-emerald-700/45 bg-background/70" },
+} as const;
+
+function StageLabel({ stage, label, title }: { stage: keyof typeof stageStyles; label: string; title?: string }) {
+  const s = stageStyles[stage];
+  return (
+    <p className={`flex flex-wrap items-center gap-2.5 text-sm font-semibold uppercase tracking-wider ${s.text}`}>
+      <span className={`rounded-full px-3 py-1 text-xs text-white ${s.chip}`}>{label}</span>
+      {title}
+    </p>
   );
 }
 
@@ -72,6 +184,23 @@ export default function PresentMissingLesson() {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [message, setMessage] = useState("");
   const saveTimer = useRef<number | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  // Highlight the topic he is on in the progress bar.
+  useEffect(() => {
+    const cards = Array.from(document.querySelectorAll<HTMLElement>("[data-question]"));
+    if (!cards.length || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) setActiveIndex(Number((entry.target as HTMLElement).dataset.question));
+        }
+      },
+      { rootMargin: "-25% 0px -60% 0px" },
+    );
+    cards.forEach((card) => observer.observe(card));
+    return () => observer.disconnect();
+  }, []);
 
   // Load this device's saved notes once the page is open.
   useEffect(() => {
@@ -172,8 +301,7 @@ export default function PresentMissingLesson() {
             ["#synopsis", "Synopsis"],
             ["#explanation", "Explanation"],
             ["#questions", "Questions"],
-            ["#action", "What to do"],
-            ["#notes", "Get my notes"],
+            ["#notes", "Get notes"],
           ].map(([href, label]) => (
             <a
               key={href}
@@ -199,10 +327,8 @@ export default function PresentMissingLesson() {
         {explanation.map((group) => (
           <div key={group.heading}>
             <h2 className={sectionTitle}>{group.heading}</h2>
-            <div className="mt-5 space-y-5">
-              {group.verses.map((v) => (
-                <VerseBlock key={v.ref} verse={v} />
-              ))}
+            <div className="mt-5">
+              <Scripture verses={group.verses} collapsible={false} />
             </div>
           </div>
         ))}
@@ -210,63 +336,104 @@ export default function PresentMissingLesson() {
 
       <section id="questions" className="mt-16 scroll-mt-24">
         <h2 className={sectionTitle}>Questions to internalize</h2>
-        <p className="mt-2 text-foreground-muted">Take a moment with each question before you write.</p>
+        <p className="mt-2 text-foreground-muted">
+          Take each one in three steps: reflect and write, see how to respond, then decide what to do.
+        </p>
+
+        {/* Stays in view while he works through the four topics */}
+        <nav
+          aria-label="Question progress"
+          className="sticky top-[3.6rem] z-30 -mx-6 mt-6 border-b border-border-subtle/70 bg-background/85 px-6 py-2.5 backdrop-blur-xl sm:top-[4.4rem]"
+        >
+          <ol className="flex items-center gap-2">
+            {contexts.map((c, i) => {
+              const active = i === activeIndex;
+              return (
+                <li key={c.id} className="min-w-0 flex-1">
+                  <a
+                    href={`#question-${c.id}`}
+                    aria-current={active ? "step" : undefined}
+                    className={`flex items-center justify-center gap-2 rounded-full px-3 py-1.5 text-sm font-semibold transition-colors ${
+                      active
+                        ? "bg-purple-700 text-white"
+                        : "bg-background-elevated text-foreground-muted hover:text-purple-800"
+                    }`}
+                  >
+                    <span>{i + 1}</span>
+                    <span className="hidden truncate sm:inline">{c.label.replace(" Context", "")}</span>
+                  </a>
+                </li>
+              );
+            })}
+          </ol>
+        </nav>
+
         <div className="mt-8 space-y-10">
-          {contexts.map((c, i) => (
-            <div key={c.id} className="rounded-3xl border border-border-subtle bg-background-elevated p-6 sm:p-8">
-              <p className="flex items-center gap-3 text-sm font-semibold uppercase tracking-wider text-purple-700">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-700 text-sm text-white">
-                  {i + 1}
-                </span>
-                {c.label}
-              </p>
-              <p className="mt-4 text-2xl font-semibold leading-snug text-mauve-900">{c.question}</p>
-              {c.honor && (
-                <div className="mt-5">
-                  <VerseBlock verse={c.honor} />
-                </div>
-              )}
-              <div className="mt-6">
-                <NoteBox id={`q-${c.id}`} label="My notes" value={value(`q-${c.id}`)} onChange={change} />
-              </div>
-              <div className="mt-7 border-t border-border-subtle pt-6">
-                <p className="text-sm font-semibold uppercase tracking-wider text-purple-700">How to respond</p>
-                <p className="mt-2 text-xl leading-relaxed text-foreground">{c.respond}</p>
-                {c.references && (
-                  <div className="mt-5 space-y-4">
-                    {c.references.map((v) => (
-                      <VerseBlock key={v.ref} verse={v} />
-                    ))}
+          {contexts.map((c, i) => {
+            const action = actionFor(c);
+            return (
+              <div
+                key={c.id}
+                id={`question-${c.id}`}
+                data-question={i}
+                className="scroll-mt-36 rounded-3xl border border-border-subtle bg-background-elevated p-5 sm:scroll-mt-40 sm:p-8"
+              >
+                <p className="flex items-center gap-3 text-sm font-semibold uppercase tracking-wider text-purple-700">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-700 text-sm text-white">
+                    {i + 1}
+                  </span>
+                  {c.label}
+                  <span className="ml-auto text-xs font-medium normal-case tracking-normal text-foreground-muted">
+                    {i + 1} of {contexts.length}
+                  </span>
+                </p>
+                <p className="mt-4 text-2xl font-semibold leading-snug text-mauve-900">{c.question}</p>
+                {c.honor && (
+                  <div className="mt-5">
+                    <VerseBlock verse={c.honor} />
                   </div>
                 )}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
 
-      <section id="action" className="mt-16 scroll-mt-24">
-        <h2 className={sectionTitle}>What to do about it</h2>
-        <div className="mt-8 space-y-10">
-          {actions.map((a) => (
-            <div key={a.id} className="rounded-3xl border border-border-subtle bg-background-elevated p-6 sm:p-8">
-              <h3 className="text-xl font-semibold text-mauve-900">{a.label}</h3>
-              <div className="mt-5 space-y-5">
-                {a.verses.map((v) => (
-                  <VerseBlock key={v.ref} verse={v} />
-                ))}
+                <div className="mt-6">
+                  <StageLabel stage="reflect" label="Reflect" />
+                  <div className="mt-3">
+                    <NoteBox id={`q-${c.id}`} label="My notes" value={value(`q-${c.id}`)} onChange={change} />
+                  </div>
+                </div>
+
+                <div className={`mt-7 rounded-2xl p-4 sm:p-6 ${stageStyles.respond.panel}`}>
+                  <StageLabel stage="respond" label="Respond" title="How to respond" />
+                  <p className="mt-3 text-xl leading-relaxed text-foreground">{c.respond}</p>
+                  {c.references && (
+                    <div className="mt-5">
+                      <Scripture verses={c.references} />
+                    </div>
+                  )}
+                </div>
+
+                <div className={`mt-5 rounded-2xl p-4 sm:p-6 ${stageStyles.act.panel}`}>
+                  <StageLabel stage="act" label="Act" title={`What to do about it: ${action.label}`} />
+                  <div className="mt-4">
+                    <Scripture verses={action.verses} />
+                  </div>
+                  <div className="mt-6">
+                    <NoteBox
+                      id={`a-${action.id}`}
+                      label="My next step"
+                      value={value(`a-${action.id}`)}
+                      onChange={change}
+                    />
+                  </div>
+                </div>
               </div>
-              <div className="mt-6">
-                <NoteBox id={`a-${a.id}`} label="My next step" value={value(`a-${a.id}`)} onChange={change} />
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
       <section id="notes" className="mt-16 scroll-mt-24">
         <div className="rounded-3xl bg-mauve-800 p-6 text-white sm:p-8">
-          <h2 className="text-2xl font-semibold sm:text-3xl">Get my notes</h2>
+          <h2 className="text-2xl font-semibold sm:text-3xl">Get notes</h2>
           <p className="mt-3 text-rose-100">
             Type your email and we will send you a PDF with the lesson and everything you wrote. It goes
             only to the address you enter. We do not receive a copy or keep your notes.

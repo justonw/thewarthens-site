@@ -3,7 +3,7 @@ import {
   LESSON_LABEL,
   LESSON_SUBTITLE,
   LESSON_TITLE,
-  actions,
+  actionFor,
   contexts,
   explanation,
   synopsis,
@@ -132,26 +132,22 @@ export async function buildLessonPdf(answers: Record<string, string>) {
   }
 
   heading("Questions to internalize");
-  for (const c of contexts) {
+  contexts.forEach((c, i) => {
+    const action = actionFor(c);
     room(110);
-    text(c.label, { font: bold, size: 12.5, color: MAUVE, gap: 3 });
+    text(`${i + 1} of ${contexts.length}  ·  ${c.label}`, { font: bold, size: 12.5, color: MAUVE, gap: 3 });
     text(c.question, { font: bold, size: 11.5, gap: 4 });
-    answerBox("My notes", answers[`q-${c.id}`]);
     if (c.honor) verse(c.honor);
+    answerBox("My notes", answers[`q-${c.id}`]);
     text("How to respond", { font: bold, size: 10, color: MUTED, gap: 2 });
     text(c.respond, { size: 11, indent: 12, gap: 6 });
     c.references?.forEach(verse);
-    y -= 6;
-  }
-
-  heading("What to do about it");
-  for (const a of actions) {
     room(100);
-    text(a.label, { font: bold, size: 12.5, color: MAUVE, gap: 3 });
-    a.verses.forEach(verse);
-    answerBox("My next step", answers[`a-${a.id}`]);
-    y -= 4;
-  }
+    text(`What to do about it: ${action.label}`, { font: bold, size: 10, color: MUTED, gap: 2 });
+    action.verses.forEach(verse);
+    answerBox("My next step", answers[`a-${action.id}`]);
+    y -= 10;
+  });
 
   // Scripture notices
   heading("Scripture notices");
