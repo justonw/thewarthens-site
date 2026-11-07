@@ -17,10 +17,10 @@ import {
 
 const PAGE = { w: 612, h: 792 };
 const MARGIN = 54;
-const MAUVE = rgb(0.49, 0.25, 0.32);
+const MAUVE = rgb(0.1, 0.22, 0.5);
 const INK = rgb(0.13, 0.13, 0.16);
 const MUTED = rgb(0.4, 0.4, 0.45);
-const ANSWER = rgb(0.1, 0.25, 0.55);
+const ANSWER = rgb(0.05, 0.38, 0.32);
 
 export async function buildLessonPdf(answers: Record<string, string>) {
   const pdf = await PDFDocument.create();

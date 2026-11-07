@@ -24,7 +24,7 @@ type Answers = Record<string, string>;
 
 function VerseBlock({ verse }: { verse: Verse }) {
   return (
-    <blockquote className="border-l-4 border-purple-700/40 pl-4">
+    <blockquote className="border-l-4 border-blue-700/40 pl-4">
       <p className="text-lg leading-relaxed text-foreground">{verse.text}</p>
       <footer className="mt-1 text-sm font-semibold text-foreground-muted">
         {verse.ref} <span className="font-normal">({verse.version})</span>
@@ -65,9 +65,9 @@ function PassageBlock({ passage }: { passage: Passage }) {
   // Short passages run together; long ones get one line per verse so they stay easy to follow.
   const perLine = passage.parts.length > 3;
   const verseNumber = (n: string) =>
-    numbered && n ? <sup className="mr-1 text-[0.65em] font-semibold text-purple-700">{n.split("-")[0]}</sup> : null;
+    numbered && n ? <sup className="mr-1 text-[0.65em] font-semibold text-blue-700">{n.split("-")[0]}</sup> : null;
   return (
-    <blockquote className="border-l-4 border-purple-700/40 pl-4">
+    <blockquote className="border-l-4 border-blue-700/40 pl-4">
       {perLine ? (
         <div className="space-y-2.5 text-lg leading-relaxed text-foreground">
           {passage.parts.map((part, i) => (
@@ -109,7 +109,7 @@ function Scripture({ verses, collapsible = true }: { verses: Verse[]; collapsibl
   if (!collapsible || total <= 3) return list;
   return (
     <details className="group/passage rounded-2xl border border-border-subtle bg-background">
-      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-2xl px-4 py-3 text-base font-semibold text-purple-800 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-purple-700 [&::-webkit-details-marker]:hidden">
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-2xl px-4 py-3 text-base font-semibold text-blue-800 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-700 [&::-webkit-details-marker]:hidden">
         <span>Read {passages.map((p) => p.ref).join(" and ")}</span>
         <svg
           viewBox="0 0 20 20"
@@ -130,8 +130,8 @@ function Scripture({ verses, collapsible = true }: { verses: Verse[]; collapsibl
 }
 
 const stageStyles = {
-  reflect: { chip: "bg-purple-700", text: "text-purple-700", panel: "" },
-  respond: { chip: "bg-mauve-800", text: "text-mauve-800", panel: "border-l-4 border-mauve-800/45 bg-background/70" },
+  reflect: { chip: "bg-blue-700", text: "text-blue-700", panel: "" },
+  respond: { chip: "bg-indigo-700", text: "text-indigo-800", panel: "border-l-4 border-indigo-700/45 bg-background/70" },
   act: { chip: "bg-emerald-700", text: "text-emerald-800", panel: "border-l-4 border-emerald-700/45 bg-background/70" },
 } as const;
 
@@ -158,7 +158,7 @@ function NoteBox({
 }) {
   return (
     <div>
-      <label htmlFor={id} className="text-sm font-semibold text-purple-800">
+      <label htmlFor={id} className="text-sm font-semibold text-blue-800">
         {label}
       </label>
       <textarea
@@ -168,13 +168,13 @@ function NoteBox({
         onChange={(e) => onChange(id, e.target.value)}
         placeholder="Write here"
         rows={4}
-        className="field-sizing-content mt-2 block min-h-28 w-full resize-y rounded-2xl border border-border-subtle bg-background px-4 py-3 text-base leading-relaxed text-foreground placeholder:text-foreground-muted focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-purple-700"
+        className="field-sizing-content mt-2 block min-h-28 w-full resize-y rounded-2xl border border-border-subtle bg-background px-4 py-3 text-base leading-relaxed text-foreground placeholder:text-foreground-muted focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-700"
       />
     </div>
   );
 }
 
-const sectionTitle = "text-2xl font-semibold tracking-tight text-mauve-800 sm:text-3xl";
+const sectionTitle = "text-2xl font-semibold tracking-tight text-blue-800 sm:text-3xl";
 
 export default function PresentMissingLesson() {
   const [answers, setAnswers] = useState<Answers>({});
@@ -269,6 +269,7 @@ export default function PresentMissingLesson() {
   const value = (id: string) => answers[id] ?? "";
 
   return (
+    <div className="theme-men bg-background text-foreground">
     <article className="mx-auto max-w-3xl px-6 pb-24 pt-10 sm:pt-16">
       <nav aria-label="Breadcrumb" className="text-sm text-foreground-muted">
         <ol className="flex flex-wrap items-center gap-2">
@@ -285,10 +286,10 @@ export default function PresentMissingLesson() {
       </nav>
 
       <header className="mt-8">
-        <p className="inline-flex rounded-full border border-purple-600/25 bg-purple-600/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-purple-700">
+        <p className="inline-flex rounded-full border border-blue-600/25 bg-blue-600/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-blue-700">
           {LESSON_LABEL}
         </p>
-        <h1 className="text-balance mt-5 text-4xl font-semibold tracking-tight text-mauve-900 sm:text-5xl">
+        <h1 className="text-balance mt-5 text-4xl font-semibold tracking-tight text-blue-950 sm:text-5xl">
           {LESSON_TITLE}
         </h1>
         <p className="mt-2 text-xl text-foreground-muted">{LESSON_SUBTITLE}</p>
@@ -306,7 +307,7 @@ export default function PresentMissingLesson() {
             <a
               key={href}
               href={href}
-              className="rounded-full border border-border-subtle bg-background-elevated px-3.5 py-1.5 text-foreground-muted transition-colors hover:border-purple-700/40 hover:text-purple-800"
+              className="rounded-full border border-border-subtle bg-background-elevated px-3.5 py-1.5 text-foreground-muted transition-colors hover:border-blue-700/40 hover:text-blue-800"
             >
               {label}
             </a>
@@ -316,7 +317,7 @@ export default function PresentMissingLesson() {
 
       <section id="synopsis" className="mt-14 scroll-mt-24">
         <h2 className={sectionTitle}>Synopsis</h2>
-        <div className="mt-5 space-y-4 rounded-3xl bg-gradient-to-br from-purple-700/10 to-rose-300/10 p-6 text-xl leading-relaxed text-foreground sm:p-8">
+        <div className="mt-5 space-y-4 rounded-3xl bg-gradient-to-br from-blue-600/10 to-sky-300/20 p-6 text-xl leading-relaxed text-foreground sm:p-8">
           {synopsis.map((p) => (
             <p key={p}>{p}</p>
           ))}
@@ -355,8 +356,8 @@ export default function PresentMissingLesson() {
                     aria-current={active ? "step" : undefined}
                     className={`flex items-center justify-center gap-2 rounded-full px-3 py-1.5 text-sm font-semibold transition-colors ${
                       active
-                        ? "bg-purple-700 text-white"
-                        : "bg-background-elevated text-foreground-muted hover:text-purple-800"
+                        ? "bg-blue-700 text-white"
+                        : "bg-background-elevated text-foreground-muted hover:text-blue-800"
                     }`}
                   >
                     <span>{i + 1}</span>
@@ -378,8 +379,8 @@ export default function PresentMissingLesson() {
                 data-question={i}
                 className="scroll-mt-36 rounded-3xl border border-border-subtle bg-background-elevated p-5 sm:scroll-mt-40 sm:p-8"
               >
-                <p className="flex items-center gap-3 text-sm font-semibold uppercase tracking-wider text-purple-700">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-700 text-sm text-white">
+                <p className="flex items-center gap-3 text-sm font-semibold uppercase tracking-wider text-blue-700">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-700 text-sm text-white">
                     {i + 1}
                   </span>
                   {c.label}
@@ -387,7 +388,7 @@ export default function PresentMissingLesson() {
                     {i + 1} of {contexts.length}
                   </span>
                 </p>
-                <p className="mt-4 text-2xl font-semibold leading-snug text-mauve-900">{c.question}</p>
+                <p className="mt-4 text-2xl font-semibold leading-snug text-blue-950">{c.question}</p>
                 {c.honor && (
                   <div className="mt-5">
                     <VerseBlock verse={c.honor} />
@@ -432,15 +433,15 @@ export default function PresentMissingLesson() {
       </section>
 
       <section id="notes" className="mt-16 scroll-mt-24">
-        <div className="rounded-3xl bg-mauve-800 p-6 text-white sm:p-8">
+        <div className="rounded-3xl bg-blue-900 p-6 text-white sm:p-8">
           <h2 className="text-2xl font-semibold sm:text-3xl">Get notes</h2>
-          <p className="mt-3 text-rose-100">
+          <p className="mt-3 text-blue-100">
             Type your email and we will send you a PDF with the lesson and everything you wrote. It goes
             only to the address you enter. We do not receive a copy or keep your notes.
           </p>
           <form onSubmit={send} className="mt-6 space-y-4">
             <div>
-              <label htmlFor="pm-email" className="text-sm font-semibold text-rose-100">
+              <label htmlFor="pm-email" className="text-sm font-semibold text-blue-100">
                 Your email
               </label>
               <input
@@ -465,15 +466,15 @@ export default function PresentMissingLesson() {
             <button
               type="submit"
               disabled={status === "sending" || email.trim() === ""}
-              className="rounded-full bg-white px-7 py-3 text-base font-semibold text-mauve-900 transition-colors hover:bg-rose-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:opacity-60"
+              className="rounded-full bg-white px-7 py-3 text-base font-semibold text-blue-950 transition-colors hover:bg-blue-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:opacity-60"
             >
               {status === "sending" ? "Sending..." : "Email me the PDF"}
             </button>
-            <p role="status" aria-live="polite" className={`text-sm ${status === "error" ? "text-rose-200" : "text-white"}`}>
+            <p role="status" aria-live="polite" className={`text-sm ${status === "error" ? "text-blue-200" : "text-white"}`}>
               {message}
             </p>
           </form>
-          <p className="mt-4 text-sm text-rose-200">
+          <p className="mt-4 text-sm text-blue-200">
             {loaded ? "Your notes are saved on this device as you type." : ""}{" "}
             <button type="button" onClick={clearNotes} className="underline underline-offset-4 hover:text-white">
               Clear my notes
@@ -487,5 +488,6 @@ export default function PresentMissingLesson() {
         <p>{versionNotice.NLT}</p>
       </footer>
     </article>
+    </div>
   );
 }

@@ -13,7 +13,7 @@ export default async function Image() {
       title: "Present but Missing",
       subtitle: "When a man provides everything but himself.",
       photos: [{ file: "juston" }],
-      accent: "mauve",
+      accent: "blue",
     }),
     size
   );

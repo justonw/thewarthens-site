@@ -105,6 +105,16 @@ article a[class*="rounded-3xl"] {
   --foreground-muted: #85685e;
 }
 
+/* The men's lesson: a cool blue variant of the Faith Journey light theme */
+.theme-men {
+  --background: #f2f6fc;
+  --background-elevated: #e7eef9;
+  --background-elevated-2: #dbe6f5;
+  --border-subtle: #cddbee;
+  --foreground: #172033;
+  --foreground-muted: #53617a;
+}
+
 .text-balance {
   text-wrap: balance;
 }
