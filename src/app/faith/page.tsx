@@ -208,82 +208,6 @@ export default function FaithJourneyPage() {
         </div>
       </div>
 
-      {faithWritings.length > 0 && (
-        <div id="writings" className="scroll-mt-32">
-          <div className="mx-auto max-w-5xl px-6 pb-4 pt-16 sm:pt-20">
-            <Reveal>
-              <p className="text-sm font-semibold uppercase tracking-wider text-purple-700">
-                Writings
-              </p>
-              <h2 className="mt-2 text-2xl font-semibold sm:text-3xl">Read what we&apos;re learning</h2>
-              <p className="mt-2 text-sm text-foreground-muted">
-                Story Time, Topical Study, and Reflections pieces as we publish
-                them, plus lessons and exercises.
-              </p>
-            </Reveal>
-            {writingGroups.map((group) => (
-              <div key={group.category} className="mt-10">
-                <Reveal>
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
-                    {categoryLabels[group.category]}
-                  </h3>
-                </Reveal>
-                <div className="mt-4 grid gap-4 md:grid-cols-2">
-                  {group.items.map((w, i) => (
-                    <Reveal key={w.slug} delay={Math.min(i, 3) * 60}>
-                      <Link
-                        href={`/faith/${w.category}/${w.slug}`}
-                        className="group flex h-full flex-col rounded-3xl border border-border-subtle bg-background-elevated p-6 transition-all hover:-translate-y-0.5 hover:border-purple-500/40 hover:shadow-lg hover:shadow-purple-950/5"
-                      >
-                        <p className="text-lg font-semibold leading-snug">{w.title}</p>
-                        <p className="mt-2 flex-1 text-sm text-foreground-muted">{w.dek}</p>
-                        <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-purple-700">
-                          Read it
-                          <span
-                            aria-hidden
-                            className="transition-transform group-hover:translate-x-1"
-                          >
-                            →
-                          </span>
-                        </span>
-                      </Link>
-                    </Reveal>
-                  ))}
-                </div>
-              </div>
-            ))}
-
-            <div className="mt-10">
-              <Reveal>
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
-                  Lessons and exercises
-                </h3>
-              </Reveal>
-              <div className="mt-4 grid gap-4 md:grid-cols-2">
-                <Reveal>
-                  <Link
-                    href="/faith/present-but-missing"
-                    className="group flex h-full flex-col rounded-3xl border border-border-subtle bg-background-elevated p-6 transition-all hover:-translate-y-0.5 hover:border-purple-500/40 hover:shadow-lg hover:shadow-purple-950/5"
-                  >
-                    <p className="text-lg font-semibold leading-snug">Present but Missing</p>
-                    <p className="mt-2 flex-1 text-sm text-foreground-muted">
-                      A lesson and exercise for men on providing everything but yourself. Follow the
-                      Scripture, write your notes, and email yourself a PDF.
-                    </p>
-                    <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-purple-700">
-                      Start the lesson
-                      <span aria-hidden className="transition-transform group-hover:translate-x-1">
-                        →
-                      </span>
-                    </span>
-                  </Link>
-                </Reveal>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Women Who Seek */}
       <div className="mx-auto max-w-5xl px-6 pb-16 pt-12 sm:pt-16">
         <Reveal>
@@ -363,6 +287,82 @@ export default function FaithJourneyPage() {
           </span>
         </Link>
       </Reveal>
+
+      {faithWritings.length > 0 && (
+        <div id="writings" className="scroll-mt-32">
+          <div className="mx-auto max-w-5xl px-6 pb-4 pt-16 sm:pt-20">
+            <Reveal>
+              <p className="text-sm font-semibold uppercase tracking-wider text-purple-700">
+                Writings
+              </p>
+              <h2 className="mt-2 text-2xl font-semibold sm:text-3xl">Read what we&apos;re learning</h2>
+              <p className="mt-2 text-sm text-foreground-muted">
+                Story Time, Topical Study, and Reflections pieces as we publish
+                them, plus lessons and exercises.
+              </p>
+            </Reveal>
+            {writingGroups.map((group) => (
+              <div key={group.category} className="mt-10">
+                <Reveal>
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
+                    {categoryLabels[group.category]}
+                  </h3>
+                </Reveal>
+                <div className="mt-4 grid gap-4 md:grid-cols-2">
+                  {group.items.map((w, i) => (
+                    <Reveal key={w.slug} delay={Math.min(i, 3) * 60}>
+                      <Link
+                        href={`/faith/${w.category}/${w.slug}`}
+                        className="group flex h-full flex-col rounded-3xl border border-border-subtle bg-background-elevated p-6 transition-all hover:-translate-y-0.5 hover:border-purple-500/40 hover:shadow-lg hover:shadow-purple-950/5"
+                      >
+                        <p className="text-lg font-semibold leading-snug">{w.title}</p>
+                        <p className="mt-2 flex-1 text-sm text-foreground-muted">{w.dek}</p>
+                        <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-purple-700">
+                          Read it
+                          <span
+                            aria-hidden
+                            className="transition-transform group-hover:translate-x-1"
+                          >
+                            →
+                          </span>
+                        </span>
+                      </Link>
+                    </Reveal>
+                  ))}
+                </div>
+              </div>
+            ))}
+
+            <div className="mt-10">
+              <Reveal>
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
+                  Lessons and exercises
+                </h3>
+              </Reveal>
+              <div className="mt-4 grid gap-4 md:grid-cols-2">
+                <Reveal>
+                  <Link
+                    href="/faith/present-but-missing"
+                    className="group flex h-full flex-col rounded-3xl border border-border-subtle bg-background-elevated p-6 transition-all hover:-translate-y-0.5 hover:border-purple-500/40 hover:shadow-lg hover:shadow-purple-950/5"
+                  >
+                    <p className="text-lg font-semibold leading-snug">Present but Missing</p>
+                    <p className="mt-2 flex-1 text-sm text-foreground-muted">
+                      A lesson and exercise for men on providing everything but yourself. Follow the
+                      Scripture, write your notes, and email yourself a PDF.
+                    </p>
+                    <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-purple-700">
+                      Start the lesson
+                      <span aria-hidden className="transition-transform group-hover:translate-x-1">
+                        →
+                      </span>
+                    </span>
+                  </Link>
+                </Reveal>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
