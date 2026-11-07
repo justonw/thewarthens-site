@@ -462,6 +462,12 @@ export const searchIndex: SearchEntry[] = [
     keywords: "career day host organizer teacher school kit kiosk event table volunteer",
   },
   {
+    title: "Present but Missing: a lesson for men",
+    href: "/faith/present-but-missing",
+    blurb: "A lesson and exercise for men, with notes you can email to yourself.",
+    keywords: "men man lesson exercise husband father dad bible study present notes pdf small group",
+  },
+  {
     title: "Home",
     href: "/",
     blurb: "Start at the front page.",

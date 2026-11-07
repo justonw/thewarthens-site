@@ -6,7 +6,7 @@ const links = [
   { href: "/", label: "Home", short: "Home", wideOnly: true },
   { href: "/tech", label: "Tech Journey", short: "Tech Journey", wideOnly: false },
   { href: "/techjr", label: "Tech Jr.", short: "Tech Jr.", wideOnly: false },
-  { href: "/faith", label: "Faith Journey", short: "Faith", wideOnly: false },
+  { href: "/faith", label: "Faith Journey", short: "Faith Journey", wideOnly: false },
   { href: "/tech/coaching", label: "1:1 Coaching", short: "Coaching", wideOnly: false },
 ];
 
@@ -32,7 +32,7 @@ export default function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className={`whitespace-nowrap rounded-full px-2.5 py-2 text-xs font-medium text-foreground-muted transition-colors hover:bg-background-elevated hover:text-foreground sm:px-4 sm:text-sm ${
+              className={`whitespace-nowrap rounded-full px-1.5 py-2 text-xs font-medium text-foreground-muted transition-colors hover:bg-background-elevated hover:text-foreground sm:px-4 sm:text-sm ${
                 link.wideOnly ? "hidden sm:inline-block" : ""
               }`}
             >

@@ -256,6 +256,33 @@ export default function FaithJourneyPage() {
         </div>
       )}
 
+      {/* A lesson and exercise for men */}
+      <div className="mx-auto max-w-5xl px-6 pt-12 sm:pt-16">
+        <Reveal>
+          <Link
+            href="/faith/present-but-missing"
+            className="group flex flex-col justify-between gap-6 rounded-[2rem] border border-border-subtle bg-background-elevated p-8 transition-all hover:-translate-y-0.5 hover:border-purple-500/40 hover:shadow-xl hover:shadow-purple-950/10 sm:flex-row sm:items-center sm:p-10"
+          >
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-purple-700">
+                A Lesson and Exercise for Men
+              </p>
+              <p className="mt-2 text-2xl font-semibold">Present but Missing</p>
+              <p className="mt-3 max-w-xl text-foreground-muted">
+                When a man provides everything but himself. Follow the lesson, write your notes, and
+                email yourself a PDF.
+              </p>
+            </div>
+            <span className="inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-purple-700">
+              Start the lesson
+              <span aria-hidden className="transition-transform group-hover:translate-x-1">
+                →
+              </span>
+            </span>
+          </Link>
+        </Reveal>
+      </div>
+
       {/* Women Who Seek */}
       <div className="mx-auto max-w-5xl px-6 pb-16 pt-12 sm:pt-16">
         <Reveal>
