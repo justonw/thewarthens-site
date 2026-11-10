@@ -15,7 +15,7 @@ export const seoTitle = "Present but Missing: A Bible Lesson for Men | Faith Jou
 export const seoDescription =
   "A free Bible lesson for men on being fully present, not just providing. Isaiah 58, Matthew 23, reflection questions, and a PDF of your notes.";
 export const LESSON_LEAD =
-  "A free Bible lesson for men on being fully present, not only providing. Built on Isaiah 58 and Matthew 23, it walks through four places a man can be there but missing: under pressure, at home, at church, and in the community.";
+  "A Bible lesson for men on being fully present, not only providing. This walks through four places a man can be there but missing: under pressure, at home, at church, and in the community.";
 
 export const faq: { question: string; answer: string }[] = [
   {
