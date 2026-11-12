@@ -3,7 +3,11 @@ import { guides } from "@/lib/guides";
 import ContactBand from "./ContactBand";
 
 const socials = [
-  { href: "https://youtube.com/@thewarthens?si=hMA8NuKtm0vox8X4", label: "YouTube" },
+  { href: "https://youtube.com/@thewarthens?si=hMA8NuKtm0vox8X4", label: "YouTube: Tech Journey" },
+  {
+    href: "https://www.youtube.com/channel/UCJj_ar9Gs8YvcYK6jSh9a6g",
+    label: "YouTube: Faith Journey",
+  },
   {
     href: "https://www.instagram.com/thewarthens?igsh=MWVnbTRsOWsyc3M4bg%3D%3D&utm_source=qr",
     label: "Instagram",
