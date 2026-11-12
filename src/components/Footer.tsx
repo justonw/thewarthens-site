@@ -115,6 +115,18 @@ export default function Footer() {
               >
                 Present but Missing
               </Link>
+              <Link
+                href="/faith/topical-study/is-tithing-biblical"
+                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+              >
+                Is Tithing Biblical?
+              </Link>
+              <Link
+                href="/faith/topical-study/did-paul-wait-14-years-to-preach"
+                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+              >
+                Did Paul Wait 14 Years to Preach?
+              </Link>
             </nav>
           </div>
           <div>
