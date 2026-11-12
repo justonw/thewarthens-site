@@ -59,11 +59,6 @@ export default function MagnetsPage() {
           </div>
         </Reveal>
 
-        <p className="mx-auto mt-8 max-w-xl text-balance text-lg text-foreground-muted">
-          Atiya shares the full story, and we talk about what carried us when the outcome was out of
-          our hands.
-        </p>
-
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <a
             href={`https://youtu.be/${VIDEO_ID}`}
