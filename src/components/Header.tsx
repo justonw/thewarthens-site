@@ -8,6 +8,8 @@ const links = [
   { href: "/techjr", label: "Tech Jr.", short: "Tech Jr.", wideOnly: false },
   { href: "/faith", label: "Faith Journey", short: "Faith Journey", wideOnly: false },
   { href: "/tech/coaching", label: "1:1 Coaching", short: "Coaching", wideOnly: false },
+  // Shown as a filled button on larger screens. On phones the footer contact block covers it.
+  { href: "/contact", label: "Contact", short: "Contact", wideOnly: true, cta: true },
 ];
 
 export default function Header() {
@@ -32,9 +34,11 @@ export default function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className={`whitespace-nowrap rounded-full px-1.5 py-2 text-xs font-medium text-foreground-muted transition-colors hover:bg-background-elevated hover:text-foreground sm:px-4 sm:text-sm ${
-                link.wideOnly ? "hidden sm:inline-block" : ""
-              }`}
+              className={`whitespace-nowrap rounded-full px-1.5 py-2 text-xs font-medium transition-colors sm:px-4 sm:text-sm ${
+                link.cta
+                  ? "bg-purple-700 font-semibold text-white shadow-sm hover:bg-purple-800 sm:ml-1"
+                  : "text-foreground-muted hover:bg-background-elevated hover:text-foreground"
+              } ${link.wideOnly ? "hidden sm:inline-block" : ""}`}
             >
               <span className="sm:hidden">{link.short}</span>
               <span className="hidden sm:inline">{link.label}</span>

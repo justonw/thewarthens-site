@@ -6,7 +6,7 @@ import { faithWritings, categoryLabels, type FaithWritingCategory } from "@/lib/
 
 const title = "Faith Journey | The Warthens";
 const description =
-  "Learning, understanding, and living out God's wisdom, through faith, by His grace. Our faith journey, coming soon.";
+  "Learning, understanding, and living out God's wisdom, through faith, by His grace. Our faith journey, told through our own life experiences, with Bible studies, writings, and lessons.";
 
 export const metadata: Metadata = {
   title,
@@ -53,16 +53,38 @@ const faq = [
 // The hero paragraph, split into three points. Same words, easier to scan.
 const faithPoints = [
   {
+    label: "Test it",
     title: "Question what looks counterfeit",
     body: "That means being willing to question anything that looks or feels counterfeit.",
+    icon: (
+      <>
+        <circle cx="11" cy="11" r="6.5" />
+        <path d="M20.5 20.5 16 16" />
+        <path d="m8.5 11 1.8 1.8L14 9.2" />
+      </>
+    ),
   },
   {
+    label: "Share it",
     title: "Share what we're learning",
     body: "And lovingly, faithfully contributing what we're learning within our own sphere and beyond, toward the freedom that only truth brings.",
+    icon: (
+      <>
+        <path d="M12 6.5C10.4 5.3 8 4.8 4.5 5v12.2c3.5-.2 5.9.3 7.5 1.5 1.6-1.2 4-1.7 7.5-1.5V5c-3.5-.2-5.9.3-7.5 1.5Z" />
+        <path d="M12 6.5v12.2" />
+      </>
+    ),
   },
   {
+    label: "Our story",
     title: "Where it comes from",
     body: "That posture comes from our own experience serving in local church leadership and later deconstructing what we thought faith was supposed to look like. God met us faithfully through all of it.",
+    icon: (
+      <>
+        <path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 1 1 13 0c0 5.4-6.5 11-6.5 11Z" />
+        <circle cx="12" cy="10" r="2.4" />
+      </>
+    ),
   },
 ];
 
@@ -121,7 +143,7 @@ export default function FaithJourneyPage() {
         />
         <div className="mx-auto max-w-4xl px-6 pt-16 pb-16 text-center sm:pt-24 sm:pb-20">
           <p className="inline-flex items-center gap-2 rounded-full border border-purple-600/25 bg-purple-600/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-purple-700">
-            Faith Journey · Coming Soon
+            Faith Journey with The Warthens
           </p>
           <h1 className="text-balance mt-6 text-4xl font-semibold tracking-tight sm:text-5xl">
             Learning, understanding, and living out God&apos;s wisdom, through
@@ -132,23 +154,51 @@ export default function FaithJourneyPage() {
             it&apos;s actually rooted in biblical, theological truth.
           </p>
 
-          <div className="mt-12 grid gap-4 text-left md:grid-cols-3">
-            {faithPoints.map((point, i) => (
-              <Reveal key={point.title} delay={i * 80}>
-                <div className="h-full rounded-3xl border border-border-subtle bg-background-elevated p-6">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-purple-700 text-sm font-semibold text-white">
-                    {i + 1}
-                  </span>
-                  <p className="mt-4 font-semibold">{point.title}</p>
-                  <p className="mt-2 text-sm text-foreground-muted">{point.body}</p>
-                </div>
-              </Reveal>
-            ))}
+          <div className="mt-12 grid gap-4 text-left md:grid-cols-2">
+            {faithPoints.map((point, i) => {
+              const featured = i === 2;
+              return (
+                <Reveal key={point.title} delay={i * 80} className={featured ? "md:col-span-2" : ""}>
+                  <div
+                    className={`group relative h-full overflow-hidden rounded-3xl border border-purple-600/15 bg-gradient-to-br from-background-elevated via-background-elevated to-purple-600/[0.07] p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-purple-600/40 hover:shadow-xl hover:shadow-purple-900/10 sm:p-8 ${
+                      featured ? "md:flex md:items-center md:gap-8" : ""
+                    }`}
+                  >
+                    {/* soft glow in the corner */}
+                    <div
+                      aria-hidden
+                      className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-purple-500/15 blur-3xl transition-opacity duration-300 group-hover:opacity-100"
+                    />
+                    <span className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-600 to-mauve-800 text-white shadow-lg shadow-purple-900/25 ring-1 ring-white/20">
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="h-7 w-7"
+                        aria-hidden
+                      >
+                        {point.icon}
+                      </svg>
+                    </span>
+                    <div className={`relative ${featured ? "mt-5 md:mt-0" : "mt-5"}`}>
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-purple-700">
+                        {point.label}
+                      </p>
+                      <p className="mt-1.5 text-xl font-semibold leading-snug">{point.title}</p>
+                      <p className="mt-2.5 text-foreground-muted">{point.body}</p>
+                    </div>
+                  </div>
+                </Reveal>
+              );
+            })}
           </div>
 
           <p className="mx-auto mt-10 max-w-2xl text-balance text-foreground-muted">
-            This page is where we&apos;ll keep sharing what we&apos;re learning.
-            For now, here&apos;s where it started.
+            This is where we share what we&apos;re learning, from videos to Bible
+            studies and writings. Here&apos;s where it started.
           </p>
         </div>
       </div>

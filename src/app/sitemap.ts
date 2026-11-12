@@ -29,7 +29,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
       lastModified: parseUpdated(a.updated),
     })),
-    { path: "/faith", priority: 0.8, lastModified: SITE_LAST_UPDATED },
+    { path: "/contact", priority: 0.6, lastModified: new Date("2026-11-12") },
+    { path: "/faith", priority: 0.8, lastModified: new Date("2026-11-12") },
     { path: "/faith/women-who-seek", priority: 0.7, lastModified: SITE_LAST_UPDATED },
     { path: "/faith/present-but-missing", priority: 0.7, lastModified: new Date("2026-11-07") },
     ...guides.map((g) => ({

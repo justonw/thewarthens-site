@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { guides } from "@/lib/guides";
+import ContactBand from "./ContactBand";
 
 const socials = [
   { href: "https://youtube.com/@thewarthens?si=hMA8NuKtm0vox8X4", label: "YouTube" },
@@ -9,7 +10,7 @@ const socials = [
   },
   { href: "https://www.tiktok.com/@techjourneyyoutube?_t=8oaopXMHjKg&_r=1", label: "TikTok" },
   { href: "https://calendly.com/techjourneyinfo", label: "Book a Call" },
-  { href: "mailto:info@thewarthens.com", label: "Email Us" },
+  { href: "mailto:info@thewarthens.com", label: "info@thewarthens.com" },
   { href: "https://www.linkedin.com/in/juston-warthen-96aa13167", label: "Juston's LinkedIn" },
   { href: "https://www.linkedin.com/in/atiya-warthen-4062881b0", label: "Atiya's LinkedIn" },
 ];
@@ -18,6 +19,9 @@ export default function Footer() {
   return (
     <footer className="border-t border-border-subtle/80 bg-background">
       <div className="mx-auto max-w-6xl px-6 py-10">
+        <div className="mb-12">
+          <ContactBand />
+        </div>
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
           <div>
             <p className="text-sm font-semibold">The Warthens</p>
