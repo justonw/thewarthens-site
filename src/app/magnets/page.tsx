@@ -37,6 +37,17 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", title: VIDEO_TITLE, description, images: [thumbnail] },
 };
 
+// The story section is built only from Atiya's own account. It leaves out names of the children,
+// doctors, and hospitals on purpose.
+const story = [
+  "On a Monday in July 2026, in the middle of what was supposed to be our family vacation week, our four-year-old daughter told us her throat hurt and that she had swallowed a magnet. She was playing and laughing, so we hoped it was one small magnet. Urgent care took X-rays, and they showed around 30 tiny magnets in her stomach, clustered in two groups. The colorful magnetic beads had been a toy in our home. We thought we had put them all away.",
+  "She was sent to a children's hospital, where the surgeon explained that magnets this strong can pull toward each other through the walls of the intestines, and that waiting was risky. We prayed, asked questions, and agreed she needed surgery. For more than three hours, we didn't know if our daughter was okay. When the surgeon finally came to talk to us, he told us the magnets had pinched her intestines and that he had repaired the holes they caused.",
+  "We had already decided that our two-year-old son needed X-rays too, so the next morning we took him in. He looked normal, just like his sister had, but an X-ray showed a cluster of magnets in him as well, and he needed surgery too. Two days after we came home, he developed an abscess, a pocket of infection, and needed another procedure.",
+  "Both of our children came through, and we are so grateful they're still here. It was also the hardest week of our lives. In the midst of fear and doubt, God graced us with faith, even giving Atiya Philippians 4:13 specifically.",
+  "What helped us was being willing to face hard decisions, refusing to let self-condemnation have the last word, trusting God with what we couldn't control, and letting Scripture, like Philippians 4:6-7, quiet the storm inside us.",
+  "If you're a parent, here is what we most want you to know. Swallowed magnets can look like nothing at first. Our daughter seemed fine all day with around 30 magnets inside her, and our son looked normal too. Magnetic beads look like candy to little kids, and they don't understand the danger. If you have young children, keep magnetic beads out of your home, and if a child swallows any, go to the emergency room right away.",
+];
+
 // Safety answers follow the U.S. Consumer Product Safety Commission guidance on swallowed magnets.
 const faq = [
   {
@@ -205,6 +216,19 @@ export default function MagnetsPage() {
               experience, not giving medical advice.
             </p>
           </aside>
+        </Reveal>
+
+        <Reveal delay={80}>
+          <article className="mx-auto mt-16 max-w-2xl text-left">
+            <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+              Our story: when our kids swallowed magnetic beads
+            </h2>
+            <div className="mt-6 space-y-5 text-lg leading-relaxed text-foreground">
+              {story.map((paragraph) => (
+                <p key={paragraph.slice(0, 40)}>{paragraph}</p>
+              ))}
+            </div>
+          </article>
         </Reveal>
 
         <Reveal delay={80}>

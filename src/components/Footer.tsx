@@ -127,6 +127,12 @@ export default function Footer() {
               >
                 Did Paul Wait 14 Years to Preach?
               </Link>
+              <Link
+                href="/magnets"
+                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+              >
+                Our Kids Swallowed Magnets
+              </Link>
             </nav>
           </div>
           <div>

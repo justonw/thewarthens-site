@@ -301,8 +301,40 @@ export default function FaithJourneyPage() {
         </div>
       </div>
 
+      {/* Latest video */}
+      <div className="mx-auto max-w-5xl px-6 pt-12 sm:pt-16">
+        <Reveal>
+          <Link
+            href="/magnets"
+            className="group grid overflow-hidden rounded-[2rem] border border-border-subtle bg-background-elevated transition-all hover:-translate-y-0.5 hover:border-mauve-600/40 hover:shadow-xl hover:shadow-mauve-950/10 md:grid-cols-[1.1fr_0.9fr]"
+          >
+            <div className="relative aspect-video md:aspect-auto md:min-h-60">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://i.ytimg.com/vi/mKewhwS4Ys4/maxresdefault.jpg"
+                alt="Our Kids Swallowed Magnets. This Is How We Trusted God."
+                loading="lazy"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+            </div>
+            <div className="flex flex-col justify-center p-6 sm:p-8">
+              <p className="text-xs font-semibold uppercase tracking-wider text-mauve-700">Latest video</p>
+              <h2 className="text-balance mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
+                Our Kids Swallowed Magnets. This Is How We Trusted God.
+              </h2>
+              <p className="mt-3 text-foreground-muted">
+                Our story, plus what every parent should know about magnetic beads.
+              </p>
+              <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-purple-700 transition-transform group-hover:translate-x-1">
+                Read the story and watch <span aria-hidden>→</span>
+              </span>
+            </div>
+          </Link>
+        </Reveal>
+      </div>
+
       {/* Women Who Seek */}
-      <div className="mx-auto max-w-5xl px-6 pb-16 pt-12 sm:pt-16">
+      <div className="mx-auto max-w-5xl px-6 pb-16 pt-8 sm:pt-10">
         <Reveal>
           <Link
             href="/faith/women-who-seek"
