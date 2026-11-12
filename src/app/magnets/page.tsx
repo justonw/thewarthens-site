@@ -6,28 +6,121 @@ const VIDEO_ID = "mKewhwS4Ys4";
 const VIDEO_TITLE = "Our Kids Swallowed Magnets. This Is How We Trusted God.";
 const FAITH_YOUTUBE_URL = "https://www.youtube.com/channel/UCJj_ar9Gs8YvcYK6jSh9a6g";
 
-const title = `${VIDEO_TITLE} | The Warthens`;
+// Search title stays under about 60 characters; the on-page headline and social cards use the video title.
+const title = "Kids Swallowed Magnets: Our Story & Safety Tips | The Warthens";
 const description =
-  "Our kids swallowed magnetic beads and we faced a worst-case scenario. Watch the full story of how we trusted God when we couldn't control the outcome, plus a safety note for parents.";
+  "Our kids swallowed magnetic beads. Watch our story of trusting God in a worst-case scenario, and learn what parents should know about magnet safety.";
 const thumbnail = `https://i.ytimg.com/vi/${VIDEO_ID}/maxresdefault.jpg`;
+const CPSC_URL =
+  "https://www.cpsc.gov/Newsroom/News-Releases/2021/Ingestion-of-High-Powered-Magnetic-Balls-and-Magnetic-Cubes-Poses-Serious-Risk-of-Severe-Internal-Injury-or-Death-in-Children-and-Teens";
 
 export const metadata: Metadata = {
   title,
   description,
   alternates: { canonical: "/magnets" },
+  keywords: [
+    "kids swallowed magnets",
+    "child swallowed magnet",
+    "magnetic beads dangerous",
+    "magnet balls swallowed",
+    "swallowed magnets symptoms",
+    "trusting God in hard times",
+    "Christian family testimony",
+  ],
   openGraph: {
-    title,
+    title: VIDEO_TITLE,
     description,
     url: "/magnets",
     type: "website",
     images: [{ url: thumbnail, width: 1280, height: 720, alt: VIDEO_TITLE }],
   },
-  twitter: { card: "summary_large_image", title, description, images: [thumbnail] },
+  twitter: { card: "summary_large_image", title: VIDEO_TITLE, description, images: [thumbnail] },
+};
+
+// Safety answers follow the U.S. Consumer Product Safety Commission guidance on swallowed magnets.
+const faq = [
+  {
+    question: "What should I do if my child swallowed a magnet?",
+    answer:
+      "Get emergency medical care right away, even if your child seems fine. The Consumer Product Safety Commission says not to wait for symptoms. Tell the medical team how many magnets you think were swallowed.",
+  },
+  {
+    question: "Why are magnetic beads (magnet balls) dangerous?",
+    answer:
+      "Strong magnets can pull toward each other, or toward metal objects, through the walls of the intestines. That can cause serious injury, such as tears, blockages, and infection. On an X-ray, several magnets can even look like a single object.",
+  },
+  {
+    question: "What are the symptoms of swallowing magnets?",
+    answer:
+      "Stomach pain, nausea, vomiting, or diarrhea can show up, but serious injury can happen before any symptoms appear. That is why you should not wait to see if your child is okay.",
+  },
+  {
+    question: "How can I keep magnets away from my kids?",
+    answer:
+      "Remove magnetic beads, magnet sets, and small magnets from homes with young children, check play areas and floors for loose or missing ones, and teach kids never to put magnets near their mouth or nose.",
+  },
+  {
+    question: "How did you trust God when you couldn't control the outcome?",
+    answer:
+      "Four things helped us: being willing to face hard decisions, not letting self-condemnation have the last word, trusting God with the uncertainty, and quieting the storm within. We talk through each one in the video.",
+  },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "VideoObject",
+      "@id": "https://thewarthens.com/magnets#video",
+      name: VIDEO_TITLE,
+      description:
+        "Our kids swallowed magnetic beads and we faced a worst-case scenario. This is our story of trusting God when we couldn't control the outcome.",
+      thumbnailUrl: [thumbnail],
+      uploadDate: "2026-11-12T08:30:10-08:00",
+      duration: "PT39M24S",
+      contentUrl: `https://www.youtube.com/watch?v=${VIDEO_ID}`,
+      embedUrl: `https://www.youtube.com/embed/${VIDEO_ID}`,
+      inLanguage: "en",
+      publisher: {
+        "@type": "Organization",
+        name: "The Warthens",
+        logo: { "@type": "ImageObject", url: "https://thewarthens.com/brand/icon-square.png" },
+      },
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://thewarthens.com/magnets",
+      url: "https://thewarthens.com/magnets",
+      name: title,
+      description,
+      mainEntity: { "@id": "https://thewarthens.com/magnets#video" },
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "The Warthens", item: "https://thewarthens.com" },
+        { "@type": "ListItem", position: 2, name: "Faith Journey", item: "https://thewarthens.com/faith" },
+        { "@type": "ListItem", position: 3, name: VIDEO_TITLE, item: "https://thewarthens.com/magnets" },
+      ],
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: faq.map((f) => ({
+        "@type": "Question",
+        name: f.question,
+        acceptedAnswer: { "@type": "Answer", text: f.answer },
+      })),
+    },
+  ],
 };
 
 export default function MagnetsPage() {
   return (
     <section className="relative overflow-hidden">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10"
@@ -112,6 +205,45 @@ export default function MagnetsPage() {
               experience, not giving medical advice.
             </p>
           </aside>
+        </Reveal>
+
+        <Reveal delay={80}>
+          <div className="mx-auto mt-16 max-w-2xl text-left">
+            <h2 className="text-center text-2xl font-semibold tracking-tight sm:text-3xl">
+              What parents should know
+            </h2>
+            <div className="mt-6 space-y-3">
+              {faq.map((f) => (
+                <details
+                  key={f.question}
+                  className="group rounded-2xl border border-border-subtle bg-background-elevated p-5 open:border-purple-600/30 open:shadow-md"
+                >
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold">
+                    <span>{f.question}</span>
+                    <span
+                      aria-hidden
+                      className="shrink-0 text-purple-700 transition-transform duration-200 group-open:rotate-45"
+                    >
+                      +
+                    </span>
+                  </summary>
+                  <p className="mt-3 text-foreground-muted">{f.answer}</p>
+                </details>
+              ))}
+            </div>
+            <p className="mt-6 text-center text-sm text-foreground-muted">
+              Safety information is based on guidance from the{" "}
+              <a
+                href={CPSC_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-purple-700 underline underline-offset-4"
+              >
+                U.S. Consumer Product Safety Commission
+              </a>
+              . We&apos;re sharing our experience, not giving medical advice.
+            </p>
+          </div>
         </Reveal>
 
         <p className="mt-12 text-sm text-foreground-muted">
