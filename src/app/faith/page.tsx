@@ -16,26 +16,8 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", title, description },
 };
 
-const videoJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "VideoObject",
-  name: "Redeeming A Deconstructed Faith | Our Christian Journey",
-  description:
-    "We discuss our journey from being former church leaders to gaining a more proper context of the Christian faith and how we practically put our faith into practice.",
-  thumbnailUrl: ["https://i.ytimg.com/vi/-udk7605GZw/maxresdefault.jpg"],
-  uploadDate: "2024-01-04T09:00:00-08:00",
-  duration: "PT56M6S",
-  contentUrl: "https://youtu.be/-udk7605GZw",
-  embedUrl: "https://www.youtube.com/embed/-udk7605GZw",
-  publisher: {
-    "@type": "Organization",
-    name: "The Warthens",
-    logo: {
-      "@type": "ImageObject",
-      url: "https://thewarthens.com/brand/icon-square.png",
-    },
-  },
-};
+// The Faith Journey YouTube channel (separate from the Tech Journey channel in the footer).
+const FAITH_YOUTUBE_URL = "https://www.youtube.com/channel/UCJj_ar9Gs8YvcYK6jSh9a6g";
 
 const faq = [
   {
@@ -120,10 +102,6 @@ export default function FaithJourneyPage() {
     <section className="relative overflow-hidden">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(videoJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <script
@@ -198,62 +176,45 @@ export default function FaithJourneyPage() {
 
           <p className="mx-auto mt-10 max-w-2xl text-balance text-foreground-muted">
             This is where we share what we&apos;re learning, from videos to Bible
-            studies and writings. Here&apos;s where it started.
+            studies and writings.
           </p>
         </div>
       </div>
 
-      {/* Where it started: the video, as the focal point */}
+      {/* Plug for the Faith Journey YouTube channel */}
       <div
-        className="text-white"
+        className="relative overflow-hidden text-white"
         style={{
           backgroundImage:
             "radial-gradient(circle at 15% 0%, rgba(244,184,160,0.3), transparent 45%), linear-gradient(135deg, #9c5268, #7d3f52 50%, #572838)",
         }}
       >
-        <div className="mx-auto max-w-4xl px-6 py-16 text-center sm:py-20">
+        <div className="mx-auto max-w-3xl px-6 py-16 text-center sm:py-20">
           <Reveal>
-            <p className="text-sm font-semibold uppercase tracking-wider text-rose-200">
-              Where it started
+            <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white/95 text-purple-700 shadow-lg ring-4 ring-white/20">
+              <svg viewBox="0 0 24 24" fill="currentColor" className="ml-1 h-7 w-7" aria-hidden>
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </span>
+            <p className="mt-6 text-sm font-semibold uppercase tracking-wider text-rose-200">
+              On YouTube
+            </p>
+            <h2 className="text-balance mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">
+              Watch Faith Journey with The Warthens
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-balance text-rose-100">
+              Testimonies, Bible study, and honest conversations about trusting God, from our family
+              to yours. Subscribe so you don&apos;t miss the next video.
             </p>
             <a
-              href="https://youtu.be/-udk7605GZw"
+              href={FAITH_YOUTUBE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="group mx-auto mt-6 block aspect-video w-full max-w-2xl overflow-hidden rounded-3xl border border-white/20 shadow-2xl shadow-black/30"
+              className="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-8 py-3.5 text-sm font-semibold text-purple-800 shadow-xl shadow-black/20 transition-all hover:-translate-y-0.5 hover:bg-rose-50"
             >
-              <div className="relative h-full w-full">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="https://img.youtube.com/vi/-udk7605GZw/maxresdefault.jpg"
-                  alt="Redeeming A Deconstructed Faith | Our Christian Journey"
-                  className="h-full w-full object-cover"
-                />
-                <div className="absolute inset-0 flex items-center justify-center bg-black/30 transition-colors group-hover:bg-black/40">
-                  <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/95 text-purple-700 shadow-lg transition-transform group-hover:scale-105">
-                    <svg viewBox="0 0 24 24" fill="currentColor" className="ml-1 h-7 w-7" aria-hidden>
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                  </span>
-                </div>
-                <p className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-5 py-4 text-left text-sm font-semibold text-white">
-                  Redeeming A Deconstructed Faith | Our Christian Journey
-                </p>
-              </div>
+              Watch on YouTube
+              <span aria-hidden>→</span>
             </a>
-            <p className="mt-6 text-sm text-rose-100">
-              More content, stories, and resources are on the way. Follow along
-              on{" "}
-              <a
-                href="https://youtube.com/@thewarthens?si=hMA8NuKtm0vox8X4"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-semibold text-white underline underline-offset-4 hover:text-rose-100"
-              >
-                YouTube
-              </a>{" "}
-              so you don&apos;t miss it.
-            </p>
           </Reveal>
         </div>
       </div>
