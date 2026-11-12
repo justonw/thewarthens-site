@@ -31,8 +31,9 @@ const jsonLd = {
   ],
   sameAs: [
     "https://youtube.com/@thewarthens",
+    "https://www.youtube.com/channel/UCJj_ar9Gs8YvcYK6jSh9a6g",
     "https://www.instagram.com/thewarthens",
-    "https://www.tiktok.com/@techjourneyyoutube",
+    "https://www.tiktok.com/@thewarthens",
     "https://www.linkedin.com/in/juston-warthen-96aa13167",
     "https://www.linkedin.com/in/atiya-warthen-4062881b0",
   ],

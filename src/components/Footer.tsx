@@ -12,7 +12,7 @@ const socials = [
     href: "https://www.instagram.com/thewarthens?igsh=MWVnbTRsOWsyc3M4bg%3D%3D&utm_source=qr",
     label: "Instagram",
   },
-  { href: "https://www.tiktok.com/@techjourneyyoutube?_t=8oaopXMHjKg&_r=1", label: "TikTok" },
+  { href: "https://www.tiktok.com/@thewarthens", label: "TikTok" },
   { href: "https://calendly.com/techjourneyinfo", label: "Book a Call" },
   { href: "mailto:info@thewarthens.com", label: "info@thewarthens.com" },
   { href: "https://www.linkedin.com/in/juston-warthen-96aa13167", label: "Juston's LinkedIn" },
