@@ -23,4 +23,5 @@ export function clipId(text: string) {
   return a.toString(16).padStart(8, "0") + b.toString(16).padStart(8, "0");
 }
 
-export const clipUrl = (text: string) => `/career-day/audio/${clipId(text)}.mp3`;
+// ?v= busts caches whenever the voice is re-recorded (v=tj is the TJ voice).
+export const clipUrl = (text: string) => `/career-day/audio/${clipId(text)}.mp3?v=tj`;
