@@ -301,9 +301,37 @@ export default function FaithJourneyPage() {
         </div>
       </div>
 
-      {/* Latest video */}
-      <div className="mx-auto max-w-5xl px-6 pt-12 sm:pt-16">
+      {/* Latest videos */}
+      <div className="mx-auto max-w-5xl space-y-6 px-6 pt-12 sm:pt-16">
         <Reveal>
+          <Link
+            href="/jesus"
+            className="group grid overflow-hidden rounded-[2rem] border border-border-subtle bg-background-elevated transition-all hover:-translate-y-0.5 hover:border-mauve-600/40 hover:shadow-xl hover:shadow-mauve-950/10 md:grid-cols-[1.1fr_0.9fr]"
+          >
+            <div className="relative aspect-video md:aspect-auto md:min-h-60">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://i.ytimg.com/vi/HKWT347dZ3U/maxresdefault.jpg"
+                alt="She Grew Up in Church. I Didn’t. We Both Needed Jesus."
+                loading="lazy"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+            </div>
+            <div className="flex flex-col justify-center p-6 sm:p-8">
+              <p className="text-xs font-semibold uppercase tracking-wider text-mauve-700">Latest video</p>
+              <h2 className="text-balance mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
+                She Grew Up in Church. I Didn’t. We Both Needed Jesus.
+              </h2>
+              <p className="mt-3 text-foreground-muted">
+                Why we believe in Jesus: Atiya’s story, Juston’s story, and how we both needed him.
+              </p>
+              <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-purple-700 transition-transform group-hover:translate-x-1">
+                Read the stories and watch <span aria-hidden>→</span>
+              </span>
+            </div>
+          </Link>
+        </Reveal>
+        <Reveal delay={80}>
           <Link
             href="/magnets"
             className="group grid overflow-hidden rounded-[2rem] border border-border-subtle bg-background-elevated transition-all hover:-translate-y-0.5 hover:border-mauve-600/40 hover:shadow-xl hover:shadow-mauve-950/10 md:grid-cols-[1.1fr_0.9fr]"
@@ -318,7 +346,7 @@ export default function FaithJourneyPage() {
               />
             </div>
             <div className="flex flex-col justify-center p-6 sm:p-8">
-              <p className="text-xs font-semibold uppercase tracking-wider text-mauve-700">Latest video</p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-mauve-700">Previous video</p>
               <h2 className="text-balance mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
                 Our Kids Swallowed Magnets. This Is How We Trusted God.
               </h2>

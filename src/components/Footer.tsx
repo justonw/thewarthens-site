@@ -133,6 +133,12 @@ export default function Footer() {
               >
                 Our Kids Swallowed Magnets
               </Link>
+              <Link
+                href="/jesus"
+                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+              >
+                Why We Believe in Jesus
+              </Link>
             </nav>
           </div>
           <div>
