@@ -80,7 +80,7 @@ export default function TeachMode({ sections }: { sections: TeachSection[] }) {
           ? "text-3xl sm:text-4xl md:text-5xl"
           : "text-4xl sm:text-5xl md:text-6xl";
   const btn =
-    "rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-slate-200 transition-colors hover:border-amber-300/70 hover:text-amber-200 disabled:opacity-30 disabled:hover:border-white/20 disabled:hover:text-slate-200";
+    "rounded-full border border-sol-line px-4 py-2 text-sm font-semibold text-sol-ink transition-colors hover:border-sol-gold/70 hover:text-sol-gold disabled:opacity-30 disabled:hover:border-sol-line disabled:hover:text-sol-ink";
 
   return (
     <div
@@ -89,21 +89,21 @@ export default function TeachMode({ sections }: { sections: TeachSection[] }) {
       aria-modal="true"
       aria-label={`Teach mode: ${section.title}`}
       tabIndex={-1}
-      className="fixed inset-0 z-[100] flex flex-col bg-[#05060f] text-slate-100 outline-none"
+      className="sol-night fixed inset-0 z-[100] flex flex-col bg-[#05060f] text-sol-ink outline-none"
       style={{ backgroundImage: "radial-gradient(60% 50% at 50% 0%, rgba(120,73,206,0.22), transparent), radial-gradient(40% 30% at 85% 90%, rgba(244,196,90,0.10), transparent)" }}
     >
       <div className="flex items-center justify-between gap-4 px-5 py-4 sm:px-8">
-        <p className="min-w-0 truncate text-xs font-semibold uppercase tracking-[0.2em] text-amber-300">{section.title}</p>
+        <p className="min-w-0 truncate text-xs font-semibold uppercase tracking-[0.2em] text-sol-gold">{section.title}</p>
         <div className="flex shrink-0 items-center gap-2">
-          <span className="text-xs text-slate-400">{index + 1} / {section.verses.length}</span>
+          <span className="text-xs text-sol-muted">{index + 1} / {section.verses.length}</span>
           <button type="button" className={btn} onClick={close}>Close</button>
         </div>
       </div>
       <div className="flex min-h-0 flex-1 items-center justify-center overflow-y-auto px-6 py-6 sm:px-14">
         <figure key={verse.id} className="mx-auto max-w-5xl text-center">
-          <blockquote className={`font-serif leading-snug text-slate-50 ${sizeClass}`}>{verse.text}</blockquote>
-          <figcaption className="mt-8 text-sm font-semibold uppercase tracking-[0.25em] text-amber-300 sm:text-base">
-            {verse.ref} <span className="text-slate-500">KJV</span>
+          <blockquote className={`font-sol leading-snug text-sol-ink ${sizeClass}`}>{verse.text}</blockquote>
+          <figcaption className="mt-8 text-sm font-semibold uppercase tracking-[0.25em] text-sol-gold sm:text-base">
+            {verse.ref} <span className="text-sol-muted">KJV</span>
           </figcaption>
         </figure>
       </div>
@@ -111,7 +111,7 @@ export default function TeachMode({ sections }: { sections: TeachSection[] }) {
         <button type="button" className={btn} disabled={index === 0} onClick={() => setIndex((i) => Math.max(0, i - 1))}>
           ← Previous
         </button>
-        <p className="hidden text-xs text-slate-500 sm:block">Arrow keys to move · F for full screen · Esc to close</p>
+        <p className="hidden text-xs text-sol-muted sm:block">Arrow keys to move · F for full screen · Esc to close</p>
         <button
           type="button"
           className={btn}

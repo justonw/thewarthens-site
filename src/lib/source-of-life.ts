@@ -8,7 +8,12 @@ export const PAGE_MODIFIED = "2026-11-14";
 
 export const seoTitle = "Source of Life: Why You Can Praise God Anyway | The Warthens";
 export const seoDescription =
-  "God is the source of life and in control of all things. A Scripture-by-Scripture look at good, bad, and evil, why you can praise God anyway, and how to come to the Father.";
+  "Good is not always God, and “bad” is not always the devil. A Scripture-by-Scripture look at who is really in control, and why you can praise God anyway.";
+
+// What shows when the link is shared: the promise, not the document's name.
+export const shareTitle = "Good Is Not Always God. “Bad” Is Not Always the Devil.";
+export const shareDescription =
+  "A Scripture-by-Scripture look at who is really in control, and why you can praise God anyway.";
 
 export type Section = {
   id: string;
@@ -40,14 +45,14 @@ export const acts: Act[] = [
     name: "See Him",
     line: "Where is He in the good, the bad, and the evil?",
     intro:
-      "This is the part that challenges how most of us were taught. We are not saying every hard thing is a punishment, and we are not saying the devil is not real. We are asking what Scripture says about who is behind what we perceive as good, bad, and evil. If you are in a hard season right now, you can start with the hurting path instead.",
+      "This is the part that challenges how many of us were taught. I am not saying every hard thing is a punishment, and I am not saying the devil is not real. I am asking what Scripture says about who is behind what we perceive as good, bad, and evil. If you are in a hard season right now, you can start with the hurting path instead.",
   },
   {
     number: 3,
     name: "Come to Him",
     line: "What do we do with it?",
     intro:
-      "Understanding is not the goal. Coming to the Father is. Once we see that God is in control, the response is not fear, and it is not going back and forth with the devil. It is turning to Him by the blood of Jesus.",
+      "Understanding is not the goal. Coming to the Father is. Once we see that God is in control, the response is not fear. It is to submit to Him first, come to the Father by the blood of Jesus, and resist the enemy from there.",
   },
 ];
 
@@ -79,16 +84,17 @@ export const sections: Section[] = [
   {
     id: "evil",
     act: 2,
-    title: "Evil does not exist absent from God",
-    take: "God and the devil are not equal. The adversary is real, and Scripture shows him needing permission before he can touch what belongs to God. These verses show that what looks like evil is never outside God's knowing, and that good and bad are, in the end, at the mercy of God.",
+    title: "Even calamity and evil do not happen outside God’s hand",
+    take: "God and the devil are not equal. The adversary is real, and Scripture shows him needing permission before he can touch what belongs to God. These verses show that hard events, even what looks like evil, never fall outside God’s knowing and His hand. How far His hand goes, whether He causes, allows, or uses, is where faithful Christians differ, so I hold it humbly. I do not believe He is the author of sin.",
     featured: ["Isaiah 45:7", "Amos 3:6", "Lamentations 3:37-40", "1 Samuel 2:6-7", "Acts 4:27-28"],
+    note: "A note on the word “evil.” In Isaiah 45:7 and Amos 3:6 the Hebrew word usually means calamity, trouble, or disaster, set against peace. Newer translations such as the NASB and ESV read “calamity” or “disaster.” The same Hebrew word can mean moral evil in other places, so context decides. I read these verses mainly as: hard events do not fall outside God’s hand.",
   },
   {
     id: "wicked",
     act: 2,
     title: "What God issues to the wicked",
-    take: "Scripture also shows God judging. Some hard things come because a person, a family, or a nation turned from Him. This is where accountability meets sovereignty, and why we are asked to examine our own ways.",
-    featured: ["Job 20:29", "Proverbs 3:33", "Deuteronomy 32:39", "1 Kings 22:19-23", "Daniel 9:14"],
+    take: "Scripture also shows God judging. Some hard things come because a person, a family, or a nation turned from Him. This is where accountability meets sovereignty, and why I am asked to examine my own ways.",
+    featured: ["Deuteronomy 32:39", "Daniel 9:14", "Proverbs 3:33", "Job 20:29", "1 Kings 22:19-23"],
     note: "A study note from the document: read all of Lamentations 2.",
   },
   {
@@ -123,7 +129,7 @@ export const sections: Section[] = [
     id: "meekness",
     act: 3,
     title: "Meekness: accepting His dealings without resisting",
-    take: "The Greek word is praotes. Thayer glosses it as mildness of disposition and gentleness of spirit. In our words: meekness toward God is trusting that what He does is good, and not disputing or resisting it. It is the opposite of self-assertion, it comes from trusting His goodness and His control, and Scripture calls it a fruit of the Spirit, not a work of the human will.",
+    take: "The Greek word is praotes. Thayer glosses it as mildness of disposition and gentleness of spirit. In my words: meekness toward God is trusting that what He does is good, and not disputing or resisting it. It is the opposite of self-assertion, it comes from trusting His goodness and His control, and Scripture calls it a fruit of the Spirit, not a work of the human will.",
     featured: ["Galatians 5:22-23"],
   },
   {
@@ -144,6 +150,7 @@ export const sections: Section[] = [
 
 // Added by us for the questions and hurting sections. Not part of the original document.
 export const extraSections = [
+  { id: "foundation", title: "The foundation (added)" },
   { id: "questions", title: "Honest questions (added)" },
   { id: "hurting", title: "If you are hurting (added)" },
 ];
@@ -162,12 +169,15 @@ export function verseByRef(sectionId: string, ref: string): Verse {
   return v;
 }
 
+// Two verses open by default so a section never overwhelms. Everything else sits in the drawer.
+const OPEN_BY_DEFAULT = 2;
+
 export function featuredFor(section: Section): Verse[] {
-  return section.featured.map((ref) => verseByRef(section.id, ref));
+  return section.featured.slice(0, OPEN_BY_DEFAULT).map((ref) => verseByRef(section.id, ref));
 }
 
 export function restFor(section: Section): Verse[] {
-  const shown = new Set(section.featured);
+  const shown = new Set(section.featured.slice(0, OPEN_BY_DEFAULT));
   return versesFor(section.id).filter((v) => !shown.has(v.ref));
 }
 
@@ -175,7 +185,7 @@ export const documentVerseCount = verses.filter((v) => !v.added).length;
 
 // ---------- the paradigm test ----------
 
-export type Pick = "god" | "devil" | "me";
+export type Pick = "god" | "devil" | "me" | "unsure";
 
 export const situations: string[] = [
   "You get the job you have been praying for.",
@@ -191,6 +201,7 @@ export const pickLabels: Record<Pick, string> = {
   god: "God",
   devil: "The devil",
   me: "Me and my choices",
+  unsure: "I’m not sure",
 };
 
 // ---------- honest questions ----------
@@ -205,47 +216,65 @@ export const faq: Faq[] = [
   {
     question: "Does this make God the author of sin?",
     answer:
-      "No. Scripture says God cannot be tempted with evil and tempts no one, that in Him is no darkness at all, and that His eyes are too pure to look on iniquity. Scripture also says He is sovereign over what He allows, even over people who intend harm and God meant it for good. We hold both, we do not claim to have solved the tension, and we believe the tension is the Bible's, not ours.",
+      "I do not believe so. Scripture says God cannot be tempted with evil and tempts no one, that in Him is no darkness at all, and that His eyes are too pure to look on iniquity. Of some evil acts He says they never came into His mind. Scripture also says He is sovereign over what He allows, even through people who intend harm. Joseph’s brothers meant it for evil and God meant it for good, and the cross was by God’s plan and still carried out by wicked hands that are held responsible. My own wording is that God allows it, uses it, and is not the author of the sin. I do not claim to have the whole picture, and thoughtful Christians land in different places on how far His hand goes.",
     refs: [
       { section: "questions", ref: "James 1:13" },
       { section: "questions", ref: "1 John 1:5" },
       { section: "questions", ref: "Habakkuk 1:13" },
+      { section: "questions", ref: "Jeremiah 19:5" },
       { section: "questions", ref: "Genesis 50:20" },
+      { section: "questions", ref: "Acts 2:23" },
     ],
   },
   {
-    question: "Is the devil not real, or not dangerous?",
+    question: "What does “evil” mean in Isaiah 45:7 and Amos 3:6?",
     answer:
-      "The devil is real and he is dangerous. He is also not God's equal. In the clearest picture Scripture gives of his reach, he can touch only what the Lord permits. Our point is not to ignore him. It is to stop treating him as the one we go back and forth with, and to go to the Father instead.",
+      "In both verses the Hebrew word usually means calamity, trouble, or disaster, and Isaiah sets it against peace. Newer translations such as the NASB and ESV read “calamity” or “disaster,” while the King James Version says “evil,” which is easier to misread. The same Hebrew word can also mean moral evil in other passages, so context decides. I use these verses to say that hard events do not fall outside God’s hand. I do not use them to say that God does wrong.",
+    refs: [
+      { section: "source", ref: "Isaiah 45:7" },
+      { section: "evil", ref: "Amos 3:6" },
+    ],
+  },
+  {
+    question: "Is the devil real? Should I ignore him or fight him?",
+    answer:
+      "He is real, he is dangerous, and he is not God’s equal. Scripture sometimes names him as the direct cause of suffering, like a woman bound for eighteen years and Paul’s thorn. In the clearest picture of his reach he can touch only what the Lord permits. And Scripture tells us what to do: submit to God first, then resist the devil. So I am not saying ignore him. I am saying do not go back and forth with him as if he were the main event. Go to the Father, and resist from there.",
     refs: [
       { section: "questions", ref: "1 Peter 5:8" },
       { section: "questions", ref: "Job 1:12" },
       { section: "questions", ref: "Job 2:6" },
+      { section: "questions", ref: "Luke 13:16" },
+      { section: "questions", ref: "Acts 10:38" },
+      { section: "questions", ref: "2 Corinthians 12:7" },
+      { section: "questions", ref: "James 4:7" },
+      { section: "questions", ref: "Ephesians 6:11-12" },
     ],
   },
   {
     question: "Does this mean every hard thing is God punishing me?",
     answer:
-      "No. Jesus said a man's blindness was not about his sin or his parents' sin, and God Himself called Job upright while Job suffered. Some hard seasons come from our own choices and lack of discipline, and some do not. Take accountability for what is yours, and do not assume what is not.",
+      "No. Scripture gives several causes for hard seasons: my own choices, God’s loving discipline, a broken world, an enemy, and sometimes no cause I can see. Jesus said a man’s blindness was not about his sin or his parents’ sin, and God Himself called Job upright while Job suffered. I try to take accountability for what is mine, and not assume what is not.",
     refs: [
       { section: "questions", ref: "John 9:3" },
       { section: "trials", ref: "Job 1:8" },
+      { section: "questions", ref: "Galatians 6:7" },
+      { section: "questions", ref: "Hebrews 12:6" },
       { section: "wicked", ref: "Daniel 9:14" },
     ],
   },
   {
     question: "Is this the final word?",
     answer:
-      "No. This is our understanding of Scripture. Some of it is our perspective and not the hill we will die on. Do not take our word for it. Search the Scriptures and see if these things are so.",
+      "No. I believe what I have written here, but I do not claim to have the full picture, and I am open to other views. Please do not take my word for it. Search the Scriptures and see if these things are so.",
     refs: [{ section: "questions", ref: "Acts 17:11" }],
   },
 ];
 
 export const notSaying: string[] = [
-  "We are not saying hard things do not hurt. Jesus wept.",
-  "We are not saying people who suffer deserve it, or that abuse or harm is acceptable.",
-  "We are not saying this replaces counseling, medical care, or emergency help.",
-  "We are not saying we have it all figured out. His ways are higher than ours.",
+  "I am not saying hard things do not hurt. Jesus wept.",
+  "I am not saying people who suffer deserve it, or that abuse or harm is acceptable.",
+  "I am not saying this replaces counseling, medical care, or emergency help.",
+  "I am not saying I have it all figured out. His ways are higher than mine.",
 ];
 
 // ---------- the hurting path ----------
@@ -260,7 +289,7 @@ export const hurtingVerses: { section: string; ref: string }[] = [
 ];
 
 export const prayer =
-  "Father, I come to You by the blood of Jesus. I do not understand what is happening, and I do not have to. I believe You are in control, and I need You. Make haste to help me, O Lord my salvation.";
+  "Father, I come to You by the blood of Jesus. I may not understand what is happening, but I believe You are in control, and I need You. Help my paradigm be transformed and conformed to the image of Your Son, Jesus, by the empowerment of Your Holy Spirit. Amen.";
 
 // ---------- the current state worksheet ----------
 

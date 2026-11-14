@@ -322,3 +322,56 @@ article a[class*="rounded-3xl"] {
   background-size: 22px 22px;
   mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
 }
+
+
+/* Source of Life page: one set of tokens, two moods. .sol-light is the warm paper default and
+   .sol-night is the deep-navy band used for the heavy parts. Components only use the sol-* colors,
+   so any section can flip between them by switching the class. */
+@theme inline {
+  --color-sol-paper: var(--sol-paper);
+  --color-sol-ink: var(--sol-ink);
+  --color-sol-muted: var(--sol-muted);
+  --color-sol-line: var(--sol-line);
+  --color-sol-card: var(--sol-card);
+  --color-sol-input: var(--sol-input);
+  --color-sol-gold: var(--sol-gold);
+  --color-sol-spark: var(--sol-spark);
+  --color-sol-violet: var(--sol-violet);
+  --color-sol-rose: var(--sol-rose);
+  --color-sol-sky: var(--sol-sky);
+  --color-sol-primary: var(--sol-primary);
+  --color-sol-on-primary: var(--sol-on-primary);
+  --font-sol: var(--font-sol-serif), Georgia, "Times New Roman", serif;
+}
+
+.sol-light {
+  --sol-paper: #fbf8f2;
+  --sol-ink: #1b1a2f;
+  --sol-muted: #5f5c73;
+  --sol-line: rgba(27, 26, 47, 0.13);
+  --sol-card: #ffffff;
+  --sol-input: #ffffff;
+  --sol-gold: #94640f;
+  --sol-spark: #e0a526;
+  --sol-violet: #5b2bbf;
+  --sol-rose: #b4233f;
+  --sol-sky: #1d63a8;
+  --sol-primary: #4c1d95;
+  --sol-on-primary: #ffffff;
+}
+
+.sol-night {
+  --sol-paper: #0b0d22;
+  --sol-ink: #f1f2fb;
+  --sol-muted: #a9aecb;
+  --sol-line: rgba(255, 255, 255, 0.13);
+  --sol-card: rgba(255, 255, 255, 0.05);
+  --sol-input: rgba(0, 0, 0, 0.3);
+  --sol-gold: #f4c45a;
+  --sol-spark: #f4c45a;
+  --sol-violet: #b9a4ff;
+  --sol-rose: #fda4af;
+  --sol-sky: #7dd3fc;
+  --sol-primary: #f4c45a;
+  --sol-on-primary: #0b0d22;
+}

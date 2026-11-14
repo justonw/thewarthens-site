@@ -34,21 +34,21 @@ export default function Worksheet() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/30 sm:p-9">
+    <div className="mx-auto max-w-2xl rounded-3xl border border-sol-line bg-sol-card p-6 shadow-xl shadow-sol-ink/10 sm:p-9">
       <div className="space-y-6">
         {worksheetPrompts.map((p, i) => (
           <div key={p.id}>
-            <label htmlFor={`ws-${p.id}`} className="block text-base font-semibold text-white">
-              <span className="mr-2 text-amber-300">{i + 1}.</span>
+            <label htmlFor={`ws-${p.id}`} className="block text-base font-semibold text-sol-ink">
+              <span className="mr-2 text-sol-gold">{i + 1}.</span>
               {p.label}
             </label>
-            <p className="mt-1 text-sm text-slate-400">{p.hint}</p>
+            <p className="mt-1 text-sm text-sol-muted">{p.hint}</p>
             <textarea
               id={`ws-${p.id}`}
               rows={3}
               value={answers[p.id] ?? ""}
               onChange={(e) => setAnswers((prev) => ({ ...prev, [p.id]: e.target.value }))}
-              className="mt-2 w-full rounded-2xl border border-white/15 bg-black/30 px-4 py-3 text-base text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-amber-300 focus:ring-4 focus:ring-amber-300/10"
+              className="mt-2 w-full rounded-2xl border border-sol-line bg-sol-input px-4 py-3 text-base text-sol-ink outline-none transition placeholder:text-sol-muted/70 focus:border-sol-gold focus:ring-4 focus:ring-sol-gold/10"
               placeholder="Write here"
             />
           </div>
@@ -59,14 +59,14 @@ export default function Worksheet() {
           type="button"
           onClick={printIt}
           disabled={!hydrated || filled === 0}
-          className="rounded-full bg-amber-300 px-6 py-3 text-sm font-semibold text-[#0a0c1d] transition-colors hover:bg-amber-200 disabled:opacity-40"
+          className="rounded-full bg-sol-primary px-6 py-3 text-sm font-semibold text-sol-on-primary transition-colors hover:bg-sol-primary/90 disabled:opacity-40"
         >
           Print or save as PDF
         </button>
-        <button type="button" onClick={clear} disabled={filled === 0} className="rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-slate-200 transition-colors hover:border-rose-300/60 disabled:opacity-40">
+        <button type="button" onClick={clear} disabled={filled === 0} className="rounded-full border border-sol-line px-6 py-3 text-sm font-semibold text-sol-ink transition-colors hover:border-sol-rose/30 disabled:opacity-40">
           Clear
         </button>
-        <p className="text-xs text-slate-500">Saved on this device only. We never see what you write.</p>
+        <p className="text-xs text-sol-muted">Saved on this device only. We never see what you write.</p>
       </div>
     </div>
   );
