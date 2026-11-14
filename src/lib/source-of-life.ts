@@ -100,10 +100,10 @@ export const sections: Section[] = [
   {
     id: "evil",
     act: 2,
-    title: "Even calamity and evil do not happen outside God’s hand",
-    take: "God and the devil are not equal. The adversary is real, and Scripture shows him needing permission before he can touch what belongs to God. These verses show that hard events, even what looks like evil, never fall outside God’s knowing and His hand. How far His hand goes, whether He causes, allows, or uses, is where faithful Christians differ, so I hold it humbly. I do not believe He is the author of sin.",
+    title: "Even calamity and evil do not happen outside God’s awareness",
+    take: "God and the devil are not equal. The adversary is real, and Scripture shows him needing permission before he can touch what belongs to God. These verses show that hard events, even what looks like evil, never fall outside God’s awareness. How far His involvement goes, whether He causes, allows, or uses, is where faithful Christians differ, so I hold it humbly. I do not believe He is the author of sin.",
     featured: ["Isaiah 45:7", "Amos 3:6", "Lamentations 3:37-40", "1 Samuel 2:6-7", "Acts 4:27-28"],
-    note: "A note on the word “evil.” In Isaiah 45:7 and Amos 3:6 the Hebrew word usually means calamity, trouble, or disaster, set against peace. Newer translations such as the NASB and ESV read “calamity” or “disaster.” The same Hebrew word can mean moral evil in other places, so context decides. I read these verses mainly as: hard events do not fall outside God’s hand.",
+    note: "A note on the word “evil.” In Isaiah 45:7 and Amos 3:6 the Hebrew word usually means calamity, trouble, or disaster, set against peace. Newer translations such as the NASB and ESV read “calamity” or “disaster.” The same Hebrew word can mean moral evil in other places, so context decides. I read these verses mainly as: hard events do not fall outside God’s awareness.",
   },
   {
     id: "wicked",
@@ -231,7 +231,7 @@ export const faq: Faq[] = [
   {
     question: "Does this make God the author of sin?",
     answer:
-      "I do not believe so. Scripture says God cannot be tempted with evil and tempts no one, that in Him is no darkness at all, and that His eyes are too pure to look on iniquity. Of some evil acts He says they never came into His mind. Scripture also says He is sovereign over what He allows, even through people who intend harm. Joseph’s brothers meant it for evil and God meant it for good, and the cross was by God’s plan and still carried out by wicked hands that are held responsible. My own wording is that God allows it, uses it, and is not the author of the sin. I do not claim to have the whole picture, and thoughtful Christians land in different places on how far His hand goes.",
+      "I do not believe so. Scripture says God cannot be tempted with evil and tempts no one, that in Him is no darkness at all, and that His eyes are too pure to look on iniquity. Of some evil acts He says they never came into His mind. Scripture also says He is sovereign over what He allows, even through people who intend harm. Joseph’s brothers meant it for evil and God meant it for good, and the cross was by God’s plan and still carried out by wicked hands that are held responsible. My own wording is that God allows it, uses it, and is not the author of the sin. I do not claim to have the whole picture, and thoughtful Christians land in different places on how far His involvement goes.",
     refs: [
       { section: "questions", ref: "James 1:13" },
       { section: "questions", ref: "1 John 1:5" },
@@ -244,7 +244,7 @@ export const faq: Faq[] = [
   {
     question: "What does “evil” mean in Isaiah 45:7 and Amos 3:6?",
     answer:
-      "In both verses the Hebrew word usually means calamity, trouble, or disaster, and Isaiah sets it against peace. Newer translations such as the NASB and ESV read “calamity” or “disaster,” while the King James Version says “evil,” which is easier to misread. The same Hebrew word can also mean moral evil in other passages, so context decides. I use these verses to say that hard events do not fall outside God’s hand. I do not use them to say that God does wrong.",
+      "In both verses the Hebrew word usually means calamity, trouble, or disaster, and Isaiah sets it against peace. Newer translations such as the NASB and ESV read “calamity” or “disaster,” while the King James Version says “evil,” which is easier to misread. The same Hebrew word can also mean moral evil in other passages, so context decides. I use these verses to say that hard events do not fall outside God’s awareness. I do not use them to say that God does wrong.",
     refs: [
       { section: "source", ref: "Isaiah 45:7" },
       { section: "evil", ref: "Amos 3:6" },
