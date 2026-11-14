@@ -139,6 +139,12 @@ export default function Footer() {
               >
                 Why We Believe in Jesus
               </Link>
+              <Link
+                href="/source-of-life"
+                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+              >
+                Source of Life
+              </Link>
             </nav>
           </div>
           <div>
