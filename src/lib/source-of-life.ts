@@ -89,7 +89,6 @@ export const sections: Section[] = [
     title: "Jesus is God",
     take: "The source did not stay far away. The Word became flesh. When we say we come to the Father by the blood of Jesus, we are coming to the same God who made all things.",
     featured: ["John 1:1-3", "John 8:58", "Isaiah 9:6", "Colossians 1:12-16", "Hebrews 12:2"],
-    note: "A study note from the document: Joshua, the hidden one in the Torah.",
   },
   {
     id: "head",
@@ -112,7 +111,6 @@ export const sections: Section[] = [
     title: "What God issues to the wicked",
     take: "Scripture also shows God judging. Some hard things come because a person, a family, or a nation turned from Him. This is where accountability meets sovereignty, and why I am asked to examine my own ways.",
     featured: ["Deuteronomy 32:39", "Daniel 9:14", "Proverbs 3:33", "Job 20:29", "1 Kings 22:19-23"],
-    note: "A study note from the document: read all of Lamentations 2.",
   },
   {
     id: "trials",
