@@ -252,6 +252,7 @@ export default function SourceOfLifePage() {
         <Reveal>
           <div className="rounded-3xl border border-sol-gold/30 bg-sol-card p-6 shadow-sm shadow-sol-ink/5 sm:p-8">
             <h2 className="text-xs font-semibold uppercase tracking-[0.22em] text-sol-gold">The short answer</h2>
+            <p className="mt-3 font-sol text-xl font-semibold leading-snug text-sol-ink sm:text-2xl">Is everything good from God and everything bad from the devil?</p>
             <p className="mt-3 font-sol text-xl leading-relaxed text-sol-ink sm:text-2xl sm:leading-relaxed">{shortAnswer}</p>
           </div>
         </Reveal>
@@ -590,6 +591,13 @@ export default function SourceOfLifePage() {
                 More from Faith Journey
               </Link>
             </div>
+            <p className="mt-6 text-sm text-sol-muted">
+              Leading a small group?{" "}
+              <Link href="/source-of-life/leader-guide" className="font-semibold text-sol-gold underline underline-offset-4">
+                Get the leader’s guide
+              </Link>
+              .
+            </p>
             <p className="mt-12 text-xs text-sol-muted">
               Scripture quotations are from the King James Version of the Bible, which is in the public domain.
             </p>

@@ -55,6 +55,12 @@ const nextConfig: NextConfig = {
         destination: "/faith/present-but-missing",
         permanent: false,
       },
+      // Short link for Source of Life, to say out loud or put on a QR code or a slide.
+      {
+        source: "/source",
+        destination: "/source-of-life",
+        permanent: false,
+      },
       {
         source: "/start",
         destination: "/tech#start-here",

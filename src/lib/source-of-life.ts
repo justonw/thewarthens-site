@@ -205,7 +205,7 @@ export type Pick = "god" | "devil" | "me" | "unsure";
 export const situations: string[] = [
   "You get the job you have been praying for.",
   "You lose your job without warning.",
-  "A friend you trusted betrays you.",
+  "A trip you planned for months falls through.",
   "You make a bad money decision and feel the consequences.",
   "A medical scare turns out to be nothing.",
   "A door you were sure God would open closes.",

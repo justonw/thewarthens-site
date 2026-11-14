@@ -33,6 +33,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/magnets", priority: 0.7, lastModified: new Date("2026-11-12") },
     { path: "/jesus", priority: 0.7, lastModified: new Date("2026-11-14") },
     { path: "/source-of-life", priority: 0.7, lastModified: new Date("2026-11-14") },
+    { path: "/source-of-life/leader-guide", priority: 0.5, lastModified: new Date("2026-11-14") },
     { path: "/faith", priority: 0.8, lastModified: new Date("2026-11-14") },
     { path: "/faith/women-who-seek", priority: 0.7, lastModified: SITE_LAST_UPDATED },
     { path: "/faith/present-but-missing", priority: 0.7, lastModified: new Date("2026-11-07") },

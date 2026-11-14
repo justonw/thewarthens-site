@@ -41,6 +41,9 @@ export default function VerseActions({ id, text, reference }: { id: string; text
       <button type="button" onClick={share} className={btn}>
         Share
       </button>
+      <a href={`/source-of-life/card/${id}`} download={`${id}.png`} className={btn} aria-label={`Download ${reference} as an image`}>
+        Image
+      </a>
     </div>
   );
 }

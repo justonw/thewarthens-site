@@ -97,7 +97,7 @@ export default function ParadigmTest({ quotes }: { quotes: Quotes }) {
             )}
           </p>
           <p className="mt-4 text-lg leading-relaxed text-sol-ink">
-            Every card made you decide who was behind it. Nobody handed you the answer, so it came from your paradigm: the lens you already look at life through. That is not an accusation. It is the point of this whole page.
+            Every card asked who you think is behind it. Nobody handed you the answer, so it came from your paradigm: the lens you already look at life through. That is not an accusation. It is the point of this whole page.
           </p>
 
           {d > 0 && (
