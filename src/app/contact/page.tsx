@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import ContactForm from "@/components/ContactForm";
 import CopyEmailButton from "@/components/CopyEmailButton";
 import Reveal from "@/components/Reveal";
 import { CONTACT_EMAIL } from "@/components/ContactBand";
@@ -26,6 +27,10 @@ const reasons = [
     body: "Thinking about a move into tech? Ask us anything, or look at 1:1 coaching with Jermell.",
     href: "/tech/coaching",
     cta: "See 1:1 coaching",
+  },
+  {
+    title: "Share your testimony",
+    body: "Tell us who you were, how you met Jesus, and what has changed. Use the form above, or write to us.",
   },
   {
     title: "Suggest a video or topic",
@@ -91,8 +96,8 @@ export default function ContactPage() {
           We&apos;d love to hear from you
         </h1>
         <p className="mx-auto mt-5 max-w-2xl text-balance text-lg text-foreground-muted">
-          The easiest way to reach us is email. Write to us about anything, and we&apos;ll do our
-          best to get back to you.
+          Send us a message below, or email us directly. Write to us about anything, and we&apos;ll
+          do our best to get back to you.
         </p>
 
         <div className="mx-auto mt-10 max-w-xl rounded-3xl border border-purple-600/20 bg-background-elevated p-8 shadow-lg shadow-purple-900/5">
@@ -130,6 +135,21 @@ export default function ContactPage() {
               className="inline-flex items-center rounded-full border border-purple-600/40 px-7 py-3 text-sm font-semibold text-purple-800 transition-colors hover:bg-purple-600/10"
             />
           </div>
+        </div>
+      </div>
+
+      <div id="message" className="mx-auto max-w-2xl scroll-mt-24 px-6 pb-16">
+        <Reveal>
+          <h2 className="text-center text-2xl font-semibold tracking-tight sm:text-3xl">
+            Send us a message
+          </h2>
+          <p className="mx-auto mt-3 max-w-lg text-balance text-center text-foreground-muted">
+            Tell us what it is about, and if you would like, tell us a little about yourself or share
+            your testimony.
+          </p>
+        </Reveal>
+        <div className="mt-8">
+          <ContactForm email={CONTACT_EMAIL} />
         </div>
       </div>
 
