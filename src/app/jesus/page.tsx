@@ -90,6 +90,7 @@ const faq = [
 
 const related = [
   { href: "/faith", label: "Faith Journey", blurb: "Our faith story, writings, and new videos." },
+  { href: "/source-of-life", label: "Source of Life", blurb: "Good is not always God, and “bad” is not always the devil. A Scripture study." },
   { href: "/faith/women-who-seek", label: "Women Who Seek", blurb: "A community for women, hosted by Atiya." },
   { href: "/faith/present-but-missing", label: "Present but Missing", blurb: "A free Bible lesson for men." },
   { href: "/magnets", label: "Our Kids Swallowed Magnets", blurb: "How we trusted God in the hardest week of our lives." },

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { extraSections, sectionTitles, sections as docSections, versesFor } from "@/lib/source-of-life";
 
 type TeachVerse = { id: string; ref: string; text: string };
 export type TeachSection = { id: string; title: string; verses: TeachVerse[] };
@@ -21,7 +22,14 @@ export function TeachButton({ sectionId, className = "", children }: { sectionId
   );
 }
 
-export default function TeachMode({ sections }: { sections: TeachSection[] }) {
+// Built here, in the browser bundle, so the verses are not sent a second time inside the page itself.
+const sections: TeachSection[] = [...docSections.map((s) => s.id), ...extraSections.map((s) => s.id)].map((id) => ({
+  id,
+  title: sectionTitles[id],
+  verses: versesFor(id).map((v) => ({ id: v.id, ref: v.ref, text: v.text })),
+}));
+
+export default function TeachMode() {
   const [open, setOpen] = useState<string | null>(null);
   const [index, setIndex] = useState(0);
   const dialogRef = useRef<HTMLDivElement>(null);

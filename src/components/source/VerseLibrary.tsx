@@ -1,17 +1,18 @@
 "use client";
 
 import { useMemo, useState, useSyncExternalStore } from "react";
-import type { Verse } from "@/lib/source-of-life-verses";
+import { verses } from "@/lib/source-of-life-verses";
+import { extraSections, sectionTitles, sections as docSections } from "@/lib/source-of-life";
 import VerseBlock from "./VerseBlock";
 import { TeachButton } from "./TeachMode";
 
-type Props = { verses: Verse[]; sections: { id: string; title: string }[] };
+const sections = [...docSections.map((s) => s.id), ...extraSections.map((s) => s.id)].map((id) => ({ id, title: sectionTitles[id] }));
 
 const LIMIT = 40;
 
 // Search and filter every verse in one place. It only renders in the browser, because the same
 // verses already appear in the sections above and we do not want duplicate text in the page source.
-export default function VerseLibrary({ verses, sections }: Props) {
+export default function VerseLibrary() {
   const ready = useSyncExternalStore(
     () => () => {},
     () => true,
@@ -24,7 +25,7 @@ export default function VerseLibrary({ verses, sections }: Props) {
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
     return verses.filter((v) => (section === "all" || v.section === section) && (!q || v.text.toLowerCase().includes(q) || v.ref.toLowerCase().includes(q)));
-  }, [verses, query, section]);
+  }, [query, section]);
 
   if (!ready) return <p className="text-center text-sm text-sol-muted">Loading the verse library…</p>;
 

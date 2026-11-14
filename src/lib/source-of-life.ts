@@ -6,9 +6,26 @@ export const PAGE_TAGLINE = "Praise Him anyway.";
 export const PAGE_PUBLISHED = "2026-11-14";
 export const PAGE_MODIFIED = "2026-11-14";
 
-export const seoTitle = "Source of Life: Why You Can Praise God Anyway | The Warthens";
+export const seoTitle = "Is Good Always God and Bad Always the Devil? | The Warthens";
 export const seoDescription =
-  "Good is not always God, and “bad” is not always the devil. A Scripture-by-Scripture look at who is really in control, and why you can praise God anyway.";
+  "Is everything good from God and everything bad from the devil? A Scripture study on who is really in control, and why you can praise God anyway.";
+
+// A plain, quotable answer near the top of the page. Written to be read on its own.
+export const shortAnswer =
+  "No. Something that feels good is not automatically from God, and something that feels bad is not automatically the devil. What we call good and bad comes from our own paradigm. Scripture shows that God is in control of all of it, that the devil is a real but limited adversary who is not His equal, and that our own choices and a broken world play a part too. So in the good and in the bad, I can come to the Father by the blood of Jesus and praise Him anyway.";
+
+export const seoKeywords = [
+  "is everything good from God and everything bad from the devil",
+  "is the devil responsible for everything bad",
+  "does God allow evil bible verses",
+  "is God in control of everything",
+  "Isaiah 45:7 meaning",
+  "Amos 3:6 meaning",
+  "God and the devil are not equal",
+  "praise God in all circumstances",
+  "Bible verses God is in control",
+  "why does God allow suffering",
+];
 
 // What shows when the link is shared: the promise, not the document's name.
 export const shareTitle = "Good Is Not Always God. “Bad” Is Not Always the Devil.";

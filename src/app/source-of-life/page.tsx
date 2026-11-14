@@ -7,11 +7,10 @@ import ParadigmTest from "@/components/source/ParadigmTest";
 import FoundationVisual from "@/components/source/FoundationVisual";
 import HouseProgress from "@/components/source/HouseProgress";
 import SectionNav, { type NavItem } from "@/components/source/SectionNav";
-import TeachMode, { TeachButton, type TeachSection } from "@/components/source/TeachMode";
+import TeachMode, { TeachButton } from "@/components/source/TeachMode";
 import VerseBlock from "@/components/source/VerseBlock";
-import VerseLibrary from "@/components/source/VerseLibrary";
+import LibraryLoader from "@/components/source/LibraryLoader";
 import Worksheet from "@/components/source/Worksheet";
-import { verses } from "@/lib/source-of-life-verses";
 import {
   PAGE_MODIFIED,
   PAGE_PATH,
@@ -20,17 +19,17 @@ import {
   PAGE_TITLE,
   acts,
   documentVerseCount,
-  extraSections,
   faq,
   featuredFor,
   hurtingVerses,
   notSaying,
   prayer,
   restFor,
-  sectionTitles,
   sections,
   seoDescription,
+  seoKeywords,
   seoTitle,
+  shortAnswer,
   shareDescription,
   shareTitle,
   verseByRef,
@@ -44,17 +43,7 @@ export const metadata: Metadata = {
   description: seoDescription,
   alternates: { canonical: PAGE_PATH },
   authors: [{ name: "Juston Warthen" }],
-  keywords: [
-    "is God in control of everything",
-    "is God sovereign over evil",
-    "does God allow evil",
-    "Isaiah 45:7 meaning",
-    "praise God in all circumstances",
-    "God is the source of life",
-    "why does God allow suffering Bible verses",
-    "God and the devil are not equal",
-    "Bible verses God is in control",
-  ],
+  keywords: seoKeywords,
   openGraph: {
     title: shareTitle,
     description: shareDescription,
@@ -106,13 +95,6 @@ function OurTake({ children }: { children: React.ReactNode }) {
 
 export default function SourceOfLifePage() {
   const url = `${site}${PAGE_PATH}`;
-  const allSections = [...sections, ...extraSections.map((s) => ({ id: s.id, title: s.title }))];
-  const teachSections: TeachSection[] = allSections.map((s) => ({
-    id: s.id,
-    title: sectionTitles[s.id],
-    verses: versesFor(s.id).map((v) => ({ id: v.id, ref: v.ref, text: v.text })),
-  }));
-
   const quotes = {
     job1: verseByRef("questions", "Job 1:12"),
     job2: verseByRef("questions", "Job 2:6"),
@@ -148,6 +130,12 @@ export default function SourceOfLifePage() {
         inLanguage: "en-US",
         isAccessibleForFree: true,
         articleSection: "Faith Journey",
+        keywords: seoKeywords.join(", "),
+        about: [
+          { "@type": "Thing", name: "Sovereignty of God" },
+          { "@type": "Thing", name: "Problem of evil" },
+          { "@type": "Thing", name: "Bible" },
+        ],
         author: { "@type": "Person", name: "Juston Warthen", url: site },
         publisher: {
           "@type": "Organization",
@@ -170,7 +158,7 @@ export default function SourceOfLifePage() {
     <article className="relative overflow-x-clip">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <HouseProgress />
-      <TeachMode sections={teachSections} />
+      <TeachMode />
 
       {/* Always-available way to the hurting path */}
       <a
@@ -260,7 +248,14 @@ export default function SourceOfLifePage() {
       {/* ------------------------------------------------ why + how to read */}
       <section id="why" className="mx-auto max-w-3xl scroll-mt-32 px-6 pb-20">
         <Reveal>
-          <p className={eyebrow}>Why I made this</p>
+          <div className="rounded-3xl border border-sol-gold/30 bg-sol-card p-6 shadow-sm shadow-sol-ink/5 sm:p-8">
+            <h2 className="text-xs font-semibold uppercase tracking-[0.22em] text-sol-gold">The short answer</h2>
+            <p className="mt-3 font-sol text-xl leading-relaxed text-sol-ink sm:text-2xl sm:leading-relaxed">{shortAnswer}</p>
+          </div>
+        </Reveal>
+
+        <Reveal delay={80}>
+          <p className={`${eyebrow} mt-16`}>Why I made this</p>
           <h2 className="mt-3 font-sol text-3xl font-semibold text-sol-ink sm:text-4xl">Where this started.</h2>
           <p className="mt-2 text-sm text-sol-muted">By Juston Warthen</p>
           <div className="mt-6 space-y-5 text-lg leading-relaxed text-sol-ink/80">
@@ -565,7 +560,7 @@ export default function SourceOfLifePage() {
           </p>
         </div>
         <div className="mt-10">
-          <VerseLibrary verses={verses} sections={allSections.map((s) => ({ id: s.id, title: sectionTitles[s.id] }))} />
+          <LibraryLoader />
         </div>
       </section>
 
