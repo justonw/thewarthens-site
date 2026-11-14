@@ -151,7 +151,7 @@ export const sections: Section[] = [
     id: "control",
     act: 3,
     title: "God is in control",
-    take: "The joy of a people, the order of every day, the hearts of kings: all of it is in His hands. Our part includes ruling our own spirit.",
+    take: "The joy of a people, the order of every day, the hearts of kings: all of it is in His control. That does not remove my responsibility. By His Spirit, I am to rule my own spirit, so that my fear and anger do not rule me.",
     featured: ["Ezra 6:22", "Psalm 119:91", "Proverbs 25:28"],
   },
   {
