@@ -359,34 +359,6 @@ export default function FaithJourneyPage() {
             </div>
           </Link>
         </Reveal>
-        <Reveal delay={120}>
-          <Link
-            href="/source-of-life"
-            className="group grid overflow-hidden rounded-[2rem] border border-border-subtle bg-background-elevated transition-all hover:-translate-y-0.5 hover:border-mauve-600/40 hover:shadow-xl hover:shadow-mauve-950/10 md:grid-cols-[1.1fr_0.9fr]"
-          >
-            <div className="relative aspect-video md:aspect-auto md:min-h-60">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/source-of-life/opengraph-image"
-                alt="Good equals God? Bad equals the devil? Not always. Source of Life."
-                loading="lazy"
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-            </div>
-            <div className="flex flex-col justify-center p-6 sm:p-8">
-              <p className="text-xs font-semibold uppercase tracking-wider text-mauve-700">Scripture study</p>
-              <h2 className="text-balance mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
-                Is good always God, and bad always the devil?
-              </h2>
-              <p className="mt-3 text-foreground-muted">
-                A short test, the Scripture in three acts, and a worksheet for where you are right now.
-              </p>
-              <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-purple-700 transition-transform group-hover:translate-x-1">
-                Start the study <span aria-hidden>→</span>
-              </span>
-            </div>
-          </Link>
-        </Reveal>
       </div>
 
       {/* Women Who Seek */}
@@ -533,6 +505,25 @@ export default function FaithJourneyPage() {
                     </p>
                     <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-purple-700">
                       Start the lesson
+                      <span aria-hidden className="transition-transform group-hover:translate-x-1">
+                        →
+                      </span>
+                    </span>
+                  </Link>
+                </Reveal>
+                <Reveal delay={60}>
+                  <Link
+                    href="/source-of-life"
+                    className="group flex h-full flex-col rounded-3xl border border-border-subtle bg-background-elevated p-6 transition-all hover:-translate-y-0.5 hover:border-purple-500/40 hover:shadow-lg hover:shadow-purple-950/5"
+                  >
+                    <p className="text-lg font-semibold leading-snug">Source of Life</p>
+                    <p className="mt-2 flex-1 text-sm text-foreground-muted">
+                      A Scripture study on who is really in control: is good always God, and bad always
+                      the devil? A short test, the verses in three acts, and a worksheet for where you
+                      are right now.
+                    </p>
+                    <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-purple-700">
+                      Start the study
                       <span aria-hidden className="transition-transform group-hover:translate-x-1">
                         →
                       </span>
