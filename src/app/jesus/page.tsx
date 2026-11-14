@@ -9,7 +9,7 @@ const FAITH_YOUTUBE_URL = "https://www.youtube.com/channel/UCJj_ar9Gs8YvcYK6jSh9
 // Search title stays under about 60 characters; the on-page headline and social cards use the video title.
 const title = "Why We Believe in Jesus: Our Testimonies | The Warthens";
 const description =
-  "Atiya grew up in church. Juston didn’t. Watch how we each came to believe in Jesus, from childhood trauma and agnostic doubt to real change, and share your own story with us.";
+  "Atiya grew up in church. Juston didn’t. Hear how a church kid and an agnostic each came to believe in Jesus, and share your own story.";
 const thumbnail = `https://i.ytimg.com/vi/${VIDEO_ID}/maxresdefault.jpg`;
 
 export const metadata: Metadata = {
@@ -40,14 +40,14 @@ export const metadata: Metadata = {
 // the children, and graphic detail on purpose.
 const stories = [
   {
-    name: "Atiya: she grew up in church, and still needed Jesus",
+    name: "Atiya’s testimony: grew up in church, and still needed Jesus",
     paragraphs: [
       "Atiya grew up in church, and as a child she experienced the presence of God. Then came childhood trauma. In the pain that followed, she turned to drinking, and in college her life spiraled.",
       "She eventually encountered Jesus and was transformed.",
     ],
   },
   {
-    name: "Juston: not raised in church, and still needed Jesus",
+    name: "Juston’s testimony: an agnostic who came to believe in Jesus",
     paragraphs: [
       "Juston wasn’t raised in church. He was a “good kid” who didn’t drink or smoke, and an analytical agnostic who thought there might be a God but wasn’t sure.",
       "Then he realized he was enslaved to his own sinful nature, which was eye-opening for someone who had never been “in the streets.” After encountering the transforming power of Jesus on both the mind and the body, and finding that the historical evidence made sense, he was inclined to believe.",
@@ -77,10 +77,22 @@ const faq = [
       "That is Atiya’s story. After childhood trauma she turned to drinking and her life spiraled, and then she encountered Jesus and was transformed. We are sharing our experience, not professional counseling. If you are in crisis, please contact a local emergency service, or call or text 988 if you are in the U.S.",
   },
   {
+    question: "Is there historical evidence for Jesus?",
+    answer:
+      "Juston found that the historical evidence made sense, and it is one reason he was inclined to believe. We are sharing our own experience, and we encourage you to look into the evidence for yourself and bring your questions to us.",
+  },
+  {
     question: "Can I share my own testimony with you?",
     answer:
       "Yes, we would love to hear it. Use the message form on our contact page, choose “Share my testimony or my story,” and tell us who you were, how you met Jesus, and what has changed.",
   },
+];
+
+const related = [
+  { href: "/faith", label: "Faith Journey", blurb: "Our faith story, writings, and new videos." },
+  { href: "/faith/women-who-seek", label: "Women Who Seek", blurb: "A community for women, hosted by Atiya." },
+  { href: "/faith/present-but-missing", label: "Present but Missing", blurb: "A free Bible lesson for men." },
+  { href: "/magnets", label: "Our Kids Swallowed Magnets", blurb: "How we trusted God in the hardest week of our lives." },
 ];
 
 const jsonLd = {
@@ -98,6 +110,7 @@ const jsonLd = {
       contentUrl: `https://www.youtube.com/watch?v=${VIDEO_ID}`,
       embedUrl: `https://www.youtube.com/embed/${VIDEO_ID}`,
       inLanguage: "en",
+      author: [{ "@id": "https://thewarthens.com/jesus#juston" }, { "@id": "https://thewarthens.com/jesus#atiya" }],
       publisher: {
         "@type": "Organization",
         name: "The Warthens",
@@ -110,7 +123,27 @@ const jsonLd = {
       url: "https://thewarthens.com/jesus",
       name: title,
       description,
+      inLanguage: "en",
+      datePublished: "2026-11-14",
+      dateModified: "2026-11-14",
+      primaryImageOfPage: { "@type": "ImageObject", url: thumbnail },
+      isPartOf: { "@type": "WebSite", name: "The Warthens", url: "https://thewarthens.com" },
+      about: { "@type": "Thing", name: "Jesus Christ" },
       mainEntity: { "@id": "https://thewarthens.com/jesus#video" },
+    },
+    {
+      "@type": "Person",
+      "@id": "https://thewarthens.com/jesus#juston",
+      name: "Juston Warthen",
+      url: "https://thewarthens.com",
+      sameAs: ["https://www.linkedin.com/in/juston-warthen-96aa13167"],
+    },
+    {
+      "@type": "Person",
+      "@id": "https://thewarthens.com/jesus#atiya",
+      name: "Atiya Warthen",
+      url: "https://thewarthens.com",
+      sameAs: ["https://www.linkedin.com/in/atiya-warthen-4062881b0"],
     },
     {
       "@type": "BreadcrumbList",
@@ -266,12 +299,27 @@ export default function JesusPage() {
           </div>
         </Reveal>
 
-        <p className="mt-12 text-sm text-foreground-muted">
-          More from our family:{" "}
-          <Link href="/faith" className="font-semibold text-purple-700 underline underline-offset-4">
-            Faith Journey
-          </Link>
-        </p>
+        <Reveal delay={80}>
+          <nav aria-labelledby="keep-exploring" className="mx-auto mt-16 max-w-2xl text-left">
+            <h2 id="keep-exploring" className="text-center text-2xl font-semibold tracking-tight sm:text-3xl">
+              Keep exploring Faith Journey
+            </h2>
+            <ul className="mt-6 grid gap-3 sm:grid-cols-2">
+              {related.map((r) => (
+                <li key={r.href}>
+                  <Link
+                    href={r.href}
+                    className="block h-full rounded-2xl border border-border-subtle bg-background-elevated p-5 transition-all hover:-translate-y-0.5 hover:border-purple-600/30 hover:shadow-md"
+                  >
+                    <span className="font-semibold">{r.label}</span>
+                    <span className="mt-1 block text-sm text-foreground-muted">{r.blurb}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </Reveal>
+
       </div>
     </section>
   );
