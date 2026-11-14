@@ -52,10 +52,11 @@ export default function ParadigmTest({ quotes }: { quotes: Quotes }) {
               ))}
             </span>
           </div>
-          <p key={current} className="mt-8 min-h-[4.5rem] font-sol text-2xl leading-snug text-sol-ink sm:text-3xl">
+          <p className="mt-8 text-xs font-semibold uppercase tracking-[0.2em] text-sol-gold">Imagine this happens to you</p>
+          <p key={current} className="mt-3 min-h-[4.5rem] font-sol text-2xl leading-snug text-sol-ink sm:text-3xl">
             {situations[current]}
           </p>
-          <p className="mt-6 text-sm text-sol-muted">Be honest. Who do you think is behind it?</p>
+          <p className="mt-6 text-sm text-sol-muted">Who do you think is mainly behind this? Go with your first instinct.</p>
           <div className="mt-4 grid gap-3 sm:grid-cols-3">
             {mainPicks.map((p) => (
               <button

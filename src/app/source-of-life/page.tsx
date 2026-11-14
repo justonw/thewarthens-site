@@ -68,7 +68,7 @@ function Fade({ from, to }: { from: string; to: string }) {
 }
 
 const navItems: NavItem[] = [
-  { id: "test", label: "The test" },
+  { id: "test", label: "Quick check" },
   { id: "why", label: "Why" },
   { id: "foundation", label: "Foundation" },
   { id: "act-1", label: "Know Him" },
@@ -195,7 +195,7 @@ export default function SourceOfLifePage() {
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <a href="#test" className="rounded-full bg-sol-primary px-7 py-3.5 text-sm font-semibold text-sol-on-primary shadow-lg shadow-sol-primary/20 transition-colors hover:bg-sol-primary/90">
-              Take the 2-minute test →
+              Take the 2-minute check →
             </a>
             <a href="#library" className="rounded-full border border-sol-line px-7 py-3.5 text-sm font-semibold text-sol-ink transition-colors hover:border-sol-gold/60">
               Browse every verse
@@ -203,7 +203,7 @@ export default function SourceOfLifePage() {
           </div>
           <ul className="mx-auto mt-12 grid max-w-2xl gap-3 text-left sm:grid-cols-3">
             {[
-              ["1", "A short test", "See how you already sort good and bad."],
+              ["1", "A quick check", "See how you already sort good and bad in your own life."],
               ["2", "The Scripture", `${documentVerseCount} passages in three acts, King James Version.`],
               ["3", "A worksheet", "Take honest stock of where you are right now."],
             ].map(([n, t, d]) => (
@@ -223,10 +223,12 @@ export default function SourceOfLifePage() {
       <Fade from={LIGHT} to={NIGHT} />
       <section id="test" className="sol-night scroll-mt-32 bg-sol-paper px-6 py-10 text-sol-ink sm:py-16">
         <div className="mx-auto max-w-3xl text-center">
-          <p className={eyebrow}>Before you read</p>
-          <h2 className="mt-3 font-sol text-3xl font-semibold text-sol-ink sm:text-5xl">Who is behind it?</h2>
+          <p className={eyebrow}>A quick self-check</p>
+          <h2 className="mt-3 font-sol text-3xl font-semibold text-sol-ink sm:text-5xl">How do you read the moments in your life?</h2>
           <p className="text-balance mx-auto mt-4 max-w-xl text-lg text-sol-ink/80">
-            Seven everyday moments. Tap the first answer that comes to mind. Nothing is scored, and nothing is saved.
+            Here are seven everyday situations. For each one, choose who you think is mainly behind what happened.
+            There are no right or wrong answers, and nothing is saved. This only shows how you already sort good and
+            bad, which is what the rest of this page is about.
           </p>
         </div>
         <div className="mt-10">
