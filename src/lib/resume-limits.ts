@@ -78,7 +78,7 @@ export function monthKey(now = new Date()) {
 
 // Adds `delta` to a counter, but only if the result stays within [0, max]. Returns the new value,
 // or null when it would go over max.
-async function bump(kv: Kv, key: string, delta: number, max: number): Promise<number | null> {
+export async function bumpCounter(kv: Kv, key: string, delta: number, max: number): Promise<number | null> {
   await kv.set(key, { n: 0 }, { onlyIfNew: true });
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     const current = await kv.get(key);
@@ -103,11 +103,11 @@ export async function reserve(
   opts: { unlimited: boolean; monthlyCap: number; now?: Date }
 ): Promise<Reservation> {
   if (opts.unlimited) return { ok: true, used: 0, unlimited: true };
-  const mine = await bump(kv, emailKey(email), 1, FREE_PER_EMAIL);
+  const mine = await bumpCounter(kv, emailKey(email), 1, FREE_PER_EMAIL);
   if (mine === null) return { ok: false, reason: "limit" };
-  const all = await bump(kv, monthKey(opts.now), 1, opts.monthlyCap);
+  const all = await bumpCounter(kv, monthKey(opts.now), 1, opts.monthlyCap);
   if (all === null) {
-    await bump(kv, emailKey(email), -1, FREE_PER_EMAIL);
+    await bumpCounter(kv, emailKey(email), -1, FREE_PER_EMAIL);
     return { ok: false, reason: "cap" };
   }
   return { ok: true, used: mine, unlimited: false };
@@ -115,6 +115,6 @@ export async function reserve(
 
 export async function refund(kv: Kv, email: string, opts: { unlimited: boolean; now?: Date }) {
   if (opts.unlimited) return;
-  await bump(kv, emailKey(email), -1, FREE_PER_EMAIL);
-  await bump(kv, monthKey(opts.now), -1, Number.MAX_SAFE_INTEGER);
+  await bumpCounter(kv, emailKey(email), -1, FREE_PER_EMAIL);
+  await bumpCounter(kv, monthKey(opts.now), -1, Number.MAX_SAFE_INTEGER);
 }

@@ -2,32 +2,19 @@
 
 import { useState } from "react";
 import { usePersistentState } from "@/lib/use-persistent-state";
+import {
+  NO_TRACKER_ENTRIES,
+  TRACKER_KEY,
+  TRACKER_STATUSES,
+  type TrackerEntry,
+  type TrackerStatus,
+} from "@/lib/job-tracker";
 
-const STORAGE_KEY = "warthens-job-tracker-v1";
-
-const STATUS_OPTIONS = [
-  "Not Yet Applied",
-  "Applied",
-  "Phone Screen",
-  "Interview",
-  "Final Round",
-  "Offer Received",
-  "Rejected",
-  "Withdrawn",
-] as const;
-
-type Status = (typeof STATUS_OPTIONS)[number];
-
-type Entry = {
-  id: string;
-  company: string;
-  role: string;
-  status: Status;
-  dateApplied: string;
-  notes: string;
-};
-
-const NO_ENTRIES: Entry[] = [];
+const STORAGE_KEY = TRACKER_KEY;
+const STATUS_OPTIONS = TRACKER_STATUSES;
+type Status = TrackerStatus;
+type Entry = TrackerEntry;
+const NO_ENTRIES = NO_TRACKER_ENTRIES;
 
 const statusColor: Record<Status, string> = {
   "Not Yet Applied": "bg-background-elevated-2 text-foreground-muted",

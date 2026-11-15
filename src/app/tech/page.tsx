@@ -355,16 +355,16 @@ export default function TechJourneyPage() {
           <div className="flex flex-col items-start justify-between gap-4 rounded-3xl border border-blue-500/30 bg-blue-500/5 p-6 sm:flex-row sm:items-center sm:p-8">
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">Free tool</p>
-              <p className="mt-1 text-lg font-semibold">Let us tailor your resume to the job</p>
+              <p className="mt-1 text-lg font-semibold">Let us tailor your resume and cover letter to the job</p>
               <p className="mt-1 text-sm text-foreground-muted">
-                Paste your resume and a job posting. Get a finished resume as a PDF and a Word file, built only from your real experience. Your first 2 are free.
+                Add your resume and a job posting. Get a finished resume and a matching cover letter as PDF and Word files, built only from your real experience. Your first 2 are free.
               </p>
             </div>
             <Link
-              href="/tech/resume"
+              href="/resume"
               className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-500"
             >
-              Tailor my resume
+              Open the Resume Builder
               <span aria-hidden>→</span>
             </Link>
           </div>

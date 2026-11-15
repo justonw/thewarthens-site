@@ -66,10 +66,11 @@ const nextConfig: NextConfig = {
         destination: "/tech#start-here",
         permanent: false,
       },
+      // The resume builder used to live under Tech Journey. Old links and emailed PDFs still work.
       {
-        source: "/resume",
-        destination: "/tech#checklist",
-        permanent: false,
+        source: "/tech/resume",
+        destination: "/resume",
+        permanent: true,
       },
       {
         source: "/tracker",

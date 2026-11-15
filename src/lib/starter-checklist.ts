@@ -22,7 +22,7 @@ export const starterChecklist: ChecklistGroup[] = [
       {
         id: "resume-title",
         text: "Use the exact job title from the posting somewhere in your resume.",
-        why: "Resumes containing the exact title get 10.6x more interview invitations than resumes that don't.",
+        why: "In Jobscan's data on over 2.5 million applications, resumes whose title matched the listing had an interview rate 10.6 times higher. That is a correlation, not proof, but 55% of recruiters surveyed also filter by job title.",
       },
       {
         id: "resume-mirror",
@@ -37,7 +37,7 @@ export const starterChecklist: ChecklistGroup[] = [
       {
         id: "resume-skills",
         text: "Put a skills section near the top of the page.",
-        why: "76.4% of recruiters start filtering candidates by skills first, before work history or education.",
+        why: "76.4% of recruiters surveyed by Jobscan filter candidates by skills.",
       },
       {
         id: "resume-chrono",
@@ -63,7 +63,7 @@ export const starterChecklist: ChecklistGroup[] = [
         id: "resume-ai",
         text: "Use ChatGPT or Claude to help tailor your resume language to each posting.",
         why: "This is now standard competitive practice in 2026, not a shortcut to be embarrassed about.",
-        cta: { label: "Or let our free tool do it for you", href: "/tech/resume" },
+        cta: { label: "Or let our free Resume Builder do it for you", href: "/resume" },
       },
     ],
   },

@@ -52,6 +52,12 @@ export default function Footer() {
                 Take the Career Quiz
               </Link>
               <Link
+                href="/resume"
+                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+              >
+                Resume Builder
+              </Link>
+              <Link
                 href="/tech#start-here"
                 className="text-sm text-foreground-muted transition-colors hover:text-foreground"
               >

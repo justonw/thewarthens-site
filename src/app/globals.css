@@ -375,3 +375,174 @@ article a[class*="rounded-3xl"] {
   --sol-primary: #f4c45a;
   --sol-on-primary: #0b0d22;
 }
+
+/* ---------------------------------------------------------------------------------------------
+   Resume Builder. Animations only run when the visitor has not asked for reduced motion; without
+   that, every element simply shows in its final state.
+   --------------------------------------------------------------------------------------------- */
+.rb-gradient-text {
+  background-image: linear-gradient(90deg, #2563eb 0%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.rb-cta {
+  position: relative;
+  overflow: hidden;
+  background-image: linear-gradient(90deg, #2563eb 0%, #7c3aed 100%);
+  box-shadow: 0 14px 34px -12px rgba(79, 70, 229, 0.6);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.rb-cta:hover {
+  box-shadow: 0 18px 40px -12px rgba(79, 70, 229, 0.75);
+}
+
+.rb-mesh {
+  background:
+    radial-gradient(45% 55% at 15% 10%, rgba(37, 99, 235, 0.16), transparent 70%),
+    radial-gradient(40% 50% at 90% 0%, rgba(124, 58, 237, 0.16), transparent 70%),
+    radial-gradient(40% 40% at 60% 100%, rgba(14, 165, 233, 0.1), transparent 70%);
+}
+
+.rb-ring-track {
+  stroke: rgba(100, 116, 139, 0.25);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes rb-rise {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes rb-pop {
+    0% {
+      opacity: 0;
+      transform: scale(0.6);
+    }
+    60% {
+      opacity: 1;
+      transform: scale(1.12);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  @keyframes rb-float {
+    0%,
+    100% {
+      transform: translateY(0) rotate(var(--rb-tilt, 0deg));
+    }
+    50% {
+      transform: translateY(-8px) rotate(var(--rb-tilt, 0deg));
+    }
+  }
+  @keyframes rb-glow {
+    0%,
+    100% {
+      opacity: 0.5;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+  @keyframes rb-mark {
+    from {
+      background-size: 0% 100%;
+    }
+    to {
+      background-size: 100% 100%;
+    }
+  }
+  @keyframes rb-sweep {
+    from {
+      transform: translateX(-120%) skewX(-18deg);
+    }
+    to {
+      transform: translateX(260%) skewX(-18deg);
+    }
+  }
+  @keyframes rb-ping {
+    0% {
+      transform: scale(1);
+      opacity: 0.7;
+    }
+    100% {
+      transform: scale(2.4);
+      opacity: 0;
+    }
+  }
+  @keyframes rb-draw {
+    from {
+      stroke-dashoffset: var(--rb-len, 100);
+    }
+  }
+  @keyframes rb-confetti {
+    0% {
+      transform: translate3d(0, 0, 0) rotate(0deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translate3d(var(--rb-x, 0px), var(--rb-y, 160px), 0) rotate(var(--rb-r, 360deg));
+      opacity: 0;
+    }
+  }
+  @keyframes rb-bar {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  .rb-rise {
+    animation: rb-rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  .rb-pop {
+    animation: rb-pop 0.5s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+  }
+  .rb-float {
+    animation: rb-float 6s ease-in-out infinite;
+  }
+  .rb-glow {
+    animation: rb-glow 4s ease-in-out infinite;
+  }
+  .rb-mark {
+    background-repeat: no-repeat;
+    background-position: left center;
+    animation: rb-mark 0.7s ease-out both;
+  }
+  .rb-cta::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 40%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+    animation: rb-sweep 3.6s ease-in-out infinite;
+  }
+  .rb-cta:hover {
+    transform: translateY(-2px);
+  }
+  .rb-ping {
+    animation: rb-ping 1.8s ease-out infinite;
+  }
+  .rb-draw {
+    stroke-dasharray: var(--rb-len, 100);
+    animation: rb-draw 0.9s ease-out 0.2s both;
+  }
+  .rb-confetti {
+    animation: rb-confetti 1.6s cubic-bezier(0.2, 0.6, 0.3, 1) both;
+  }
+  .rb-bar {
+    animation: rb-bar 30s linear both;
+  }
+}

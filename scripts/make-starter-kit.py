@@ -33,15 +33,15 @@ bullet = ParagraphStyle("bullet", parent=body, leftIndent=12, firstLineIndent=-1
 foot = ParagraphStyle("foot", fontName="Helvetica", fontSize=8, leading=11, textColor=GREY, alignment=1)
 
 RESUME = [
-    ("Use the exact job title from the posting somewhere in your resume.", "Resumes containing the exact title get 10.6× more interview invitations than resumes that don’t.", None),
+    ("Use the exact job title from the posting somewhere in your resume.", "In Jobscan’s data on over 2.5 million applications, resumes whose title matched the listing had an interview rate 10.6 times higher. That is a correlation, not proof, but 55% of recruiters surveyed also filter by job title.", None),
     ("Mirror the specific posting’s language, not a generic keyword list.", "There’s no universal keyword set. Read each posting and match its real wording where your experience genuinely applies.", None),
     ("Keep formatting simple: single column, standard fonts, no tables, icons, or graphics.", "ATS software scans like a machine, not a designer. Fancy layouts get misread or dropped entirely.", None),
-    ("Put a skills section near the top of the page.", "76.4% of recruiters start filtering candidates by skills first, before work history or education.", None),
+    ("Put a skills section near the top of the page.", "76.4% of recruiters surveyed by Jobscan filter candidates by skills.", None),
     ("Use a reverse-chronological or combination format, not a skills-only layout.", "Functional-only resumes are the format ATS is most likely to mis-parse, and recruiters trust them the least.", None),
     ("Don’t worry about hitting exactly one page.", "ATS parsers don’t penalize length. The one-page rule is a human-reader preference, not a screening rule.", None),
     ("Open with a short summary that names the role you want.", "It’s the first thing a recruiter and the scanner read. In 3 sentences or fewer, say who you are, your proof, and the role you’re after. Skip “I don’t have direct experience, but…” and lead with the value you bring.", None),
     ("Start each bullet with a verb and end it with a result.", "Bullets that say what you did and what changed read stronger than a list of duties. Only use numbers you can back up.", None),
-    ("Use ChatGPT or Claude to help tailor your resume language to each posting.", "This is now standard competitive practice in 2026, not a shortcut to be embarrassed about.", "Or let our free tool do it for you: thewarthens.com/tech/resume"),
+    ("Use ChatGPT or Claude to help tailor your resume language to each posting.", "This is now standard competitive practice in 2026, not a shortcut to be embarrassed about.", "Or let our free Resume Builder do it for you: thewarthens.com/resume"),
 ]
 LINKEDIN = [
     ("Add a professional photo.", "Profiles with a photo get 21× more views and 9× more connection requests."),
@@ -69,7 +69,7 @@ story = [
 for text, reason, link in RESUME:
     parts = [checkbox(text), Paragraph(reason, why)]
     if link:
-        parts.append(Paragraph(f'<link href="https://thewarthens.com/tech/resume" color="#2563eb">{link}</link>', cta))
+        parts.append(Paragraph(f'<link href="https://thewarthens.com/resume" color="#2563eb">{link}</link>', cta))
     story.append(KeepTogether(parts))
 
 story += [
@@ -86,7 +86,7 @@ story += [
     Paragraph("•&nbsp;&nbsp;<b>Sell the outside perspective.</b> What you noticed from outside the industry is something no insider can replicate. That’s a genuine edge, not a consolation prize.", bullet),
     Spacer(1, 6),
     HRFlowable(width="100%", thickness=0.6, color=HexColor("#cfd3dc"), spaceAfter=6),
-    Paragraph('Not sure which field even fits? Take the free 2-minute career-path quiz and see real, sourced 2026 entry-level pay for 9 different paths at <link href="https://thewarthens.com/tech" color="#2563eb">thewarthens.com/tech</link>. Ready to apply? <link href="https://thewarthens.com/tech/resume" color="#2563eb">thewarthens.com/tech/resume</link> tailors your resume to a job posting for free.', note),
+    Paragraph('Not sure which field even fits? Take the free 2-minute career-path quiz and see real, sourced 2026 entry-level pay for 9 different paths at <link href="https://thewarthens.com/tech" color="#2563eb">thewarthens.com/tech</link>. Ready to apply? <link href="https://thewarthens.com/resume" color="#2563eb">thewarthens.com/resume</link> tailors your resume and cover letter to a job posting for free.', note),
     HRFlowable(width="100%", thickness=0.6, color=HexColor("#cfd3dc"), spaceAfter=6),
     Paragraph("Sources: Jobscan ATS usage data, Merit America, Resume.io, Kickresume, CareerEnlightenment, Simplify Jobs LinkedIn optimization research, all 2026-dated. © The Warthens · thewarthens.com", foot),
 ]

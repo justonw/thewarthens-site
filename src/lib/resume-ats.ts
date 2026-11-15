@@ -79,3 +79,17 @@ export function runAtsCheck(doc: ResumeDoc, postingTitle: string, keywords: stri
 
   return { rows, found, missing };
 }
+
+// How many of the posting's key terms a piece of text contains. Used for the before-and-after view, so the
+// numbers shown are real counts for the person's original resume and the tailored one.
+export function keywordCoverage(text: string, keywords: string[]): { found: string[]; missing: string[] } {
+  const haystack = ` ${norm(text)} `;
+  const found: string[] = [];
+  const missing: string[] = [];
+  for (const k of keywords) {
+    const n = norm(k);
+    if (n && haystack.includes(n)) found.push(k);
+    else missing.push(k);
+  }
+  return { found, missing };
+}

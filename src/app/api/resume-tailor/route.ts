@@ -5,6 +5,7 @@ import {
   cleanAttachments,
   MAX_ATTACH_B64_TOTAL,
   RESUME_MODEL,
+  MAX_NOTES_CHARS,
   MAX_POSTING_CHARS,
   MAX_RESUME_CHARS,
   parseResumeResponse,
@@ -27,7 +28,7 @@ const API_BASE = process.env.CLAUDE_API_BASE_URL || "https://api.anthropic.com";
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const FROM_EMAIL = process.env.TRACKER_FROM_EMAIL || "The Warthens <info@thewarthens.com>";
 const NOTIFY_EMAIL = "justonwarthen@gmail.com";
-// "How did you find us" is required. Keep this list in step with the dropdown in ResumeTailor.tsx.
+// "How did you find us" is required. Keep this list in step with the dropdown in components/resume/ResumeBuilder.tsx.
 const SOURCES = new Set(["YouTube", "Instagram or TikTok", "Google search", "A friend or family member", "Career day or an event", "Other"]);
 const MODEL = process.env.RESUME_MODEL || RESUME_MODEL;
 const MONTHLY_CAP = Number(process.env.RESUME_MONTHLY_CAP) || DEFAULT_MONTHLY_CAP;
@@ -66,7 +67,7 @@ function escapeHtml(input: string) {
 }
 
 // Tells Juston someone used the tool. Never includes the resume itself.
-async function notify(live: boolean, email: string, jobTitle: string, source: string) {
+async function notify(live: boolean, email: string, jobTitle: string, source: string, withLetter: boolean) {
   if (!RESEND_API_KEY) return;
   try {
     await fetch("https://api.resend.com/emails", {
@@ -75,7 +76,7 @@ async function notify(live: boolean, email: string, jobTitle: string, source: st
       body: JSON.stringify({
         from: FROM_EMAIL,
         to: NOTIFY_EMAIL,
-        subject: `${live ? "" : "[TEST] "}New resume built: ${jobTitle || "job"}`,
+        subject: `${live ? "" : "[TEST] "}New resume built${withLetter ? " + cover letter" : ""}: ${jobTitle || "job"}`,
         html: `<p>${escapeHtml(email)} built a resume for "${escapeHtml(jobTitle)}".</p><p>Found us via: ${escapeHtml(source || "not given")}</p>`,
       }),
     });
@@ -154,6 +155,11 @@ export async function POST(req: NextRequest) {
   const resumeText = text(body.resumeText);
   const postingText = text(body.postingText);
   const source = text(body.source);
+  const notes = text(body.notes);
+  const wantsLetter = body.coverLetter === true;
+  const hiringManager = text(body.hiringManager).slice(0, 120);
+  const fromScratch = body.fromScratch === true;
+  const matchDesign = body.matchDesign === true && !fromScratch;
   const resumeFiles = cleanAttachments(body.resumeFiles);
   const postingFiles = cleanAttachments(body.postingFiles);
 
@@ -163,7 +169,7 @@ export async function POST(req: NextRequest) {
   // Either pasted text or at least one file is needed for each of the two.
   if (resumeText.length < 150 && resumeFiles.length === 0) return NextResponse.json({ error: "resume-short" }, { status: 400 });
   if (postingText.length < 80 && postingFiles.length === 0) return NextResponse.json({ error: "posting-short" }, { status: 400 });
-  if (resumeText.length > MAX_RESUME_CHARS || postingText.length > MAX_POSTING_CHARS) {
+  if (resumeText.length > MAX_RESUME_CHARS || postingText.length > MAX_POSTING_CHARS || notes.length > MAX_NOTES_CHARS) {
     return NextResponse.json({ error: "too-long" }, { status: 413 });
   }
   const attachedSize = [...resumeFiles, ...postingFiles].reduce((n, f) => n + f.data.length, 0);
@@ -201,7 +207,7 @@ export async function POST(req: NextRequest) {
   const giveBack = () => refund(kv, email, { unlimited }).catch(() => {});
 
   try {
-    const parsed = await askClaude({ resumeText, resumeFiles, postingText, postingFiles }, model);
+    const parsed = await askClaude({ resumeText, resumeFiles, postingText, postingFiles, notes, coverLetter: wantsLetter, hiringManager, fromScratch, matchDesign: matchDesign && resumeFiles.length > 0 }, model);
     if (!parsed) {
       await giveBack();
       return NextResponse.json({ error: "upstream" }, { status: 502 });
@@ -210,7 +216,7 @@ export async function POST(req: NextRequest) {
       await giveBack();
       return NextResponse.json({ error: "problem", message: parsed.problem }, { status: 422 });
     }
-    await notify(live, email, parsed.result.postingTitle, source);
+    await notify(live, email, parsed.result.postingTitle, source, Boolean(parsed.result.coverLetter));
     return NextResponse.json({
       ok: true,
       result: parsed.result,

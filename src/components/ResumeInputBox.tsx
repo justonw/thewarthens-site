@@ -31,6 +31,9 @@ export default function ResumeInputBox({
   files,
   onFiles,
   allowLink = false,
+  lookHint = false,
+  step,
+  done = false,
 }: {
   id: string;
   label: string;
@@ -41,6 +44,10 @@ export default function ResumeInputBox({
   files: PickedFile[];
   onFiles: (value: PickedFile[]) => void;
   allowLink?: boolean;
+  // On the resume box: remind people that a Word file gives us its words but not its look.
+  lookHint?: boolean;
+  step: number;
+  done?: boolean;
 }) {
   const [dragging, setDragging] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -57,7 +64,9 @@ export default function ResumeInputBox({
     const errors: string[] = [];
     const added: PickedFile[] = [];
     const words: string[] = [];
+    let sawWord = false;
     for (const file of list) {
+      if (/\.docx$/i.test(file.name)) sawWord = true;
       if (files.length + added.length >= MAX_FILES) {
         errors.push(`You can add up to ${MAX_FILES} files here. Skipped ${file.name || "a file"}.`);
         continue;
@@ -73,7 +82,7 @@ export default function ResumeInputBox({
     if (added.length) onFiles([...files, ...added]);
     if (words.length) onText([text.trim(), ...words].filter(Boolean).join("\n\n"));
     if (errors.length) setNotice({ kind: "error", message: errors.join(" ") });
-    else if (words.length) setNotice({ kind: "info", message: "Added the text from your file. Read it over and fix anything that looks off." });
+    else if (words.length) setNotice({ kind: "info", message: `Added the text from your file. Read it over and fix anything that looks off.${lookHint && sawWord ? " To copy its look as well, upload it as a PDF or a screenshot." : ""}` });
     setBusy(false);
   }
 
@@ -134,14 +143,24 @@ export default function ResumeInputBox({
         setDragging(false);
         void addFiles(Array.from(e.dataTransfer.files));
       }}
-      className={`mt-5 rounded-2xl border-2 border-dashed p-3 transition-colors ${
-        dragging ? "border-blue-500 bg-blue-500/5" : "border-border-subtle"
+      className={`rounded-2xl border p-4 shadow-sm transition-all focus-within:border-blue-500/40 focus-within:shadow-md sm:p-5 ${
+        dragging ? "border-dashed border-blue-500 bg-blue-500/5" : "border-border-subtle bg-background-elevated"
       }`}
     >
-      <label className="block text-sm font-semibold" htmlFor={id}>
-        {label}
-      </label>
-      <p className="mt-0.5 text-xs text-foreground-muted">{help}</p>
+      <div className="flex items-center gap-3">
+        <span
+          aria-hidden
+          className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors ${
+            done ? "bg-green-600 text-white" : "bg-blue-600/10 text-blue-700"
+          }`}
+        >
+          {done ? "✓" : step}
+        </span>
+        <label className="text-base font-semibold" htmlFor={id}>
+          {label}
+        </label>
+      </div>
+      <p className="mt-1 text-xs text-foreground-muted sm:pl-10">{help}</p>
       <textarea
         id={id}
         rows={8}
@@ -149,7 +168,7 @@ export default function ResumeInputBox({
         onChange={(e) => onText(e.target.value)}
         onPaste={handlePaste}
         placeholder={placeholder}
-        className="mt-2 w-full resize-y rounded-xl border border-border-subtle bg-background px-4 py-2.5 text-sm outline-none focus:border-blue-500/50"
+        className="mt-3 w-full resize-y rounded-xl border border-border-subtle bg-background px-4 py-2.5 text-sm outline-none focus:border-blue-500/50"
       />
 
       {files.length > 0 && (
