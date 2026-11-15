@@ -16,6 +16,7 @@
 ## Tech Journey (adults changing careers)
 
 - [Tech Journey](https://thewarthens.com/tech): Career quiz, pay snapshots, resume checklist, and Start Here guides for tech sales, cybersecurity, coding, and data analytics.
+- [Resume tailoring tool](https://thewarthens.com/tech/resume): Paste your resume and a job posting to get a tailored, scanner-friendly resume as a PDF and Word file, built only from your real experience. Two free per email.
 - [1:1 coaching with Jermell Mitchell](https://thewarthens.com/tech/coaching): Career coaching with a free 15-minute intro call.
 
 ## Faith Journey

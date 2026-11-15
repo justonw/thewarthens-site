@@ -105,6 +105,15 @@ export default function StarterChecklist() {
                           {expanded[item.id] ? "Hide" : "Why?"}
                         </button>
                       </span>
+                      {item.cta && (
+                        <a
+                          href={item.cta.href}
+                          onClick={(e) => e.stopPropagation()}
+                          className="mt-1 inline-block text-xs font-semibold text-blue-600 underline underline-offset-2 hover:text-blue-700"
+                        >
+                          {item.cta.label} →
+                        </a>
+                      )}
                       {expanded[item.id] && (
                         <span className="mt-1 block text-xs italic text-foreground-muted">
                           {item.why}

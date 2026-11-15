@@ -6,12 +6,13 @@ import {
 } from "@/lib/guide-ai";
 
 // The site guide's AI. It only picks pages from the site's own list (see lib/guide-ai.ts).
-// Without ANTHROPIC_API_KEY it answers 503 and the guide falls back to its built-in search.
+// Without CLAUDE_API_KEY it answers 503 and the guide falls back to its built-in search.
 // The question is sent to Anthropic to get an answer, and is not logged or stored here.
 
 export const dynamic = "force-dynamic";
 
-const API_KEY = process.env.ANTHROPIC_API_KEY;
+// Not ANTHROPIC_API_KEY: Netlify's AI Gateway can inject that name with a key Anthropic rejects.
+const API_KEY = process.env.CLAUDE_API_KEY;
 
 // A small, best-effort limit per visitor. On a serverless host each instance keeps its own count,
 // so this slows down casual abuse; the real spending cap is the one set in the Anthropic console.

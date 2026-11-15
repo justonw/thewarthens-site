@@ -330,6 +330,12 @@ export const searchIndex: SearchEntry[] = [
     keywords: "resume cv linkedin checklist application apply job search profile",
   },
   {
+    title: "Resume tailoring tool",
+    href: "/tech/resume",
+    blurb: "Paste your resume and a job posting, get a tailored resume as a PDF and Word file.",
+    keywords: "resume builder tailor rewrite job posting description ats keywords cv pdf word free tool generator",
+  },
+  {
     title: "Job application tracker",
     href: "/tech#tracker",
     blurb: "Keep track of every job you apply for.",

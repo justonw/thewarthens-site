@@ -2,6 +2,8 @@ export type ChecklistItem = {
   id: string;
   text: string;
   why: string;
+  // Optional link shown under the item, for a tool that does the step for you.
+  cta?: { label: string; href: string };
 };
 
 export type ChecklistGroup = {
@@ -48,9 +50,20 @@ export const starterChecklist: ChecklistGroup[] = [
         why: "ATS parsers don't penalize length. The one-page rule is a human-reader preference, not a screening rule.",
       },
       {
+        id: "resume-summary",
+        text: "Open with a short summary that names the role you want.",
+        why: "It's the first thing a recruiter and the scanner read. In 3 sentences or fewer, say who you are, your proof, and the role you're after. Skip \"I don't have direct experience, but…\" and lead with the value you bring.",
+      },
+      {
+        id: "resume-bullets",
+        text: "Start each bullet with a verb and end it with a result.",
+        why: "Bullets that say what you did and what changed read stronger than a list of duties. Only use numbers you can back up.",
+      },
+      {
         id: "resume-ai",
         text: "Use ChatGPT or Claude to help tailor your resume language to each posting.",
         why: "This is now standard competitive practice in 2026, not a shortcut to be embarrassed about.",
+        cta: { label: "Or let our free tool do it for you", href: "/tech/resume" },
       },
     ],
   },

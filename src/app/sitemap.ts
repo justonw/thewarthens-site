@@ -20,6 +20,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "", priority: 1, lastModified: SITE_LAST_UPDATED },
     { path: "/tech", priority: 0.9, lastModified: SITE_LAST_UPDATED },
     { path: "/tech/coaching", priority: 0.8, lastModified: new Date("2026-10-24") },
+    { path: "/tech/resume", priority: 0.8, lastModified: new Date("2026-11-15") },
     { path: "/techjr", priority: 0.9, lastModified: new Date("2026-11-03") },
     { path: "/techjr/play", priority: 0.8, lastModified: new Date("2026-11-03") },
     { path: "/techjr/play/ages-5-7", priority: 0.8, lastModified: new Date("2026-11-03") },
