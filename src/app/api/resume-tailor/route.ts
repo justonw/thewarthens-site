@@ -8,6 +8,8 @@ import {
   MAX_POSTING_CHARS,
   MAX_RESUME_CHARS,
   parseResumeResponse,
+  type ParsedTailor,
+  type TailorInput,
 } from "@/lib/resume-tailor";
 import { DEFAULT_MONTHLY_CAP, FREE_PER_EMAIL, getKv, refund, reserve } from "@/lib/resume-limits";
 import { isLiveHost } from "@/lib/coaching-recipients";
@@ -82,6 +84,43 @@ async function notify(live: boolean, email: string, jobTitle: string, source: st
   }
 }
 
+
+// Asks Claude for the resume. A failed try (a busy service, or a reply that skipped the tool call) is
+// retried once on the fast model, which is very reliable at this, so people rarely see an error.
+// What went wrong is logged without any of their words.
+const FALLBACK_MODEL = "claude-haiku-5-5";
+
+async function askClaude(input: TailorInput, model: string): Promise<ParsedTailor | null> {
+  const started = Date.now();
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    const payload = JSON.stringify(buildResumeRequest(input, attempt === 1 ? model : FALLBACK_MODEL));
+    try {
+      const res = await fetch(`${API_BASE}/v1/messages`, {
+        method: "POST",
+        headers: { "content-type": "application/json", "x-api-key": API_KEY as string, "anthropic-version": "2023-06-01" },
+        body: payload,
+        signal: AbortSignal.timeout(40000),
+      });
+      if (!res.ok) {
+        const detail = (await res.text().catch(() => "")).slice(0, 300);
+        console.error(`resume-tailor attempt ${attempt}: Claude answered ${res.status} ${detail}`);
+        if (res.status !== 429 && res.status < 500) return null; // a bad request will not get better
+      } else {
+        const data = await res.json();
+        const parsed = parseResumeResponse(data);
+        if (parsed) return parsed;
+        const kinds = Array.isArray(data?.content) ? data.content.map((c: { type?: string }) => c?.type).join(",") : "none";
+        console.error(`resume-tailor attempt ${attempt}: no usable tool call (stop_reason ${data?.stop_reason}, blocks ${kinds})`);
+      }
+    } catch (err) {
+      console.error(`resume-tailor attempt ${attempt} failed`, err instanceof Error ? err.message : err);
+    }
+    if (Date.now() - started > 30000) break; // do not run past the host's time limit
+    await new Promise((resolve) => setTimeout(resolve, 800));
+  }
+  return null;
+}
+
 export async function POST(req: NextRequest) {
   if (!API_KEY) return NextResponse.json({ error: "unavailable" }, { status: 503 });
 
@@ -95,12 +134,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "forbidden" }, { status: 403 });
     }
   }
-
-  const ip =
-    req.headers.get("x-nf-client-connection-ip") ??
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    "unknown";
-  if (tooMany(ip)) return NextResponse.json({ error: "slow-down" }, { status: 429 });
 
   let body: Record<string, unknown>;
   try {
@@ -130,6 +163,13 @@ export async function POST(req: NextRequest) {
 
   const live = isLiveHost(req.headers.get("x-forwarded-host") ?? host);
   const unlimited = isOwner(body.ownerCode);
+  const ip =
+    req.headers.get("x-nf-client-connection-ip") ??
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    "unknown";
+  if (!unlimited && tooMany(ip)) return NextResponse.json({ error: "slow-down" }, { status: 429 });
+
+
   const model = unlimited && typeof body.model === "string" && OWNER_MODELS.has(body.model) ? body.model : MODEL;
 
   let kv;
@@ -153,21 +193,7 @@ export async function POST(req: NextRequest) {
   const giveBack = () => refund(kv, email, { unlimited }).catch(() => {});
 
   try {
-    const res = await fetch(`${API_BASE}/v1/messages`, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-api-key": API_KEY,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify(buildResumeRequest({ resumeText, resumeFiles, postingText, postingFiles }, model)),
-      signal: AbortSignal.timeout(55000),
-    });
-    if (!res.ok) {
-      await giveBack();
-      return NextResponse.json({ error: "upstream" }, { status: 502 });
-    }
-    const parsed = parseResumeResponse(await res.json());
+    const parsed = await askClaude({ resumeText, resumeFiles, postingText, postingFiles }, model);
     if (!parsed) {
       await giveBack();
       return NextResponse.json({ error: "upstream" }, { status: 502 });
