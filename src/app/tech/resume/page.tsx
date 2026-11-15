@@ -6,7 +6,7 @@ import CoachingCallout from "@/components/coaching/CoachingCallout";
 
 const title = "Tailor Your Resume to Any Job (2 Free) | The Warthens";
 const description =
-  "Paste your resume and a job posting. Get a tailored, scanner-friendly resume as a PDF and Word file, built only from your real experience. First 2 are free.";
+  "Upload or paste your resume and a job posting (or just its link). Get a tailored, scanner-friendly resume as a PDF and Word file, built only from your real experience. First 2 are free.";
 
 export const metadata: Metadata = {
   title,
@@ -26,8 +26,8 @@ export const metadata: Metadata = {
 
 const steps = [
   {
-    title: "Paste two things",
-    body: "Your current resume and the job posting you want. No quiz, no account.",
+    title: "Add two things",
+    body: "Your current resume and the job posting you want. Paste text, upload a file, drop in a screenshot, or paste the posting's link. No quiz, no account.",
   },
   {
     title: "We rewrite it for that job",
@@ -46,14 +46,19 @@ const faq = [
       "No. It only rewords and reorders what's already in your resume. If the posting asks for something your resume doesn't show, it lists that separately as something to add only if it's true, and leaves it out of the resume.",
   },
   {
+    question: "What can I upload or paste?",
+    answer:
+      "For your resume: a PDF, a Word (.docx) file, a text file, a screenshot or photo, or pasted text. For the job posting: all of those, or paste a link to the posting. Some job sites, like LinkedIn and Indeed, don't let us read their pages from a link. If that happens, we'll tell you, and you can paste the text or drop in a screenshot instead. Files can add up to about 4 MB per try, and pictures are shrunk automatically.",
+  },
+  {
     question: "Why not just paste this into ChatGPT?",
     answer:
-      "You can. This does the parts a chat window doesn't: it asks nothing of you but the two pastes, builds a finished PDF and Word file in a layout made for hiring software, and checks the result against the same checklist we teach on Tech Journey.",
+      "You can. This does the parts a chat window doesn't: it asks nothing of you but your resume and the posting (as text, files, screenshots, or a link), builds a finished PDF and Word file in a layout made for hiring software, and checks the result against the same checklist we teach on Tech Journey.",
   },
   {
     question: "Do you keep my resume?",
     answer:
-      "No. Your resume and the posting are sent to an AI service to be rewritten, and we don't save either one. The finished resume is built in your browser. We keep your email so we can count your free tries.",
+      "No. Your resume and the posting, including any files or screenshots, are sent to an AI service to be rewritten, and we don't save any of it. The finished resume is built in your browser. We keep your email so we can count your free tries.",
   },
   {
     question: "What do I get for free?",
@@ -110,7 +115,7 @@ export default function ResumePage() {
             Your resume, tailored to the job
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-lg text-foreground-muted">
-            Paste your resume and a job posting. Get back a finished resume built only from your real experience, as a PDF and a Word file. Your first 2 are free.
+            Add your resume and a job posting, by pasting, uploading, or dropping in a screenshot. Get back a finished resume built only from your real experience, as a PDF and a Word file. Your first 2 are free.
           </p>
           <p className="mt-4 text-sm text-foreground-muted">
             Changing careers? Start with the{" "}

@@ -4,6 +4,8 @@ import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { ResumeDoc, ResumeJob, TailorResult } from "@/lib/resume-tailor";
 import { runAtsCheck } from "@/lib/resume-ats";
 import { buildDocx, buildPdf, resumeFileName, resumeToPlainText } from "@/lib/resume-files";
+import type { PickedFile } from "@/lib/resume-upload";
+import ResumeInputBox from "@/components/ResumeInputBox";
 
 type Phase = "input" | "loading" | "result";
 
@@ -16,6 +18,9 @@ const errorText: Record<string, string> = {
   email: "Enter a valid email address.",
   "resume-short": "Paste your whole resume. It looks too short to work with.",
   "posting-short": "Paste the whole job posting, including the requirements.",
+  source: "Choose how you found us.",
+  files: "One of your files couldn't be used. Remove it and add it again, or paste the text instead.",
+  "too-big": "Your files add up to more than we can send at once (about 4 MB). Remove one, or paste the text instead.",
   "too-long": "That's too long. Trim the resume or the posting and try again.",
   limit: "You've used your 2 free resumes. Paid resumes are coming soon. Email info@thewarthens.com if you need one sooner.",
   cap: "We've reached our free limit for this month. It resets on the 1st. Join the wait by emailing info@thewarthens.com.",
@@ -83,6 +88,8 @@ export default function ResumeTailor() {
   const [email, setEmail] = useState("");
   const [resume, setResume] = useState("");
   const [posting, setPosting] = useState("");
+  const [resumeFiles, setResumeFiles] = useState<PickedFile[]>([]);
+  const [postingFiles, setPostingFiles] = useState<PickedFile[]>([]);
   const [source, setSource] = useState("");
   const [error, setError] = useState("");
   const [result, setResult] = useState<TailorResult | null>(null);
@@ -99,12 +106,36 @@ export default function ResumeTailor() {
   async function build(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+    // Check here first so people get a clear message before anything is sent.
+    if (resume.trim().length < 150 && resumeFiles.length === 0) {
+      setError(errorText["resume-short"]);
+      return;
+    }
+    if (posting.trim().length < 80 && postingFiles.length === 0) {
+      setError(errorText["posting-short"]);
+      return;
+    }
+    if (!source) {
+      setError(errorText.source);
+      return;
+    }
+    if ([...resumeFiles, ...postingFiles].reduce((n, f) => n + f.size, 0) > 5_000_000) {
+      setError(errorText["too-big"]);
+      return;
+    }
     setPhase("loading");
     try {
       const res = await fetch("/api/resume-tailor", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, resume, posting, source }),
+        body: JSON.stringify({
+          email,
+          source,
+          resumeText: resume,
+          postingText: posting,
+          resumeFiles: resumeFiles.flatMap((f) => (f.attachment ? [f.attachment] : [])),
+          postingFiles: postingFiles.flatMap((f) => (f.attachment ? [f.attachment] : [])),
+        }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.ok) {
@@ -143,6 +174,7 @@ export default function ResumeTailor() {
     setResult(null);
     setDoc(null);
     setPosting("");
+    setPostingFiles([]);
     setError("");
   }
 
@@ -361,33 +393,30 @@ export default function ResumeTailor() {
       <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">Free tool</p>
       <p className="mt-1 text-lg font-semibold">Tailor your resume to a job</p>
       <p className="mt-1 text-sm text-foreground-muted">
-        Paste your current resume and the job posting. You get a finished, scanner-friendly resume as a PDF and a Word file. Your first 2 are free.
+        Add your current resume and the job posting, by pasting text, uploading files, or dropping in screenshots. You get a finished, scanner-friendly resume as a PDF and a Word file. Your first 2 are free.
       </p>
 
-      <label className="mt-5 block text-sm font-semibold" htmlFor="rt-resume">
-        1. Your current resume
-      </label>
-      <textarea
+      <ResumeInputBox
         id="rt-resume"
-        required
-        rows={9}
-        value={resume}
-        onChange={(e) => setResume(e.target.value)}
-        placeholder="Paste the text of your resume here. Include your jobs, dates, education, and contact details."
-        className={`${inputCls} mt-2 resize-y`}
+        label="1. Your current resume"
+        help="Upload a file, drag one in, paste a screenshot, or paste the text."
+        placeholder="Paste your resume text here, or drop a PDF, Word file, or screenshot onto this box."
+        text={resume}
+        onText={setResume}
+        files={resumeFiles}
+        onFiles={setResumeFiles}
       />
 
-      <label className="mt-5 block text-sm font-semibold" htmlFor="rt-posting">
-        2. The job posting
-      </label>
-      <textarea
+      <ResumeInputBox
         id="rt-posting"
-        required
-        rows={9}
-        value={posting}
-        onChange={(e) => setPosting(e.target.value)}
-        placeholder="Paste the full job posting: the title, responsibilities, and requirements."
-        className={`${inputCls} mt-2 resize-y`}
+        label="2. The job posting"
+        help="Paste a link to the posting, or paste the text, or upload a file or screenshot."
+        placeholder="Paste the link to the job posting here, or paste the posting text, or drop a screenshot onto this box."
+        text={posting}
+        onText={setPosting}
+        files={postingFiles}
+        onFiles={setPostingFiles}
+        allowLink
       />
 
       <div className="mt-5 grid gap-4 sm:grid-cols-2">
@@ -407,10 +436,12 @@ export default function ResumeTailor() {
         </div>
         <div>
           <label className="block text-sm font-semibold" htmlFor="rt-source">
-            How did you find us? <span className="font-normal text-foreground-muted">(optional)</span>
+            4. How did you find us?
           </label>
-          <select id="rt-source" value={source} onChange={(e) => setSource(e.target.value)} className={`${inputCls} mt-2`}>
-            <option value="">Choose one</option>
+          <select id="rt-source" required value={source} onChange={(e) => setSource(e.target.value)} className={`${inputCls} mt-2`}>
+            <option value="" disabled>
+              Choose one
+            </option>
             <option>YouTube</option>
             <option>Instagram or TikTok</option>
             <option>Google search</option>
@@ -435,7 +466,7 @@ export default function ResumeTailor() {
         <span aria-hidden>→</span>
       </button>
       <p className="mt-3 text-xs text-foreground-muted">
-        We send your resume and the posting to an AI service (Anthropic&apos;s Claude) to rewrite it, and we don&apos;t save either one. We only keep your email to count your free tries, and we may send the occasional resource. Reply to any email from us to opt out. We only reword what&apos;s in your resume. We never add experience you don&apos;t have.
+        We send your resume and the posting, including any files or screenshots, to an AI service (Anthropic&apos;s Claude) to rewrite it, and we don&apos;t save any of it. We only keep your email to count your free tries, and we may send the occasional resource. Reply to any email from us to opt out. We only reword what&apos;s in your resume. We never add experience you don&apos;t have.
       </p>
     </form>
   );

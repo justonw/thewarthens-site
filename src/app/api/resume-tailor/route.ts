@@ -2,6 +2,8 @@ import { timingSafeEqual } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import {
   buildResumeRequest,
+  cleanAttachments,
+  MAX_ATTACH_B64_TOTAL,
   RESUME_MODEL,
   MAX_POSTING_CHARS,
   MAX_RESUME_CHARS,
@@ -23,6 +25,8 @@ const API_BASE = process.env.CLAUDE_API_BASE_URL || "https://api.anthropic.com";
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const FROM_EMAIL = process.env.TRACKER_FROM_EMAIL || "The Warthens <info@thewarthens.com>";
 const NOTIFY_EMAIL = "justonwarthen@gmail.com";
+// "How did you find us" is required. Keep this list in step with the dropdown in ResumeTailor.tsx.
+const SOURCES = new Set(["YouTube", "Instagram or TikTok", "Google search", "A friend or family member", "Career day or an event", "Other"]);
 const MODEL = process.env.RESUME_MODEL || RESUME_MODEL;
 const MONTHLY_CAP = Number(process.env.RESUME_MONTHLY_CAP) || DEFAULT_MONTHLY_CAP;
 // The owner (for testing) can bypass the free limits and pick the model by sending a secret code that
@@ -98,23 +102,31 @@ export async function POST(req: NextRequest) {
     "unknown";
   if (tooMany(ip)) return NextResponse.json({ error: "slow-down" }, { status: 429 });
 
-  let body: { email?: unknown; resume?: unknown; posting?: unknown; source?: unknown; ownerCode?: unknown; model?: unknown };
+  let body: Record<string, unknown>;
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: "bad-request" }, { status: 400 });
   }
-  const email = typeof body.email === "string" ? body.email.trim() : "";
-  const resume = typeof body.resume === "string" ? body.resume.trim() : "";
-  const posting = typeof body.posting === "string" ? body.posting.trim() : "";
-  const source = typeof body.source === "string" ? body.source.trim().slice(0, 60) : "";
+  const text = (v: unknown) => (typeof v === "string" ? v.trim() : "");
+  const email = text(body.email);
+  const resumeText = text(body.resumeText);
+  const postingText = text(body.postingText);
+  const source = text(body.source);
+  const resumeFiles = cleanAttachments(body.resumeFiles);
+  const postingFiles = cleanAttachments(body.postingFiles);
 
   if (!isValidEmail(email)) return NextResponse.json({ error: "email" }, { status: 400 });
-  if (resume.length < 150) return NextResponse.json({ error: "resume-short" }, { status: 400 });
-  if (posting.length < 80) return NextResponse.json({ error: "posting-short" }, { status: 400 });
-  if (resume.length > MAX_RESUME_CHARS || posting.length > MAX_POSTING_CHARS) {
+  if (!SOURCES.has(source)) return NextResponse.json({ error: "source" }, { status: 400 });
+  if (!resumeFiles || !postingFiles) return NextResponse.json({ error: "files" }, { status: 400 });
+  // Either pasted text or at least one file is needed for each of the two.
+  if (resumeText.length < 150 && resumeFiles.length === 0) return NextResponse.json({ error: "resume-short" }, { status: 400 });
+  if (postingText.length < 80 && postingFiles.length === 0) return NextResponse.json({ error: "posting-short" }, { status: 400 });
+  if (resumeText.length > MAX_RESUME_CHARS || postingText.length > MAX_POSTING_CHARS) {
     return NextResponse.json({ error: "too-long" }, { status: 413 });
   }
+  const attachedSize = [...resumeFiles, ...postingFiles].reduce((n, f) => n + f.data.length, 0);
+  if (attachedSize > MAX_ATTACH_B64_TOTAL) return NextResponse.json({ error: "too-big" }, { status: 413 });
 
   const live = isLiveHost(req.headers.get("x-forwarded-host") ?? host);
   const unlimited = isOwner(body.ownerCode);
@@ -148,7 +160,7 @@ export async function POST(req: NextRequest) {
         "x-api-key": API_KEY,
         "anthropic-version": "2023-06-01",
       },
-      body: JSON.stringify(buildResumeRequest(resume, posting, model)),
+      body: JSON.stringify(buildResumeRequest({ resumeText, resumeFiles, postingText, postingFiles }, model)),
       signal: AbortSignal.timeout(55000),
     });
     if (!res.ok) {
