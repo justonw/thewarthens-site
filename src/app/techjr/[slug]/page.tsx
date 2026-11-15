@@ -328,7 +328,7 @@ export default async function TechJrArticlePage({ params }: PageProps<"/techjr/[
               Ages 8 to 10: Tech Trailblazers
             </Link>
           </div>
-          <p className="mt-4 text-sm text-indigo-200">No ads. No sign-in. Nothing a child picks is saved or sent.</p>
+          <p className="mt-4 text-sm text-indigo-200">No sign-in.</p>
         </div>
       </section>
 

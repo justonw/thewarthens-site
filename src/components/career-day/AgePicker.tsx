@@ -102,7 +102,7 @@ export default function AgePicker() {
           tap, with no store and no download.
         </p>
         <p className="mt-3 text-base text-indigo-100">
-          No sign-in, no ads, and nothing a child picks or types is saved or sent.{" "}
+          No sign-in.{" "}
           <Link href="/techjr#parents" className="font-bold text-amber-200 underline underline-offset-4">
             How this helps kids learn
           </Link>

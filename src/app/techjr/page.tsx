@@ -210,7 +210,7 @@ export default function TechJrPage() {
             </a>
           </div>
           <p className="mt-4 text-sm text-foreground-muted">
-            No sign-in. Nothing a child types or picks is saved.
+            No sign-in.
           </p>
           <CrewStrip
             ids={["maya", "kenji", "emma", "jamal", "joy", "joshua", "lily", "diego"]}

@@ -343,7 +343,7 @@ export default function Home() {
                 <p className="mt-4 max-w-xl text-indigo-100">
                   A free career and online-safety game for ages 5 to 10. Two age groups, a voice that
                   reads every screen, Cool Facts about the real people who built tech, and a crew of
-                  kids who look like the kids who play. No sign-in, and nothing a child picks is saved.
+                  kids who look like the kids who play. No sign-in.
                 </p>
                 <div className="mt-7 flex flex-wrap items-center gap-3">
                   <Link

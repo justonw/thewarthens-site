@@ -35,7 +35,7 @@ const steps: {
   {
     minutes: 10,
     name: "The quick check",
-    what: "Everyone takes the 2-minute check on their own phone. Nothing is saved or shared. Then invite each person to say, only if they want to, which situation surprised them most.",
+    what: "Everyone takes the 2-minute check on their own phone. Then invite each person to say, only if they want to, which situation surprised them most.",
     questions: [
       "Which situation did you answer fastest, and which did you hesitate on?",
       "Where did your answer come from: Scripture, a sermon you heard, or your own experience?",
@@ -88,7 +88,7 @@ const steps: {
   {
     minutes: 7,
     name: "Your current state",
-    what: "Each person fills in the five-question worksheet in silence. It is saved only on their own device. Share only what each person is comfortable sharing.",
+    what: "Each person fills in the five-question worksheet in silence. It is saved on their own device. Share only what each person is comfortable sharing.",
   },
   {
     minutes: 3,

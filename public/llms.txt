@@ -4,7 +4,7 @@
 
 ## Tech Journey Jr. (for kids and parents)
 
-- [Tech Journey Jr.](https://thewarthens.com/techjr): Free educational games for kids ages 5 to 10 that teach online safety, tech and creator careers, and cool facts. No ads, no sign-in, nothing a child picks is saved. Includes a kit for career day tables.
+- [Tech Journey Jr.](https://thewarthens.com/techjr): Free educational games for kids ages 5 to 10 that teach online safety, tech and creator careers, and cool facts. No sign-in. Includes a kit for career day tables.
 - [Play the game](https://thewarthens.com/techjr/play): Pick an age group. Tech Sprouts (ages 5 to 7, read-aloud voice, picture choices) or Tech Trailblazers (ages 8 to 10).
 - [Internet safety for kids: 10 simple rules by age](https://thewarthens.com/techjr/internet-safety-for-kids)
 - [Safe educational games for kids: a parent's checklist](https://thewarthens.com/techjr/how-to-choose-safe-educational-games)

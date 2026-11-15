@@ -235,7 +235,7 @@ export default async function StartHerePage({
             Your free step-by-step path
           </h2>
           <p className="mt-2 text-sm text-foreground-muted">
-            Every step here is free. Check them off as you go, saved privately in your browser.
+            Every step here is free. Check them off as you go, saved in your browser.
           </p>
           <div className="mt-6">
             <StartHereChecklist slug={guide.slug} steps={guide.steps} />

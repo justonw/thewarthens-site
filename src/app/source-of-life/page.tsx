@@ -227,7 +227,7 @@ export default function SourceOfLifePage() {
           <h2 className="mt-3 font-sol text-3xl font-semibold text-sol-ink sm:text-5xl">How do you read the moments in your life?</h2>
           <p className="text-balance mx-auto mt-4 max-w-xl text-lg text-sol-ink/80">
             Here are seven everyday situations. For each one, choose who you think is mainly behind what happened.
-            There are no right or wrong answers, and nothing is saved. This only shows how you already sort good and
+            There are no right or wrong answers. This only shows how you already sort good and
             bad, which is what the rest of this page is about.
           </p>
         </div>

@@ -70,7 +70,7 @@ Win long-tail, high-intent, parent-phrased searches first, then let the head-ter
 Every page now has its own 1200 x 630 card:
 
 - **Home, Tech, Faith, Women Who Seek, Coaching**: real photos with page-specific headlines.
-- **All Tech Journey Jr. pages** (hub, picker, each age group, each world, each guide): a night-sky game card with the Tech Crew, the headline, and "Free, No ads, No sign-in".
+- **All Tech Journey Jr. pages** (hub, picker, each age group, each world, each guide): a night-sky game card with the Tech Crew, the headline, and "Free, No sign-in".
 - The crew pictures for these cards are saved in `public/og/crew/`. If a character's look changes in `src/lib/career-avatar.ts`, save a fresh SVG of that avatar there.
 
 ## 7. Off-page plan (links and mentions)
@@ -98,6 +98,6 @@ New pages usually take weeks to be indexed and a few months to rank. Head terms 
 ## 10. Content rules to keep
 
 - Say only what is true and visible on the page. No pay numbers, no promises about outcomes, no medical claims.
-- Do not call the site "COPPA compliant" or similar; say what it does ("no ads, no sign-in, nothing a child picks is saved or sent").
+- Do not call the site "COPPA compliant" or similar; say what it does ("no sign-in"), and avoid promising anything about data.
 - Fact-check any new fact against two sources and keep careful wording.
 - Keep guide titles near 60 characters and descriptions under 160.

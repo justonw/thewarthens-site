@@ -56,9 +56,9 @@ const faq = [
       "You can. This does the parts a chat window doesn't: it asks nothing of you but your resume and the posting (as text, files, screenshots, or a link), builds a finished PDF and Word file in a layout made for hiring software, and checks the result against the same checklist we teach on Tech Journey.",
   },
   {
-    question: "Do you keep my resume?",
+    question: "Who sees my resume?",
     answer:
-      "No. Your resume and the posting, including any files or screenshots, are sent to an AI service to be rewritten, and we don't save any of it. The finished resume is built in your browser. We keep your email so we can count your free tries.",
+      "Your resume and the posting, including any files or screenshots, are sent to an AI service (Anthropic's Claude) to be rewritten. The finished resume is built in your browser, so you can edit and download it right there. We use your email to count your free tries.",
   },
   {
     question: "What do I get for free?",

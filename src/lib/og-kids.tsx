@@ -35,7 +35,7 @@ export function renderKidsOg({
   title,
   subtitle,
   crew = ["maya", "kenji", "emma", "jamal", "joy"],
-  badges = ["Free", "No ads", "No sign-in"],
+  badges = ["Free", "No sign-in"],
 }: {
   eyebrow: string;
   title: string;

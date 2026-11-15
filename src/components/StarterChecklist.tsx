@@ -61,7 +61,7 @@ export default function StarterChecklist() {
         scores your resume the way an LLM (an AI language model) would.
         This checklist covers what the research says actually gets you
         past that screen and into recruiter searches. Check items off
-        as you go, saved privately in your browser.
+        as you go, saved in your browser.
       </p>
 
       <div className="mt-5 flex items-center gap-3">

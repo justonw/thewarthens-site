@@ -74,7 +74,7 @@ export const articles: Article[] = [
     blurb: "Ten rules kids can actually remember, with the words to say and a game to practice.",
     intro: [
       "Kids learn online safety the same way they learn to cross the street: by hearing a few simple rules, seeing them used, and practicing before it counts. A long list of dos and don'ts does not stick. Ten short rules, said the same way every time, do.",
-      "These are the rules we built the Cyber Defenders game around. Each one has words you can say out loud, and a note about how it changes between ages 5 to 7 and ages 8 to 10. At the end, there is a free game where children practice each rule by making the choice themselves, with no sign-in and nothing saved.",
+      "These are the rules we built the Cyber Defenders game around. Each one has words you can say out loud, and a note about how it changes between ages 5 to 7 and ages 8 to 10. At the end, there is a free game where children practice each rule by making the choice themselves, with no sign-in.",
     ],
     sections: [
       {
@@ -184,7 +184,7 @@ export const articles: Article[] = [
         blocks: [
           {
             type: "p",
-            text: "Cyber Defenders is a part of our free game, Tech Journey Jr. Your child solves short cases about things kids really see, like a pop-up prize, a friend asking for a password, or a link that looks wrong. Each question puts the child in the decision seat, and the right answer is something a child can actually do. There are no ads, no sign-in, and nothing a child picks is saved or sent.",
+            text: "Cyber Defenders is a part of our free game, Tech Journey Jr. Your child solves short cases about things kids really see, like a pop-up prize, a friend asking for a password, or a link that looks wrong. Each question puts the child in the decision seat, and the right answer is something a child can actually do. There is no sign-in.",
           },
           {
             type: "links",
@@ -228,7 +228,7 @@ export const articles: Article[] = [
       {
         question: "Is there a free internet safety game for kids?",
         answer:
-          "Yes. Cyber Defenders, part of Tech Journey Jr., is free, has no ads, and needs no account. It comes in a version for ages 5 to 7 with a read-aloud voice and a version for ages 8 to 10. Google's Interland is another free option for older elementary kids.",
+          "Yes. Cyber Defenders, part of Tech Journey Jr., is free and needs no account. It comes in a version for ages 5 to 7 with a read-aloud voice and a version for ages 8 to 10. Google's Interland is another free option for older elementary kids.",
       },
       {
         question: "Should I let my child have their own passwords?",
@@ -289,7 +289,7 @@ export const articles: Article[] = [
               },
               {
                 title: "No account, or a very light one.",
-                text: "A game that needs no sign-in cannot lose or leak your child's information. If it does ask for an account, check what it collects and whether a parent controls it.",
+                text: "A game that needs no sign-in has far less of your child's information to protect. If it does ask for an account, check what it collects and whether a parent controls it.",
               },
               {
                 title: "A clear age fit.",
@@ -329,7 +329,7 @@ export const articles: Article[] = [
               {
                 label: "Tech Journey Jr. (ours)",
                 href: "/techjr/play",
-                text: "A free browser game for ages 5 to 10 that teaches online safety, tech and creator careers, and cool facts. No ads, no sign-in, and nothing a child picks is saved. Two versions: Tech Sprouts (5 to 7, read-aloud) and Tech Trailblazers (8 to 10).",
+                text: "A free browser game for ages 5 to 10 that teaches online safety, tech and creator careers, and cool facts. No sign-in. Two versions: Tech Sprouts (5 to 7, read-aloud) and Tech Trailblazers (8 to 10).",
               },
               {
                 label: "PBS KIDS Games",
@@ -377,9 +377,9 @@ export const articles: Article[] = [
           "No ads, no in-app purchases, no chat with strangers, no or minimal account, a clear age fit, and a natural stopping point. Also look for a game that leaves your child with something to talk about afterward.",
       },
       {
-        question: "Are there free educational games with no ads and no sign-up?",
+        question: "Are there free educational games with no sign-up?",
         answer:
-          "Yes. Tech Journey Jr. is free with no ads and no sign-in. PBS KIDS Games and Khan Academy Kids are other well-known free options. Always check each one's current policies, since they can change.",
+          "Yes. Tech Journey Jr. is free with no sign-in. PBS KIDS Games and Khan Academy Kids are other well-known free options. Always check each one's current policies, since they can change.",
       },
       {
         question: "What can I put on my child's phone that is educational?",
@@ -400,7 +400,7 @@ export const articles: Article[] = [
     related: ["internet-safety-for-kids", "things-to-do-when-kids-are-bored"],
     cta: {
       heading: "Try a game that passes the checklist",
-      text: "Tech Journey Jr. is free, has no ads or sign-in, and takes about ten minutes to finish a world. Pick an age group and hand over the phone.",
+      text: "Tech Journey Jr. is free, needs no sign-in, and takes about ten minutes to finish a world. Pick an age group and hand over the phone.",
     },
   },
 
@@ -461,7 +461,7 @@ export const articles: Article[] = [
           },
           {
             type: "note",
-            text: "All five are in Tech Journey Jr., our free game. There are no ads and no sign-in, and nothing a child picks is saved. See the checklist in our guide to safe educational games for how we think about this.",
+            text: "All five are in Tech Journey Jr., our free game. There is no sign-in. See the checklist in our guide to safe educational games for how we think about this.",
           },
         ],
       },
@@ -536,15 +536,15 @@ export const articles: Article[] = [
           "Job charades, interviewing a grown-up about their work, inventing a helper robot, planning a pretend show, or looking for the computers hiding inside household objects. All take a few minutes and teach something real.",
       },
       {
-        question: "Is there a free game I can hand my child with no ads?",
+        question: "Is there a free game I can hand my child?",
         answer:
-          "Yes. Tech Journey Jr. is free with no ads and no sign-in. It has two versions: Tech Sprouts for ages 5 to 7 and Tech Trailblazers for ages 8 to 10.",
+          "Yes. Tech Journey Jr. is free with no sign-in. It has two versions: Tech Sprouts for ages 5 to 7 and Tech Trailblazers for ages 8 to 10.",
       },
     ],
     related: ["how-to-choose-safe-educational-games", "cool-tech-facts-for-kids"],
     cta: {
       heading: "Have a bored kid right now?",
-      text: "Pick an age group and hand over the phone. It is free, with no ads or sign-in, and a world takes about ten minutes.",
+      text: "Pick an age group and hand over the phone. It is free, needs no sign-in, and a world takes about ten minutes.",
     },
   },
 
@@ -628,7 +628,7 @@ export const articles: Article[] = [
     related: ["black-inventors-and-tech-heroes-for-kids", "women-in-tech-and-stem-for-kids"],
     cta: {
       heading: "Turn the facts into a game",
-      text: "Collect facts, tap Surprise me, and play True or Made Up? It is free, with no ads and no sign-in.",
+      text: "Collect facts, tap Surprise me, and play True or Made Up? It is free, with no sign-in.",
     },
   },
 
@@ -781,7 +781,7 @@ export const articles: Article[] = [
     related: ["women-in-tech-and-stem-for-kids", "cool-tech-facts-for-kids"],
     cta: {
       heading: "Meet more tech heroes in the game",
-      text: "Cool Facts in Tech Journey Jr. has true stories of inventors and builders from many backgrounds. It is free, with no ads and no sign-in.",
+      text: "Cool Facts in Tech Journey Jr. has true stories of inventors and builders from many backgrounds. It is free, with no sign-in.",
     },
   },
 
@@ -946,7 +946,7 @@ export const articles: Article[] = [
     related: ["black-inventors-and-tech-heroes-for-kids", "cool-tech-facts-for-kids"],
     cta: {
       heading: "Meet more builders in the game",
-      text: "Cool Facts in Tech Journey Jr. is full of true stories of people who built the tech we use. It is free, with no ads and no sign-in.",
+      text: "Cool Facts in Tech Journey Jr. is full of true stories of people who built the tech we use. It is free, with no sign-in.",
     },
   },
 ];

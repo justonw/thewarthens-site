@@ -6,7 +6,7 @@ export function GET() {
     id: "/techjr/play",
     name: "Tech Journey Jr.",
     short_name: "Tech Jr.",
-    description: "Free games for kids ages 5 to 10: online safety, careers, and cool facts. No ads, no sign-in.",
+    description: "Free games for kids ages 5 to 10: online safety, careers, and cool facts. No sign-in.",
     start_url: "/techjr/play",
     scope: "/techjr/play",
     display: "standalone",

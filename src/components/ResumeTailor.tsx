@@ -96,6 +96,7 @@ export default function ResumeTailor() {
   const [doc, setDoc] = useState<ResumeDoc | null>(null);
   const [remaining, setRemaining] = useState<number | null>(null);
   const [busy, setBusy] = useState<"" | "pdf" | "docx">("");
+  const [retrying, setRetrying] = useState(false);
 
   const finalDoc = useMemo(() => (doc ? cleanDoc(doc) : null), [doc]);
   const ats = useMemo(
@@ -124,34 +125,43 @@ export default function ResumeTailor() {
       return;
     }
     setPhase("loading");
-    try {
-      const res = await fetch("/api/resume-tailor", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          source,
-          resumeText: resume,
-          postingText: posting,
-          resumeFiles: resumeFiles.flatMap((f) => (f.attachment ? [f.attachment] : [])),
-          postingFiles: postingFiles.flatMap((f) => (f.attachment ? [f.attachment] : [])),
-        }),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.ok) {
-        setError(data.error === "problem" ? data.message : errorText[data.error as string] ?? errorText.upstream);
-        setPhase("input");
-        return;
+    setRetrying(false);
+    const payload = JSON.stringify({
+      email,
+      source,
+      resumeText: resume,
+      postingText: posting,
+      resumeFiles: resumeFiles.flatMap((f) => (f.attachment ? [f.attachment] : [])),
+      postingFiles: postingFiles.flatMap((f) => (f.attachment ? [f.attachment] : [])),
+    });
+    // A one-off hiccup on our side should not reach the person: try once more before showing an error.
+    // A failed try never uses up a free resume, so trying again is safe.
+    let data: { ok?: boolean; error?: string; message?: string; result?: TailorResult; remaining?: number | null } = {};
+    let status = 0;
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        const res = await fetch("/api/resume-tailor", { method: "POST", headers: { "Content-Type": "application/json" }, body: payload });
+        status = res.status;
+        data = await res.json().catch(() => ({}));
+      } catch {
+        status = 0;
+        data = { error: "upstream" };
       }
-      setResult(data.result as TailorResult);
-      setDoc((data.result as TailorResult).resume);
-      setRemaining(typeof data.remaining === "number" ? data.remaining : null);
-      setPhase("result");
-      window.scrollTo({ top: document.getElementById("resume-tool")?.offsetTop ?? 0, behavior: "smooth" });
-    } catch {
-      setError(errorText.upstream);
-      setPhase("input");
+      const retryable = (status === 0 || status >= 500) && data.error !== "unavailable";
+      if (data.ok || !retryable || attempt === 2) break;
+      setRetrying(true);
+      await new Promise((resolve) => setTimeout(resolve, 2500));
     }
+    if (!data.ok || !data.result) {
+      setError(data.error === "problem" ? data.message ?? errorText.upstream : errorText[data.error as string] ?? errorText.upstream);
+      setPhase("input");
+      return;
+    }
+    setResult(data.result);
+    setDoc(data.result.resume);
+    setRemaining(typeof data.remaining === "number" ? data.remaining : null);
+    setPhase("result");
+    window.scrollTo({ top: document.getElementById("resume-tool")?.offsetTop ?? 0, behavior: "smooth" });
   }
 
   async function download(kind: "pdf" | "docx") {
@@ -184,7 +194,9 @@ export default function ResumeTailor() {
         <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-border-subtle border-t-blue-600" aria-hidden />
         <p className="mt-4 text-lg font-semibold">Building your resume</p>
         <p className="mt-1 text-sm text-foreground-muted" role="status">
-          Reading your resume against the job posting. This usually takes 20 to 40 seconds. Please keep this tab open.
+          {retrying
+            ? "That took a little longer than usual, so we're trying again. Please keep this tab open."
+            : "Reading your resume against the job posting. This usually takes 10 to 30 seconds. Please keep this tab open."}
         </p>
       </div>
     );
@@ -466,7 +478,7 @@ export default function ResumeTailor() {
         <span aria-hidden>→</span>
       </button>
       <p className="mt-3 text-xs text-foreground-muted">
-        We send your resume and the posting, including any files or screenshots, to an AI service (Anthropic&apos;s Claude) to rewrite it, and we don&apos;t save any of it. We only keep your email to count your free tries, and we may send the occasional resource. Reply to any email from us to opt out. We only reword what&apos;s in your resume. We never add experience you don&apos;t have.
+        We send your resume and the posting, including any files or screenshots, to an AI service (Anthropic&apos;s Claude) to rewrite it. We use your email to count your free tries, and we may send the occasional resource. Reply to any email from us to opt out. We only reword what&apos;s in your resume. We never add experience you don&apos;t have.
       </p>
     </form>
   );

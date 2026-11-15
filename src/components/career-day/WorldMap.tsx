@@ -191,8 +191,8 @@ export default function WorldMap({ band }: { band: Band }) {
         <p className="mt-2 text-lg font-semibold text-indigo-100">Ask your child:</p>
         <p className="mt-1 rounded-2xl bg-white/90 p-4 text-xl font-bold text-slate-800">&ldquo;{starter}&rdquo;</p>
         <p className="mt-4 text-base text-indigo-100">
-          Every world teaches a real skill, like listening, honesty, and asking good questions. No sign-in, no
-          ads, and nothing a child picks or types is saved or sent.{" "}
+          Every world teaches a real skill, like listening, honesty, and asking good questions. No sign-in and no
+          ads.{" "}
           <Link href="/techjr#parents" className="font-bold text-amber-200 underline underline-offset-4">
             How this helps kids learn
           </Link>

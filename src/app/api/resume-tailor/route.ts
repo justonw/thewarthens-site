@@ -86,25 +86,33 @@ async function notify(live: boolean, email: string, jobTitle: string, source: st
 
 
 // Asks Claude for the resume. A failed try (a busy service, or a reply that skipped the tool call) is
-// retried once on the fast model, which is very reliable at this, so people rarely see an error.
+// retried (up to three tries in all) on the fast model, which is very reliable at this, so people rarely
+// see an error. A busy or rate-limited service is given the pause it asks for between tries.
 // What went wrong is logged without any of their words.
 const FALLBACK_MODEL = "claude-haiku-5-5";
+const MAX_ATTEMPTS = 3;
 
 async function askClaude(input: TailorInput, model: string): Promise<ParsedTailor | null> {
   const started = Date.now();
-  for (let attempt = 1; attempt <= 2; attempt++) {
+  let pauseMs = 800;
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    // Stay inside the host's time limit: each try gets only what is left of a 55 second budget.
+    const left = 55000 - (Date.now() - started);
+    if (attempt > 1 && left < 9000) break;
     const payload = JSON.stringify(buildResumeRequest(input, attempt === 1 ? model : FALLBACK_MODEL));
     try {
       const res = await fetch(`${API_BASE}/v1/messages`, {
         method: "POST",
         headers: { "content-type": "application/json", "x-api-key": API_KEY as string, "anthropic-version": "2023-06-01" },
         body: payload,
-        signal: AbortSignal.timeout(40000),
+        signal: AbortSignal.timeout(Math.min(40000, left)),
       });
       if (!res.ok) {
         const detail = (await res.text().catch(() => "")).slice(0, 300);
         console.error(`resume-tailor attempt ${attempt}: Claude answered ${res.status} ${detail}`);
         if (res.status !== 429 && res.status < 500) return null; // a bad request will not get better
+        const asked = Number(res.headers.get("retry-after"));
+        pauseMs = Math.min(Math.max(Number.isFinite(asked) ? asked * 1000 : 0, 800 * attempt), 4000);
       } else {
         const data = await res.json();
         const parsed = parseResumeResponse(data);
@@ -115,8 +123,8 @@ async function askClaude(input: TailorInput, model: string): Promise<ParsedTailo
     } catch (err) {
       console.error(`resume-tailor attempt ${attempt} failed`, err instanceof Error ? err.message : err);
     }
-    if (Date.now() - started > 30000) break; // do not run past the host's time limit
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    await new Promise((resolve) => setTimeout(resolve, pauseMs));
+    pauseMs = 800 * attempt;
   }
   return null;
 }

@@ -66,7 +66,7 @@ export default function Worksheet() {
         <button type="button" onClick={clear} disabled={filled === 0} className="rounded-full border border-sol-line px-6 py-3 text-sm font-semibold text-sol-ink transition-colors hover:border-sol-rose/30 disabled:opacity-40">
           Clear
         </button>
-        <p className="text-xs text-sol-muted">Saved on this device only. We never see what you write.</p>
+        <p className="text-xs text-sol-muted">Saved on this device.</p>
       </div>
     </div>
   );

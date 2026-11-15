@@ -43,9 +43,9 @@ export const faq: { question: string; answer: string }[] = [
     answer: "It is free, and there is nothing to sign up for. You can read it and write your notes right on the page.",
   },
   {
-    question: "Are my notes saved or shared?",
+    question: "Where are my notes saved?",
     answer:
-      "What you write is saved only in your own browser, on the device you are using. If you ask for the PDF, it is emailed only to the address you type, and we do not keep a copy of your notes.",
+      "What you write is saved in your own browser, on the device you are using. If you ask for the PDF, it is emailed to the address you type.",
   },
   {
     question: "How do I get a PDF with my notes?",

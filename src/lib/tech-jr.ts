@@ -9,7 +9,7 @@ export const TECHJR_UPDATED = "2026-10-29";
 
 export const techJrTitle = "Free Educational Games for Kids Ages 5-10 | Tech Journey Jr.";
 export const techJrDescription =
-  "Free games for kids ages 5 to 10 that teach online safety, tech careers, and cool facts. No ads, no sign-in. Plus parent guides and a kit for a career day table.";
+  "Free games for kids ages 5 to 10 that teach online safety, tech careers, and cool facts. No sign-in. Plus parent guides and a kit for a career day table.";
 
 // The two versions of the game. A child picks one first, and the words, the questions, and how much
 // there is to read are all made for that group.
@@ -59,7 +59,7 @@ export const gameParts = [
     emoji: "🎥",
     title: "Make a Show",
     topic: "Content creation",
-    body: "A child builds a cartoon character that looks like them, names their own show, and picks who it is for. It teaches that creators start by helping an audience, and nothing is posted or saved.",
+    body: "A child builds a cartoon character that looks like them, names their own show, and picks who it is for. It teaches that creators start by helping an audience.",
   },
   {
     emoji: "🎁",
@@ -171,8 +171,7 @@ export const volunteerTips = [
 
 export const privacyPoints = [
   "No sign-in, no accounts, and no forms.",
-  "Nothing a child picks or types, including their character and show name, is saved or sent anywhere.",
-  "No ads and no outside links on the child's screen.",
+  "No outside links on the child's screen.",
 ] as const;
 
 export type TechJrFaq = { question: string; answer: string };
@@ -191,7 +190,7 @@ export const techJrFaq: TechJrFaq[] = [
   {
     question: "What can I give my child to play on my phone that is educational and safe?",
     answer:
-      "Tech Journey Jr. is made for exactly that. It is free, has no ads or sign-in, runs in the browser on any phone or tablet, and the worlds are short missions so there is a natural place to stop. Add it to your home screen and your child can open it in one tap. Our guide to safe educational games has an 8-point checklist you can use on any game.",
+      "Tech Journey Jr. is made for exactly that. It is free, needs no sign-in, runs in the browser on any phone or tablet, and the worlds are short missions so there is a natural place to stop. Add it to your home screen and your child can open it in one tap. Our guide to safe educational games has an 8-point checklist you can use on any game.",
   },
   {
     question: "Does it work on phones and tablets? Do I need to download anything?",
@@ -209,9 +208,9 @@ export const techJrFaq: TechJrFaq[] = [
       "Yes. The game, the facts, and the guides on this page are free to use at home, in a classroom, or at a career day table. There is nothing to buy and no account to make.",
   },
   {
-    question: "Does it collect my child's information?",
+    question: "Does my child need an account?",
     answer:
-      "No. There are no sign-ins, forms, or ads, and nothing a child chooses or types is saved or sent. The character and show name a child makes disappear when the game resets.",
+      "No. There are no sign-ins, forms, or ads. The character and show name a child makes disappear when the game resets.",
   },
   {
     question: "How do I teach my child about careers in tech?",
@@ -245,18 +244,18 @@ export const playSeo = {
   picker: {
     title: "Free Games for Kids Ages 5 to 10: Play Tech Journey Jr.",
     description:
-      "Free online games for kids ages 5 to 10 that teach online safety, tech careers, and cool facts. No ads, no sign-in, nothing saved. Works on phones and tablets.",
+      "Free online games for kids ages 5 to 10 that teach online safety, tech careers, and cool facts. No sign-in. Works on phones and tablets.",
   },
   "ages-5-7": {
     title: "Free Games for 5, 6 & 7 Year Olds: Tech Sprouts",
     description:
-      "Free games for ages 5 to 7 (K to 2nd grade). A voice reads every screen and every choice has a picture. Online safety, careers, cool facts. No ads, no sign-in.",
+      "Free games for ages 5 to 7 (K to 2nd grade). A voice reads every screen and every choice has a picture. Online safety, careers, cool facts. No sign-in.",
     h1: "Free games for 5, 6 and 7 year olds",
   },
   "ages-8-10": {
     title: "Free Games for 8, 9 & 10 Year Olds: Tech Trailblazers",
     description:
-      "Free online games for ages 8 to 10 (3rd to 5th grade). Trickier choices, real jobs, online safety, and 55 cool facts. No ads, no sign-in, nothing saved.",
+      "Free online games for ages 8 to 10 (3rd to 5th grade). Trickier choices, real jobs, online safety, and 55 cool facts. No sign-in.",
     h1: "Free games for 8, 9 and 10 year olds",
   },
 } as const;

@@ -83,9 +83,8 @@ export default function JobTracker() {
         Track your applications right here
       </h3>
       <p className="mt-3 text-sm text-foreground-muted">
-        Saved privately in your browser only. We never see this data, and it
-        never leaves your device. Clearing your browser data will clear it
-        too, so grab the{" "}
+        Saved in your browser on this device. Clearing your browser data will
+        clear it too, so grab the{" "}
         <a href="#tracker-download" className="font-semibold text-blue-600 hover:text-blue-700">
           downloadable version
         </a>{" "}

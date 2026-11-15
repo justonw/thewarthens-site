@@ -41,7 +41,7 @@ const jsonLd = {
         "Online safety game",
         "Tech and creator career exploration",
         "Cool facts with a True or Made Up game",
-        "No ads, no sign-in, nothing saved",
+        "No sign-in",
       ],
     },
     {

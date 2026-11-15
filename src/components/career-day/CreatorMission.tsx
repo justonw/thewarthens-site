@@ -399,7 +399,7 @@ export default function CreatorMission({ band, onFinish }: { band: BandId; onFin
             className="mx-auto mt-2 block w-full max-w-xs rounded-3xl border-4 border-slate-200 bg-white px-5 py-4 text-center text-2xl font-bold text-slate-900 outline-none focus:border-blue-400"
           />
           <p className="mt-2 text-sm text-slate-500">
-            It stays on this screen. It is never saved or sent anywhere.
+            It stays on this screen.
           </p>
         </Panel>
 
