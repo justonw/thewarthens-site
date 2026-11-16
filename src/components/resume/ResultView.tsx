@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { CoverLetter, ResumeDoc, ResumeGap, TailorResult } from "@/lib/resume-tailor";
 import { keywordCoverage, runAtsCheck } from "@/lib/resume-ats";
 import { RESUME_STYLES, buildCoverLetterDocx, buildCoverLetterPdf, buildDocx, buildPdf, coverLetterFileName, resumeFileName, resumeToPlainText, type ResumeStyle } from "@/lib/resume-files";
@@ -199,8 +199,11 @@ export default function ResultView({
   const design = result.design;
   // When we could see the original's look, start with it, as the person asked for.
   const [style, setStyle] = useState<ResumeStyle>(design ? "custom" : "classic");
-  const [preview, setPreview] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState("");
+  // The preview is shown from the start: choosing a template changes only the download, so without a preview
+  // nothing on the page would seem to change.
+  const [preview, setPreview] = useState(true);
+  const [built, setBuilt] = useState<{ url: string; key: string }>({ url: "", key: "" });
+  const previewUrl = built.url;
 
   const finalDoc = useMemo(() => cleanDoc(doc), [doc]);
   const ats = useMemo(() => runAtsCheck(finalDoc, result.postingTitle, result.postingKeywords), [finalDoc, result.postingTitle, result.postingKeywords]);
@@ -231,7 +234,9 @@ export default function ResultView({
   // Emails the person their files (the same ones the download buttons make). Sent once on its own if they
   // ticked the box, and again whenever they ask, so the copy can include their edits.
   const [mailed, setMailed] = useState<"" | "sending" | "sent" | "failed">("");
-  const autoSent = useRef(false);
+  // They asked for a copy on the form, but nothing is sent until they confirm the address here: a mistyped
+  // address would send their resume to a stranger.
+  const [confirmCopy, setConfirmCopy] = useState<"ask" | "declined" | "done">(emailCopy ? "ask" : "done");
 
   async function sendCopy() {
     setMailed("sending");
@@ -269,14 +274,6 @@ export default function ResultView({
     }
   }
 
-  useEffect(() => {
-    if (!emailCopy || autoSent.current) return;
-    autoSent.current = true;
-    void sendCopy();
-    // Runs once when the result first appears.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   async function download(kind: "pdf" | "docx") {
     setBusy(kind);
     try {
@@ -290,7 +287,10 @@ export default function ResultView({
     }
   }
 
-  // A live preview of the PDF in the chosen style. It is rebuilt a moment after any edit or style change.
+  // A live preview of the PDF in the chosen style. It is rebuilt a moment after any edit or style change, and the
+  // old one stays on screen (marked as updating) until the new one is ready.
+  const previewKey = useMemo(() => `${style}|${JSON.stringify(finalDoc)}|${design ? design.accent : ""}`, [style, finalDoc, design]);
+  const updating = preview && built.key !== previewKey;
   useEffect(() => {
     if (!preview) return;
     let cancelled = false;
@@ -299,14 +299,15 @@ export default function ResultView({
       const bytes = await buildPdf(finalDoc, style, design);
       if (cancelled) return;
       url = URL.createObjectURL(new Blob([bytes as BlobPart], { type: "application/pdf" }));
-      setPreviewUrl(url);
+      setBuilt({ url, key: previewKey });
     }, 350);
     return () => {
       cancelled = true;
       clearTimeout(timer);
-      if (url) URL.revokeObjectURL(url);
+      // The address of an older preview is released once a newer one has replaced it.
+      if (url) window.setTimeout(() => URL.revokeObjectURL(url), 1500);
     };
-  }, [preview, finalDoc, style, design]);
+  }, [preview, finalDoc, style, design, previewKey]);
 
   // "I have this": the person tells us in a sentence, and we add it to the resume.
   async function addGap(index: number, answer: string): Promise<string | null> {
@@ -383,6 +384,34 @@ export default function ResultView({
         </div>
       </div>
 
+      {confirmCopy === "ask" && (
+        <div role="group" aria-label="Email a copy" className="rounded-2xl border border-blue-500/30 bg-blue-500/5 px-4 py-4 sm:px-5">
+          <p className="text-sm font-semibold">Email a copy of your files to this address?</p>
+          <p className="mt-1 break-all text-base font-bold">{email}</p>
+          <p className="mt-1 text-xs text-foreground-muted">Check it letter by letter. Your resume and cover letter would go to this address, so make sure it&apos;s yours.</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                setConfirmCopy("done");
+                void sendCopy();
+              }}
+              className="rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-500"
+            >
+              Yes, send it
+            </button>
+            <button type="button" onClick={() => setConfirmCopy("declined")} className="rounded-full border border-border-subtle bg-white px-5 py-2 text-sm font-semibold transition-colors hover:border-blue-500/40">
+              That&apos;s not my address
+            </button>
+          </div>
+        </div>
+      )}
+      {confirmCopy === "declined" && (
+        <p role="status" className="rounded-2xl border border-border-subtle bg-background-elevated px-4 py-3 text-sm">
+          No problem, nothing was sent. You can download your files below. If you want them by email, press &quot;Tailor for another job&quot; and enter the right address (free builds are counted per email address).
+        </p>
+      )}
+
       {letterFailed && !letter && (
         <p role="status" className="rounded-2xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm">
           Your resume is ready, but the cover letter did not come through this time. You can download the resume now, and use &quot;Tailor for another job&quot; to try the letter again. Your resume and notes are saved here, so it only takes a moment.
@@ -408,10 +437,11 @@ export default function ResultView({
               <button onClick={() => download("docx")} disabled={busy !== ""} className="rounded-full border border-border-subtle bg-background-elevated px-5 py-2.5 text-sm font-semibold transition-colors hover:border-blue-500/40 disabled:opacity-60">
                 {busy === "docx" ? "Preparing…" : "Download Word"}
               </button>
-              <button onClick={sendCopy} disabled={mailed === "sending"} className="rounded-full border border-border-subtle bg-background-elevated px-5 py-2.5 text-sm font-semibold transition-colors hover:border-blue-500/40 disabled:opacity-60">
+              <button onClick={sendCopy} disabled={mailed === "sending"} title={`Sends to ${email}`} className="rounded-full border border-border-subtle bg-background-elevated px-5 py-2.5 text-sm font-semibold transition-colors hover:border-blue-500/40 disabled:opacity-60">
                 {mailed === "sending" ? "Sending…" : mailed === "sent" ? "Email it again" : "Email me a copy"}
               </button>
             </div>
+            <p className="-mt-1 text-xs text-foreground-muted">Email copies go to {email}.</p>
             <div className="space-y-2" role="group" aria-label="Download style">
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                 <span className="text-xs font-semibold text-foreground-muted">Template for your download</span>
@@ -461,11 +491,19 @@ export default function ResultView({
                 )}
               </p>
               {preview && (
-                <div className="overflow-hidden rounded-2xl border border-border-subtle bg-white shadow-sm">
+                <div className="relative overflow-hidden rounded-2xl border border-border-subtle bg-white shadow-sm">
+                  <p className="border-b border-border-subtle bg-background-elevated px-4 py-2 text-xs font-semibold text-foreground-muted">
+                    Preview of your download ({style === "custom" ? "Match my resume" : (RESUME_STYLES.find((x) => x.id === style)?.label ?? style)})
+                  </p>
                   {previewUrl ? (
                     <iframe title="Preview of your resume download" src={`${previewUrl}#toolbar=0&navpanes=0&view=FitH`} className="h-[560px] w-full" />
                   ) : (
                     <p className="p-6 text-center text-sm text-foreground-muted">Building the preview…</p>
+                  )}
+                  {updating && previewUrl && (
+                    <span role="status" className="absolute right-3 top-10 rounded-full bg-foreground px-3 py-1 text-xs font-semibold text-background shadow">
+                      Updating…
+                    </span>
                   )}
                   {previewUrl && (
                     <p className="border-t border-border-subtle px-4 py-2 text-xs text-foreground-muted">
@@ -551,7 +589,7 @@ export default function ResultView({
 
             {changes.length > 0 && (
               <div className={card}>
-                <p className="font-semibold">What we changed</p>
+                <p className="font-semibold">What we did, and why</p>
                 <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm text-foreground-muted">
                   {changes.map((c, i) => (
                     <li key={`${i}-${c}`}>{c}</li>
@@ -562,7 +600,7 @@ export default function ResultView({
 
             <details className={`${card} text-sm`}>
               <summary className="cursor-pointer font-semibold">How a scanner reads it</summary>
-              <p className="mt-2 text-xs text-foreground-muted">Hiring software strips the design and reads plain text, in this order. If this looks clean, it parses clean.</p>
+              <p className="mt-2 text-xs text-foreground-muted">Hiring software first turns your resume into plain text like this. Ours is one column with standard headings, which most systems read well. We can&apos;t test every system, so a clean view here is a good sign, not a guarantee.</p>
               <pre className="mt-3 max-h-72 overflow-auto whitespace-pre-wrap rounded-lg bg-background p-3 text-xs">{resumeToPlainText(finalDoc)}</pre>
             </details>
           </div>

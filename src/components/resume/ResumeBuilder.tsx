@@ -615,7 +615,7 @@ export default function ResumeBuilder() {
           <input type="checkbox" checked={emailCopy} onChange={(e) => setEmailCopy(e.target.checked)} className="mt-0.5 h-4 w-4 shrink-0 accent-blue-600" />
           <span className="text-sm">
             <span className="font-semibold">Email me a copy</span> of my resume (PDF and Word) when it&apos;s ready.
-            <span className="block text-xs text-foreground-muted">Double-check your address above. You can also download everything on the next screen.</span>
+            <span className="block text-xs text-foreground-muted">We&apos;ll ask you to confirm your address before anything is sent. You can also download everything on the next screen.</span>
           </span>
         </label>
       </div>
