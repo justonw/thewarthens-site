@@ -11,6 +11,7 @@ import JobTracker from "@/components/JobTracker";
 import StarterChecklist from "@/components/StarterChecklist";
 import EmailGatedDownload from "@/components/EmailGatedDownload";
 import CourseSection from "@/components/CourseSection";
+import ResumeBuilderCallout from "@/components/ResumeBuilderCallout";
 import CoachingCallout from "@/components/coaching/CoachingCallout";
 
 const title = "Tech Journey | Career Change to Tech | The Warthens";
@@ -341,6 +342,18 @@ export default function TechJourneyPage() {
             for every application and follow-up. Use the live versions
             right on this page, or get both as files sent to your inbox.
           </p>
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+            <Link
+              href="/resume"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-500"
+            >
+              Tailor your resume to a job (first 2 free)
+              <span aria-hidden>→</span>
+            </Link>
+            <a href="#toolkit" className="text-sm font-semibold text-blue-600 hover:text-blue-700">
+              Get the printable toolkit ↓
+            </a>
+          </div>
         </Reveal>
       </section>
 
@@ -390,6 +403,12 @@ export default function TechJourneyPage() {
             ]}
             ctaLabel="Email Me Both"
           />
+        </Reveal>
+      </section>
+
+      <section className="mx-auto max-w-3xl px-6 pb-16">
+        <Reveal>
+          <ResumeBuilderCallout />
         </Reveal>
       </section>
 

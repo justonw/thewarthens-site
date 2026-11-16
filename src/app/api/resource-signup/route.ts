@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { HEARD_FROM } from "@/lib/heard-from";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const FROM_EMAIL = process.env.TRACKER_FROM_EMAIL || "The Warthens <info@thewarthens.com>";
@@ -55,7 +56,7 @@ async function sendEmail(payload: Record<string, unknown>) {
 }
 
 export async function POST(req: NextRequest) {
-  let body: { email?: string; resourceId?: string };
+  let body: { email?: string; resourceId?: string; source?: string };
   try {
     body = await req.json();
   } catch {
@@ -66,6 +67,9 @@ export async function POST(req: NextRequest) {
   if (!isValidEmail(email)) {
     return NextResponse.json({ error: "Enter a valid email address." }, { status: 400 });
   }
+
+  // Optional. Anything that is not one of the offered answers is treated as not given.
+  const source = HEARD_FROM.includes(body.source ?? "") ? (body.source as string) : "";
 
   const resource = body.resourceId ? RESOURCES[body.resourceId] : undefined;
   if (!resource) {
@@ -90,7 +94,8 @@ export async function POST(req: NextRequest) {
       html: `<p>Hi,</p>
 <p>Here's your ${resource.label}:</p>
 <ul>${fileList}</ul>
-<p>They're yours. If you haven't taken the free 2-minute career-path quiz yet, it's at <a href="${SITE_URL}/tech">thewarthens.com/tech</a>.</p>
+<p>They're yours. One more thing that might help: if you have a resume and a job you want, our Resume Builder tailors the resume and writes a cover letter for that job, as PDF and Word files. Your first 2 are free: <a href="${SITE_URL}/resume">thewarthens.com/resume</a>.</p>
+<p>If you haven't taken the free 2-minute career-path quiz yet, it's at <a href="${SITE_URL}/tech">thewarthens.com/tech</a>.</p>
 <p>Juston &amp; Atiya</p>`,
     });
   } catch (err) {
@@ -106,7 +111,7 @@ export async function POST(req: NextRequest) {
       from: FROM_EMAIL,
       to: NOTIFY_EMAIL,
       subject: `New signup: ${resource.label}`,
-      html: `<p>${escapeHtml(email)} requested "${escapeHtml(resource.label)}".</p>`,
+      html: `<p>${escapeHtml(email)} requested "${escapeHtml(resource.label)}".</p><p>Found us via: ${escapeHtml(source || "not given")}</p>`,
     });
   } catch (err) {
     console.error("resource-signup notify copy failed (visitor email still sent)", err);

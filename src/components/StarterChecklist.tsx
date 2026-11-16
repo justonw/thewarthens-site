@@ -134,6 +134,12 @@ export default function StarterChecklist() {
           Get the job search toolkit ↓
         </a>
       </p>
+      <p className="mt-2 text-xs text-foreground-muted">
+        Have a job in mind?{" "}
+        <a href="/resume" className="font-semibold text-blue-600 hover:text-blue-700">
+          Tailor your resume to it with the Resume Builder →
+        </a>
+      </p>
       <p className="mt-3 text-xs text-foreground-muted">
         Sources: Jobscan ATS usage data, Merit America, Resume.io,
         Kickresume, CareerEnlightenment, Simplify Jobs LinkedIn
