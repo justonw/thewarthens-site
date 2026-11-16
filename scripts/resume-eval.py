@@ -141,7 +141,8 @@ def score(result, original_text, expect_entries):
     missing = [k for k in keys if k not in found]
     new_numbers = sorted(numbers(text) - numbers(original_text)) if original_text else []
     problems = []
-    if re.search(r"\b(he|she|his|her|him|they|their)\b", text, re.I):
+    # "they" and "their" usually mean customers or stakeholders ("on their pain points"), so only he/she/his/her/him are flagged
+    if re.search(r"\b(he|she|his|her|him)\b", text, re.I):
         problems.append("pronoun for the person")
     if re.search(r"\bI\b|\bmy\b", text):
         problems.append("first person")

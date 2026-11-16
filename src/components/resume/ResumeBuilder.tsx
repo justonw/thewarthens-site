@@ -570,6 +570,7 @@ export default function ResumeBuilder() {
         <textarea
           ref={notesRef}
           id="rt-notes"
+          aria-label="Tell us more about you (optional)"
           rows={3}
           value={notes}
           onChange={(e) => setNotes(e.target.value)}

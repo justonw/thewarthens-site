@@ -1,6 +1,6 @@
 import { timingSafeEqual } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
-import { buildRefineRequest, cleanText, parseDoc, parseRefineResponse, RESUME_MODEL, type ResumeDoc } from "@/lib/resume-tailor";
+import { buildRefineRequest, cleanText, mergeRefined, parseDoc, parseRefineResponse, RESUME_MODEL, type ResumeDoc } from "@/lib/resume-tailor";
 import { getKv, bumpCounter, monthKey, emailKey } from "@/lib/resume-limits";
 import { isLiveHost } from "@/lib/coaching-recipients";
 
@@ -139,5 +139,5 @@ export async function POST(req: NextRequest) {
   const parsed = await ask(payload);
   if (!parsed || !parsed.added) await giveBack();
   if (!parsed) return NextResponse.json({ error: "upstream" }, { status: 502 });
-  return NextResponse.json({ ok: true, added: parsed.added, note: parsed.note, resume: parsed.resume });
+  return NextResponse.json({ ok: true, added: parsed.added, note: parsed.note, resume: mergeRefined(doc, parsed.resume) });
 }

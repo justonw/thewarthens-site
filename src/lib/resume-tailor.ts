@@ -210,7 +210,7 @@ const docProps = {
   },
 };
 
-export function buildResumeRequest(input: TailorInput, model: string = RESUME_MODEL) {
+export function buildResumeRequest(input: TailorInput, model: string = RESUME_MODEL, missingPhrases: string[] = []) {
   // Sonnet 5.5 rejects a forced tool call (HTTP 400), so it gets "auto" plus an instruction to call the
   // tool; Haiku accepts the forced call. A reply with no tool call is treated as a failed try upstream.
   const forceTool = model.startsWith("claude-haiku");
@@ -276,7 +276,17 @@ export function buildResumeRequest(input: TailorInput, model: string = RESUME_MO
       },
     ],
     tool_choice: forceTool ? { type: "tool", name: TOOL_NAME } : { type: "auto" },
-    messages: [{ role: "user", content: buildContent(input) }],
+    messages: [
+      {
+        role: "user",
+        content: buildContent(
+          input,
+          missingPhrases.length
+            ? `A first draft did not use these phrases from the posting: ${missingPhrases.map((p) => `"${p}"`).join(", ")}. For each one that the person's real work truly matches, use that exact phrase by reframing the bullet or summary line that proves it, keeping every number, name, and date. Leave out any that do not match, and list those in gaps. Do not merge or drop jobs. Now call ${TOOL_NAME} with the tailored resume.`
+            : undefined
+        ),
+      },
+    ],
   };
 }
 
@@ -386,6 +396,9 @@ function parseDesign(value: unknown): ResumeDesign | null {
   if (!order.includes("summary")) order.unshift("summary");
   if (!order.includes("skills")) order.splice(order.indexOf("summary") + 1, 0, "skills");
   for (const k of SECTION_KEYS) if (!order.includes(k)) order.push(k);
+  // With two columns there is no single reading order (a sidebar's sections get read first), so the best-practice
+  // order is used: summary, skills, experience, training, education.
+  if (Number(v.columns) > 1) order.splice(0, order.length, ...SECTION_KEYS);
   return {
     font: pick(v.font, ["sans", "serif"] as const, "sans"),
     headerAlign: pick(v.headerAlign, ["left", "center"] as const, "left"),
@@ -480,7 +493,7 @@ const REFINE_SYSTEM = `You update a resume. A job posting asks for something the
 Rules:
 - Use only what the person said, at the level of detail they gave. Do not add numbers, tools, dates, employers, or results they did not state.
 - Put it where it belongs: a skill or tool goes in the best skills group (add a group only if none fits); something they did at a named job becomes one new bullet under that job (verb first, past tense for a past job, and only if the person named the job or it is clear from what they said); a course or certificate goes in training. If it is not clear which job it belongs to, put it in skills or training instead and do not attach it to a job.
-- Leave every other part of the resume exactly as it is. Do not rewrite, reorder, or shorten anything else.
+- Leave every other part of the resume exactly as it is. Do not rewrite, reorder, or shorten anything else. Always return EVERY section in full: the name, headline, contact details, summary, skills, every job with its title, company, location, dates, and bullets, training, and education. A section that does not change must still be returned exactly as given.
 - If what the person said does not actually answer the requirement, or is too vague to use, set "added" to false and use "note" to say, in one friendly sentence, what to add (for example: where they used it and for how long).
 - Never use em dashes or en dashes. No clichés.
 - "note": one short sentence saying what you changed, for example "Added Salesforce to your Tools skills."
@@ -503,7 +516,7 @@ export function buildRefineRequest(
         input_schema: {
           type: "object",
           properties: { added: { type: "boolean" }, note: str, ...docProps },
-          required: ["added", "note", "name", "headline", "summary", "skills", "experience"],
+          required: ["added", "note", "name", "headline", "contact", "summary", "skills", "experience", "training", "education"],
         },
       },
     ],
@@ -519,6 +532,39 @@ export function buildRefineRequest(
         ],
       },
     ],
+  };
+}
+
+// The "I have this" answer is only trusted for what it was asked to do: add something. Everything else is taken
+// from the resume as it was, so a section the AI forgot to send back (the contact line, training, education, a
+// job's dates) can never disappear.
+const words = (t: string) => t.toLowerCase().replace(/[^a-z0-9 ]+/g, " ").split(/\s+/).filter(Boolean);
+function similar(a: string, b: string) {
+  const x = new Set(words(a));
+  const y = words(b);
+  if (x.size === 0 || y.length === 0) return 0;
+  return y.filter((w) => x.has(w)).length / Math.max(x.size, y.length);
+}
+export function mergeRefined(original: ResumeDoc, refined: ResumeDoc): ResumeDoc {
+  const sameJob = (a: ResumeJob, b: ResumeJob) => words(a.company).join(" ") === words(b.company).join(" ") && words(a.title).join(" ") === words(b.title).join(" ");
+  const experience = original.experience.map((job) => {
+    const next = refined.experience.find((r) => sameJob(r, job));
+    if (!next) return job;
+    // Keep every original bullet as written; add only bullets that are really new, not reworded copies.
+    const added = next.bullets.filter((b) => b && job.bullets.every((o) => similar(o, b) < 0.75));
+    return { ...job, bullets: [...job.bullets, ...added].slice(0, 8) };
+  });
+  const skills = [...refined.skills];
+  for (const group of original.skills) {
+    if (!skills.some((g) => g.label.toLowerCase() === group.label.toLowerCase())) skills.push(group);
+  }
+  return {
+    ...original,
+    summary: refined.summary || original.summary,
+    skills: skills.length ? skills : original.skills,
+    experience,
+    // a new course or certificate may be added, but nothing already listed is dropped
+    training: [...original.training, ...refined.training.filter((t) => original.training.every((o) => similar(o.name, t.name) < 0.75))],
   };
 }
 

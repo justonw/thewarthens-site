@@ -15,6 +15,8 @@ import {
 } from "@/lib/resume-tailor";
 import { DEFAULT_MONTHLY_CAP, FREE_PER_EMAIL, getKv, refund, reserve, withTimeout, type Reservation } from "@/lib/resume-limits";
 import { isLiveHost } from "@/lib/coaching-recipients";
+import { keywordCoverage } from "@/lib/resume-ats";
+import { resumeToPlainText } from "@/lib/resume-files";
 
 // Rewrites a person's resume for one job posting (see lib/resume-tailor.ts). The resume and posting
 // are sent to Anthropic to be rewritten and are not logged or stored here. Free use is limited per
@@ -100,13 +102,15 @@ async function askClaude<T>(
   label: string,
   build: (model: string) => unknown,
   parse: (data: unknown) => T | null,
-  model: string
+  model: string,
+  budgetMs = 55000,
+  state: { badFile?: boolean } = {}
 ): Promise<T | null> {
   const started = Date.now();
   let pauseMs = 800;
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
     // Stay inside the host's time limit: each try gets only what is left of a 55 second budget.
-    const left = 55000 - (Date.now() - started);
+    const left = budgetMs - (Date.now() - started);
     if (attempt > 1 && left < 9000) break;
     const payload = JSON.stringify(build(attempt === 1 ? model : FALLBACK_MODEL));
     try {
@@ -119,7 +123,9 @@ async function askClaude<T>(
       if (!res.ok) {
         const detail = (await res.text().catch(() => "")).slice(0, 300);
         console.error(`${label} attempt ${attempt}: Claude answered ${res.status} ${detail}`);
-        if (res.status !== 429 && res.status < 500) return null; // a bad request will not get better
+        // A bad request will not get better. When the reply names a file, tell the person the file is the problem.
+        if (res.status === 400 && /pdf|document|image|media|base64|file/i.test(detail)) state.badFile = true;
+        if (res.status !== 429 && res.status < 500) return null;
         const asked = Number(res.headers.get("retry-after"));
         pauseMs = Math.min(Math.max(Number.isFinite(asked) ? asked * 1000 : 0, 800 * attempt), 4000);
       } else {
@@ -219,13 +225,43 @@ export async function POST(req: NextRequest) {
     // The resume and the cover letter are written by two requests at the same time. A letter is a different job,
     // and asking for both in one answer often left the letter missing or half-written.
     const base: TailorInput = { resumeText, resumeFiles, postingText, postingFiles, notes, coverLetter: false, hiringManager, fromScratch, matchDesign: matchDesign && resumeFiles.length > 0 };
-    const [parsed, letterResult] = await Promise.all([
-      askClaude("resume-tailor", (m) => buildResumeRequest(base, m), parseResumeResponse, model),
+    const startedAll = Date.now();
+    const fileState: { badFile?: boolean } = {};
+    const [firstParsed, letterResult] = await Promise.all([
+      askClaude("resume-tailor", (m) => buildResumeRequest(base, m), parseResumeResponse, model, 55000, fileState),
       wantsLetter ? askClaude("resume-letter", (m) => buildLetterRequest(base, m), parseLetterResponse, model) : Promise.resolve(null),
     ]);
+    let parsed = firstParsed;
     if (!parsed) {
       await giveBack();
+      if (fileState.badFile) {
+        return NextResponse.json({ error: "problem", message: "We couldn't read one of your files. Try saving it again as a PDF or picture, or paste the text instead. Nothing was counted." }, { status: 422 });
+      }
       return NextResponse.json({ error: "upstream" }, { status: 502 });
+    }
+
+    // A draw can come back with too little of the posting's own wording. When that happens and there is time, one
+    // more pass names the missed phrases. The better of the two drafts is kept, and a draft that dropped jobs is not.
+    if (parsed.ok && !fromScratch && parsed.result.postingKeywords.length >= 6) {
+     try {
+      const first = keywordCoverage(resumeToPlainText(parsed.result.resume), parsed.result.postingKeywords);
+      const total = parsed.result.postingKeywords.length;
+      const elapsed = Date.now() - startedAll;
+      if (first.found.length / total < 0.65 && first.missing.length >= 3 && elapsed < 26000) {
+        const missing = first.missing.slice(0, 8);
+        const second = await askClaude("resume-repair", (m) => buildResumeRequest(base, m, missing), parseResumeResponse, model, 54000 - elapsed);
+        if (second && second.ok) {
+          const after = keywordCoverage(resumeToPlainText(second.result.resume), second.result.postingKeywords);
+          const better = after.found.length / Math.max(1, second.result.postingKeywords.length) > first.found.length / total;
+          const keptJobs = second.result.resume.experience.length >= parsed.result.resume.experience.length;
+          console.log("resume-tailor: repair pass", { before: `${first.found.length}/${total}`, after: `${after.found.length}/${second.result.postingKeywords.length}`, used: better && keptJobs });
+          if (better && keptJobs) parsed = second;
+        }
+      }
+     } catch (err) {
+      // The repair is a bonus: if anything goes wrong in it, the first draft is used as it is.
+      console.error("resume-tailor: repair pass failed, keeping the first draft", err instanceof Error ? err.message : err);
+     }
     }
     if (!parsed.ok) {
       await giveBack();

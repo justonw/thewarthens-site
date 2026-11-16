@@ -482,7 +482,7 @@ export default function ResultView({
                         , accent <span aria-hidden className="inline-block h-2.5 w-2.5 translate-y-px rounded-full align-baseline" style={{ backgroundColor: design.accent }} /> {design.accent}
                       </>
                     )}
-                    , sections in your original order.
+                    , {design.columns > 1 ? "sections in the standard order (summary, skills, experience, training, education)" : "sections in your original order"}.
                     {(design.columns > 1 || design.hasGraphics) &&
                       " Your original used columns or graphics, which many hiring systems misread, so we kept one clean column."}
                   </>
