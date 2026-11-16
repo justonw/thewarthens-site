@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import type { CoverLetter, ResumeDoc, ResumeGap, TailorResult } from "@/lib/resume-tailor";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { contactGaps, type CoverLetter, type ResumeDoc, type ResumeGap, type TailorResult } from "@/lib/resume-tailor";
 import { keywordCoverage, runAtsCheck } from "@/lib/resume-ats";
 import { RESUME_STYLES, buildCoverLetterDocx, buildCoverLetterPdf, buildDocx, buildPdf, coverLetterFileName, resumeFileName, resumeToPlainText, type ResumeStyle } from "@/lib/resume-files";
 import { downloadBlob } from "@/lib/download";
@@ -208,6 +208,7 @@ export default function ResultView({
   const finalDoc = useMemo(() => cleanDoc(doc), [doc]);
   const ats = useMemo(() => runAtsCheck(finalDoc, result.postingTitle, result.postingKeywords), [finalDoc, result.postingTitle, result.postingKeywords]);
   const flags = ats.rows.filter((r) => r.status === "flag").length;
+  const contactMissing = contactGaps(finalDoc.contact);
 
   // Add to the job tracker (kept in this browser, the same list as the tracker on the Tech Journey page).
   const [entries, setEntries] = usePersistentState<TrackerEntry[]>(TRACKER_KEY, NO_TRACKER_ENTRIES);
@@ -234,9 +235,18 @@ export default function ResultView({
   // Emails the person their files (the same ones the download buttons make). Sent once on its own if they
   // ticked the box, and again whenever they ask, so the copy can include their edits.
   const [mailed, setMailed] = useState<"" | "sending" | "sent" | "failed">("");
-  // They asked for a copy on the form, but nothing is sent until they confirm the address here: a mistyped
-  // address would send their resume to a stranger.
-  const [confirmCopy, setConfirmCopy] = useState<"ask" | "declined" | "done">(emailCopy ? "ask" : "done");
+  // They ticked "email me a copy" on the form next to the address they typed, which is their say-so. The copy goes
+  // out once, when the result first appears. A mistyped address is caught on the form, where the address is entered.
+  const autoSent = useRef(false);
+  useEffect(() => {
+    if (!emailCopy || autoSent.current) return;
+    const timer = window.setTimeout(() => {
+      autoSent.current = true;
+      void sendCopy();
+    }, 300);
+    return () => window.clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function sendCopy() {
     setMailed("sending");
@@ -360,7 +370,13 @@ export default function ResultView({
           <div className="flex items-center gap-4">
             <ReadinessRing passed={ats.rows.length - flags} total={ats.rows.length} />
             <div>
-              <p className="rb-pop inline-flex items-center rounded-full bg-green-600 px-3 py-1 text-xs font-bold uppercase tracking-wider text-white">Ready to apply</p>
+              {flags === 0 ? (
+                <p className="rb-pop inline-flex items-center rounded-full bg-green-600 px-3 py-1 text-xs font-bold uppercase tracking-wider text-white">Ready to apply</p>
+              ) : (
+                <p className="rb-pop inline-flex items-center rounded-full bg-amber-500 px-3 py-1 text-xs font-bold uppercase tracking-wider text-white">
+                  {flags} thing{flags === 1 ? "" : "s"} to check before you apply
+                </p>
+              )}
               <h2 className="mt-1.5 text-xl font-semibold tracking-tight sm:text-2xl">
                 Your {letter ? "resume and cover letter" : "resume"} for {result.postingTitle || doc.headline}
                 {result.postingCompany ? ` at ${result.postingCompany}` : ""}
@@ -384,32 +400,24 @@ export default function ResultView({
         </div>
       </div>
 
-      {confirmCopy === "ask" && (
-        <div role="group" aria-label="Email a copy" className="rounded-2xl border border-blue-500/30 bg-blue-500/5 px-4 py-4 sm:px-5">
-          <p className="text-sm font-semibold">Email a copy of your files to this address?</p>
-          <p className="mt-1 break-all text-base font-bold">{email}</p>
-          <p className="mt-1 text-xs text-foreground-muted">Check it letter by letter. Your resume and cover letter would go to this address, so make sure it&apos;s yours.</p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                setConfirmCopy("done");
-                void sendCopy();
-              }}
-              className="rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-500"
-            >
-              Yes, send it
-            </button>
-            <button type="button" onClick={() => setConfirmCopy("declined")} className="rounded-full border border-border-subtle bg-white px-5 py-2 text-sm font-semibold transition-colors hover:border-blue-500/40">
-              That&apos;s not my address
-            </button>
-          </div>
+    {(contactMissing.email || contactMissing.phone) && (
+        <div role="alert" className="rounded-2xl border border-amber-500/50 bg-amber-500/10 p-5">
+          <p className="font-semibold">
+            {contactMissing.email && contactMissing.phone ? "No email or phone number made it onto this resume." : contactMissing.email ? "No email address made it onto this resume." : "No phone number made it onto this resume."}
+          </p>
+          <p className="mt-1 text-sm text-foreground-muted">A recruiter needs a way to reach you. Type your contact details here, separated by &quot;|&quot;, and they go straight into the header.</p>
+          <label htmlFor="rt-contact-fix" className="sr-only">
+            Your contact details
+          </label>
+          <input
+            id="rt-contact-fix"
+            type="text"
+            value={doc.contact.join(" | ")}
+            onChange={(e) => onDoc({ ...doc, contact: e.target.value.split("|") })}
+            placeholder="Atlanta, GA | (555) 123-4567 | you@example.com"
+            className="mt-3 w-full rounded-xl border border-border-subtle bg-background px-3 py-2 text-sm"
+          />
         </div>
-      )}
-      {confirmCopy === "declined" && (
-        <p role="status" className="rounded-2xl border border-border-subtle bg-background-elevated px-4 py-3 text-sm">
-          No problem, nothing was sent. You can download your files below. If you want them by email, press &quot;Tailor for another job&quot; and enter the right address (free builds are counted per email address).
-        </p>
       )}
 
       {letterFailed && !letter && (

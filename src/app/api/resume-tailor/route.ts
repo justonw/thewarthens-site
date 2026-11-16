@@ -1,14 +1,19 @@
 import { timingSafeEqual } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import {
+  addMissingContact,
+  buildContactRequest,
   buildLetterRequest,
   buildResumeRequest,
   cleanAttachments,
+  contactFromText,
+  contactGaps,
   MAX_ATTACH_B64_TOTAL,
   RESUME_MODEL,
   MAX_NOTES_CHARS,
   MAX_POSTING_CHARS,
   MAX_RESUME_CHARS,
+  parseContactResponse,
   parseLetterResponse,
   parseResumeResponse,
   type TailorInput,
@@ -243,6 +248,30 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "problem", message: "We couldn't read one of your files. Try saving it again as a PDF or picture, or paste the text instead. Nothing was counted." }, { status: 422 });
       }
       return NextResponse.json({ error: "upstream" }, { status: 502 });
+    }
+
+    // The contact line is checked before anything else: an email and a phone number are what a recruiter needs.
+    // Pasted text is searched in plain code. For files, a small fast question reads the contact details off them.
+    // Both steps are bonuses and fail soft, and the second only runs while there is time left before the host's limit.
+    if (parsed.ok && !fromScratch) {
+      try {
+        const doc = parsed.result.resume;
+        let gaps = contactGaps(doc.contact);
+        if (gaps.email || gaps.phone) {
+          if (resumeText) doc.contact = addMissingContact(doc.contact, contactFromText(resumeText, doc.contact));
+          gaps = contactGaps(doc.contact);
+          const used = Date.now() - startedAll;
+          if ((gaps.email || gaps.phone) && resumeFiles.length > 0 && used < 22000) {
+            const found = await askClaude("resume-contact", () => buildContactRequest(base), parseContactResponse, model, Math.min(9500, 27000 - used));
+            if (found) {
+              doc.contact = addMissingContact(doc.contact, found);
+              console.log("resume-tailor: contact filled in by a second look", { items: found.length });
+            }
+          }
+        }
+      } catch (err) {
+        console.error("resume-tailor: contact check failed, keeping the draft", err instanceof Error ? err.message : err);
+      }
     }
 
     // A draw can come back with too little of the posting's own wording. When that happens and there is time, one

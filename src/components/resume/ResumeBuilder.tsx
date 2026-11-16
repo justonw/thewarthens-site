@@ -99,6 +99,19 @@ const progressSteps = (letter: boolean) => [
   "Checking it against our checklist…",
 ];
 
+// A quick check for the most common mistyped email providers, so a copy is not sent to a stranger by accident.
+const EMAIL_FIXES: Record<string, string> = {
+  "gmial.com": "gmail.com", "gmai.com": "gmail.com", "gmal.com": "gmail.com", "gmail.co": "gmail.com", "gmail.con": "gmail.com", "gamil.com": "gmail.com", "gnail.com": "gmail.com",
+  "yaho.com": "yahoo.com", "yahooo.com": "yahoo.com", "yahoo.con": "yahoo.com", "hotmial.com": "hotmail.com", "hotmail.con": "hotmail.com", "outlok.com": "outlook.com", "outlook.con": "outlook.com",
+  "iclod.com": "icloud.com", "icloud.con": "icloud.com",
+};
+function suggestEmail(value: string): string {
+  const m = value.trim().match(/^([^@\s]+)@([^@\s]+)$/);
+  if (!m) return "";
+  const fix = EMAIL_FIXES[m[2].toLowerCase()];
+  return fix ? `${m[1]}@${fix}` : "";
+}
+
 export default function ResumeBuilder() {
   const [phase, setPhase] = useState<Phase>("form");
   const [mode, setMode] = useState<"have" | "scratch">("have");
@@ -111,6 +124,7 @@ export default function ResumeBuilder() {
   const [hiringManager, setHiringManager] = useState("");
   const [wantLetter, setWantLetter] = useState(false);
   const [email, setEmail] = useState("");
+  const emailHint = suggestEmail(email);
   const [source, setSource] = useState("");
   const [error, setError] = useState("");
   const [retrying, setRetrying] = useState(false);
@@ -329,6 +343,18 @@ export default function ResumeBuilder() {
     const saved = raw;
     // Applied just after the page has settled, so the form fills in without a mismatch with the server's page.
     window.setTimeout(() => applyDraft(saved), 0);
+  }, [justPaid]);
+
+  // After Stripe the person must still press Build. Bring the button into view and focus it, so the last step
+  // is impossible to miss. Waits a moment so the restored form has finished filling in and the page has settled.
+  const buildButton = useRef<HTMLButtonElement | null>(null);
+  useEffect(() => {
+    if (!justPaid) return;
+    const timer = window.setTimeout(() => {
+      buildButton.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      buildButton.current?.focus({ preventScroll: true });
+    }, 700);
+    return () => window.clearTimeout(timer);
   }, [justPaid]);
 
   function startOver() {
@@ -597,6 +623,15 @@ export default function ResumeBuilder() {
               Your email
             </label>
             <input id="rt-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" autoComplete="email" className={`${input} mt-1`} />
+            {emailHint && (
+              <p role="status" className="mt-1 text-xs text-amber-700">
+                Did you mean{" "}
+                <button type="button" onClick={() => setEmail(emailHint)} className="font-semibold underline underline-offset-2">
+                  {emailHint}
+                </button>
+                ?
+              </p>
+            )}
           </div>
           <div>
             <label className="block text-xs font-semibold" htmlFor="rt-source">
@@ -616,7 +651,7 @@ export default function ResumeBuilder() {
           <input type="checkbox" checked={emailCopy} onChange={(e) => setEmailCopy(e.target.checked)} className="mt-0.5 h-4 w-4 shrink-0 accent-blue-600" />
           <span className="text-sm">
             <span className="font-semibold">Email me a copy</span> of my resume (PDF and Word) when it&apos;s ready.
-            <span className="block text-xs text-foreground-muted">We&apos;ll ask you to confirm your address before anything is sent. You can also download everything on the next screen.</span>
+            <span className="block text-xs text-foreground-muted">It goes to the email address above the moment it&apos;s ready, so check that it&apos;s right. You can also download everything on the next screen.</span>
           </span>
         </label>
       </div>
@@ -673,13 +708,16 @@ export default function ResumeBuilder() {
         </div>
       ) : (
         justPaid && (
-          <p role="status" className="rounded-xl border border-green-600/30 bg-green-600/5 px-4 py-3 text-sm text-green-800">
-            {draftBack === "yes" &&
-              "Thank you! Your payment went through, and your builds are added to the email you paid with. We kept everything you entered, so press Build."}
-            {draftBack === "files" &&
-              "Thank you! Your payment went through, and your builds are added to the email you paid with. We kept what you typed. Add your file or screenshot again, then press Build."}
-            {draftBack === "" && "Thank you! Your payment went through. Your builds are added to the email address you paid with, so use that same email below."}
-          </p>
+          <div role="status" className="rounded-2xl border-2 border-green-600/50 bg-green-600/10 p-4 sm:p-5">
+            <p className="text-base font-semibold text-green-900">
+              <span aria-hidden>✓ </span>Payment received. One more step: press the button below to build your resume.
+            </p>
+            <p className="mt-1 text-sm text-green-900/80">
+              {draftBack === "yes" && "Your builds are added to the email you paid with, and we kept everything you entered. Your resume has not been built yet."}
+              {draftBack === "files" && "Your builds are added to the email you paid with, and we kept what you typed. Add your resume file or screenshot again, then press the button below. Your resume has not been built yet."}
+              {draftBack === "" && "Your builds are added to the email address you paid with, so use that same email below. Your resume has not been built yet."}
+            </p>
+          </div>
         )
       )}
 
@@ -690,8 +728,12 @@ export default function ResumeBuilder() {
       )}
 
       <div className="pt-1">
-        <button type="submit" className="rb-cta inline-flex w-full items-center justify-center gap-2 rounded-full px-7 py-4 text-base font-semibold text-white">
-          {wantLetter ? "Build my resume and cover letter" : "Build my resume"}
+        <button
+          ref={buildButton}
+          type="submit"
+          className={`rb-cta inline-flex w-full items-center justify-center gap-2 rounded-full px-7 py-4 text-base font-semibold text-white ${justPaid ? "ring-4 ring-green-500/50 ring-offset-2" : ""}`}
+        >
+          {justPaid ? (wantLetter ? "Press here to build my resume and cover letter" : "Press here to build my resume") : wantLetter ? "Build my resume and cover letter" : "Build my resume"}
           <span aria-hidden>→</span>
         </button>
         {missing.length > 0 && <p className="mt-2 text-center text-xs text-foreground-muted">Still needed: {missing.join(", ")}.</p>}

@@ -90,12 +90,21 @@ export default function ResumeInputBox({
     setBusy(true);
     setNotice({ kind: "info", message: "Reading the posting from your link…" });
     try {
-      const res = await fetch("/api/posting-fetch", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url }),
-      });
-      const data = await res.json().catch(() => ({}));
+      const ask = async () => {
+        const r = await fetch("/api/posting-fetch", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url }),
+        });
+        return { res: r, data: await r.json().catch(() => ({})) };
+      };
+      let { res, data } = await ask();
+      // Sites like LinkedIn turn away an automated read some of the time and allow it the next. One quiet retry
+      // saves the person a second click.
+      if ((!res.ok || !data.ok) && (data.error === "blocked-site" || data.error === "unreachable")) {
+        await new Promise((resolve) => setTimeout(resolve, 1200));
+        ({ res, data } = await ask());
+      }
       if (!res.ok || !data.ok) {
         setNotice({ kind: "error", message: linkErrors[data.error as string] ?? linkErrors.unreachable });
       } else {
