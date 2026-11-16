@@ -92,9 +92,15 @@ function BlockView({ block }: { block: Block }) {
         <ul className="space-y-4">
           {block.items.map((item) => (
             <li key={item.href} className="rounded-2xl border border-border-subtle bg-background-elevated p-5">
-              <a href={item.href} target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-700 underline-offset-4 hover:underline">
-                {item.label}
-              </a>
+              {item.href.startsWith("/") ? (
+                <Link href={item.href} className="font-semibold text-blue-700 underline-offset-4 hover:underline">
+                  {item.label}
+                </Link>
+              ) : (
+                <a href={item.href} target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-700 underline-offset-4 hover:underline">
+                  {item.label}
+                </a>
+              )}
               <p className="mt-1 text-sm text-foreground-muted sm:text-base">{item.text}</p>
             </li>
           ))}

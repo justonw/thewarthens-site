@@ -22,6 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/tech", priority: 0.9, lastModified: SITE_LAST_UPDATED },
     { path: "/tech/coaching", priority: 0.8, lastModified: new Date("2026-10-24") },
     { path: "/resume", priority: 0.9, lastModified: new Date("2026-11-16") },
+    { path: "/resume/keyword-matcher", priority: 0.8, lastModified: new Date("2026-11-16") },
     { path: "/resume/guides", priority: 0.8, lastModified: new Date(RESUME_GUIDES_UPDATED) },
     ...resumeGuides.map((g) => ({ path: `/resume/guides/${g.slug}`, priority: 0.8, lastModified: new Date(g.updated) })),
     { path: "/techjr", priority: 0.9, lastModified: new Date("2026-11-03") },

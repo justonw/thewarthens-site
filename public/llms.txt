@@ -17,6 +17,7 @@
 
 - [Tech Journey](https://thewarthens.com/tech): Career quiz, pay snapshots, resume checklist, and Start Here guides for tech sales, cybersecurity, coding, and data analytics.
 - [Resume Builder](https://thewarthens.com/resume): Add your resume and a job posting (or its link) to get a tailored, scanner-friendly resume and an optional matching cover letter as PDF and Word files, built only from your real experience. Two free builds per email.
+- [Free resume keyword scanner](https://thewarthens.com/resume/keyword-matcher): Paste a resume and a job posting to see which key phrases are present, almost there, or missing. Free, no sign-up.
 - [Resume and cover letter guides](https://thewarthens.com/resume/guides): Short, sourced guides to tailoring a resume, passing hiring software, changing careers, and addressing a cover letter.
 - [How to tailor your resume to a job description](https://thewarthens.com/resume/guides/tailor-resume-to-job-description): A 7-step process with a before-and-after example, the evidence on whether tailoring helps, and what never to do.
 - [ATS-friendly resume: what hiring software actually reads](https://thewarthens.com/resume/guides/ats-friendly-resume): What applicant tracking systems do, the formatting that causes problems, and a seven-point check.

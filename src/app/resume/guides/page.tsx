@@ -81,6 +81,11 @@ export default function ResumeGuidesPage() {
           </li>
         ))}
       </ul>
+      <Link href="/resume/keyword-matcher" className="mt-6 block rounded-2xl border border-blue-500/30 bg-blue-500/5 p-6 transition-colors hover:border-blue-500/60">
+        <span className="text-xs font-semibold uppercase tracking-wider text-blue-700">Free tool</span>
+        <span className="mt-1 block text-xl font-semibold">Resume keyword scanner</span>
+        <span className="mt-2 block text-foreground-muted">Paste your resume and a job posting to see which key phrases you have and which are missing.</span>
+      </Link>
       <div className="mt-12 rounded-3xl border border-blue-500/30 bg-blue-500/5 p-6 sm:p-8">
         <h2 className="text-xl font-semibold">Skip the reading: let the builder do it</h2>
         <p className="mt-2 text-foreground-muted">Add your resume and a job posting. Get a tailored resume and a matching cover letter as PDF and Word files, built only from your real experience. Your first 2 builds are free.</p>

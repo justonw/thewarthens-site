@@ -118,6 +118,7 @@ export const resumeGuides: ResumeGuide[] = [
               },
             ],
           },
+          { type: "links", items: [{ label: "Try the free resume keyword scanner", href: "/resume/keyword-matcher", text: "Paste your resume and the posting to see which of its key phrases you already have, which are missing, and which are almost there. Free, no sign-up." }] },
         ],
       },
       {
@@ -255,6 +256,7 @@ export const resumeGuides: ResumeGuide[] = [
               { title: "Dates on every job", text: "A missing date can make a timeline unreadable to software and raises questions for a person." },
             ],
           },
+          { type: "links", items: [{ label: "Try the free resume keyword scanner", href: "/resume/keyword-matcher", text: "Paste your resume and the posting to see which of its key phrases you already have, which are missing, and which are almost there. Free, no sign-up." }] },
           {
             type: "p",
             text: "These are the same seven checks the Resume Builder runs on every resume it makes, and it updates the list as you edit.",

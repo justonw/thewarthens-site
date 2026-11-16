@@ -199,6 +199,10 @@ export default function ResumePage() {
               </li>
             ))}
           </ul>
+          <Link href="/resume/keyword-matcher" className="mt-4 block rounded-2xl border border-blue-500/30 bg-blue-500/5 p-4 transition-colors hover:border-blue-500/60">
+            <span className="font-semibold text-blue-700">Free resume keyword scanner</span>
+            <span className="mt-1 block text-sm text-foreground-muted">Just want to see what your resume is missing? Paste it with a job posting and check, no sign-up.</span>
+          </Link>
         </Reveal>
       </section>
 
