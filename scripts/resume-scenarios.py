@@ -245,6 +245,8 @@ def ai_scenarios(api, only):
 
     for (key, name, over, src, _), (code, payload, secs) in results:
         print(f"-- {name} ({secs}s)")
+        # Netlify's edge cuts off a quiet request at about 30 seconds, so a build must finish well inside that.
+        check(f"{name}: finishes in under 25 seconds", secs < 25, f"{secs}s")
         if key == "notresume":
             check(f"{name}: refused with a friendly message", code == 422 and payload.get("error") == "problem" and bool(payload.get("message")), f"{code} {str(payload)[:120]}")
             continue

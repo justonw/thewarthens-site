@@ -93,6 +93,11 @@ async function notify(live: boolean, email: string, jobTitle: string, source: st
 // retried (up to three tries in all) on the fast model, which is very reliable at this, so people rarely
 // see an error. A busy or rate-limited service is given the pause it asks for between tries.
 // What went wrong is logged without any of their words.
+// Netlify's edge cuts off a request that has been quiet for about 30 seconds, even though the function itself may run
+// to 60. A first draft takes 15 to 20 seconds, so a second full pass cannot fit and made some builds time out.
+// The repair pass is therefore only attempted when the first draft came back this fast, which is rare. It can be
+// turned back on once the reply is streamed (so the connection is never quiet).
+const REPAIR_ONLY_IF_FASTER_THAN_MS = 9000;
 const FALLBACK_MODEL = "claude-haiku-5-5";
 const MAX_ATTEMPTS = 3;
 
@@ -247,7 +252,7 @@ export async function POST(req: NextRequest) {
       const first = keywordCoverage(resumeToPlainText(parsed.result.resume), parsed.result.postingKeywords);
       const total = parsed.result.postingKeywords.length;
       const elapsed = Date.now() - startedAll;
-      if (first.found.length / total < 0.65 && first.missing.length >= 3 && elapsed < 26000) {
+      if (first.found.length / total < 0.65 && first.missing.length >= 3 && elapsed < REPAIR_ONLY_IF_FASTER_THAN_MS) {
         const missing = first.missing.slice(0, 8);
         const second = await askClaude("resume-repair", (m) => buildResumeRequest(base, m, missing), parseResumeResponse, model, 54000 - elapsed);
         if (second && second.ok) {
