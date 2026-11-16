@@ -7,7 +7,7 @@
 The owner code is read from RESUME_OWNER_CODE or from the file given with --owner-code-file. It is never printed.
 The site refuses to send until a pack is on sale, and never emails the same person twice.
 """
-import argparse, json, os, sys, time, urllib.request, urllib.error
+import argparse, json, os, ssl, sys, time, urllib.request, urllib.error
 from pathlib import Path
 
 ap = argparse.ArgumentParser()
@@ -22,10 +22,13 @@ if not code and Path(a.owner_code_file).expanduser().exists():
 if not code:
     sys.exit("No owner code. Set RESUME_OWNER_CODE or pass --owner-code-file.")
 
+# Some Python installs on a Mac have no certificate list of their own; the system one works.
+SSL_CONTEXT = ssl.create_default_context(cafile="/etc/ssl/cert.pem") if Path("/etc/ssl/cert.pem").exists() else None
+
 def call(body):
     req = urllib.request.Request(a.base_url.rstrip("/") + "/api/resume-waitlist-send", data=json.dumps(body).encode(), headers={"content-type": "application/json", "origin": a.base_url.rstrip("/")})
     try:
-        with urllib.request.urlopen(req, timeout=60) as r:
+        with urllib.request.urlopen(req, timeout=60, context=SSL_CONTEXT) as r:
             return json.load(r)
     except urllib.error.HTTPError as e:
         try:

@@ -137,6 +137,8 @@ export default function ResumeBuilder() {
   const [emailCopy, setEmailCopy] = useState(true);
   const [notesOpen, setNotesOpen] = useState(false);
   const [outOfBuilds, setOutOfBuilds] = useState(false);
+  // True when there are no packs on sale yet, so running out of free builds leads to a waitlist and not a buy screen.
+  const [nothingToBuy, setNothingToBuy] = useState(false);
   // After a payment: whether we could put their form back ("yes"), or everything but their files ("files").
   const [draftBack, setDraftBack] = useState<"" | "yes" | "files">("");
   // True when the visitor has just come back from Stripe.
@@ -704,7 +706,17 @@ export default function ResumeBuilder() {
 
       {outOfBuilds ? (
         <div id="rt-problem">
-          <BuyMore email={email.trim()} afterPayment={justPaid} onBeforeCheckout={saveDraft} />
+          <BuyMore
+            email={email.trim()}
+            afterPayment={justPaid}
+            onBeforeCheckout={saveDraft}
+            onPlansKnown={setNothingToBuy}
+            onTryAnother={() => {
+              setOutOfBuilds(false);
+              setError("");
+              window.setTimeout(() => document.getElementById("rt-email")?.focus(), 50);
+            }}
+          />
         </div>
       ) : (
         justPaid && (
@@ -727,6 +739,7 @@ export default function ResumeBuilder() {
         </p>
       )}
 
+      {!(outOfBuilds && nothingToBuy && !justPaid) && (
       <div className="pt-1">
         <button
           ref={buildButton}
@@ -741,6 +754,7 @@ export default function ResumeBuilder() {
           Your first 2 builds are free. We send your resume and the posting, including any files or screenshots, to an AI service (Anthropic&apos;s Claude) to write your documents. We use your email to count your free builds, to send the copy you ask for (through our email service, Resend), and we may send the occasional resource. Reply to any email from us to opt out. We only reword what&apos;s in your resume and notes. We never add experience you don&apos;t have.
         </p>
       </div>
+      )}
       </div>
     </form>
   );
