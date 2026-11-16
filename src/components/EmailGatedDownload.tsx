@@ -39,6 +39,8 @@ export default function EmailGatedDownload({
 }) {
   const [email, setEmail] = useState("");
   const [source, setSource] = useState("");
+  // A hidden trap field: people never see it, so only a script fills it in.
+  const [trap, setTrap] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -50,7 +52,7 @@ export default function EmailGatedDownload({
       const res = await fetch("/api/resource-signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, resourceId, source }),
+        body: JSON.stringify({ email, resourceId, source, company_url: trap }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -91,6 +93,10 @@ export default function EmailGatedDownload({
           onChange={(e) => setEmail(e.target.value)}
           className="flex-1 rounded-xl border border-border-subtle bg-background px-4 py-2.5 text-sm outline-none focus:border-blue-500/50"
         />
+        <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+          <label htmlFor={`${resourceId}-company`}>Company website</label>
+          <input id={`${resourceId}-company`} name="company_url" type="text" tabIndex={-1} autoComplete="off" value={trap} onChange={(e) => setTrap(e.target.value)} />
+        </div>
         <label className="sr-only" htmlFor={`${resourceId}-source`}>
           Where did you find us? (optional)
         </label>

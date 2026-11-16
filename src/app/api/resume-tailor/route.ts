@@ -35,7 +35,8 @@ const API_KEY = process.env.CLAUDE_API_KEY;
 const API_BASE = process.env.CLAUDE_API_BASE_URL || "https://api.anthropic.com";
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const FROM_EMAIL = process.env.TRACKER_FROM_EMAIL || "The Warthens <info@thewarthens.com>";
-const NOTIFY_EMAIL = "justonwarthen@gmail.com";
+// Where the "new resume built" alerts go. Set NOTIFY_EMAIL in Netlify to change it without a code change.
+const NOTIFY_EMAIL = process.env.NOTIFY_EMAIL || "techjourneyinfo@gmail.com";
 // "How did you find us" is required. Keep this list in step with the dropdown in components/resume/ResumeBuilder.tsx.
 const SOURCES = new Set(["YouTube", "Instagram or TikTok", "Google search", "A friend or family member", "Career day or an event", "Other"]);
 const MODEL = process.env.RESUME_MODEL || RESUME_MODEL;

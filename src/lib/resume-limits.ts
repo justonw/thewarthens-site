@@ -18,6 +18,8 @@ export type Kv = {
   // answers a read of a missing key, so a missing key is never read.
   has(key: string): Promise<boolean>;
   set(key: string, data: unknown, opts: { onlyIfNew?: boolean; onlyIfMatch?: string }): Promise<{ modified: boolean; etag?: string }>;
+  // Every key that starts with the prefix.
+  list(prefix: string): Promise<string[]>;
 };
 
 export function memoryKv(): Kv {
@@ -30,6 +32,9 @@ export function memoryKv(): Kv {
     },
     async has(key) {
       return data.has(key);
+    },
+    async list(prefix) {
+      return [...data.keys()].filter((k) => k.startsWith(prefix));
     },
     async set(key, value, opts) {
       const hit = data.get(key);
@@ -68,6 +73,10 @@ export async function getKv(live: boolean): Promise<Kv> {
       async has(key) {
         const { blobs } = await store.list({ prefix: key });
         return blobs.some((b) => b.key === key);
+      },
+      async list(prefix) {
+        const { blobs } = await store.list({ prefix });
+        return blobs.map((b) => b.key);
       },
       async set(key, value, opts) {
         return opts.onlyIfMatch

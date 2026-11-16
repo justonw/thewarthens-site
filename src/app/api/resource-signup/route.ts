@@ -3,7 +3,8 @@ import { HEARD_FROM } from "@/lib/heard-from";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const FROM_EMAIL = process.env.TRACKER_FROM_EMAIL || "The Warthens <info@thewarthens.com>";
-const NOTIFY_EMAIL = "justonwarthen@gmail.com";
+// Where the "new signup" alerts go. Set NOTIFY_EMAIL in Netlify to change it without a code change.
+const NOTIFY_EMAIL = process.env.NOTIFY_EMAIL || "techjourneyinfo@gmail.com";
 const SITE_URL = "https://thewarthens.com";
 
 const RESOURCES: Record<
@@ -24,6 +25,19 @@ const RESOURCES: Record<
     ],
   },
 };
+
+// A few signups per connection per 10 minutes is plenty for a person and slows down a script.
+const WINDOW_MS = 10 * 60 * 1000;
+const MAX_PER_WINDOW = 5;
+const hits = new Map<string, number[]>();
+function tooMany(ip: string) {
+  const now = Date.now();
+  const recent = (hits.get(ip) ?? []).filter((t) => now - t < WINDOW_MS);
+  recent.push(now);
+  hits.set(ip, recent);
+  if (hits.size > 5000) hits.clear();
+  return recent.length > MAX_PER_WINDOW;
+}
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -56,12 +70,19 @@ async function sendEmail(payload: Record<string, unknown>) {
 }
 
 export async function POST(req: NextRequest) {
-  let body: { email?: string; resourceId?: string; source?: string };
+  let body: { email?: string; resourceId?: string; source?: string; company_url?: string };
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
+
+  // A hidden field that people never see or fill in. A script that fills in every field gives itself away, and is
+  // told it worked so it does not try again.
+  if (typeof body.company_url === "string" && body.company_url.trim() !== "") return NextResponse.json({ ok: true });
+
+  const ip = req.headers.get("x-nf-client-connection-ip") ?? req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  if (tooMany(ip)) return NextResponse.json({ error: "That was a lot of tries in a short time. Please wait a few minutes." }, { status: 429 });
 
   const email = (body.email || "").trim();
   if (!isValidEmail(email)) {
