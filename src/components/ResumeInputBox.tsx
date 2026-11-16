@@ -143,32 +143,32 @@ export default function ResumeInputBox({
         setDragging(false);
         void addFiles(Array.from(e.dataTransfer.files));
       }}
-      className={`rounded-2xl border p-4 shadow-sm transition-all focus-within:border-blue-500/40 focus-within:shadow-md sm:p-5 ${
-        dragging ? "border-dashed border-blue-500 bg-blue-500/5" : "border-border-subtle bg-background-elevated"
+      className={`h-full rounded-3xl border p-5 shadow-lg shadow-blue-900/5 transition-all focus-within:border-blue-500/40 focus-within:shadow-xl sm:p-6 ${
+        dragging ? "border-dashed border-blue-500 bg-blue-500/5" : "border-border-subtle bg-white"
       }`}
     >
       <div className="flex items-center gap-3">
         <span
           aria-hidden
-          className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors ${
-            done ? "bg-green-600 text-white" : "bg-blue-600/10 text-blue-700"
+          className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-base font-bold text-white shadow-sm transition-colors ${
+            done ? "bg-green-600" : "bg-gradient-to-br from-blue-600 to-violet-600"
           }`}
         >
           {done ? "✓" : step}
         </span>
-        <label className="text-base font-semibold" htmlFor={id}>
+        <label className="text-lg font-bold tracking-tight" htmlFor={id}>
           {label}
         </label>
       </div>
-      <p className="mt-1 text-xs text-foreground-muted sm:pl-10">{help}</p>
+      <p className="mt-1.5 text-sm text-foreground-muted sm:pl-12 lg:min-h-[2.75rem]">{help}</p>
       <textarea
         id={id}
-        rows={8}
+        rows={9}
         value={text}
         onChange={(e) => onText(e.target.value)}
         onPaste={handlePaste}
         placeholder={placeholder}
-        className="mt-3 w-full resize-y rounded-xl border border-border-subtle bg-background px-4 py-2.5 text-sm outline-none focus:border-blue-500/50"
+        className="mt-4 w-full resize-y rounded-2xl border border-border-subtle bg-background px-4 py-3 text-sm leading-relaxed outline-none transition-colors focus:border-blue-500/60 focus:bg-white"
       />
 
       {files.length > 0 && (
@@ -197,15 +197,25 @@ export default function ResumeInputBox({
         </ul>
       )}
 
+      <button
+        type="button"
+        onClick={() => picker.current?.click()}
+        disabled={busy}
+        className="group mt-3 flex w-full items-center gap-3 rounded-2xl border-2 border-dashed border-border-subtle bg-background px-4 py-3 text-left transition-colors hover:border-blue-500/50 hover:bg-blue-500/5 disabled:opacity-60"
+      >
+        <span aria-hidden className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-600/10 text-blue-700 transition-colors group-hover:bg-blue-600/15">
+          <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 16V5m0 0l-4 4m4-4l4 4" />
+            <path d="M4 16v2.5A1.5 1.5 0 005.5 20h13a1.5 1.5 0 001.5-1.5V16" />
+          </svg>
+        </span>
+        <span>
+          <span className="block text-sm font-semibold">Upload a file or screenshot</span>
+          <span className="block text-xs text-foreground-muted">{busy ? "Working on it…" : "Or drag it in, or paste a screenshot. PDF, Word, text, and pictures all work."}</span>
+        </span>
+      </button>
+
       <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2">
-        <button
-          type="button"
-          onClick={() => picker.current?.click()}
-          disabled={busy}
-          className="rounded-full border border-border-subtle bg-background px-4 py-1.5 text-xs font-semibold transition-colors hover:border-blue-500/40 disabled:opacity-60"
-        >
-          Upload a file or screenshot
-        </button>
         {looksLikeLink && (
           <button
             type="button"
@@ -216,9 +226,6 @@ export default function ResumeInputBox({
             Get the posting from this link
           </button>
         )}
-        <span className="text-xs text-foreground-muted">
-          {busy ? "Working on it…" : "You can also drag files in, or paste a screenshot. PDF, Word, text, and pictures all work."}
-        </span>
         <input
           ref={picker}
           type="file"

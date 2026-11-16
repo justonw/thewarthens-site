@@ -1,6 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
-import { addCredits, getKv } from "@/lib/resume-limits";
+import { addCredits, getKv, withTimeout } from "@/lib/resume-limits";
 import { PLANS, isPlanId } from "@/lib/resume-plans";
 import { isLiveHost } from "@/lib/coaching-recipients";
 
@@ -54,19 +54,21 @@ export async function POST(req: NextRequest) {
 
   try {
     // The same store the builder counts free builds in, so the balance is found when they build again.
-    const kv = await getKv(isLiveHost(req.headers.get("x-forwarded-host") ?? req.headers.get("host")));
+    const kv = await withTimeout(getKv(isLiveHost(req.headers.get("x-forwarded-host") ?? req.headers.get("host"))), 8000, "open usage store");
     const marker = `stripe/${session.id}`;
-    const first = await kv.set(marker, { state: "pending", email, builds }, { onlyIfNew: true });
+    const first = await withTimeout(kv.set(marker, { state: "pending", email, builds, at: Date.now() }, { onlyIfNew: true }), 10000, "mark the payment");
     if (!first.modified) {
-      const seen = await kv.get(marker);
-      const state = (seen?.data as { state?: string } | null)?.state;
-      if (state !== "failed" || !seen?.etag) return NextResponse.json({ ok: true, duplicate: true });
-      const retake = await kv.set(marker, { state: "pending", email, builds }, { onlyIfMatch: seen.etag });
+      const seen = await withTimeout(kv.get(marker), 10000, "read the payment mark");
+      const mark = seen?.data as { state?: string; at?: number } | null;
+      // A payment is retried when it failed, or when an earlier try started over two minutes ago and never finished.
+      const stuck = mark?.state === "pending" && Date.now() - Number(mark.at ?? 0) > 120_000;
+      if ((mark?.state !== "failed" && !stuck) || !seen?.etag) return NextResponse.json({ ok: true, duplicate: true });
+      const retake = await withTimeout(kv.set(marker, { state: "pending", email, builds, at: Date.now() }, { onlyIfMatch: seen.etag }), 10000, "retry the payment");
       if (!retake.modified) return NextResponse.json({ ok: true, duplicate: true });
       first.etag = retake.etag;
     }
     try {
-      await addCredits(kv, email, builds);
+      await withTimeout(addCredits(kv, email, builds), 15000, "add the builds");
     } catch (err) {
       // Let Stripe try again later: mark this one as not done.
       if (first.etag) await kv.set(marker, { state: "failed", email, builds }, { onlyIfMatch: first.etag }).catch(() => {});

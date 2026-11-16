@@ -13,7 +13,7 @@ import {
   parseResumeResponse,
   type TailorInput,
 } from "@/lib/resume-tailor";
-import { DEFAULT_MONTHLY_CAP, FREE_PER_EMAIL, getKv, refund, reserve } from "@/lib/resume-limits";
+import { DEFAULT_MONTHLY_CAP, FREE_PER_EMAIL, getKv, refund, reserve, withTimeout, type Reservation } from "@/lib/resume-limits";
 import { isLiveHost } from "@/lib/coaching-recipients";
 
 // Rewrites a person's resume for one job posting (see lib/resume-tailor.ts). The resume and posting
@@ -195,26 +195,25 @@ export async function POST(req: NextRequest) {
 
   const model = unlimited && typeof body.model === "string" && OWNER_MODELS.has(body.model) ? body.model : MODEL;
 
-  let kv;
+  // The usage counters live in Netlify Blobs. If that storage is slow or down, the person should still get their
+  // resume: we log it loudly and let the build through uncounted, instead of making them wait for a timeout.
+  let kv: Awaited<ReturnType<typeof getKv>> | null = null;
+  let reservation: Reservation;
+  let counted = true;
   try {
-    kv = await getKv(live);
-  } catch {
-    return NextResponse.json({ error: "unavailable" }, { status: 503 });
-  }
-
-  let reservation;
-  try {
-    reservation = await reserve(kv, email, { unlimited, monthlyCap: MONTHLY_CAP });
+    kv = await withTimeout(getKv(live), 5000, "open usage store");
+    reservation = await withTimeout(reserve(kv, email, { unlimited, monthlyCap: MONTHLY_CAP }), 10000, "reserve a build");
   } catch (err) {
-    console.error("resume-tailor reserve failed", err);
-    return NextResponse.json({ error: "unavailable" }, { status: 503 });
+    console.error("resume-tailor: usage counters unavailable, building without counting", err instanceof Error ? err.message : err);
+    counted = false;
+    reservation = { ok: true, used: 0, unlimited: false, paid: false, credits: 0 };
   }
   if (!reservation.ok) {
     return NextResponse.json({ error: reservation.reason }, { status: 429 });
   }
 
   const paidBuild = reservation.paid;
-  const giveBack = () => refund(kv, email, { unlimited, paid: paidBuild }).catch(() => {});
+  const giveBack = () => (counted && kv ? withTimeout(refund(kv, email, { unlimited, paid: paidBuild }), 8000, "give a build back").catch(() => {}) : Promise.resolve());
 
   try {
     // The resume and the cover letter are written by two requests at the same time. A letter is a different job,
@@ -241,7 +240,7 @@ export async function POST(req: NextRequest) {
       result: parsed.result,
       letterFailed,
       // Free builds left, plus any paid builds they bought.
-      remaining: unlimited ? null : reservation.paid ? reservation.credits : Math.max(0, FREE_PER_EMAIL - reservation.used) + reservation.credits,
+      remaining: unlimited || !counted ? null : reservation.paid ? reservation.credits : Math.max(0, FREE_PER_EMAIL - reservation.used) + reservation.credits,
     });
   } catch {
     await giveBack();

@@ -99,6 +99,7 @@ export default function ResumeBuilder() {
   const [letter, setLetter] = useState<CoverLetter | null>(null);
   const [letterFailed, setLetterFailed] = useState(false);
   const [emailCopy, setEmailCopy] = useState(true);
+  const [notesOpen, setNotesOpen] = useState(false);
   const [outOfBuilds, setOutOfBuilds] = useState(false);
   // True when the visitor has just come back from Stripe.
   const justPaid = useSyncExternalStore(
@@ -150,6 +151,7 @@ export default function ResumeBuilder() {
 
   function insertStarter(starter: string) {
     setNotes((n) => `${n.trim() ? `${n.trimEnd()}\n` : ""}${starter}`);
+    setNotesOpen(true);
     notesRef.current?.focus();
   }
 
@@ -236,8 +238,22 @@ export default function ResumeBuilder() {
     setRemaining(typeof data.remaining === "number" ? data.remaining : null);
     setOriginal(fromScratch || !resumeText.trim() ? null : resumeText);
     setPhase("result");
-    window.scrollTo({ top: Math.max(0, (document.getElementById("resume-tool")?.offsetTop ?? 0) - 80), behavior: "smooth" });
   }
+
+  // Pressing Build swaps the long form for a much shorter progress card, and the page gets shorter under the
+  // reader. So whenever the view changes, take them to the top of the new one (or to the message, when a build
+  // comes back with a problem), so they never have to hunt for where they are.
+  const previousPhase = useRef<Phase>("form");
+  useEffect(() => {
+    const was = previousPhase.current;
+    previousPhase.current = phase;
+    if (was === phase) return;
+    const backWithProblem = phase === "form" && was === "loading";
+    const target = (backWithProblem && document.getElementById("rt-problem")) || document.getElementById("resume-tool");
+    if (!target) return;
+    const top = target.getBoundingClientRect().top + window.scrollY - (backWithProblem ? 160 : 100);
+    window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+  }, [phase]);
 
   function startOver() {
     // Keeps the resume, notes, and email, so the next job takes seconds.
@@ -248,7 +264,6 @@ export default function ResumeBuilder() {
     setPosting("");
     setPostingFiles([]);
     setError("");
-    window.scrollTo({ top: Math.max(0, (document.getElementById("resume-tool")?.offsetTop ?? 0) - 80), behavior: "smooth" });
   }
 
   if (phase === "loading") {
@@ -318,6 +333,8 @@ export default function ResumeBuilder() {
     );
   }
 
+  // The notes panel stays open once there is something in it (for example, notes remembered from last time).
+  const notesShown = notesOpen || notes.trim().length > 0;
   const input = "w-full rounded-xl border border-border-subtle bg-background px-4 py-2.5 text-sm outline-none focus:border-blue-500/50";
   const resumeReady = mode === "scratch" ? scratchReady(scratch) : resume.trim().length >= 150 || resumeFiles.length > 0;
   const postingReady = posting.trim().length >= 80 || postingFiles.length > 0;
@@ -326,30 +343,39 @@ export default function ResumeBuilder() {
   const missing = [!resumeReady && "your resume", !postingReady && "the job", !emailReady && "your email and how you found us"].filter(Boolean) as string[];
 
   return (
-    <form id="resume-tool" onSubmit={build} className="mx-auto max-w-3xl space-y-4" noValidate>
-      <div className="sticky top-14 z-30 -mx-1 rounded-2xl border border-border-subtle bg-white/90 px-4 py-3 shadow-sm backdrop-blur sm:top-16">
-        <div className="flex items-center justify-between gap-3 text-xs font-semibold">
-          <span>{readyCount === 3 ? "You're ready. Build it." : `${readyCount} of 3 steps done`}</span>
-          <span className="hidden gap-3 font-medium text-foreground-muted sm:flex">
-            {[
-              ["Resume", resumeReady],
-              ["Job", postingReady],
-              ["Email", emailReady],
-            ].map(([label, done]) => (
-              <span key={label as string} className={done ? "text-green-700" : ""}>
-                {done ? "✓ " : ""}
-                {label as string}
-              </span>
-            ))}
-          </span>
-        </div>
-        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-background-elevated-2">
-          <div className="h-full rounded-full bg-gradient-to-r from-blue-600 to-violet-600 transition-all duration-500" style={{ width: `${(readyCount / 3) * 100}%` }} />
-        </div>
+    <form id="resume-tool" onSubmit={build} className="space-y-6" noValidate>
+      <div className="sticky top-14 z-30 mx-auto max-w-3xl rounded-2xl border border-border-subtle bg-white/90 px-4 py-3 shadow-md backdrop-blur sm:top-16 sm:px-6">
+        <ol className="flex items-center" aria-label="Your progress">
+          {(
+            [
+              ["Resume", resumeReady, mode === "scratch" ? "sc-name" : "rt-resume"],
+              ["Job", postingReady, "rt-posting"],
+              ["Email", emailReady, "rt-email"],
+            ] as [string, boolean, string][]
+          ).map(([label, done, target], i) => (
+            <li key={label} className="flex flex-1 items-center last:flex-none">
+              <a href={`#${target}`} className="group flex items-center gap-2">
+                <span
+                  aria-hidden
+                  className={`inline-flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold transition-colors ${
+                    done ? "bg-green-600 text-white" : "bg-gradient-to-br from-blue-600 to-violet-600 text-white group-hover:opacity-90"
+                  }`}
+                >
+                  {done ? "✓" : i + 1}
+                </span>
+                <span className={`text-xs font-semibold sm:text-sm ${done ? "text-green-700" : ""}`}>{label}</span>
+              </a>
+              {i < 2 && <span aria-hidden className={`mx-3 h-0.5 flex-1 rounded-full transition-colors duration-500 ${done ? "bg-green-600" : "bg-border-subtle"}`} />}
+            </li>
+          ))}
+        </ol>
+        <p className="sr-only" role="status">
+          {readyCount === 3 ? "You're ready. Build it." : `${readyCount} of 3 steps done`}
+        </p>
       </div>
 
       {showSaved && mode === "have" && (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-blue-500/30 bg-blue-500/5 px-5 py-4">
+        <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-3 rounded-2xl border border-blue-500/30 bg-blue-500/5 px-5 py-4">
           <p className="text-sm">
             <span className="font-semibold">Welcome back.</span> We kept your resume and notes on this device, so you can skip step 1.
           </p>
@@ -365,17 +391,33 @@ export default function ResumeBuilder() {
       )}
 
       {mode === "scratch" ? (
-        <>
+        <div className="mx-auto max-w-3xl space-y-6">
+        
           <p className="text-center text-xs text-foreground-muted">
             <button type="button" onClick={() => setMode("have")} className="font-semibold text-blue-600 underline underline-offset-2">
               ← Back: I have a resume to tailor
             </button>
           </p>
           <ScratchForm value={scratch} onChange={setScratch} done={resumeReady} />
-        </>
-      ) : (
-        <>
+
           <ResumeInputBox
+        id="rt-posting"
+        step={2}
+        done={postingReady}
+        label="The job you want"
+        help="Paste a link to the posting, or paste the text, or upload a file or screenshot."
+        placeholder="Paste the link to the job posting here, or paste the posting text, or drop a screenshot onto this box."
+        text={posting}
+        onText={setPosting}
+        files={postingFiles}
+        onFiles={setPostingFiles}
+        allowLink
+      />
+        </div>
+      ) : (
+        <div className="grid items-start gap-6 lg:grid-cols-2">
+          <div className="space-y-3">
+            <ResumeInputBox
         id="rt-resume"
         step={1}
         done={resumeReady}
@@ -397,15 +439,15 @@ export default function ResumeBuilder() {
               </span>
             </label>
           )}
-          <p className="-mt-1 text-center text-xs text-foreground-muted">
+
+          <p className="text-center text-xs text-foreground-muted">
             No resume yet?{" "}
             <button type="button" onClick={() => setMode("scratch")} className="font-semibold text-blue-600 underline underline-offset-2">
               Start from scratch
             </button>
           </p>
-        </>
-      )}
 
+          </div>
       <ResumeInputBox
         id="rt-posting"
         step={2}
@@ -419,19 +461,29 @@ export default function ResumeBuilder() {
         onFiles={setPostingFiles}
         allowLink
       />
-
-      <div className="rounded-2xl border border-border-subtle bg-background-elevated p-4 shadow-sm transition-shadow focus-within:border-blue-500/40 focus-within:shadow-md sm:p-5">
-        <div className="flex items-center gap-3">
-          <span aria-hidden className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors ${tidyNotes(notes) ? "bg-green-600 text-white" : "bg-blue-600/10 text-blue-700"}`}>
-            {tidyNotes(notes) ? "✓" : 3}
-          </span>
-          <label className="text-base font-semibold" htmlFor="rt-notes">
-            Tell us more about you <span className="text-sm font-normal text-foreground-muted">(optional)</span>
-          </label>
         </div>
-        <p className="mt-1 text-xs text-foreground-muted sm:pl-10">
-          Anything that isn&apos;t on your resume. We use it to write your resume and cover letter, in your own words.
-        </p>
+      )}
+
+      <div className="mx-auto max-w-3xl space-y-4">
+      <div className="rounded-3xl border border-border-subtle bg-white p-5 shadow-lg shadow-blue-900/5 transition-shadow focus-within:border-blue-500/40 focus-within:shadow-xl sm:p-6">
+        <button
+          type="button"
+          onClick={() => setNotesOpen((o) => !o)}
+          aria-expanded={notesShown}
+          aria-controls="rt-notes-panel"
+          className="flex w-full items-center gap-3 text-left"
+        >
+          <span aria-hidden className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-lg font-bold transition-colors ${tidyNotes(notes) ? "bg-green-600 text-white" : "bg-blue-600/10 text-blue-700"}`}>
+            {tidyNotes(notes) ? "✓" : notesShown ? "−" : "+"}
+          </span>
+          <span className="flex-1">
+            <span className="block text-lg font-bold tracking-tight">
+              Tell us more about you <span className="text-sm font-normal text-foreground-muted">(optional)</span>
+            </span>
+            <span className="block text-sm text-foreground-muted">Add anything that isn&apos;t on your resume. It makes your resume and letter sound like you.</span>
+          </span>
+        </button>
+        <div id="rt-notes-panel" hidden={!notesShown} className="mt-3">
         <div className="mt-3 flex flex-wrap gap-2 sm:pl-10">
           {NOTE_STARTERS.map((starter) => (
             <button key={starter} type="button" onClick={() => insertStarter(starter)} className="rounded-full border border-border-subtle bg-background px-3 py-1 text-xs transition-colors hover:border-blue-500/40">
@@ -451,17 +503,18 @@ export default function ResumeBuilder() {
         <div className="mt-2 sm:pl-10">
           <VoiceInput onText={(t) => setNotes((prev) => `${prev}${prev && !/\s$/.test(prev) ? " " : ""}${t}`)} />
         </div>
+        </div>
       </div>
 
-      <div className="rounded-2xl border border-border-subtle bg-background-elevated p-4 shadow-sm transition-shadow focus-within:border-blue-500/40 focus-within:shadow-md sm:p-5">
+      <div className="rounded-3xl border border-border-subtle bg-white p-5 shadow-lg shadow-blue-900/5 transition-shadow focus-within:border-blue-500/40 focus-within:shadow-xl sm:p-6">
         <div className="flex items-center gap-3">
-          <span aria-hidden className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors ${/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) && source ? "bg-green-600 text-white" : "bg-blue-600/10 text-blue-700"}`}>
-            {/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) && source ? "✓" : 4}
+          <span aria-hidden className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-base font-bold text-white shadow-sm transition-colors ${emailReady ? "bg-green-600" : "bg-gradient-to-br from-blue-600 to-violet-600"}`}>
+            {emailReady ? "✓" : 3}
           </span>
-          <p className="text-base font-semibold">Last step: your email</p>
+          <p className="text-lg font-bold tracking-tight">Last step: your email</p>
         </div>
-        <p className="mt-1 text-xs text-foreground-muted sm:pl-10">We use it to count your 2 free builds, and to email you a copy of your resume if you want one.</p>
-        <div className="mt-3 grid gap-3 sm:ml-10 sm:grid-cols-2">
+        <p className="mt-1.5 text-sm text-foreground-muted sm:pl-12">We use it to count your 2 free builds, and to email you a copy of your resume if you want one.</p>
+        <div className="mt-3 grid gap-3 sm:ml-12 sm:grid-cols-2">
           <div>
             <label className="block text-xs font-semibold" htmlFor="rt-email">
               Your email
@@ -482,7 +535,7 @@ export default function ResumeBuilder() {
             </select>
           </div>
         </div>
-        <label className="mt-3 flex cursor-pointer items-start gap-3 sm:ml-10">
+        <label className="mt-3 flex cursor-pointer items-start gap-3 sm:ml-12">
           <input type="checkbox" checked={emailCopy} onChange={(e) => setEmailCopy(e.target.checked)} className="mt-0.5 h-4 w-4 shrink-0 accent-blue-600" />
           <span className="text-sm">
             <span className="font-semibold">Email me a copy</span> of my resume (PDF and Word) when it&apos;s ready.
@@ -491,7 +544,7 @@ export default function ResumeBuilder() {
         </label>
       </div>
 
-      <div className="rounded-2xl border border-border-subtle bg-background-elevated p-4 shadow-sm transition-shadow focus-within:border-blue-500/40 focus-within:shadow-md sm:p-5">
+      <div className="rounded-3xl border border-border-subtle bg-white p-5 shadow-lg shadow-blue-900/5 transition-shadow focus-within:border-blue-500/40 focus-within:shadow-xl sm:p-6">
         <label className="flex cursor-pointer items-start gap-3">
           <input type="checkbox" checked={wantLetter} onChange={(e) => setWantLetter(e.target.checked)} className="mt-0.5 h-4 w-4 shrink-0 accent-blue-600" />
           <span>
@@ -538,7 +591,9 @@ export default function ResumeBuilder() {
       </div>
 
       {outOfBuilds ? (
-        <BuyMore email={email.trim()} afterPayment={justPaid} />
+        <div id="rt-problem">
+          <BuyMore email={email.trim()} afterPayment={justPaid} />
+        </div>
       ) : (
         justPaid && (
           <p role="status" className="rounded-xl border border-green-600/30 bg-green-600/5 px-4 py-3 text-sm text-green-800">
@@ -548,7 +603,7 @@ export default function ResumeBuilder() {
       )}
 
       {error && !outOfBuilds && (
-        <p role="alert" className="rounded-xl border border-red-500/30 bg-red-500/5 px-4 py-3 text-sm text-red-700">
+        <p id="rt-problem" role="alert" className="rounded-xl border border-red-500/30 bg-red-500/5 px-4 py-3 text-sm text-red-700">
           {error}
         </p>
       )}
@@ -562,6 +617,7 @@ export default function ResumeBuilder() {
         <p className="mt-3 text-center text-xs text-foreground-muted">
           Your first 2 builds are free. We send your resume and the posting, including any files or screenshots, to an AI service (Anthropic&apos;s Claude) to write your documents. We use your email to count your free builds, to send the copy you ask for (through our email service, Resend), and we may send the occasional resource. Reply to any email from us to opt out. We only reword what&apos;s in your resume and notes. We never add experience you don&apos;t have.
         </p>
+      </div>
       </div>
     </form>
   );

@@ -37,12 +37,18 @@ export function memoryKv(): Kv {
 }
 
 const devKvs = new Map<string, Kv>();
+let loggedKv = false;
 
 export async function getKv(live: boolean): Promise<Kv> {
   const name = live ? "resume-usage" : "resume-usage-test";
   try {
     const { getStore } = await import("@netlify/blobs");
     const store = getStore({ name, consistency: "strong" });
+    // Logged once per start-up, so a storage problem can be told apart from a missing setting.
+    if (!loggedKv) {
+      loggedKv = true;
+      console.log("resume-limits: Netlify Blobs store ready", { store: name, hasBlobsContext: Boolean(process.env.NETLIFY_BLOBS_CONTEXT) });
+    }
     return {
       async get(key) {
         return store.getWithMetadata(key, { type: "json", consistency: "strong" });
@@ -62,6 +68,17 @@ export async function getKv(live: boolean): Promise<Kv> {
     }
     return kv;
   }
+}
+
+// Never wait forever on storage. If it does not answer in time, the caller gets an error it can handle, and the
+// log says which step was stuck.
+export class KvTimeoutError extends Error {}
+export function withTimeout<T>(work: Promise<T>, ms: number, label: string): Promise<T> {
+  let timer: ReturnType<typeof setTimeout>;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new KvTimeoutError(`${label} timed out after ${ms} ms`)), ms);
+  });
+  return Promise.race([work, timeout]).finally(() => clearTimeout(timer));
 }
 
 const MAX_ATTEMPTS = 30;

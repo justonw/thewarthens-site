@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { bumpCounter, emailKey, getKv } from "@/lib/resume-limits";
+import { bumpCounter, emailKey, getKv, withTimeout } from "@/lib/resume-limits";
 import { isLiveHost } from "@/lib/coaching-recipients";
 
 // Emails a person their finished resume (and cover letter) as attachments, to the address they gave us.
@@ -86,12 +86,12 @@ export async function POST(req: NextRequest) {
   // Only an address that has built a resume with us can be sent a copy, and only a few a day.
   const live = isLiveHost(req.headers.get("x-forwarded-host") ?? host);
   try {
-    const kv = await getKv(live);
-    const built = await kv.get(emailKey(email));
+    const kv = await withTimeout(getKv(live), 5000, "open usage store");
+    const built = await withTimeout(kv.get(emailKey(email)), 8000, "look up the address");
     const n = Number((built?.data as { n?: number } | null)?.n ?? 0);
     if (n < 1) return NextResponse.json({ error: "not-found" }, { status: 403 });
     const day = new Date().toISOString().slice(0, 10);
-    const sent = await bumpCounter(kv, `mail/${emailKey(email).slice(6)}/${day}`, 1, MAX_PER_DAY);
+    const sent = await withTimeout(bumpCounter(kv, `mail/${emailKey(email).slice(6)}/${day}`, 1, MAX_PER_DAY), 8000, "count the copy");
     if (sent === null) return NextResponse.json({ error: "daily-limit" }, { status: 429 });
   } catch (err) {
     console.error("resume-email limit check failed", err);
