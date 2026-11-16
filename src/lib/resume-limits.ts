@@ -39,6 +39,31 @@ export function memoryKv(): Kv {
 const devKvs = new Map<string, Kv>();
 let loggedKv = false;
 
+// A one-time check, in the background and logged only: how long each kind of storage read takes, and what error
+// comes back. It runs while the first request on a new server instance is already waiting on storage, so it
+// adds no delay for anyone. Remove once the storage problem is understood.
+type Probe = Record<string, (...args: never[]) => Promise<unknown>>;
+async function probeStore(store: unknown, name: string) {
+  const st = store as { get: Probe["x"]; getWithMetadata: Probe["x"]; list: Probe["x"] };
+  const timed = async (label: string, run: () => Promise<unknown>) => {
+    const started = Date.now();
+    try {
+      await withTimeout(run(), 20000, label);
+      return `${label}: ok ${Date.now() - started} ms`;
+    } catch (err) {
+      return `${label}: ${err instanceof Error ? err.message : String(err)} after ${Date.now() - started} ms`;
+    }
+  };
+  const key = "diag/missing-key";
+  const results = await Promise.all([
+    timed("get strong", () => (st.get as (k: string, o: object) => Promise<unknown>)(key, { consistency: "strong" })),
+    timed("get eventual", () => (st.get as (k: string, o: object) => Promise<unknown>)(key, { consistency: "eventual" })),
+    timed("getWithMetadata eventual", () => (st.getWithMetadata as (k: string, o: object) => Promise<unknown>)(key, { consistency: "eventual" })),
+    timed("list", () => (st.list as (o: object) => Promise<unknown>)({ prefix: "diag/" })),
+  ]);
+  console.log("resume-limits probe", { store: name, results });
+}
+
 export async function getKv(live: boolean): Promise<Kv> {
   const name = live ? "resume-usage" : "resume-usage-test";
   try {
@@ -48,6 +73,7 @@ export async function getKv(live: boolean): Promise<Kv> {
     if (!loggedKv) {
       loggedKv = true;
       console.log("resume-limits: Netlify Blobs store ready", { store: name, hasBlobsContext: Boolean(process.env.NETLIFY_BLOBS_CONTEXT) });
+      void probeStore(store, name).catch((err) => console.error("resume-limits probe failed", err instanceof Error ? err.message : err));
     }
     return {
       async get(key) {
