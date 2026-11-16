@@ -13,8 +13,8 @@ export const metadata: Metadata = {
   title,
   description,
   alternates: { canonical: "/contact" },
-  openGraph: { title, description, url: "/contact" },
-  twitter: { card: "summary_large_image", title, description },
+  openGraph: { title, description, url: "/contact", images: [{ url: "/opengraph-image", width: 1200, height: 630 }] },
+  twitter: { card: "summary_large_image", title, description, images: ["/opengraph-image"] },
 };
 
 const reasons = [

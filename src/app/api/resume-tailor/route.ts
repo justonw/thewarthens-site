@@ -213,7 +213,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: reservation.reason }, { status: 429 });
   }
 
-  const giveBack = () => refund(kv, email, { unlimited }).catch(() => {});
+  const paidBuild = reservation.paid;
+  const giveBack = () => refund(kv, email, { unlimited, paid: paidBuild }).catch(() => {});
 
   try {
     // The resume and the cover letter are written by two requests at the same time. A letter is a different job,
@@ -239,7 +240,8 @@ export async function POST(req: NextRequest) {
       ok: true,
       result: parsed.result,
       letterFailed,
-      remaining: unlimited ? null : Math.max(0, FREE_PER_EMAIL - reservation.used),
+      // Free builds left, plus any paid builds they bought.
+      remaining: unlimited ? null : reservation.paid ? reservation.credits : Math.max(0, FREE_PER_EMAIL - reservation.used) + reservation.credits,
     });
   } catch {
     await giveBack();

@@ -44,13 +44,13 @@ export async function generateMetadata({
       title: writing.title,
       description: writing.dek,
       url: `/faith/${writing.category}/${writing.slug}`,
-      ...(writing.heroImage && { images: [{ url: writing.heroImage.src }] }),
+      images: [{ url: writing.heroImage?.src ?? "/faith/opengraph-image", width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary_large_image",
       title: writing.title,
       description: writing.dek,
-      ...(writing.heroImage && { images: [writing.heroImage.src] }),
+      images: [writing.heroImage?.src ?? "/faith/opengraph-image"],
     },
   };
 }

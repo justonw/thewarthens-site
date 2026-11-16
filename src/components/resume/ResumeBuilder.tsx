@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { CoverLetter, ResumeDoc, ResumeGap, TailorResult } from "@/lib/resume-tailor";
 import { MAX_NOTES_CHARS, MAX_POSTING_CHARS, MAX_RESUME_CHARS } from "@/lib/resume-input-limits";
 import type { PickedFile } from "@/lib/resume-upload";
@@ -8,6 +8,7 @@ import { usePersistentState } from "@/lib/use-persistent-state";
 import ResumeInputBox from "@/components/ResumeInputBox";
 import ResultView from "./ResultView";
 import VoiceInput from "./VoiceInput";
+import BuyMore from "./BuyMore";
 import ScratchForm, { emptyScratch, scratchReady, scratchToText, type Scratch } from "./ScratchForm";
 
 // The whole resume builder: the form, the progress screen, and the results. Anything worth keeping for
@@ -59,7 +60,7 @@ const errorText: Record<string, string> = {
   "resume-short": "Add your resume first: paste the text, or upload a file or screenshot.",
   "posting-short": "Add the job posting: paste it, paste its link, or upload a file or screenshot.",
   "too-long": "That's more text than we can read at once. Trim the resume or the posting and try again.",
-  limit: "You've used your 2 free builds. Paid builds are coming soon. Email info@thewarthens.com if you need one sooner.",
+  limit: "You're out of builds.",
   cap: "We've reached our free limit for this month. It resets on the 1st. Email info@thewarthens.com to join the wait.",
   "slow-down": "That was a lot of tries in a short time. Wait a few minutes and try again.",
   unavailable: "The resume builder isn't available right now. Try again later.",
@@ -97,6 +98,16 @@ export default function ResumeBuilder() {
   const [doc, setDoc] = useState<ResumeDoc | null>(null);
   const [letter, setLetter] = useState<CoverLetter | null>(null);
   const [letterFailed, setLetterFailed] = useState(false);
+  const [emailCopy, setEmailCopy] = useState(true);
+  const [outOfBuilds, setOutOfBuilds] = useState(false);
+  // True when the visitor has just come back from Stripe.
+  const justPaid = useSyncExternalStore(
+    () => () => {},
+    () => new URLSearchParams(window.location.search).get("paid") === "1",
+    () => false
+  );
+  // Whether the copy was asked for in the build that produced the result on screen.
+  const [mailThis, setMailThis] = useState(false);
   const [gaps, setGaps] = useState<ResumeGap[]>([]);
   const [changes, setChanges] = useState<string[]>([]);
   const [remaining, setRemaining] = useState<number | null>(null);
@@ -145,6 +156,7 @@ export default function ResumeBuilder() {
   async function build(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+    setOutOfBuilds(false);
     // Check here first so people get a clear message before anything is sent.
     const fromScratch = mode === "scratch";
     const resumeText = fromScratch ? scratchToText(scratch, email) : resume;
@@ -197,6 +209,7 @@ export default function ResumeBuilder() {
       await new Promise((resolve) => setTimeout(resolve, 2500));
     }
     if (!data.ok || !data.result) {
+      setOutOfBuilds(data.error === "limit");
       setError(data.error === "problem" ? data.message ?? errorText.upstream : errorText[data.error as string] ?? errorText.upstream);
       setPhase("form");
       return;
@@ -217,6 +230,7 @@ export default function ResumeBuilder() {
     setDoc(data.result.resume);
     setLetter(data.result.coverLetter ?? null);
     setLetterFailed(Boolean(data.letterFailed));
+    setMailThis(emailCopy);
     setGaps(data.result.gaps);
     setChanges(data.result.changes);
     setRemaining(typeof data.remaining === "number" ? data.remaining : null);
@@ -296,6 +310,7 @@ export default function ResumeBuilder() {
         changes={changes}
         onChanges={setChanges}
         email={email.trim()}
+        emailCopy={mailThis}
         remaining={remaining}
         original={original}
         onStartOver={startOver}
@@ -445,7 +460,7 @@ export default function ResumeBuilder() {
           </span>
           <p className="text-base font-semibold">Last step: your email</p>
         </div>
-        <p className="mt-1 text-xs text-foreground-muted sm:pl-10">We use it to count your 2 free builds.</p>
+        <p className="mt-1 text-xs text-foreground-muted sm:pl-10">We use it to count your 2 free builds, and to email you a copy of your resume if you want one.</p>
         <div className="mt-3 grid gap-3 sm:ml-10 sm:grid-cols-2">
           <div>
             <label className="block text-xs font-semibold" htmlFor="rt-email">
@@ -467,6 +482,13 @@ export default function ResumeBuilder() {
             </select>
           </div>
         </div>
+        <label className="mt-3 flex cursor-pointer items-start gap-3 sm:ml-10">
+          <input type="checkbox" checked={emailCopy} onChange={(e) => setEmailCopy(e.target.checked)} className="mt-0.5 h-4 w-4 shrink-0 accent-blue-600" />
+          <span className="text-sm">
+            <span className="font-semibold">Email me a copy</span> of my resume (PDF and Word) when it&apos;s ready.
+            <span className="block text-xs text-foreground-muted">Double-check your address above. You can also download everything on the next screen.</span>
+          </span>
+        </label>
       </div>
 
       <div className="rounded-2xl border border-border-subtle bg-background-elevated p-4 shadow-sm transition-shadow focus-within:border-blue-500/40 focus-within:shadow-md sm:p-5">
@@ -482,12 +504,50 @@ export default function ResumeBuilder() {
             <label className="block text-xs font-semibold" htmlFor="rt-manager">
               Who should it be addressed to? <span className="font-normal text-foreground-muted">(if you know)</span>
             </label>
-            <input id="rt-manager" value={hiringManager} onChange={(e) => setHiringManager(e.target.value)} placeholder="For example: Ms. Alvarez, or leave blank" className={`${input} mt-1`} />
+            <p className="mt-0.5 text-xs text-foreground-muted">Best is the hiring manager&apos;s full name, like Jamie Alvarez. Leave it blank if you can&apos;t find one, and we&apos;ll address it to the company&apos;s hiring team.</p>
+            <details className="mt-2 rounded-xl border border-border-subtle bg-background px-3 py-2 text-xs">
+              <summary className="cursor-pointer font-semibold">Not sure who to address it to?</summary>
+              <div className="mt-2 space-y-2 text-foreground-muted">
+                <p>Most career guides agree on this order:</p>
+                <ol className="list-decimal space-y-1 pl-5">
+                  <li>
+                    <span className="font-semibold text-foreground">A real person&apos;s name.</span> It shows you did your homework. Example: &quot;Dear Jamie Alvarez,&quot;
+                  </li>
+                  <li>
+                    <span className="font-semibold text-foreground">The company&apos;s hiring team.</span> The safe choice when there&apos;s no name. Example: &quot;Dear Spotify Hiring Team,&quot;
+                  </li>
+                  <li>
+                    <span className="font-semibold text-foreground">The team you&apos;d join,</span> if the posting names it. Example: &quot;Dear Customer Success Team,&quot;
+                  </li>
+                </ol>
+                <p>&quot;To whom it may concern&quot; sounds like a form letter, so we never use it. Small details like this rarely decide an application, but a real name is the one that stands out.</p>
+                <p className="font-semibold text-foreground">Ways to find a name</p>
+                <ul className="list-disc space-y-1 pl-5">
+                  <li>Read the posting again: many name a contact or a recruiter near the bottom.</li>
+                  <li>Search the company on LinkedIn for the team&apos;s manager, or a recruiter at that company.</li>
+                  <li>Check the company&apos;s careers or &quot;Our team&quot; page.</li>
+                  <li>Call the company and ask who is hiring for the role. Career counselors call this the most reliable way.</li>
+                  <li>Ask anyone you know who works there.</li>
+                </ul>
+                <p>If you only find the manager&apos;s boss, that works too. A wrong guess is worse than no name, so only use a name you&apos;re sure of.</p>
+              </div>
+            </details>
+            <input id="rt-manager" value={hiringManager} onChange={(e) => setHiringManager(e.target.value)} placeholder="Full name, like Jamie Alvarez, or leave blank" className={`${input} mt-1`} />
           </div>
         )}
       </div>
 
-      {error && (
+      {outOfBuilds ? (
+        <BuyMore email={email.trim()} afterPayment={justPaid} />
+      ) : (
+        justPaid && (
+          <p role="status" className="rounded-xl border border-green-600/30 bg-green-600/5 px-4 py-3 text-sm text-green-800">
+            Thank you! Your payment went through. Your builds are added to the email address you paid with, so use that same email below.
+          </p>
+        )
+      )}
+
+      {error && !outOfBuilds && (
         <p role="alert" className="rounded-xl border border-red-500/30 bg-red-500/5 px-4 py-3 text-sm text-red-700">
           {error}
         </p>
@@ -500,7 +560,7 @@ export default function ResumeBuilder() {
         </button>
         {missing.length > 0 && <p className="mt-2 text-center text-xs text-foreground-muted">Still needed: {missing.join(", ")}.</p>}
         <p className="mt-3 text-center text-xs text-foreground-muted">
-          Your first 2 builds are free. We send your resume and the posting, including any files or screenshots, to an AI service (Anthropic&apos;s Claude) to write your documents. We use your email to count your free builds, and we may send the occasional resource. Reply to any email from us to opt out. We only reword what&apos;s in your resume and notes. We never add experience you don&apos;t have.
+          Your first 2 builds are free. We send your resume and the posting, including any files or screenshots, to an AI service (Anthropic&apos;s Claude) to write your documents. We use your email to count your free builds, to send the copy you ask for (through our email service, Resend), and we may send the occasional resource. Reply to any email from us to opt out. We only reword what&apos;s in your resume and notes. We never add experience you don&apos;t have.
         </p>
       </div>
     </form>

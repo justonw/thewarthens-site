@@ -93,8 +93,39 @@ export async function bumpCounter(kv: Kv, key: string, delta: number, max: numbe
   throw new Error("counter is busy");
 }
 
+// ---------- Paid builds ----------
+// Someone who has used their free builds can buy more (see /api/resume-checkout). Each purchase adds builds to
+// a balance kept for their email address. A build is paid for out of the free ones first, then the balance.
+
+export function creditsKey(email: string) {
+  return `credits/${emailKey(email).slice(6)}`;
+}
+
+export async function creditsLeft(kv: Kv, email: string): Promise<number> {
+  const entry = await kv.get(creditsKey(email));
+  return Math.max(0, Number((entry?.data as { n?: number } | null)?.n ?? 0));
+}
+
+export async function addCredits(kv: Kv, email: string, n: number): Promise<number | null> {
+  return bumpCounter(kv, creditsKey(email), n, Number.MAX_SAFE_INTEGER);
+}
+
+// Takes one paid build off the balance, or returns null when there is none.
+async function takeCredit(kv: Kv, email: string): Promise<number | null> {
+  const key = creditsKey(email);
+  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    const current = await kv.get(key);
+    const n = Number((current?.data as { n?: number } | null)?.n ?? 0);
+    if (!current?.etag || n < 1) return null;
+    const written = await kv.set(key, { n: n - 1 }, { onlyIfMatch: current.etag });
+    if (written.modified) return n - 1;
+    await sleep(Math.random() * 25);
+  }
+  throw new Error("credits are busy");
+}
+
 export type Reservation =
-  | { ok: true; used: number; unlimited: boolean }
+  | { ok: true; used: number; unlimited: boolean; paid: boolean; credits: number }
   | { ok: false; reason: "limit" | "cap" };
 
 export async function reserve(
@@ -102,19 +133,29 @@ export async function reserve(
   email: string,
   opts: { unlimited: boolean; monthlyCap: number; now?: Date }
 ): Promise<Reservation> {
-  if (opts.unlimited) return { ok: true, used: 0, unlimited: true };
+  if (opts.unlimited) return { ok: true, used: 0, unlimited: true, paid: false, credits: 0 };
   const mine = await bumpCounter(kv, emailKey(email), 1, FREE_PER_EMAIL);
-  if (mine === null) return { ok: false, reason: "limit" };
+  if (mine === null) {
+    // The free builds are used up. A paid build comes off the balance, and is not held to the monthly cap
+    // because the person paid for it.
+    const left = await takeCredit(kv, email);
+    if (left === null) return { ok: false, reason: "limit" };
+    return { ok: true, used: FREE_PER_EMAIL, unlimited: false, paid: true, credits: left };
+  }
   const all = await bumpCounter(kv, monthKey(opts.now), 1, opts.monthlyCap);
   if (all === null) {
     await bumpCounter(kv, emailKey(email), -1, FREE_PER_EMAIL);
     return { ok: false, reason: "cap" };
   }
-  return { ok: true, used: mine, unlimited: false };
+  return { ok: true, used: mine, unlimited: false, paid: false, credits: await creditsLeft(kv, email) };
 }
 
-export async function refund(kv: Kv, email: string, opts: { unlimited: boolean; now?: Date }) {
+export async function refund(kv: Kv, email: string, opts: { unlimited: boolean; paid?: boolean; now?: Date }) {
   if (opts.unlimited) return;
+  if (opts.paid) {
+    await addCredits(kv, email, 1);
+    return;
+  }
   await bumpCounter(kv, emailKey(email), -1, FREE_PER_EMAIL);
   await bumpCounter(kv, monthKey(opts.now), -1, Number.MAX_SAFE_INTEGER);
 }

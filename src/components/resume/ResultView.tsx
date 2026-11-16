@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { CoverLetter, ResumeDoc, ResumeGap, TailorResult } from "@/lib/resume-tailor";
 import { keywordCoverage, runAtsCheck } from "@/lib/resume-ats";
-import { RESUME_STYLES, buildDocx, buildPdf, resumeFileName, resumeToPlainText, type ResumeStyle } from "@/lib/resume-files";
+import { RESUME_STYLES, buildCoverLetterDocx, buildCoverLetterPdf, buildDocx, buildPdf, coverLetterFileName, resumeFileName, resumeToPlainText, type ResumeStyle } from "@/lib/resume-files";
 import { downloadBlob } from "@/lib/download";
 import { usePersistentState } from "@/lib/use-persistent-state";
 import { NO_TRACKER_ENTRIES, TRACKER_KEY, type TrackerEntry } from "@/lib/job-tracker";
@@ -171,6 +171,7 @@ export default function ResultView({
   changes,
   onChanges,
   email,
+  emailCopy = false,
   remaining,
   original,
   onStartOver,
@@ -186,6 +187,7 @@ export default function ResultView({
   changes: string[];
   onChanges: (c: string[]) => void;
   email: string;
+  emailCopy?: boolean;
   remaining: number | null;
   // The resume text the person gave us, for the before-and-after view. Null when it came from a file or from scratch.
   original: string | null;
@@ -225,6 +227,49 @@ export default function ResultView({
     ]);
     setTracked("added");
   }
+
+  // Emails the person their files (the same ones the download buttons make). Sent once on its own if they
+  // ticked the box, and again whenever they ask, so the copy can include their edits.
+  const [mailed, setMailed] = useState<"" | "sending" | "sent" | "failed">("");
+  const autoSent = useRef(false);
+
+  async function sendCopy() {
+    setMailed("sending");
+    try {
+      const b64 = async (blob: Blob) => {
+        const bytes = new Uint8Array(await blob.arrayBuffer());
+        let bin = "";
+        for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+        return btoa(bin);
+      };
+      const files = [
+        { name: resumeFileName(finalDoc, "pdf"), data: await b64(new Blob([(await buildPdf(finalDoc, style, design)) as BlobPart])) },
+        { name: resumeFileName(finalDoc, "docx"), data: await b64(await buildDocx(finalDoc, style, design)) },
+      ];
+      if (letter) {
+        files.push(
+          { name: coverLetterFileName(finalDoc, "pdf"), data: await b64(new Blob([(await buildCoverLetterPdf(letter, finalDoc)) as BlobPart])) },
+          { name: coverLetterFileName(finalDoc, "docx"), data: await b64(await buildCoverLetterDocx(letter, finalDoc)) }
+        );
+      }
+      const res = await fetch("/api/resume-email", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ email, jobTitle: result.postingTitle, files }),
+      });
+      setMailed(res.ok ? "sent" : "failed");
+    } catch {
+      setMailed("failed");
+    }
+  }
+
+  useEffect(() => {
+    if (!emailCopy || autoSent.current) return;
+    autoSent.current = true;
+    void sendCopy();
+    // Runs once when the result first appears.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function download(kind: "pdf" | "docx") {
     setBusy(kind);
@@ -313,6 +358,13 @@ export default function ResultView({
                 Your {letter ? "resume and cover letter" : "resume"} for {result.postingTitle || doc.headline}
                 {result.postingCompany ? ` at ${result.postingCompany}` : ""}
               </h2>
+              {mailed !== "" && (
+                <p role="status" className="mt-1 text-sm font-medium">
+                  {mailed === "sending" && "Emailing you a copy..."}
+                  {mailed === "sent" && <span className="text-green-700">A copy is on its way to {email}. If it doesn&apos;t show up, check spam.</span>}
+                  {mailed === "failed" && <span className="text-red-700">We couldn&apos;t email your copy. You can still download your files below.</span>}
+                </p>
+              )}
               <p className="mt-1 text-sm text-foreground-muted">
                 Click any text to edit it. Read it through once before you send it.
                 {remaining !== null && (remaining > 0 ? ` You have ${remaining} free ${remaining === 1 ? "build" : "builds"} left.` : " That was your last free build, but you can keep editing and downloading this one.")}
@@ -349,6 +401,9 @@ export default function ResultView({
               </button>
               <button onClick={() => download("docx")} disabled={busy !== ""} className="rounded-full border border-border-subtle bg-background-elevated px-5 py-2.5 text-sm font-semibold transition-colors hover:border-blue-500/40 disabled:opacity-60">
                 {busy === "docx" ? "Preparing…" : "Download Word"}
+              </button>
+              <button onClick={sendCopy} disabled={mailed === "sending"} className="rounded-full border border-border-subtle bg-background-elevated px-5 py-2.5 text-sm font-semibold transition-colors hover:border-blue-500/40 disabled:opacity-60">
+                {mailed === "sending" ? "Sending…" : mailed === "sent" ? "Email it again" : "Email me a copy"}
               </button>
             </div>
             <div className="space-y-2" role="group" aria-label="Download style">

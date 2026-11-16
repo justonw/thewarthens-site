@@ -11,8 +11,8 @@ export const metadata: Metadata = {
   title: { absolute: title },
   description,
   alternates: { canonical: "/source-of-life/leader-guide" },
-  openGraph: { title, description, url: "/source-of-life/leader-guide", type: "article" },
-  twitter: { card: "summary_large_image", title, description },
+  openGraph: { title, description, url: "/source-of-life/leader-guide", type: "article", images: [{ url: "/source-of-life/opengraph-image", width: 1200, height: 630 }] },
+  twitter: { card: "summary_large_image", title, description, images: ["/source-of-life/opengraph-image"] },
 };
 
 type Ref = { section: string; ref: string };
