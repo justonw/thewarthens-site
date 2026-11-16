@@ -9,7 +9,7 @@ import { PLANS, PLAN_ORDER, isPlanId, type PlanId } from "@/lib/resume-plans";
 
 const SOON = "Paid builds are coming soon. Email info@thewarthens.com if you need one sooner.";
 
-export default function BuyMore({ email, afterPayment }: { email: string; afterPayment: boolean }) {
+export default function BuyMore({ email, afterPayment, onBeforeCheckout }: { email: string; afterPayment: boolean; onBeforeCheckout?: () => void }) {
   const [busy, setBusy] = useState("");
   const [message, setMessage] = useState("");
   // null while we check which packs are on sale.
@@ -29,6 +29,8 @@ export default function BuyMore({ email, afterPayment }: { email: string; afterP
   async function buy(plan: string) {
     setBusy(plan);
     setMessage("");
+    // Lets the page keep what the person typed, because the payment page takes them away from this one.
+    onBeforeCheckout?.();
     try {
       const res = await fetch("/api/resume-checkout", {
         method: "POST",

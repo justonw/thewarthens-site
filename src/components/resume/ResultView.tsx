@@ -242,14 +242,20 @@ export default function ResultView({
         for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
         return btoa(bin);
       };
+      // A job title can be very long, so the names sent by email are kept to a sensible length.
+      const short = (name: string) => {
+        const dot = name.lastIndexOf(".");
+        const base = name.slice(0, dot);
+        return base.length > 90 ? `${base.slice(0, 90).replace(/-+$/, "")}${name.slice(dot)}` : name;
+      };
       const files = [
-        { name: resumeFileName(finalDoc, "pdf"), data: await b64(new Blob([(await buildPdf(finalDoc, style, design)) as BlobPart])) },
-        { name: resumeFileName(finalDoc, "docx"), data: await b64(await buildDocx(finalDoc, style, design)) },
+        { name: short(resumeFileName(finalDoc, "pdf")), data: await b64(new Blob([(await buildPdf(finalDoc, style, design)) as BlobPart])) },
+        { name: short(resumeFileName(finalDoc, "docx")), data: await b64(await buildDocx(finalDoc, style, design)) },
       ];
       if (letter) {
         files.push(
-          { name: coverLetterFileName(finalDoc, "pdf"), data: await b64(new Blob([(await buildCoverLetterPdf(letter, finalDoc)) as BlobPart])) },
-          { name: coverLetterFileName(finalDoc, "docx"), data: await b64(await buildCoverLetterDocx(letter, finalDoc)) }
+          { name: short(coverLetterFileName(finalDoc, "pdf")), data: await b64(new Blob([(await buildCoverLetterPdf(letter, finalDoc)) as BlobPart])) },
+          { name: short(coverLetterFileName(finalDoc, "docx")), data: await b64(await buildCoverLetterDocx(letter, finalDoc)) }
         );
       }
       const res = await fetch("/api/resume-email", {

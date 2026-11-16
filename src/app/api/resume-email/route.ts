@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
     const name = typeof f?.name === "string" ? f.name : "";
     const data = typeof f?.data === "string" ? f.data : "";
     const ext = name.split(".").pop()?.toLowerCase() ?? "";
-    if (!TYPES[ext] || !/^[\w\- .()]{1,80}$/.test(name) || !/^[A-Za-z0-9+/=]+$/.test(data) || data.length < 100) {
+    if (!TYPES[ext] || !/^[\w\- .()]{1,150}$/.test(name) || !/^[A-Za-z0-9+/=]+$/.test(data) || data.length < 100) {
       return NextResponse.json({ error: "files" }, { status: 400 });
     }
     // A real PDF starts with "%PDF" and a Word file is a zip that starts with "PK".

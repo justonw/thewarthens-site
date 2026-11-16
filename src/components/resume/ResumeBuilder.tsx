@@ -52,6 +52,28 @@ type Saved = {
 
 const noSaved: Saved | null = null;
 
+const DRAFT_KEY = "warthens-resume-draft-v1";
+type Draft = {
+  mode?: string;
+  scratch?: Scratch;
+  resume?: string;
+  posting?: string;
+  notes?: string;
+  hiringManager?: string;
+  wantLetter?: boolean;
+  email?: string;
+  source?: string;
+  emailCopy?: boolean;
+  matchDesign?: boolean;
+  resumeFiles?: PickedFile[];
+  postingFiles?: PickedFile[];
+  filesDropped?: boolean;
+};
+// A picture's preview is a temporary address that does not survive the trip, so it is rebuilt from the picture itself.
+const stripPreview = (f: PickedFile): PickedFile => ({ ...f, previewUrl: undefined });
+const withPreview = (f: PickedFile): PickedFile =>
+  f.kind === "image" && f.attachment ? { ...f, previewUrl: `data:${f.attachment.mediaType};base64,${f.attachment.data}` } : f;
+
 const errorText: Record<string, string> = {
   email: "Enter a valid email address.",
   source: "Choose how you found us.",
@@ -101,6 +123,8 @@ export default function ResumeBuilder() {
   const [emailCopy, setEmailCopy] = useState(true);
   const [notesOpen, setNotesOpen] = useState(false);
   const [outOfBuilds, setOutOfBuilds] = useState(false);
+  // After a payment: whether we could put their form back ("yes"), or everything but their files ("files").
+  const [draftBack, setDraftBack] = useState<"" | "yes" | "files">("");
   // True when the visitor has just come back from Stripe.
   const justPaid = useSyncExternalStore(
     () => () => {},
@@ -254,6 +278,58 @@ export default function ResumeBuilder() {
     const top = target.getBoundingClientRect().top + window.scrollY - (backWithProblem ? 160 : 100);
     window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
   }, [phase]);
+
+  // Paying on Stripe takes the person to another page and back, which would empty the form. So the form is kept
+  // for the trip, in this tab only, and put back (once) when they return from a payment.
+  function saveDraft() {
+    try {
+      const draft = { mode, scratch, resume, posting, notes, hiringManager, wantLetter, email, source, emailCopy, matchDesign, resumeFiles: resumeFiles.map(stripPreview), postingFiles: postingFiles.map(stripPreview) };
+      const json = JSON.stringify(draft);
+      // Files can be large. If they do not fit, keep the typed parts and tell the person to add the files again.
+      window.sessionStorage.setItem(DRAFT_KEY, json.length < 3_500_000 ? json : JSON.stringify({ ...draft, resumeFiles: [], postingFiles: [], filesDropped: true }));
+    } catch {
+      /* private mode or storage full: they will simply see an empty form, as before */
+    }
+  }
+
+  function applyDraft(raw: string) {
+    try {
+      const d = JSON.parse(raw) as Draft;
+      setMode(d.mode === "scratch" ? "scratch" : "have");
+      setScratch({ ...emptyScratch, ...d.scratch });
+      setResume(d.resume ?? "");
+      setPosting(d.posting ?? "");
+      setNotes(d.notes ?? "");
+      setHiringManager(d.hiringManager ?? "");
+      setWantLetter(Boolean(d.wantLetter));
+      setEmail(d.email ?? "");
+      setSource(d.source ?? "");
+      setEmailCopy(d.emailCopy !== false);
+      setMatchDesign(d.matchDesign !== false);
+      setResumeFiles((d.resumeFiles ?? []).map(withPreview));
+      setPostingFiles((d.postingFiles ?? []).map(withPreview));
+      setDraftBack(d.filesDropped ? "files" : "yes");
+    } catch {
+      /* an unreadable draft is ignored */
+    }
+  }
+
+  const restored = useRef(false);
+  useEffect(() => {
+    if (!justPaid || restored.current) return;
+    restored.current = true;
+    let raw: string | null = null;
+    try {
+      raw = window.sessionStorage.getItem(DRAFT_KEY);
+      window.sessionStorage.removeItem(DRAFT_KEY);
+    } catch {
+      return;
+    }
+    if (!raw) return;
+    const saved = raw;
+    // Applied just after the page has settled, so the form fills in without a mismatch with the server's page.
+    window.setTimeout(() => applyDraft(saved), 0);
+  }, [justPaid]);
 
   function startOver() {
     // Keeps the resume, notes, and email, so the next job takes seconds.
@@ -592,12 +668,16 @@ export default function ResumeBuilder() {
 
       {outOfBuilds ? (
         <div id="rt-problem">
-          <BuyMore email={email.trim()} afterPayment={justPaid} />
+          <BuyMore email={email.trim()} afterPayment={justPaid} onBeforeCheckout={saveDraft} />
         </div>
       ) : (
         justPaid && (
           <p role="status" className="rounded-xl border border-green-600/30 bg-green-600/5 px-4 py-3 text-sm text-green-800">
-            Thank you! Your payment went through. Your builds are added to the email address you paid with, so use that same email below.
+            {draftBack === "yes" &&
+              "Thank you! Your payment went through, and your builds are added to the email you paid with. We kept everything you entered, so press Build."}
+            {draftBack === "files" &&
+              "Thank you! Your payment went through, and your builds are added to the email you paid with. We kept what you typed. Add your file or screenshot again, then press Build."}
+            {draftBack === "" && "Thank you! Your payment went through. Your builds are added to the email address you paid with, so use that same email below."}
           </p>
         )
       )}
