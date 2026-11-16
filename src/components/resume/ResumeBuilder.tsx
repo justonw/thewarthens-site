@@ -7,6 +7,7 @@ import type { PickedFile } from "@/lib/resume-upload";
 import { usePersistentState } from "@/lib/use-persistent-state";
 import ResumeInputBox from "@/components/ResumeInputBox";
 import ResultView from "./ResultView";
+import VoiceInput from "./VoiceInput";
 import ScratchForm, { emptyScratch, scratchReady, scratchToText, type Scratch } from "./ScratchForm";
 
 // The whole resume builder: the form, the progress screen, and the results. Anything worth keeping for
@@ -95,6 +96,7 @@ export default function ResumeBuilder() {
   const [result, setResult] = useState<TailorResult | null>(null);
   const [doc, setDoc] = useState<ResumeDoc | null>(null);
   const [letter, setLetter] = useState<CoverLetter | null>(null);
+  const [letterFailed, setLetterFailed] = useState(false);
   const [gaps, setGaps] = useState<ResumeGap[]>([]);
   const [changes, setChanges] = useState<string[]>([]);
   const [remaining, setRemaining] = useState<number | null>(null);
@@ -178,7 +180,7 @@ export default function ResumeBuilder() {
     });
     // A one-off hiccup on our side should not reach the person: try once more before showing an error.
     // A failed try never uses up a free build, so trying again is safe.
-    let data: { ok?: boolean; error?: string; message?: string; result?: TailorResult; remaining?: number | null } = {};
+    let data: { ok?: boolean; error?: string; message?: string; result?: TailorResult; letterFailed?: boolean; remaining?: number | null } = {};
     let status = 0;
     for (let attempt = 1; attempt <= 2; attempt++) {
       try {
@@ -214,6 +216,7 @@ export default function ResumeBuilder() {
     setResult(data.result);
     setDoc(data.result.resume);
     setLetter(data.result.coverLetter ?? null);
+    setLetterFailed(Boolean(data.letterFailed));
     setGaps(data.result.gaps);
     setChanges(data.result.changes);
     setRemaining(typeof data.remaining === "number" ? data.remaining : null);
@@ -286,6 +289,7 @@ export default function ResumeBuilder() {
         doc={doc}
         onDoc={setDoc}
         letter={letter}
+        letterFailed={letterFailed}
         onLetter={setLetter}
         gaps={gaps}
         onGaps={setGaps}
@@ -429,6 +433,9 @@ export default function ResumeBuilder() {
           placeholder="For example: I volunteer as a youth mentor. I use Canva and Notion every day. I'm finishing a Google Career Certificate. I'm great at calming upset customers."
           className={`${input} mt-3 resize-y`}
         />
+        <div className="mt-2 sm:pl-10">
+          <VoiceInput onText={(t) => setNotes((prev) => `${prev}${prev && !/\s$/.test(prev) ? " " : ""}${t}`)} />
+        </div>
       </div>
 
       <div className="rounded-2xl border border-border-subtle bg-background-elevated p-4 shadow-sm transition-shadow focus-within:border-blue-500/40 focus-within:shadow-md sm:p-5">

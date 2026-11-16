@@ -1,6 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import {
+  buildLetterRequest,
   buildResumeRequest,
   cleanAttachments,
   MAX_ATTACH_B64_TOTAL,
@@ -8,8 +9,8 @@ import {
   MAX_NOTES_CHARS,
   MAX_POSTING_CHARS,
   MAX_RESUME_CHARS,
+  parseLetterResponse,
   parseResumeResponse,
-  type ParsedTailor,
   type TailorInput,
 } from "@/lib/resume-tailor";
 import { DEFAULT_MONTHLY_CAP, FREE_PER_EMAIL, getKv, refund, reserve } from "@/lib/resume-limits";
@@ -93,14 +94,21 @@ async function notify(live: boolean, email: string, jobTitle: string, source: st
 const FALLBACK_MODEL = "claude-haiku-5-5";
 const MAX_ATTEMPTS = 3;
 
-async function askClaude(input: TailorInput, model: string): Promise<ParsedTailor | null> {
+// Runs one request (the resume or the cover letter) with the tries described above. `build` makes the request
+// for a model, and `parse` turns the reply into a result, or null when it was not usable.
+async function askClaude<T>(
+  label: string,
+  build: (model: string) => unknown,
+  parse: (data: unknown) => T | null,
+  model: string
+): Promise<T | null> {
   const started = Date.now();
   let pauseMs = 800;
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
     // Stay inside the host's time limit: each try gets only what is left of a 55 second budget.
     const left = 55000 - (Date.now() - started);
     if (attempt > 1 && left < 9000) break;
-    const payload = JSON.stringify(buildResumeRequest(input, attempt === 1 ? model : FALLBACK_MODEL));
+    const payload = JSON.stringify(build(attempt === 1 ? model : FALLBACK_MODEL));
     try {
       const res = await fetch(`${API_BASE}/v1/messages`, {
         method: "POST",
@@ -110,19 +118,20 @@ async function askClaude(input: TailorInput, model: string): Promise<ParsedTailo
       });
       if (!res.ok) {
         const detail = (await res.text().catch(() => "")).slice(0, 300);
-        console.error(`resume-tailor attempt ${attempt}: Claude answered ${res.status} ${detail}`);
+        console.error(`${label} attempt ${attempt}: Claude answered ${res.status} ${detail}`);
         if (res.status !== 429 && res.status < 500) return null; // a bad request will not get better
         const asked = Number(res.headers.get("retry-after"));
         pauseMs = Math.min(Math.max(Number.isFinite(asked) ? asked * 1000 : 0, 800 * attempt), 4000);
       } else {
         const data = await res.json();
-        const parsed = parseResumeResponse(data);
+        const parsed = parse(data);
         if (parsed) return parsed;
-        const kinds = Array.isArray(data?.content) ? data.content.map((c: { type?: string }) => c?.type).join(",") : "none";
-        console.error(`resume-tailor attempt ${attempt}: no usable tool call (stop_reason ${data?.stop_reason}, blocks ${kinds})`);
+        const content = (data as { content?: { type?: string }[] })?.content;
+        const kinds = Array.isArray(content) ? content.map((c) => c?.type).join(",") : "none";
+        console.error(`${label} attempt ${attempt}: no usable tool call (stop_reason ${(data as { stop_reason?: string })?.stop_reason}, blocks ${kinds})`);
       }
     } catch (err) {
-      console.error(`resume-tailor attempt ${attempt} failed`, err instanceof Error ? err.message : err);
+      console.error(`${label} attempt ${attempt} failed`, err instanceof Error ? err.message : err);
     }
     await new Promise((resolve) => setTimeout(resolve, pauseMs));
     pauseMs = 800 * attempt;
@@ -207,7 +216,13 @@ export async function POST(req: NextRequest) {
   const giveBack = () => refund(kv, email, { unlimited }).catch(() => {});
 
   try {
-    const parsed = await askClaude({ resumeText, resumeFiles, postingText, postingFiles, notes, coverLetter: wantsLetter, hiringManager, fromScratch, matchDesign: matchDesign && resumeFiles.length > 0 }, model);
+    // The resume and the cover letter are written by two requests at the same time. A letter is a different job,
+    // and asking for both in one answer often left the letter missing or half-written.
+    const base: TailorInput = { resumeText, resumeFiles, postingText, postingFiles, notes, coverLetter: false, hiringManager, fromScratch, matchDesign: matchDesign && resumeFiles.length > 0 };
+    const [parsed, letterResult] = await Promise.all([
+      askClaude("resume-tailor", (m) => buildResumeRequest(base, m), parseResumeResponse, model),
+      wantsLetter ? askClaude("resume-letter", (m) => buildLetterRequest(base, m), parseLetterResponse, model) : Promise.resolve(null),
+    ]);
     if (!parsed) {
       await giveBack();
       return NextResponse.json({ error: "upstream" }, { status: 502 });
@@ -216,10 +231,14 @@ export async function POST(req: NextRequest) {
       await giveBack();
       return NextResponse.json({ error: "problem", message: parsed.problem }, { status: 422 });
     }
-    await notify(live, email, parsed.result.postingTitle, source, Boolean(parsed.result.coverLetter));
+    const letter = letterResult && letterResult.ok ? letterResult.letter : null;
+    if (letter) parsed.result.coverLetter = letter;
+    const letterFailed = wantsLetter && !letter;
+    await notify(live, email, parsed.result.postingTitle, source, Boolean(letter));
     return NextResponse.json({
       ok: true,
       result: parsed.result,
+      letterFailed,
       remaining: unlimited ? null : Math.max(0, FREE_PER_EMAIL - reservation.used),
     });
   } catch {

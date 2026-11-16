@@ -164,6 +164,7 @@ export default function ResultView({
   doc,
   onDoc,
   letter,
+  letterFailed = false,
   onLetter,
   gaps,
   onGaps,
@@ -178,6 +179,7 @@ export default function ResultView({
   doc: ResumeDoc;
   onDoc: (d: ResumeDoc) => void;
   letter: CoverLetter | null;
+  letterFailed?: boolean;
   onLetter: (l: CoverLetter) => void;
   gaps: ResumeGap[];
   onGaps: (g: ResumeGap[]) => void;
@@ -322,6 +324,12 @@ export default function ResultView({
           </button>
         </div>
       </div>
+
+      {letterFailed && !letter && (
+        <p role="status" className="rounded-2xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm">
+          Your resume is ready, but the cover letter did not come through this time. You can download the resume now, and use &quot;Tailor for another job&quot; to try the letter again. Your resume and notes are saved here, so it only takes a moment.
+        </p>
+      )}
 
       {letter && (
         <div role="tablist" aria-label="Your documents" className="inline-flex rounded-full border border-border-subtle bg-background-elevated p-1">
