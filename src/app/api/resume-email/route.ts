@@ -1,17 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { bumpCounter, emailKey, getKv, withTimeout } from "@/lib/resume-limits";
+import { bumpCounter, copiesAllowed, emailKey, getKv, mailedKey, withTimeout } from "@/lib/resume-limits";
 import { isLiveHost } from "@/lib/coaching-recipients";
 
 // Emails a person their finished resume (and cover letter) as attachments, to the address they gave us.
 // The files are built in the visitor's browser and passed straight through to our email service: nothing
-// is stored here. The text of the email is fixed, and an address can only get a few copies a day, so this
+// is stored here. The text of the email is fixed, and an address can only get 2 copies for each build made with it, so this
 // cannot be used to send messages to other people. Without RESEND_API_KEY it answers 503.
 
 export const dynamic = "force-dynamic";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const FROM_EMAIL = process.env.TRACKER_FROM_EMAIL || "The Warthens <info@thewarthens.com>";
-const MAX_PER_DAY = 6;
 const MAX_FILES = 4;
 const MAX_B64_TOTAL = 4_000_000;
 const TYPES: Record<string, string> = {
@@ -91,9 +90,12 @@ export async function POST(req: NextRequest) {
     const built = (await withTimeout(kv.has(emailKey(email)), 8000, "look up the address")) ? await withTimeout(kv.get(emailKey(email)), 8000, "read the address") : null;
     const n = Number((built?.data as { n?: number } | null)?.n ?? 0);
     if (n < 1) return NextResponse.json({ error: "not-found" }, { status: 403 });
-    const day = new Date().toISOString().slice(0, 10);
-    const sent = await withTimeout(bumpCounter(kv, `mail/${emailKey(email).slice(6)}/${day}`, 1, MAX_PER_DAY), 8000, "count the copy");
-    if (sent === null) return NextResponse.json({ error: "daily-limit" }, { status: 429 });
+    // Each build comes with 2 emailed copies (the automatic one and one resend), counted as a pool for the address.
+    // A person who has bought builds therefore gets copies for every one of them, and a stranger's address can
+    // never be sent more than 2 copies per build that was made with it.
+    const allowed = await withTimeout(copiesAllowed(kv, email, n), 8000, "work out the copies allowed");
+    const sent = await withTimeout(bumpCounter(kv, mailedKey(email), 1, allowed), 8000, "count the copy");
+    if (sent === null) return NextResponse.json({ error: "copies-used" }, { status: 429 });
   } catch (err) {
     console.error("resume-email limit check failed", err);
     return NextResponse.json({ error: "unavailable" }, { status: 503 });

@@ -235,6 +235,8 @@ export default function ResultView({
   // Emails the person their files (the same ones the download buttons make). Sent once on its own if they
   // ticked the box, and again whenever they ask, so the copy can include their edits.
   const [mailed, setMailed] = useState<"" | "sending" | "sent" | "failed">("");
+  // When the email did not go, say why in plain words (a daily limit is not a fault, and the files can still be downloaded).
+  const [mailWhy, setMailWhy] = useState("");
   // They ticked "email me a copy" on the form next to the address they typed, which is their say-so. The copy goes
   // out once, when the result first appears. A mistyped address is caught on the form, where the address is entered.
   const autoSent = useRef(false);
@@ -278,6 +280,16 @@ export default function ResultView({
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ email, jobTitle: result.postingTitle, files }),
       });
+      if (!res.ok) {
+        const why = (await res.json().catch(() => ({}))) as { error?: string };
+        setMailWhy(
+          why.error === "copies-used"
+            ? "Every build comes with 2 emailed copies (the one sent automatically and one resend), and you've used them. Your files are still here to download."
+            : why.error === "slow-down"
+              ? "That was a lot of copies in a short time. Wait a few minutes and press \"Email me a copy\", or download your files below."
+              : ""
+        );
+      } else setMailWhy("");
       setMailed(res.ok ? "sent" : "failed");
     } catch {
       setMailed("failed");
@@ -385,7 +397,7 @@ export default function ResultView({
                 <p role="status" className="mt-1 text-sm font-medium">
                   {mailed === "sending" && "Emailing you a copy..."}
                   {mailed === "sent" && <span className="text-green-700">A copy is on its way to {email}. If it doesn&apos;t show up, check spam.</span>}
-                  {mailed === "failed" && <span className="text-red-700">We couldn&apos;t email your copy. You can still download your files below.</span>}
+                  {mailed === "failed" && <span className="text-red-700">{mailWhy || "We couldn't email your copy. You can still download your files below."}</span>}
                 </p>
               )}
               <p className="mt-1 text-sm text-foreground-muted">

@@ -148,6 +148,38 @@ async function takeCredit(kv: Kv, email: string): Promise<number | null> {
   throw new Error("credits are busy");
 }
 
+// ---------- Builds ever made, and the emailed copies that come with them ----------
+// Each build comes with 2 emailed copies: one sent automatically, and one resend. The copies are a pool per address
+// (builds x 2), so 2 free builds allow 4 copies, and an address that bought 30 more builds allows 64 in all.
+export const COPIES_PER_BUILD = 2;
+
+export function buildsKey(email: string) {
+  return `builds/${emailKey(email).slice(6)}`;
+}
+export function mailedKey(email: string) {
+  return `mailed/${emailKey(email).slice(6)}`;
+}
+
+// Counts a build against the address. Never lets a counting problem break a build that already went through.
+async function countBuild(kv: Kv, email: string, delta: number) {
+  try {
+    await bumpCounter(kv, buildsKey(email), delta, Number.MAX_SAFE_INTEGER);
+  } catch {
+    /* the build still counts for the person; only the email allowance is affected */
+  }
+}
+
+// How many emailed copies the address is allowed in all. Addresses that built before this counter existed are
+// worked out from their free builds, so they are never locked out.
+export async function copiesAllowed(kv: Kv, email: string, freeUsed: number): Promise<number> {
+  let builds = 0;
+  if (await kv.has(buildsKey(email))) {
+    const entry = await kv.get(buildsKey(email));
+    builds = Number((entry?.data as { n?: number } | null)?.n ?? 0);
+  }
+  return Math.max(builds, freeUsed) * COPIES_PER_BUILD;
+}
+
 export type Reservation =
   | { ok: true; used: number; unlimited: boolean; paid: boolean; credits: number }
   | { ok: false; reason: "limit" | "cap" };
@@ -164,6 +196,7 @@ export async function reserve(
     // because the person paid for it.
     const left = await takeCredit(kv, email);
     if (left === null) return { ok: false, reason: "limit" };
+    await countBuild(kv, email, 1);
     return { ok: true, used: FREE_PER_EMAIL, unlimited: false, paid: true, credits: left };
   }
   const all = await bumpCounter(kv, monthKey(opts.now), 1, opts.monthlyCap);
@@ -171,11 +204,13 @@ export async function reserve(
     await bumpCounter(kv, emailKey(email), -1, FREE_PER_EMAIL);
     return { ok: false, reason: "cap" };
   }
+  await countBuild(kv, email, 1);
   return { ok: true, used: mine, unlimited: false, paid: false, credits: await creditsLeft(kv, email) };
 }
 
 export async function refund(kv: Kv, email: string, opts: { unlimited: boolean; paid?: boolean; now?: Date }) {
   if (opts.unlimited) return;
+  await countBuild(kv, email, -1);
   if (opts.paid) {
     await addCredits(kv, email, 1);
     return;
