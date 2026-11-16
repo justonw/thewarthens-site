@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { buildLabel, usageLine, type Usage } from "@/lib/resume-usage";
 import { contactGaps, type CoverLetter, type ResumeDoc, type ResumeGap, type TailorResult } from "@/lib/resume-tailor";
 import { keywordCoverage, runAtsCheck } from "@/lib/resume-ats";
 import { RESUME_STYLES, buildCoverLetterDocx, buildCoverLetterPdf, buildDocx, buildPdf, coverLetterFileName, resumeFileName, resumeToPlainText, type ResumeStyle } from "@/lib/resume-files";
@@ -173,6 +174,7 @@ export default function ResultView({
   email,
   emailCopy = false,
   remaining,
+  usage,
   original,
   onStartOver,
 }: {
@@ -189,6 +191,7 @@ export default function ResultView({
   email: string;
   emailCopy?: boolean;
   remaining: number | null;
+  usage?: Usage | null;
   // The resume text the person gave us, for the before-and-after view. Null when it came from a file or from scratch.
   original: string | null;
   onStartOver: () => void;
@@ -278,7 +281,7 @@ export default function ResultView({
       const res = await fetch("/api/resume-email", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ email, jobTitle: result.postingTitle, files }),
+        body: JSON.stringify({ email, jobTitle: result.postingTitle, files, buildNote: usage ? buildLabel(usage) ?? undefined : undefined }),
       });
       if (!res.ok) {
         const why = (await res.json().catch(() => ({}))) as { error?: string };
@@ -402,7 +405,7 @@ export default function ResultView({
               )}
               <p className="mt-1 text-sm text-foreground-muted">
                 Click any text to edit it. Read it through once before you send it.
-                {remaining !== null && (remaining > 0 ? ` You have ${remaining} free ${remaining === 1 ? "build" : "builds"} left.` : " That was your last free build, but you can keep editing and downloading this one.")}
+                {usage ? ` ${usageLine(usage)}` : remaining !== null && (remaining > 0 ? ` You have ${remaining} ${remaining === 1 ? "build" : "builds"} left.` : " That was your last build, but you can keep editing and downloading this one.")}
               </p>
             </div>
           </div>

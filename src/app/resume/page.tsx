@@ -5,10 +5,13 @@ import ResumeBuilder from "@/components/resume/ResumeBuilder";
 import CoachingCallout from "@/components/coaching/CoachingCallout";
 import FieldExplorer from "@/components/resume/FieldExplorer";
 import { FinalCta, HowItWorks, ResumeHero } from "@/components/resume/ResumeLanding";
+import { resumeGuides } from "@/lib/resume-guides";
 
-const title = "Tailored Resume Builder: Get More Interviews | The Warthens";
+// The title and description are written for the search results page: under about 60 and 160 characters, with the
+// words people type ("tailor resume to job description") near the front.
+const title = "Tailor Resume to a Job Description, Free | The Warthens";
 const description =
-  "Boost your chances of being interviewed by tailoring your resume to every job you apply for. Add your resume and the posting, get a tailored resume (and a cover letter if you want one) in about a minute. First 2 are free.";
+  "Add your resume and a job posting. Get a tailored resume and matching cover letter as PDF and Word in about a minute. Your first 2 builds are free.";
 
 export const metadata: Metadata = {
   title,
@@ -21,6 +24,10 @@ export const metadata: Metadata = {
     "resume for career change",
     "resume keywords job description",
     "career change resume",
+    "tailor resume to job description",
+    "ai resume tailor",
+    "resume and cover letter generator",
+    "ats resume",
   ],
   alternates: { canonical: "/resume" },
   openGraph: { title, description, url: "/resume" },
@@ -95,7 +102,18 @@ const jsonLd = {
       description,
       applicationCategory: "BusinessApplication",
       operatingSystem: "Any",
-      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      isAccessibleForFree: true,
+      dateModified: "2026-11-16",
+      inLanguage: "en",
+      featureList: [
+        "Tailors a resume to a specific job posting without adding experience you do not have",
+        "Writes a matching cover letter",
+        "Accepts a resume as a PDF, Word file, screenshot, or pasted text, and a posting as text, a file, a screenshot, or a link",
+        "Downloads as PDF and Word, in a one-column layout that hiring software reads cleanly",
+        "Explains every change it made and why",
+        "Runs a seven-point resume check as you edit",
+      ],
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD", description: "The first 2 builds per email address are free." },
       publisher: { "@type": "Organization", name: "The Warthens", url: "https://thewarthens.com" },
     },
     {
@@ -164,6 +182,23 @@ export default function ResumePage() {
               </details>
             ))}
           </div>
+        </Reveal>
+      </section>
+
+      <section className="mx-auto max-w-3xl px-6 pb-14">
+        <Reveal>
+          <h2 className="text-xl font-semibold sm:text-2xl">Resume and cover letter guides</h2>
+          <p className="mt-2 text-sm text-foreground-muted">Want to understand the why? Short, sourced guides to the parts of an application that people get stuck on.</p>
+          <ul className="mt-5 grid gap-3 sm:grid-cols-2">
+            {resumeGuides.map((g) => (
+              <li key={g.slug}>
+                <Link href={`/resume/guides/${g.slug}`} className="block h-full rounded-2xl border border-border-subtle bg-background-elevated p-4 transition-colors hover:border-blue-500/50">
+                  <span className="font-semibold text-blue-700">{g.short}</span>
+                  <span className="mt-1 block text-sm text-foreground-muted">{g.blurb}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </Reveal>
       </section>
 

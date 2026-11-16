@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { bumpCounter, copiesAllowed, emailKey, getKv, mailedKey, withTimeout } from "@/lib/resume-limits";
 import { isLiveHost } from "@/lib/coaching-recipients";
+import { BUILD_NOTE_RE } from "@/lib/resume-usage";
 
 // Emails a person their finished resume (and cover letter) as attachments, to the address they gave us.
 // The files are built in the visitor's browser and passed straight through to our email service: nothing
@@ -58,6 +59,9 @@ export async function POST(req: NextRequest) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 200) return NextResponse.json({ error: "email" }, { status: 400 });
   const jobTitle = (typeof body.jobTitle === "string" ? body.jobTitle : "").replace(/[\r\n]+/g, " ").trim().slice(0, 120);
 
+  // "Paid build 3 of 15": only that exact shape is accepted, so it cannot carry any other words into the email.
+  const buildNote = typeof body.buildNote === "string" && BUILD_NOTE_RE.test(body.buildNote) ? body.buildNote : "";
+
   const rawFiles = Array.isArray(body.files) ? body.files : [];
   if (rawFiles.length === 0 || rawFiles.length > MAX_FILES) return NextResponse.json({ error: "files" }, { status: 400 });
   const attachments: { filename: string; content: string }[] = [];
@@ -110,7 +114,7 @@ export async function POST(req: NextRequest) {
         from: FROM_EMAIL,
         to: email,
         subject: `Your tailored resume${label}`,
-        html: `<p>Here is the resume${attachments.length > 2 ? " and cover letter" : ""} you built${jobTitle ? ` for <strong>${escapeHtml(jobTitle)}</strong>` : ""} on The Warthens. The files are attached: a PDF to send, and a Word file you can keep editing.</p><p>Read it through once before you apply, and make sure everything is true and says it the way you would.</p><p>You can build another one for a different job any time at <a href="https://thewarthens.com/resume">thewarthens.com/resume</a>.</p><p>If you did not ask for this, you can ignore it.</p><p>The Warthens</p>`,
+        html: `<p>Here is the resume${attachments.length > 2 ? " and cover letter" : ""} you built${jobTitle ? ` for <strong>${escapeHtml(jobTitle)}</strong>` : ""} on The Warthens. The files are attached: a PDF to send, and a Word file you can keep editing.</p><p>Read it through once before you apply, and make sure everything is true and says it the way you would.</p><p>You can build another one for a different job any time at <a href="https://thewarthens.com/resume">thewarthens.com/resume</a>.</p>${buildNote ? `<p>This was ${buildNote.charAt(0).toLowerCase()}${buildNote.slice(1)}.</p>` : ""}<p>If you did not ask for this, you can ignore it.</p><p>The Warthens</p>`,
         attachments,
       }),
     });

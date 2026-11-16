@@ -132,6 +132,22 @@ export function creditsKey(email: string) {
   return `credits/${emailKey(email).slice(6)}`;
 }
 
+// How many builds this address has ever bought, so a result can say "paid build 3 of 15". It only goes up, when a
+// payment is confirmed (see the Stripe webhook).
+export function purchasedKey(email: string) {
+  return `purchased/${emailKey(email).slice(6)}`;
+}
+
+export async function purchasedTotal(kv: Kv, email: string): Promise<number | null> {
+  if (!(await kv.has(purchasedKey(email)))) return null;
+  const entry = await kv.get(purchasedKey(email));
+  return Math.max(0, Number((entry?.data as { n?: number } | null)?.n ?? 0));
+}
+
+export async function addPurchased(kv: Kv, email: string, n: number): Promise<number | null> {
+  return bumpCounter(kv, purchasedKey(email), n, Number.MAX_SAFE_INTEGER);
+}
+
 export async function creditsLeft(kv: Kv, email: string): Promise<number> {
   if (!(await kv.has(creditsKey(email)))) return 0;
   const entry = await kv.get(creditsKey(email));

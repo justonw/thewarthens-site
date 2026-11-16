@@ -3,6 +3,7 @@ import { guides } from "@/lib/guides";
 import { startHereGuides } from "@/lib/start-here";
 import { faithWritings } from "@/lib/faith-writings";
 import { articles } from "@/lib/techjr-articles";
+import { RESUME_GUIDES_UPDATED, resumeGuides } from "@/lib/resume-guides";
 
 // Bump this when you make a meaningful content change to a static page
 // (home, /tech, /faith, /faith/women-who-seek) so search engines get a
@@ -20,7 +21,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "", priority: 1, lastModified: SITE_LAST_UPDATED },
     { path: "/tech", priority: 0.9, lastModified: SITE_LAST_UPDATED },
     { path: "/tech/coaching", priority: 0.8, lastModified: new Date("2026-10-24") },
-    { path: "/resume", priority: 0.9, lastModified: new Date("2026-11-15") },
+    { path: "/resume", priority: 0.9, lastModified: new Date("2026-11-16") },
+    { path: "/resume/guides", priority: 0.8, lastModified: new Date(RESUME_GUIDES_UPDATED) },
+    ...resumeGuides.map((g) => ({ path: `/resume/guides/${g.slug}`, priority: 0.8, lastModified: new Date(g.updated) })),
     { path: "/techjr", priority: 0.9, lastModified: new Date("2026-11-03") },
     { path: "/techjr/play", priority: 0.8, lastModified: new Date("2026-11-03") },
     { path: "/techjr/play/ages-5-7", priority: 0.8, lastModified: new Date("2026-11-03") },

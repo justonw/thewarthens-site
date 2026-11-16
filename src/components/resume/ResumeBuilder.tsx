@@ -6,6 +6,7 @@ import { MAX_NOTES_CHARS, MAX_POSTING_CHARS, MAX_RESUME_CHARS } from "@/lib/resu
 import type { PickedFile } from "@/lib/resume-upload";
 import { usePersistentState } from "@/lib/use-persistent-state";
 import ResumeInputBox from "@/components/ResumeInputBox";
+import { type Usage } from "@/lib/resume-usage";
 import ResultView from "./ResultView";
 import VoiceInput from "./VoiceInput";
 import BuyMore from "./BuyMore";
@@ -86,7 +87,8 @@ const errorText: Record<string, string> = {
   cap: "We've reached our free limit for this month. It resets on the 1st. Email info@thewarthens.com to join the wait.",
   "slow-down": "That was a lot of tries in a short time. Wait a few minutes and try again.",
   unavailable: "The resume builder isn't available right now. Try again later.",
-  upstream: "Something went wrong building your resume, and it didn't use up a free build. Try again.",
+  upstream: "Something went wrong building your resume, and it didn't use up a build. Try again.",
+  "recover-limit": "Something went wrong, and we couldn't restore your build automatically. Email info@thewarthens.com and we'll fix it right away.",
   forbidden: "Something went wrong. Reload the page and try again.",
 };
 
@@ -110,6 +112,27 @@ function suggestEmail(value: string): string {
   if (!m) return "";
   const fix = EMAIL_FIXES[m[2].toLowerCase()];
   return fix ? `${m[1]}@${fix}` : "";
+}
+
+// Each try at a build has its own id, so the server can tell which build a "give it back" request is about.
+function newBuildId() {
+  return typeof crypto !== "undefined" && typeof crypto.randomUUID === "function" ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}-${Math.random().toString(16).slice(2)}`;
+}
+
+// Asks the server to give back a build whose result never arrived. A build that is still running is asked about
+// again every few seconds, for up to about 100 seconds (a build never runs longer than that).
+async function recoverBuild(buildId: string, email: string): Promise<string> {
+  for (let i = 0; i < 17; i++) {
+    try {
+      const res = await fetch("/api/resume-recover", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, buildId }) });
+      const d = (await res.json().catch(() => ({}))) as { status?: string };
+      if (d.status && d.status !== "pending") return d.status;
+    } catch {
+      /* try again */
+    }
+    await new Promise((resolve) => setTimeout(resolve, 6000));
+  }
+  return "unknown";
 }
 
 export default function ResumeBuilder() {
@@ -152,6 +175,8 @@ export default function ResumeBuilder() {
   const [gaps, setGaps] = useState<ResumeGap[]>([]);
   const [changes, setChanges] = useState<string[]>([]);
   const [remaining, setRemaining] = useState<number | null>(null);
+  // "Free build 2 of 2" or "Paid build 3 of 15", as reported by the server for the build on screen.
+  const [usage, setUsage] = useState<Usage | null>(null);
   const [original, setOriginal] = useState<string | null>(null);
   const [matchDesign, setMatchDesign] = useState(true);
 
@@ -219,7 +244,7 @@ export default function ResumeBuilder() {
     setPhase("loading");
     setRetrying(false);
     setTick(0);
-    const payload = JSON.stringify({
+    const payloadBase = {
       email: email.trim(),
       source,
       resumeText,
@@ -231,14 +256,16 @@ export default function ResumeBuilder() {
       coverLetter: wantLetter,
       hiringManager: hiringManager.trim(),
       matchDesign: !fromScratch && matchDesign && resumeFiles.some((f) => Boolean(f.attachment)),
-    });
+    };
     // A one-off hiccup on our side should not reach the person: try once more before showing an error.
-    // A failed try never uses up a free build, so trying again is safe.
-    let data: { ok?: boolean; error?: string; message?: string; result?: TailorResult; letterFailed?: boolean; remaining?: number | null } = {};
+    // Every try has its own id. When a try does not come back, we first ask the server to give that build back (it
+    // may have finished on our side while the connection dropped), so trying again never costs a second build.
+    let data: { ok?: boolean; error?: string; message?: string; result?: TailorResult; letterFailed?: boolean; remaining?: number | null; usage?: Usage | null } = {};
     let status = 0;
     for (let attempt = 1; attempt <= 2; attempt++) {
+      const buildId = newBuildId();
       try {
-        const res = await fetch("/api/resume-tailor", { method: "POST", headers: { "Content-Type": "application/json" }, body: payload });
+        const res = await fetch("/api/resume-tailor", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...payloadBase, buildId }) });
         status = res.status;
         data = await res.json().catch(() => ({}));
       } catch {
@@ -246,9 +273,15 @@ export default function ResumeBuilder() {
         data = { error: "upstream" };
       }
       const retryable = (status === 0 || status >= 500) && data.error !== "unavailable";
-      if (data.ok || !retryable || attempt === 2) break;
+      if (data.ok || !retryable) break;
       setRetrying(true);
-      await new Promise((resolve) => setTimeout(resolve, 2500));
+      const recovered = await recoverBuild(buildId, email.trim());
+      if (recovered === "limit") {
+        data = { error: "recover-limit" };
+        break;
+      }
+      if (attempt === 2) break;
+      await new Promise((resolve) => setTimeout(resolve, 1500));
     }
     if (!data.ok || !data.result) {
       setOutOfBuilds(data.error === "limit");
@@ -276,6 +309,7 @@ export default function ResumeBuilder() {
     setGaps(data.result.gaps);
     setChanges(data.result.changes);
     setRemaining(typeof data.remaining === "number" ? data.remaining : null);
+    setUsage(data.usage ?? null);
     setOriginal(fromScratch || !resumeText.trim() ? null : resumeText);
     setPhase("result");
   }
@@ -431,6 +465,7 @@ export default function ResumeBuilder() {
         email={email.trim()}
         emailCopy={mailThis}
         remaining={remaining}
+        usage={usage}
         original={original}
         onStartOver={startOver}
       />

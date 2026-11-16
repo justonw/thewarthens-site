@@ -18,7 +18,8 @@ import {
   parseResumeResponse,
   type TailorInput,
 } from "@/lib/resume-tailor";
-import { DEFAULT_MONTHLY_CAP, FREE_PER_EMAIL, getKv, refund, reserve, withTimeout, type Reservation } from "@/lib/resume-limits";
+import { DEFAULT_MONTHLY_CAP, FREE_PER_EMAIL, getKv, purchasedTotal, refund, reserve, withTimeout, type Reservation } from "@/lib/resume-limits";
+import { claimRefund, finishBuildMark, startBuildMark, validBuildId, type BuildMark } from "@/lib/resume-builds";
 import { isLiveHost } from "@/lib/coaching-recipients";
 import { keywordCoverage } from "@/lib/resume-ats";
 import { resumeToPlainText } from "@/lib/resume-files";
@@ -230,7 +231,24 @@ export async function POST(req: NextRequest) {
   }
 
   const paidBuild = reservation.paid;
-  const giveBack = () => (counted && kv ? withTimeout(refund(kv, email, { unlimited, paid: paidBuild }), 8000, "give a build back").catch(() => {}) : Promise.resolve());
+
+  // A small record of this build, so that if the page never gets the answer (a timeout, a dropped connection) the
+  // build can be given back, and so a build is never given back twice (see lib/resume-builds.ts).
+  const buildId = body.buildId;
+  let mark: BuildMark | null = null;
+  if (counted && kv && !unlimited && validBuildId(buildId)) {
+    mark = await withTimeout(startBuildMark(kv, buildId, email, paidBuild), 5000, "record the build").catch(() => null);
+  }
+  const giveBack = async () => {
+    if (!counted || !kv) return;
+    try {
+      // Whoever moves the record to "refunded" first does the refund, so it can only happen once.
+      if (mark && !(await withTimeout(claimRefund(kv, mark), 5000, "claim the refund"))) return;
+      await withTimeout(refund(kv, email, { unlimited, paid: paidBuild }), 8000, "give a build back");
+    } catch {
+      /* the build is not counted twice either way: a failure here is logged by the caller's own error path */
+    }
+  };
 
   try {
     // The resume and the cover letter are written by two requests at the same time. A letter is a different job,
@@ -306,8 +324,25 @@ export async function POST(req: NextRequest) {
     if (letter) parsed.result.coverLetter = letter;
     const letterFailed = wantsLetter && !letter;
     await notify(live, email, parsed.result.postingTitle, source, Boolean(letter));
+    if (mark && kv) await withTimeout(finishBuildMark(kv, mark), 5000, "finish the build record").catch(() => {});
+
+    // "Free build 2 of 2" or "Paid build 3 of 15", for the page and the email. Never worth failing a finished build over.
+    let usage: { kind: "free" | "paid"; number: number; of: number | null; left: number } | null = null;
+    if (!unlimited && counted && kv) {
+      try {
+        if (reservation.paid) {
+          const bought = await withTimeout(purchasedTotal(kv, email), 5000, "read purchases");
+          usage = { kind: "paid", number: bought ? Math.max(1, bought - reservation.credits) : 0, of: bought, left: reservation.credits };
+        } else {
+          usage = { kind: "free", number: reservation.used, of: FREE_PER_EMAIL, left: Math.max(0, FREE_PER_EMAIL - reservation.used) + reservation.credits };
+        }
+      } catch {
+        usage = null;
+      }
+    }
     return NextResponse.json({
       ok: true,
+      usage,
       result: parsed.result,
       letterFailed,
       // Free builds left, plus any paid builds they bought.
