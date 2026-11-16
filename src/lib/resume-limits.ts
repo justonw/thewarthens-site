@@ -14,6 +14,9 @@ type Entry = { data: unknown; etag?: string } | null;
 
 export type Kv = {
   get(key: string): Promise<Entry>;
+  // Whether a key exists. Used before reading a key that may not be there: Netlify's storage currently never
+  // answers a read of a missing key, so a missing key is never read.
+  has(key: string): Promise<boolean>;
   set(key: string, data: unknown, opts: { onlyIfNew?: boolean; onlyIfMatch?: string }): Promise<{ modified: boolean; etag?: string }>;
 };
 
@@ -24,6 +27,9 @@ export function memoryKv(): Kv {
     async get(key) {
       const hit = data.get(key);
       return hit ? { data: hit.value, etag: hit.etag } : null;
+    },
+    async has(key) {
+      return data.has(key);
     },
     async set(key, value, opts) {
       const hit = data.get(key);
@@ -48,84 +54,25 @@ export function withTimeout<T>(work: Promise<T>, ms: number, label: string): Pro
 }
 
 const devKvs = new Map<string, Kv>();
-let loggedKv = false;
 
-// A one-time check, in the background and logged only: how long each kind of storage call takes, and what error
-// comes back, over both connection routes. It runs while the first request on a new server instance is already
-// waiting on storage, so it adds no delay for anyone. Remove once the storage problem is understood.
-type StoreLike = {
-  get(key: string, opts?: object): Promise<unknown>;
-  set(key: string, value: string, opts?: object): Promise<unknown>;
-  delete(key: string): Promise<unknown>;
-  list(opts?: object): Promise<unknown>;
-};
-async function probeStores(stores: { label: string; store: StoreLike }[]) {
-  const timed = async (label: string, run: () => Promise<unknown>) => {
-    const started = Date.now();
-    try {
-      await withTimeout(run(), 6000, label);
-      return `${label}: ok ${Date.now() - started} ms`;
-    } catch (err) {
-      return `${label}: ${err instanceof Error ? err.message : String(err)}`;
-    }
-  };
-  const results: string[] = [];
-  await Promise.all(
-    stores.map(async ({ label, store }) => {
-      const key = `diag/${label}-${Date.now()}`;
-      results.push(
-        await timed(`${label} list`, () => store.list({ prefix: "diag/" })),
-        await timed(`${label} get missing`, () => store.get(key, { consistency: "strong" })),
-        await timed(`${label} set`, () => store.set(key, "x", { onlyIfNew: true })),
-        await timed(`${label} get existing`, () => store.get(key, { consistency: "strong" })),
-        await timed(`${label} delete`, () => store.delete(key))
-      );
-    })
-  );
-  console.log("resume-limits probe", { results });
-}
-
-// The same store, reached through Netlify's API route instead of the edge route that is currently not answering.
-// Reads the connection details Netlify gives this function (never logged), and returns null if they are not there.
-async function apiRouteStore(name: string): Promise<StoreLike | null> {
-  try {
-    const raw = process.env.NETLIFY_BLOBS_CONTEXT;
-    if (!raw) return null;
-    const ctx = JSON.parse(Buffer.from(raw, "base64").toString("utf8")) as { siteID?: string; token?: string; apiURL?: string };
-    if (!ctx.siteID || !ctx.token) return null;
-    const { getStore } = await import("@netlify/blobs");
-    return getStore({ name, siteID: ctx.siteID, token: ctx.token, apiURL: ctx.apiURL, consistency: "strong" }) as unknown as StoreLike;
-  } catch {
-    return null;
-  }
-}
 
 export async function getKv(live: boolean): Promise<Kv> {
   const name = live ? "resume-usage" : "resume-usage-test";
   try {
     const { getStore } = await import("@netlify/blobs");
-    const edgeStore = getStore({ name, consistency: "strong" });
-    // Reading one value through the default (edge) route has been hanging, while the API route answers, so the API
-    // route is used unless RESUME_BLOBS_MODE=edge is set in Netlify.
-    const apiStore = process.env.RESUME_BLOBS_MODE === "edge" ? null : await apiRouteStore(name);
-    const store = (apiStore ?? edgeStore) as unknown as {
-      getWithMetadata(key: string, opts: object): Promise<Entry>;
-      setJSON(key: string, value: unknown, opts: object): Promise<{ modified: boolean; etag?: string }>;
-    };
-    if (!loggedKv) {
-      loggedKv = true;
-      console.log("resume-limits: Netlify Blobs store ready", { store: name, hasBlobsContext: Boolean(process.env.NETLIFY_BLOBS_CONTEXT), route: apiStore ? "api" : "edge" });
-      void probeStores([
-        { label: "edge", store: edgeStore as unknown as StoreLike },
-        ...(apiStore ? [{ label: "api", store: apiStore }] : []),
-      ]).catch((err) => console.error("resume-limits probe failed", err instanceof Error ? err.message : err));
-    }
+    const store = getStore({ name, consistency: "strong" });
     return {
       async get(key) {
         return store.getWithMetadata(key, { type: "json", consistency: "strong" });
       },
+      async has(key) {
+        const { blobs } = await store.list({ prefix: key });
+        return blobs.some((b) => b.key === key);
+      },
       async set(key, value, opts) {
-        return opts.onlyIfMatch ? store.setJSON(key, value, { onlyIfMatch: opts.onlyIfMatch }) : store.setJSON(key, value, { onlyIfNew: true });
+        return opts.onlyIfMatch
+          ? store.setJSON(key, value, { onlyIfMatch: opts.onlyIfMatch })
+          : store.setJSON(key, value, { onlyIfNew: true });
       },
     };
   } catch {
@@ -177,6 +124,7 @@ export function creditsKey(email: string) {
 }
 
 export async function creditsLeft(kv: Kv, email: string): Promise<number> {
+  if (!(await kv.has(creditsKey(email)))) return 0;
   const entry = await kv.get(creditsKey(email));
   return Math.max(0, Number((entry?.data as { n?: number } | null)?.n ?? 0));
 }
@@ -188,6 +136,7 @@ export async function addCredits(kv: Kv, email: string, n: number): Promise<numb
 // Takes one paid build off the balance, or returns null when there is none.
 async function takeCredit(kv: Kv, email: string): Promise<number | null> {
   const key = creditsKey(email);
+  if (!(await kv.has(key))) return null;
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     const current = await kv.get(key);
     const n = Number((current?.data as { n?: number } | null)?.n ?? 0);

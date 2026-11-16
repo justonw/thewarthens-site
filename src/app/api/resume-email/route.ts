@@ -87,7 +87,8 @@ export async function POST(req: NextRequest) {
   const live = isLiveHost(req.headers.get("x-forwarded-host") ?? host);
   try {
     const kv = await withTimeout(getKv(live), 5000, "open usage store");
-    const built = await withTimeout(kv.get(emailKey(email)), 8000, "look up the address");
+    // Checked with has() first: reading a key that is not there hangs on Netlify's storage right now.
+    const built = (await withTimeout(kv.has(emailKey(email)), 8000, "look up the address")) ? await withTimeout(kv.get(emailKey(email)), 8000, "read the address") : null;
     const n = Number((built?.data as { n?: number } | null)?.n ?? 0);
     if (n < 1) return NextResponse.json({ error: "not-found" }, { status: 403 });
     const day = new Date().toISOString().slice(0, 10);
