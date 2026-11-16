@@ -21,7 +21,8 @@ Checks per run (plain code, not the AI grading itself):
   - pronouns for the person, dashes, placeholders, and the length of the title under the name
   - how many experience entries came back (compare with how many the original has: --expect-entries)
 """
-import argparse, base64, json, os, re, shutil, ssl, subprocess, sys, time, urllib.request, urllib.error
+import argparse, base64, difflib, json, os, re, shutil, ssl, subprocess, sys, time, urllib.request, urllib.error
+base64 = __import__("base64")
 from pathlib import Path
 
 
@@ -98,6 +99,39 @@ def norm(s):
     return re.sub(r"[^a-z0-9+#./ ]+", " ", s.lower())
 
 
+def original_bullets(text):
+    """Best-effort list of the original's bullets, from its extracted text (lines that start with a bullet glyph)."""
+    out, cur = [], None
+    for line in (l.strip() for l in text.split("\n")):
+        if re.match(r"^[\u25cf\u2022\u25aa\u2023*-]\s+", line):
+            if cur:
+                out.append(cur)
+            cur = re.sub(r"^[\u25cf\u2022\u25aa\u2023*-]\s+", "", line)
+        elif cur is not None and line and not re.search(r"\b20\d\d\b\s*[\u2013-]\s*(Present|20\d\d)", line):
+            cur += " " + line
+        elif cur:
+            out.append(cur)
+            cur = None
+    if cur:
+        out.append(cur)
+    # a bold lead-in such as "Strategic Discovery:" is not part of the sentence
+    return [re.sub(r"^[A-Z][A-Za-z &/\-]{2,40}:\s+", "", b) for b in out]
+
+
+def change_profile(doc, original_text):
+    """How much the bullets changed from the original: nearly the same, lightly reworded, or rewritten."""
+    originals = original_bullets(original_text) if original_text else []
+    if len(originals) < 5:
+        return None
+    words = lambda t: re.sub(r"[^a-z0-9 ]+", " ", t.lower()).split()
+    bullets = [b for j in doc.get("experience", []) for b in j.get("bullets", [])]
+    counts = {"same": 0, "light": 0, "rewritten": 0}
+    for b in bullets:
+        best = max(difflib.SequenceMatcher(None, words(b), words(o)).ratio() for o in originals)
+        counts["same" if best >= 0.90 else "light" if best >= 0.60 else "rewritten"] += 1
+    return {"bullets": len(bullets), "original_bullets": len(originals), **counts}
+
+
 def score(result, original_text, expect_entries):
     doc = result["resume"]
     text = resume_text(doc)
@@ -118,6 +152,10 @@ def score(result, original_text, expect_entries):
     headline = doc.get("headline", "")
     if len(headline) > 50:
         problems.append(f"title is {len(headline)} characters")
+    for j in doc.get("experience", []):
+        t = j.get("title", "")
+        if re.search(r"\bthen\b|\s/\s|\band\b.*\b(representative|manager|consultant|executive|specialist|associate)\b", t, re.I):
+            problems.append(f"merged or sequenced title: {t!r}")
     entries = len(doc.get("experience", []))
     if expect_entries and entries < expect_entries:
         problems.append(f"{entries} of {expect_entries} entries kept")
@@ -127,6 +165,7 @@ def score(result, original_text, expect_entries):
         "keywords_found": found,
         "keywords_missing": missing,
         "new_numbers": new_numbers if original_text else None,
+        "change": change_profile(doc, original_text),
         "problems": problems,
     }
 
@@ -147,6 +186,9 @@ def render(result, sc, seconds):
     lines.append(f"- Key terms missing: {', '.join(sc['keywords_missing']) or 'none'}")
     if sc["new_numbers"] is not None:
         lines.append(f"- Numbers not in the original (check each): {', '.join(sc['new_numbers']) or 'none'}")
+    ch = sc.get("change")
+    if ch:
+        lines.append(f"- How much changed: of {ch['bullets']} bullets (the original had {ch['original_bullets']}): {ch['same']} nearly the same, {ch['light']} lightly reworded, {ch['rewritten']} rewritten")
     lines.append(f"- Problems: {', '.join(sc['problems']) or 'none'}")
     if result.get("coverLetter"):
         cl = result["coverLetter"]
@@ -203,7 +245,9 @@ def main():
         rows.append((n, sc))
         found = len(sc["keywords_found"])
         total = found + len(sc["keywords_missing"])
-        print(f"run {n}: {seconds}s | title: {sc['headline']!r} | entries {sc['entries']} | key terms {found}/{total} | problems: {', '.join(sc['problems']) or 'none'}")
+        ch = sc.get("change")
+        changed = f" | bullets same/light/rewritten {ch['same']}/{ch['light']}/{ch['rewritten']}" if ch else ""
+        print(f"run {n}: {seconds}s | title: {sc['headline']!r} | entries {sc['entries']} | key terms {found}/{total}{changed} | problems: {', '.join(sc['problems']) or 'none'}")
 
     ok = [sc for _, sc in rows if sc]
     summary = [f"# {a.label}", "", "| run | title | entries | key terms | new numbers | problems |", "|---|---|---|---|---|---|"]
