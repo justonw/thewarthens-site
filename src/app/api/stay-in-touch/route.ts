@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
       subject: "Glad you're here (from Juston and Atiya)",
       html: `<p>Hi,</p>
 <p>Thanks for joining us. Every so often we'll send a short note: something we're learning, one practical step, and a word of encouragement. Nothing pushy.</p>
-<p>If you're figuring out what's next, a good place to start is the free 2-minute career quiz at <a href="https://thewarthens.com/tech#quiz">thewarthens.com/tech</a>, or our story at <a href="https://thewarthens.com/jesus">thewarthens.com/jesus</a>.</p>
+<p>A good place to start is our story, <a href="https://thewarthens.com/jesus">why we believe in Jesus</a>, or our Bible studies at <a href="https://thewarthens.com/faith">thewarthens.com/faith</a>. And if you are figuring out a career change too, there is a free 2-minute quiz at <a href="https://thewarthens.com/tech#quiz">thewarthens.com/tech</a>.</p>
 <p>You can reply to this email any time, and a real person will read it. Every note we send has an unsubscribe link at the bottom, and replying with "stop" works too.</p>
 <p>Juston and Atiya</p>`,
     });

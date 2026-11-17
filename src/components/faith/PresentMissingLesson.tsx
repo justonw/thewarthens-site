@@ -17,6 +17,7 @@ import {
   versionNotice,
   type Verse,
 } from "@/lib/present-missing";
+import { prayerScripture } from "@/lib/present-missing-prayer";
 
 // The read-along page for the men's lesson. A man follows the notes, writes in the boxes (saved
 // only on his own device), and can email himself a PDF of the lesson with his answers.
@@ -307,6 +308,7 @@ export default function PresentMissingLesson() {
             ["#explanation", "Explanation"],
             ["#questions", "Questions"],
             ["#more-scripture", "More Scripture"],
+            ["#prayer-scripture", "Place of prayer"],
             ["#notes", "Get notes"],
           ].map(([href, label]) => (
             <a
@@ -454,6 +456,49 @@ export default function PresentMissingLesson() {
         </div>
       </section>
 
+      <section id="prayer-scripture" className="mt-16 scroll-mt-24">
+        <h2 className={sectionTitle}>The place of prayer: kneel before God, stand before people</h2>
+        <p className="mt-2 text-foreground-muted">
+          A man who has knelt before God can stand before people. These are passages on that, in the order we pray through them in the video.
+          Tap a topic to open it.
+        </p>
+        <div className="mt-6 space-y-3">
+          {prayerScripture.map((group) => (
+            <details key={group.heading} className="group/prayer rounded-2xl border border-border-subtle bg-background-elevated">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-2xl px-5 py-4 text-base font-semibold text-blue-950 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-700 [&::-webkit-details-marker]:hidden">
+                <span>
+                  {group.heading}
+                  <span className="ml-2 text-sm font-normal text-foreground-muted">{group.verses.map((v) => v.ref).join(", ")}</span>
+                </span>
+                <svg
+                  viewBox="0 0 20 20"
+                  className="h-5 w-5 shrink-0 transition-transform group-open/prayer:rotate-180"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden
+                >
+                  <path d="m5 8 5 5 5-5" />
+                </svg>
+              </summary>
+              <div className="space-y-6 border-t border-border-subtle px-5 py-5">
+                {group.verses.map((v) => (
+                  <blockquote key={v.ref} className="border-l-4 border-blue-700/40 pl-4">
+                    <p className="text-lg leading-relaxed text-foreground">{v.text}</p>
+                    <footer className="mt-1 text-sm font-semibold text-foreground-muted">
+                      {v.ref} <span className="font-normal">(KJV)</span>
+                    </footer>
+                    <p className="mt-2 text-base italic text-foreground-muted">({v.note})</p>
+                  </blockquote>
+                ))}
+              </div>
+            </details>
+          ))}
+        </div>
+      </section>
+
       <section id="notes" className="mt-16 scroll-mt-24">
         <div className="rounded-3xl bg-blue-900 p-6 text-white sm:p-8">
           <h2 className="text-2xl font-semibold sm:text-3xl">Get notes</h2>
@@ -564,6 +609,7 @@ export default function PresentMissingLesson() {
       <footer className="mt-12 space-y-3 text-xs text-foreground-muted">
         <p>{versionNotice.NASB2020}</p>
         <p>{versionNotice.NLT}</p>
+        <p>{versionNotice.KJV}</p>
       </footer>
     </article>
     </div>

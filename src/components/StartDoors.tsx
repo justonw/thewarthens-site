@@ -12,7 +12,7 @@ const DOORS: Record<"tech" | "faith", Door[]> = {
     { title: "I want to earn more", go: "See what tech roles pay", href: "#pay" },
     { title: "I'm curious about tech but don't know where to start", go: "Step-by-step starting paths", href: "#start-here" },
     { title: "I want to feel more settled", go: "Hear our story", href: "/jesus" },
-    { title: "I'm in a season of change", go: "Get an occasional note from us", href: "#stay-in-touch" },
+    { title: "I'm in a season of change", go: "Get an occasional note from us", href: "/faith#stay-in-touch" },
   ],
   faith: [
     { title: "I want to feel more settled", go: "Hear our story", href: "/jesus" },

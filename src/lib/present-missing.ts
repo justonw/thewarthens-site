@@ -31,7 +31,7 @@ export const faq: { question: string; answer: string }[] = [
   {
     question: "Which Scripture does it use?",
     answer:
-      "The lesson centers on Isaiah 58:3-10 and Matthew 23:23-24, then draws on Philippians, 1 Peter, Ephesians, Colossians, 1 John, Psalm 119, John 8, Acts 17, Esther 4, and Galatians 2. A closing section adds 2 Corinthians 8, Mark 12 and 13, and Matthew 15 on being present. Quotations are from the NASB 2020 and the NLT.",
+      "The lesson centers on Isaiah 58:3-10 and Matthew 23:23-24, then draws on Philippians, 1 Peter, Ephesians, Colossians, 1 John, Psalm 119, John 8, Acts 17, Esther 4, and Galatians 2. A closing section adds 2 Corinthians 8, Mark 12 and 13, and Matthew 15 on being present. A section on the place of prayer, kneeling before God so a man can stand before people, adds passages from Psalms, Proverbs, Isaiah, Daniel, Esther, 2 Kings, Luke, Acts, Galatians, Ephesians, and Hebrews. Quotations are from the NASB 2020 and the NLT, and the prayer section is from the King James Version.",
   },
   {
     question: "How can a men’s group or session use it?",
@@ -54,7 +54,7 @@ export const faq: { question: string; answer: string }[] = [
   },
 ];
 
-export type Version = "NASB2020" | "NLT";
+export type Version = "NASB2020" | "NLT" | "KJV";
 export type Verse = { ref: string; version: Version; text: string };
 
 export const synopsis = [
@@ -439,4 +439,5 @@ export const versionNotice: Record<Version, string> = {
   NASB2020:
     "Scripture quotations taken from the (NASB®) New American Standard Bible®, Copyright © 1960, 1971, 1977, 1995, 2020 by The Lockman Foundation. Used by permission. All rights reserved. www.Lockman.org",
   NLT: "Scripture quotations are taken from the Holy Bible, New Living Translation, Copyright © 1996, 2004, 2015 by Tyndale House Foundation. Used by permission of Tyndale House Publishers, a Division of Tyndale House Ministries. All rights reserved.",
+  KJV: "Scripture in the prayer section is from the King James Version, which is in the public domain.",
 };

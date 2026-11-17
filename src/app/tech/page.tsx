@@ -14,7 +14,6 @@ import CourseSection from "@/components/CourseSection";
 import ResumeBuilderCallout from "@/components/ResumeBuilderCallout";
 import CoachingCallout from "@/components/coaching/CoachingCallout";
 import StartDoors from "@/components/StartDoors";
-import StayInTouch from "@/components/StayInTouch";
 import ThisWeekCard from "@/components/ThisWeekCard";
 
 const title = "Career Change to Tech: Free Quiz, Pay Data & Guides";
@@ -433,10 +432,9 @@ export default function TechJourneyPage() {
         </Reveal>
       </section>
 
-      <section className="mx-auto max-w-5xl px-6 pb-16">
-        <Reveal className="grid gap-5 md:grid-cols-2">
+      <section className="mx-auto max-w-3xl px-6 pb-16">
+        <Reveal>
           <ThisWeekCard />
-          <StayInTouch from="tech" />
         </Reveal>
       </section>
 
