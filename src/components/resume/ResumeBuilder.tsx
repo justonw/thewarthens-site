@@ -9,6 +9,7 @@ import ResumeInputBox from "@/components/ResumeInputBox";
 import { type Usage } from "@/lib/resume-usage";
 import ResultView from "./ResultView";
 import VoiceInput from "./VoiceInput";
+import { takeHandoff } from "@/lib/resume-handoff";
 import BuyMore from "./BuyMore";
 import ScratchForm, { emptyScratch, scratchReady, scratchToText, type Scratch } from "./ScratchForm";
 
@@ -54,6 +55,10 @@ type Saved = {
 const noSaved: Saved | null = null;
 
 const DRAFT_KEY = "warthens-resume-draft-v1";
+// A build that is running right now. If the phone reloads the page while it runs, this is how we find out.
+const INFLIGHT_KEY = "warthens-resume-inflight-v1";
+const INFLIGHT_DRAFT_KEY = "warthens-resume-inflight-draft-v1";
+const clock = () => Date.now();
 type Draft = {
   mode?: string;
   scratch?: Scratch;
@@ -164,6 +169,10 @@ export default function ResumeBuilder() {
   const [nothingToBuy, setNothingToBuy] = useState(false);
   // After a payment: whether we could put their form back ("yes"), or everything but their files ("files").
   const [draftBack, setDraftBack] = useState<"" | "yes" | "files">("");
+  // Set when the page was reloaded while a build was running (phones do this when you switch apps for a moment).
+  // True when the free keyword scanner passed the resume and posting over.
+  const [fromScanner, setFromScanner] = useState(false);
+  const [reloadNote, setReloadNote] = useState<"" | "checking" | "back" | "limit">("");
   // True when the visitor has just come back from Stripe.
   const justPaid = useSyncExternalStore(
     () => () => {},
@@ -260,10 +269,16 @@ export default function ResumeBuilder() {
     // A one-off hiccup on our side should not reach the person: try once more before showing an error.
     // Every try has its own id. When a try does not come back, we first ask the server to give that build back (it
     // may have finished on our side while the connection dropped), so trying again never costs a second build.
+    saveDraft(INFLIGHT_DRAFT_KEY);
     let data: { ok?: boolean; error?: string; message?: string; result?: TailorResult; letterFailed?: boolean; remaining?: number | null; usage?: Usage | null } = {};
     let status = 0;
     for (let attempt = 1; attempt <= 2; attempt++) {
       const buildId = newBuildId();
+      try {
+        window.sessionStorage.setItem(INFLIGHT_KEY, JSON.stringify({ buildId, email: email.trim(), at: clock() }));
+      } catch {
+        /* private mode: no reload recovery, everything else works */
+      }
       try {
         const res = await fetch("/api/resume-tailor", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...payloadBase, buildId }) });
         status = res.status;
@@ -282,6 +297,13 @@ export default function ResumeBuilder() {
       }
       if (attempt === 2) break;
       await new Promise((resolve) => setTimeout(resolve, 1500));
+    }
+    // The build is over, one way or another, so there is nothing to recover after a reload.
+    try {
+      window.sessionStorage.removeItem(INFLIGHT_KEY);
+      window.sessionStorage.removeItem(INFLIGHT_DRAFT_KEY);
+    } catch {
+      /* ignore */
     }
     if (!data.ok || !data.result) {
       setOutOfBuilds(data.error === "limit");
@@ -331,12 +353,12 @@ export default function ResumeBuilder() {
 
   // Paying on Stripe takes the person to another page and back, which would empty the form. So the form is kept
   // for the trip, in this tab only, and put back (once) when they return from a payment.
-  function saveDraft() {
+  function saveDraft(key = DRAFT_KEY) {
     try {
       const draft = { mode, scratch, resume, posting, notes, hiringManager, wantLetter, email, source, emailCopy, matchDesign, resumeFiles: resumeFiles.map(stripPreview), postingFiles: postingFiles.map(stripPreview) };
       const json = JSON.stringify(draft);
       // Files can be large. If they do not fit, keep the typed parts and tell the person to add the files again.
-      window.sessionStorage.setItem(DRAFT_KEY, json.length < 3_500_000 ? json : JSON.stringify({ ...draft, resumeFiles: [], postingFiles: [], filesDropped: true }));
+      window.sessionStorage.setItem(key, json.length < 3_500_000 ? json : JSON.stringify({ ...draft, resumeFiles: [], postingFiles: [], filesDropped: true }));
     } catch {
       /* private mode or storage full: they will simply see an empty form, as before */
     }
@@ -363,6 +385,47 @@ export default function ResumeBuilder() {
       /* an unreadable draft is ignored */
     }
   }
+
+  // The page came back after being reloaded in the middle of a build. The result cannot be recovered, but the build can:
+  // ask the server to give it back, put the form back as it was, and say so.
+  const checkedInflight = useRef(false);
+  useEffect(() => {
+    if (checkedInflight.current) return;
+    checkedInflight.current = true;
+    let info: { buildId?: string; email?: string; at?: number } | null = null;
+    let draft: string | null = null;
+    try {
+      info = JSON.parse(window.sessionStorage.getItem(INFLIGHT_KEY) ?? "null");
+      draft = window.sessionStorage.getItem(INFLIGHT_DRAFT_KEY);
+      window.sessionStorage.removeItem(INFLIGHT_KEY);
+      window.sessionStorage.removeItem(INFLIGHT_DRAFT_KEY);
+    } catch {
+      return;
+    }
+    if (!info?.buildId || !info.email || clock() - Number(info.at ?? 0) > 20 * 60_000) return;
+    const { buildId, email: who } = info;
+    const saved = draft;
+    window.setTimeout(() => {
+      if (saved) applyDraft(saved);
+      setReloadNote("checking");
+      void recoverBuild(buildId, who).then((status) => setReloadNote(status === "limit" ? "limit" : "back"));
+    }, 0);
+  }, []);
+
+  // The free keyword scanner can hand over the resume and posting it was just given. Used once, and only when nothing
+  // else is being restored.
+  const handoffChecked = useRef(false);
+  useEffect(() => {
+    if (handoffChecked.current) return;
+    handoffChecked.current = true;
+    const h = takeHandoff();
+    if (!h || (!h.resume.trim() && !h.posting.trim())) return;
+    window.setTimeout(() => {
+      setResume((cur) => cur || h.resume);
+      setPosting((cur) => cur || h.posting);
+      setFromScanner(true);
+    }, 0);
+  }, []);
 
   const restored = useRef(false);
   useEffect(() => {
@@ -581,7 +644,7 @@ export default function ResumeBuilder() {
 
           <p className="text-center text-xs text-foreground-muted">
             No resume yet?{" "}
-            <button type="button" onClick={() => setMode("scratch")} className="font-semibold text-blue-600 underline underline-offset-2">
+            <button type="button" onClick={() => setMode("scratch")} className="inline-flex min-h-11 items-center px-1 font-semibold text-blue-600 underline underline-offset-2">
               Start from scratch
             </button>
           </p>
@@ -766,6 +829,24 @@ export default function ResumeBuilder() {
             </p>
           </div>
         )
+      )}
+
+      {fromScanner && !reloadNote && (
+        <div role="status" className="rounded-2xl border-2 border-green-600/40 bg-green-600/10 p-4 text-sm sm:p-5">
+          <p className="font-semibold text-green-900">We brought your resume and the job posting over from the keyword scanner.</p>
+          <p className="mt-1 text-green-900/80">Add your email in step 3, then press the Build button. Check both boxes first and fix anything that looks off.</p>
+        </div>
+      )}
+
+      {reloadNote && (
+        <div role="status" className="rounded-2xl border-2 border-amber-500/50 bg-amber-500/10 p-4 text-sm sm:p-5">
+          <p className="font-semibold">The page reloaded while your resume was building.</p>
+          <p className="mt-1 text-foreground-muted">
+            {reloadNote === "checking" && "Checking that build and putting your answers back…"}
+            {reloadNote === "back" && "Phones sometimes do this when you switch apps. We put your answers back, and that build was not counted against you. Press the Build button when you are ready, and stay on this page until it finishes."}
+            {reloadNote === "limit" && "We put your answers back, but could not give that build back automatically. Email info@thewarthens.com and we will fix it right away."}
+          </p>
+        </div>
       )}
 
       {error && !outOfBuilds && (

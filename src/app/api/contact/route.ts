@@ -1,10 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import { contactTopics, MESSAGE_MAX, STORY_MAX } from "@/lib/contact-topics";
 import { isLiveHost, JUSTON_EMAIL } from "@/lib/coaching-recipients";
+import { looksLikeSalesPitch } from "@/lib/contact-spam";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const FROM_EMAIL = process.env.TRACKER_FROM_EMAIL || "The Warthens <info@thewarthens.com>";
 const TEAM_EMAIL = "info@thewarthens.com";
+
+// Each visitor can send a few messages in ten minutes. Enough for a real person, too slow for a spam run.
+const WINDOW_MS = 10 * 60 * 1000;
+const MAX_PER_WINDOW = 4;
+const MIN_FILL_MS = 3000;
+const hits = new Map<string, number[]>();
+function tooMany(ip: string) {
+  const now = Date.now();
+  const recent = (hits.get(ip) ?? []).filter((t) => now - t < WINDOW_MS);
+  recent.push(now);
+  hits.set(ip, recent);
+  if (hits.size > 5000) hits.clear();
+  return recent.length > MAX_PER_WINDOW;
+}
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email.length <= 200;
@@ -29,6 +44,20 @@ async function sendEmail(payload: Record<string, unknown>) {
 }
 
 export async function POST(req: NextRequest) {
+  // Only the site's own form may post here.
+  const origin = req.headers.get("origin");
+  const host = req.headers.get("host");
+  if (origin && host) {
+    try {
+      if (new URL(origin).host !== host) return NextResponse.json({ error: "Something went wrong. Reload the page and try again." }, { status: 403 });
+    } catch {
+      return NextResponse.json({ error: "Something went wrong. Reload the page and try again." }, { status: 403 });
+    }
+  }
+
+  const ip = req.headers.get("x-nf-client-connection-ip") ?? req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  if (tooMany(ip)) return NextResponse.json({ error: "That was a lot of messages in a short time. Please wait a few minutes and try again, or email us directly." }, { status: 429 });
+
   let body: Record<string, unknown>;
   try {
     body = await req.json();
@@ -38,6 +67,11 @@ export async function POST(req: NextRequest) {
 
   // Honeypot: real people never fill this hidden field. Pretend it worked.
   if (clean(body.company, 100)) return NextResponse.json({ ok: true });
+
+  // A real person takes more than a few seconds to fill in the form. The form sends how long it was open; a request
+  // without that number did not come from the form. (Silently dropped, like the trap field above.)
+  if (typeof body.elapsed !== "number") return NextResponse.json({ error: "Please reload the page and try again." }, { status: 400 });
+  if (body.elapsed < MIN_FILL_MS) return NextResponse.json({ ok: true });
 
   const name = clean(body.name, 100);
   const email = clean(body.email, 200);
@@ -54,6 +88,12 @@ export async function POST(req: NextRequest) {
   }
   if (message.length < 3 && story.length < 3) {
     return NextResponse.json({ error: "Please write us a short message." }, { status: 400 });
+  }
+
+  // Cold sales pitches (SEO, "traffic", web design) are dropped without a sound, so they never reach the inbox.
+  if (looksLikeSalesPitch(message, story)) {
+    console.warn("contact: dropped a message that looks like a sales pitch");
+    return NextResponse.json({ ok: true });
   }
 
   if (!RESEND_API_KEY) {

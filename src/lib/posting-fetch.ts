@@ -11,7 +11,9 @@ import net from "node:net";
 export const MAX_POSTING_TEXT = 10000;
 const MAX_BYTES = 1_500_000;
 const MAX_REDIRECTS = 4;
-const TIMEOUT_MS = 9000;
+const TIMEOUT_MS = 6000;
+// The whole read, redirects included, gets this long. A slow site used to be able to take over a minute.
+const TOTAL_MS = 13000;
 
 // ---------- address safety ----------
 
@@ -247,7 +249,10 @@ export async function fetchPosting(raw: string): Promise<FetchOutcome> {
   if (!url) return { ok: false, error: "bad-url" };
   let page: Page;
   try {
-    page = await fetchPage(url);
+    page = await Promise.race([
+      fetchPage(url),
+      new Promise<never>((_, reject) => setTimeout(() => reject(new Error("took too long")), TOTAL_MS)),
+    ]);
   } catch {
     return { ok: false, error: "unreachable" };
   }

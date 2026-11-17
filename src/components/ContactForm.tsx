@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { contactTopics, MESSAGE_MAX, STORY_MAX } from "@/lib/contact-topics";
 
 const fieldClass =
@@ -17,6 +17,11 @@ export default function ContactForm({ email }: { email: string }) {
   const [message, setMessage] = useState("");
   const [story, setStory] = useState("");
   const [company, setCompany] = useState(""); // honeypot
+  // When the form was opened, so the server can tell a person from a script that fills it in instantly.
+  const openedAt = useRef(0);
+  useEffect(() => {
+    openedAt.current = performance.timeOrigin + performance.now();
+  }, []);
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
 
@@ -31,7 +36,7 @@ export default function ContactForm({ email }: { email: string }) {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email: from, topic, message, story, company }),
+        body: JSON.stringify({ name, email: from, topic, message, story, company, elapsed: Math.round(performance.timeOrigin + performance.now() - openedAt.current) }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {

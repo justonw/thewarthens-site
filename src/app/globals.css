@@ -546,3 +546,18 @@ article a[class*="rounded-3xl"] {
     animation: rb-bar 30s linear both;
   }
 }
+
+/* Phones. iPhones zoom the whole page in when you tap a text box whose type is smaller than 16px, and they stay zoomed
+   (the page seems to "jump" or freeze). So on small screens every text field is at least 16px. Footer links get room
+   to tap, too. */
+@media (max-width: 767px) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):not([type="hidden"]),
+  textarea,
+  select {
+    font-size: 16px;
+  }
+  footer a {
+    display: inline-block;
+    padding-block: 0.4rem;
+  }
+}

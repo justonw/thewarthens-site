@@ -107,7 +107,7 @@ export function ResumeHero() {
               Build my tailored resume
               <span aria-hidden>→</span>
             </a>
-            <a href="#how" className="text-sm font-semibold text-foreground-muted underline-offset-4 transition-colors hover:text-foreground hover:underline">
+            <a href="#how" className="inline-flex min-h-11 items-center text-sm font-semibold text-foreground-muted underline-offset-4 transition-colors hover:text-foreground hover:underline">
               See how it works
             </a>
           </div>

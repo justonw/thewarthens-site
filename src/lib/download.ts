@@ -7,5 +7,6 @@ export function downloadBlob(blob: Blob, name: string) {
   document.body.appendChild(a);
   a.click();
   a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 2000);
+  // Phones can take a while to start a download, so the link stays valid for a minute.
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }

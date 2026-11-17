@@ -70,7 +70,7 @@ function GapItem({ gap, onAdd }: { gap: ResumeGap; onAdd: (answer: string) => Pr
     <li className="text-sm">
       <p className="font-medium">{gap.requirement}</p>
       {!open ? (
-        <button type="button" onClick={() => setOpen(true)} className="mt-1 text-xs font-semibold text-blue-600 underline underline-offset-2">
+        <button type="button" onClick={() => setOpen(true)} className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold text-blue-600 underline underline-offset-2 sm:min-h-0">
           I have this
         </button>
       ) : (
@@ -204,6 +204,12 @@ export default function ResultView({
   const [style, setStyle] = useState<ResumeStyle>(design ? "custom" : "classic");
   // The preview is shown from the start: choosing a template changes only the download, so without a preview
   // nothing on the page would seem to change.
+  // Phones cannot show a PDF inside a page (Android shows a blank box, iPhones show only the first page), so there the
+  // preview opens in its own tab instead. This screen only ever renders in the browser, so the check is safe here.
+  const [onPhone] = useState(() => typeof navigator !== "undefined" && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent));
+  // Instagram, TikTok, Facebook, LinkedIn and similar apps open links in their own mini browser, which often blocks
+  // file downloads without saying so. Warn people there and point them to the email copy or their real browser.
+  const [inApp] = useState(() => typeof navigator !== "undefined" && /FBAN|FBAV|FB_IAB|Instagram|LinkedInApp|TikTok|musical_ly|BytedanceWebview|Snapchat|Pinterest|Line\/|MicroMessenger|; wv\)/i.test(navigator.userAgent));
   const [preview, setPreview] = useState(true);
   const [built, setBuilt] = useState<{ url: string; key: string }>({ url: "", key: "" });
   const previewUrl = built.url;
@@ -448,6 +454,12 @@ export default function ResultView({
         </div>
       )}
 
+      {inApp && (
+        <p role="status" className="rounded-2xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm">
+          You&apos;re in an app&apos;s built-in browser, which often blocks downloads. If a download doesn&apos;t start, use &quot;Email me a copy&quot; below, or open this page in Safari or Chrome (look for the menu or the &quot;Open in browser&quot; option).
+        </p>
+      )}
+
       {tab === "letter" && letter ? (
         <CoverLetterEditor letter={letter} doc={finalDoc} onChange={onLetter} />
       ) : (
@@ -474,7 +486,7 @@ export default function ResultView({
                       type="button"
                       aria-pressed={style === "custom"}
                       onClick={() => setStyle("custom")}
-                      className={`rounded-full px-3.5 py-1 text-xs font-semibold transition-colors ${style === "custom" ? "bg-gradient-to-r from-blue-600 to-violet-600 text-white" : "text-blue-700 hover:text-blue-900"}`}
+                      className={`rounded-full px-3.5 py-2.5 text-xs font-semibold transition-colors sm:py-1.5 ${style === "custom" ? "bg-gradient-to-r from-blue-600 to-violet-600 text-white" : "text-blue-700 hover:text-blue-900"}`}
                     >
                       Match my resume
                     </button>
@@ -486,13 +498,13 @@ export default function ResultView({
                       aria-pressed={style === st.id}
                       title={st.note}
                       onClick={() => setStyle(st.id)}
-                      className={`rounded-full px-3.5 py-1 text-xs font-semibold transition-colors ${style === st.id ? "bg-foreground text-background" : "text-foreground-muted hover:text-foreground"}`}
+                      className={`rounded-full px-3.5 py-2.5 text-xs font-semibold transition-colors sm:py-1.5 ${style === st.id ? "bg-foreground text-background" : "text-foreground-muted hover:text-foreground"}`}
                     >
                       {st.label}
                     </button>
                   ))}
                 </div>
-                <button type="button" onClick={() => setPreview((v) => !v)} aria-expanded={preview} className="text-xs font-semibold text-blue-600 underline underline-offset-2">
+                <button type="button" onClick={() => setPreview((v) => !v)} aria-expanded={preview} className="inline-flex min-h-11 items-center text-xs font-semibold sm:min-h-0 text-blue-600 underline underline-offset-2">
                   {preview ? "Hide preview" : "Preview the download"}
                 </button>
               </div>
@@ -518,7 +530,15 @@ export default function ResultView({
                   <p className="border-b border-border-subtle bg-background-elevated px-4 py-2 text-xs font-semibold text-foreground-muted">
                     Preview of your download ({style === "custom" ? "Match my resume" : (RESUME_STYLES.find((x) => x.id === style)?.label ?? style)})
                   </p>
-                  {previewUrl ? (
+                  {previewUrl && onPhone ? (
+                    <p className="p-5 text-sm text-foreground-muted">
+                      Phones can&apos;t show the preview inside the page.{" "}
+                      <a href={previewUrl} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center font-semibold text-blue-600 underline underline-offset-2">
+                        Open the preview in a new tab
+                      </a>
+                      . Come back here to keep editing.
+                    </p>
+                  ) : previewUrl ? (
                     <iframe title="Preview of your resume download" src={`${previewUrl}#toolbar=0&navpanes=0&view=FitH`} className="h-[560px] w-full" />
                   ) : (
                     <p className="p-6 text-center text-sm text-foreground-muted">Building the preview…</p>
@@ -528,7 +548,7 @@ export default function ResultView({
                       Updating…
                     </span>
                   )}
-                  {previewUrl && (
+                  {previewUrl && !onPhone && (
                     <p className="border-t border-border-subtle px-4 py-2 text-xs text-foreground-muted">
                       Not showing on your phone?{" "}
                       <a href={previewUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-600 underline underline-offset-2">
@@ -622,7 +642,7 @@ export default function ResultView({
             )}
 
             <details className={`${card} text-sm`}>
-              <summary className="cursor-pointer font-semibold">How a scanner reads it</summary>
+              <summary className="cursor-pointer py-1 font-semibold">How a scanner reads it</summary>
               <p className="mt-2 text-xs text-foreground-muted">Hiring software first turns your resume into plain text like this. Ours is one column with standard headings, which most systems read well. We can&apos;t test every system, so a clean view here is a good sign, not a guarantee.</p>
               <pre className="mt-3 max-h-72 overflow-auto whitespace-pre-wrap rounded-lg bg-background p-3 text-xs">{resumeToPlainText(finalDoc)}</pre>
             </details>

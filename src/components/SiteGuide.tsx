@@ -30,6 +30,8 @@ type Msg = { id: number; from: "bot" | "me"; text: string };
 const AUTO_OPEN_PATHS = ["/", "/tech", "/faith", "/techjr"];
 // The coaching page has a sticky "book a call" bar, so the launcher sits above it there.
 const LIFTED_PREFIXES = ["/tech/coaching"];
+// On the resume pages the floating button sits on top of the form and the Build button on a phone, so it is hidden there.
+const HIDDEN_ON_PHONE_PREFIXES = ["/resume"];
 const AUTO_OPEN_DELAY_MS = 1200;
 const COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 const STORAGE_KEY = "warthens-guide-seen";
@@ -262,6 +264,7 @@ export default function SiteGuide() {
   const node = guideNodes[nodeId];
   const busy = typing || leaving;
   const lifted = !!pathname && LIFTED_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+  const hiddenOnPhone = !!pathname && HIDDEN_ON_PHONE_PREFIXES.some((prefix) => pathname.startsWith(prefix));
   const inResults = results !== null;
 
   return (
@@ -409,7 +412,7 @@ export default function SiteGuide() {
           ref={launcherRef}
           type="button"
           onClick={openByVisitor}
-          className={`fixed right-4 z-[60] inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-950/25 transition-colors hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ${lifted ? "bottom-24 sm:right-6 sm:bottom-24" : "bottom-4 sm:right-6 sm:bottom-6"}`}
+          className={`fixed right-4 z-[60] inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-950/25 transition-colors hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ${hiddenOnPhone ? "max-sm:hidden " : ""}${lifted ? "bottom-24 sm:right-6 sm:bottom-24" : "bottom-4 sm:right-6 sm:bottom-6"}`}
         >
           <span aria-hidden>💬</span>
           Where to start?

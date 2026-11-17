@@ -86,7 +86,7 @@ export default function NextSteps({ title, extra }: { title: string; extra: stri
                 </li>
               ))}
             </ul>
-            <a href="#programs" className="mt-3 inline-block text-xs font-semibold text-blue-600 underline underline-offset-2">
+            <a href="#programs" className="mt-3 inline-flex min-h-11 items-center text-xs font-semibold text-blue-600 underline underline-offset-2 sm:min-h-0">
               Explore all career fields and programs
             </a>
             <p className="mt-2 text-xs text-foreground-muted">
@@ -101,7 +101,7 @@ export default function NextSteps({ title, extra }: { title: string; extra: stri
             <p className="mt-1 text-sm text-foreground-muted">
               Take our free 2-minute career quiz and see real, sourced entry-level pay for nine different paths.
             </p>
-            <a href="#programs" className="mt-3 inline-block text-xs font-semibold text-blue-600 underline underline-offset-2">
+            <a href="#programs" className="mt-3 inline-flex min-h-11 items-center text-xs font-semibold text-blue-600 underline underline-offset-2 sm:min-h-0">
               Explore all career fields and programs
             </a>
             <Link

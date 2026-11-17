@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { findPostingLink } from "@/lib/posting-link";
 import { processFile, type PickedFile } from "@/lib/resume-upload";
 
 // One of the two input boxes on the resume tool. A person can type or paste text, upload files, drag
@@ -53,9 +54,26 @@ export default function ResumeInputBox({
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<Notice>(null);
   const picker = useRef<HTMLInputElement>(null);
+  // What the box said before a link replaced it, so "Undo" can bring it back.
+  const [undoText, setUndoText] = useState<string | null>(null);
+  // Only the newest link request may fill the box, and only if the person has not changed the box since.
+  const requestId = useRef(0);
+  const textRef = useRef(text);
+  const mounted = useRef(true);
+  useEffect(() => {
+    textRef.current = text;
+  });
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+      requestId.current += 1;
+    };
+  }, []);
 
   const trimmed = text.trim();
-  const looksLikeLink = allowLink && /^https?:\/\/\S+$/i.test(trimmed);
+  const link = allowLink ? findPostingLink(trimmed) : null;
+  const looksLikeLink = link !== null;
 
   async function addFiles(list: File[]) {
     if (list.length === 0) return;
@@ -87,34 +105,65 @@ export default function ResumeInputBox({
   }
 
   async function fetchLink(url: string) {
+    const mine = ++requestId.current;
+    const current = () => mounted.current && requestId.current === mine;
     setBusy(true);
+    setUndoText(null);
     setNotice({ kind: "info", message: "Reading the posting from your link…" });
+    const slow = window.setTimeout(() => {
+      if (current()) setNotice({ kind: "info", message: "Still reading it. Some job sites are slow, this can take up to 20 seconds…" });
+    }, 6000);
+    const started = Date.now();
+    const controller = new AbortController();
+    const giveUp = window.setTimeout(() => controller.abort(), 28000);
     try {
       const ask = async () => {
         const r = await fetch("/api/posting-fetch", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ url }),
+          signal: controller.signal,
         });
         return { res: r, data: await r.json().catch(() => ({})) };
       };
       let { res, data } = await ask();
       // Sites like LinkedIn turn away an automated read some of the time and allow it the next. One quiet retry
-      // saves the person a second click.
-      if ((!res.ok || !data.ok) && (data.error === "blocked-site" || data.error === "unreachable")) {
+      // saves the person a second click, but only when the first try was quick (a slow one would double the wait).
+      if ((!res.ok || !data.ok) && (data.error === "blocked-site" || data.error === "unreachable") && Date.now() - started < 8000 && current()) {
         await new Promise((resolve) => setTimeout(resolve, 1200));
-        ({ res, data } = await ask());
+        if (current()) ({ res, data } = await ask());
       }
+      if (!current()) return;
       if (!res.ok || !data.ok) {
         setNotice({ kind: "error", message: linkErrors[data.error as string] ?? linkErrors.unreachable });
+      } else if (textRef.current.trim() && !findPostingLink(textRef.current.trim()) && textRef.current !== url) {
+        // The person typed or pasted something else while we were reading. Do not overwrite it.
+        setNotice({ kind: "info", message: "We read the posting, but the box had changed, so we left it alone. Clear the box and paste the link again to use it." });
       } else {
         onText(data.text as string);
         setNotice({ kind: "info", message: `Got it: ${data.title || "the posting"}. Read it over and fix anything that looks off.` });
       }
-    } catch {
-      setNotice({ kind: "error", message: linkErrors.unreachable });
+    } catch (e) {
+      if (current()) {
+        const timedOut = e instanceof DOMException && e.name === "AbortError";
+        setNotice({
+          kind: "error",
+          message: timedOut ? "That link took too long to open. Try again, or paste the posting text or a screenshot instead." : linkErrors.unreachable,
+        });
+      }
+    } finally {
+      window.clearTimeout(slow);
+      window.clearTimeout(giveUp);
+      if (current()) setBusy(false);
     }
-    setBusy(false);
+  }
+
+  // A link was pasted or inserted: put it in the box (remembering what was there) and go and read it.
+  function takeLink(url: string) {
+    const before = textRef.current;
+    if (before.trim() && !findPostingLink(before.trim()) && before.trim() !== url) setUndoText(before);
+    onText(url);
+    void fetchLink(url);
   }
 
   function removeFile(fileId: string) {
@@ -130,14 +179,26 @@ export default function ResumeInputBox({
       void addFiles(pasted);
       return;
     }
-    if (allowLink && !trimmed) {
-      const value = e.clipboardData.getData("text").trim();
-      if (/^https?:\/\/\S+$/i.test(value)) {
+    if (allowLink) {
+      const url = findPostingLink(e.clipboardData.getData("text"));
+      if (url) {
         e.preventDefault();
-        onText(value);
-        void fetchLink(value);
+        takeLink(url);
       }
     }
+  }
+
+  // Some phone keyboards put a copied link into the box without a paste event (the clipboard suggestion above the
+  // keys). A link that appears all at once, and is the only thing in the box, is treated like a paste.
+  function handleChange(value: string) {
+    if (allowLink && value.length - textRef.current.length >= 8 && findPostingLink(value) && !findPostingLink(textRef.current)) {
+      const url = findPostingLink(value) as string;
+      if (value.trim() === url || value.length - textRef.current.length >= url.length) {
+        takeLink(url);
+        return;
+      }
+    }
+    onText(value);
   }
 
   return (
@@ -174,7 +235,7 @@ export default function ResumeInputBox({
         id={id}
         rows={9}
         value={text}
-        onChange={(e) => onText(e.target.value)}
+        onChange={(e) => handleChange(e.target.value)}
         onPaste={handlePaste}
         placeholder={placeholder}
         className="mt-4 w-full resize-y rounded-2xl border border-border-subtle bg-background px-4 py-3 text-sm leading-relaxed outline-none transition-colors focus:border-blue-500/60 focus:bg-white"
@@ -228,7 +289,7 @@ export default function ResumeInputBox({
         {looksLikeLink && (
           <button
             type="button"
-            onClick={() => fetchLink(trimmed)}
+            onClick={() => fetchLink(link as string)}
             disabled={busy}
             className="rounded-full bg-blue-600 px-4 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-blue-500 disabled:opacity-60"
           >
@@ -259,6 +320,22 @@ export default function ResumeInputBox({
           }`}
         >
           {notice.message}
+          {undoText !== null && notice.kind === "info" && !busy ? (
+            <>
+              {" "}
+              <button
+                type="button"
+                onClick={() => {
+                  onText(undoText);
+                  setUndoText(null);
+                  setNotice(null);
+                }}
+                className="font-semibold text-blue-700 underline underline-offset-2"
+              >
+                Undo, put back what I had
+              </button>
+            </>
+          ) : null}
         </p>
       )}
     </div>
