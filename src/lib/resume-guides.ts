@@ -3,6 +3,8 @@
 // has a source on this site (see components/resume/EvidenceDropdown.tsx and lib/starter-checklist.ts), no promises
 // about outcomes, no made-up statistics, no em dashes. Example resume lines are labeled as examples.
 
+import { moreResumeGuides } from "./resume-guides-more";
+
 export const RESUME_GUIDES_UPDATED = "2026-11-16";
 
 export type Item = { title: string; text: string };
@@ -49,7 +51,7 @@ const EVIDENCE_LINKS = [
   },
 ];
 
-export const resumeGuides: ResumeGuide[] = [
+const baseGuides: ResumeGuide[] = [
   /* ---------------------------------------------------------------- */
   {
     slug: "tailor-resume-to-job-description",
@@ -501,5 +503,7 @@ export const resumeGuides: ResumeGuide[] = [
     blurb: "A real name, then the hiring team, then the team you would join, and how to find a name.",
   },
 ];
+
+export const resumeGuides: ResumeGuide[] = [...baseGuides, ...moreResumeGuides];
 
 export const guideBySlug = (slug: string) => resumeGuides.find((g) => g.slug === slug);

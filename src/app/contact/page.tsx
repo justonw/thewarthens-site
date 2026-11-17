@@ -5,7 +5,7 @@ import CopyEmailButton from "@/components/CopyEmailButton";
 import Reveal from "@/components/Reveal";
 import { CONTACT_EMAIL } from "@/components/ContactBand";
 
-const title = "Contact | The Warthens";
+const title = "Contact The Warthens: Questions, Coaching & Stories";
 const description =
   "Email The Warthens at info@thewarthens.com with questions about our videos, Tech Journey, Faith Journey, Tech Jr., or 1:1 coaching.";
 

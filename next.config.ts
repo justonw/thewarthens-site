@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // The picture-reading files (/public/ocr) never change, so browsers may keep them for a year instead of asking again.
+  async headers() {
+    return [{ source: "/ocr/:path*", headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }] }];
+  },
   async redirects() {
     return [
       {
@@ -15,7 +19,7 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/hype",
-        destination: "/tech#guides",
+        destination: "/tech/guides",
         permanent: false,
       },
       {
@@ -63,7 +67,7 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/start",
-        destination: "/tech#start-here",
+        destination: "/tech/start-here",
         permanent: false,
       },
       // The resume builder used to live under Tech Journey. Old links and emailed PDFs still work.

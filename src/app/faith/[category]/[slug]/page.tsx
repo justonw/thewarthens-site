@@ -10,6 +10,7 @@ import {
 } from "@/lib/faith-writings";
 import Reveal from "@/components/Reveal";
 import RaceStatChart from "@/components/RaceStatChart";
+import { faithWritingSeo, searchTitle } from "@/lib/seo";
 
 function renderInline(text: string) {
   const parts = text.split(/(\*\*.+?\*\*|\*.+?\*)/g);
@@ -36,20 +37,23 @@ export async function generateMetadata({
   const { category, slug } = await params;
   const writing = getFaithWriting(category, slug);
   if (!writing) return {};
+  const seo = faithWritingSeo[writing.slug];
+  const title = seo?.title ?? writing.title;
+  const description = seo?.description ?? writing.dek;
   return {
-    title: `${writing.title} | The Warthens`,
-    description: writing.dek,
+    title: { absolute: searchTitle(title) },
+    description,
     alternates: { canonical: `/faith/${writing.category}/${writing.slug}` },
     openGraph: {
-      title: writing.title,
-      description: writing.dek,
+      title,
+      description,
       url: `/faith/${writing.category}/${writing.slug}`,
       images: [{ url: writing.heroImage?.src ?? "/faith/opengraph-image", width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary_large_image",
-      title: writing.title,
-      description: writing.dek,
+      title,
+      description,
       images: [writing.heroImage?.src ?? "/faith/opengraph-image"],
     },
   };
@@ -72,7 +76,7 @@ export default async function FaithWritingPage({
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "The Warthens", item: "https://thewarthens.com" },
       { "@type": "ListItem", position: 2, name: "Faith Journey", item: "https://thewarthens.com/faith" },
-      { "@type": "ListItem", position: 3, name: categoryLabel, item: "https://thewarthens.com/faith#writings" },
+      { "@type": "ListItem", position: 3, name: categoryLabel, item: `https://thewarthens.com/faith/${writing.category}` },
       {
         "@type": "ListItem",
         position: 4,

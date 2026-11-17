@@ -14,9 +14,9 @@ const playfair = Playfair_Display({
 
 const serif = "font-[family-name:var(--font-playfair)]";
 
-const title = "Women Who Seek | The Warthens";
+const title = "Women Who Seek: A Women's Bible Study Community";
 const description =
-  "Women Who Seek: a community of women finding Jesus in the Scriptures. Hosted by Atiya Warthen.";
+  "Women Who Seek is a Bible study community for women finding Jesus in the Scriptures, hosted by Atiya Warthen. Open to any woman, wherever she is in her walk.";
 
 export const metadata: Metadata = {
   title,

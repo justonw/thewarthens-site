@@ -5,6 +5,9 @@ import { faithWritings } from "@/lib/faith-writings";
 import { articles } from "@/lib/techjr-articles";
 import { RESUME_GUIDES_UPDATED, resumeGuides } from "@/lib/resume-guides";
 
+// Categories of writing that have at least one piece (each has its own listing page).
+const faithCategories = [...new Set(faithWritings.map((w) => w.category))];
+
 // Bump this when you make a meaningful content change to a static page
 // (home, /tech, /faith, /faith/women-who-seek) so search engines get a
 // real freshness signal instead of "just now" on every single crawl.
@@ -20,6 +23,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const routes: { path: string; priority: number; lastModified: Date }[] = [
     { path: "", priority: 1, lastModified: SITE_LAST_UPDATED },
     { path: "/tech", priority: 0.9, lastModified: SITE_LAST_UPDATED },
+    { path: "/about", priority: 0.7, lastModified: new Date("2026-11-16") },
+    { path: "/tech/guides", priority: 0.8, lastModified: new Date("2026-11-16") },
+    { path: "/tech/start-here", priority: 0.8, lastModified: new Date("2026-11-16") },
     { path: "/tech/coaching", priority: 0.8, lastModified: new Date("2026-10-24") },
     { path: "/resume", priority: 0.9, lastModified: new Date("2026-11-16") },
     { path: "/resume/keyword-matcher", priority: 0.8, lastModified: new Date("2026-11-16") },
@@ -52,6 +58,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
       lastModified: parseUpdated(g.updated),
     })),
+    ...faithCategories.map((c) => ({ path: `/faith/${c}`, priority: 0.7, lastModified: parseUpdated(faithWritings.filter((w) => w.category === c).map((w) => w.date).sort().at(-1) ?? "2026-11-16") })),
     ...faithWritings.map((w) => ({
       path: `/faith/${w.category}/${w.slug}`,
       priority: 0.7,

@@ -2,11 +2,14 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
+import StartDoors from "@/components/StartDoors";
+import StayInTouch from "@/components/StayInTouch";
+import ThisWeekCard from "@/components/ThisWeekCard";
 import { faithWritings, categoryLabels, type FaithWritingCategory } from "@/lib/faith-writings";
 
-const title = "Faith Journey | The Warthens";
+const title = "Faith Journey: Bible Studies, Testimonies & Wisdom";
 const description =
-  "Learning, understanding, and living out God's wisdom, through faith, by His grace. Our faith journey, told through our own life experiences, with Bible studies, writings, and lessons.";
+  "Our faith journey, told through real life: Bible studies, testimonies, and lessons on learning, understanding, and living out God's wisdom by His grace.";
 
 export const metadata: Metadata = {
   title,
@@ -180,6 +183,8 @@ export default function FaithJourneyPage() {
           </p>
         </div>
       </div>
+
+      <StartDoors variant="faith" />
 
       {/* Plug for the Faith Journey YouTube channel */}
       <div
@@ -397,6 +402,11 @@ export default function FaithJourneyPage() {
         </Reveal>
       </div>
 
+      <Reveal className="mx-auto grid max-w-5xl gap-5 px-6 pb-16 md:grid-cols-2">
+        <ThisWeekCard />
+        <StayInTouch from="faith" />
+      </Reveal>
+
       <Reveal delay={100} className="mx-auto max-w-3xl px-6 pb-16 text-left">
         <h2 className="text-xl font-semibold sm:text-2xl">Quick Answers</h2>
         <div className="mt-5 space-y-3">
@@ -458,7 +468,9 @@ export default function FaithJourneyPage() {
               <div key={group.category} className="mt-10">
                 <Reveal>
                   <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
-                    {categoryLabels[group.category]}
+                    <Link href={`/faith/${group.category}`} className="hover:text-foreground">
+                      {categoryLabels[group.category]}
+                    </Link>
                   </h3>
                 </Reveal>
                 <div className="mt-4 grid gap-4 md:grid-cols-2">

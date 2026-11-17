@@ -3,9 +3,9 @@ import Link from "next/link";
 import PrintButton from "@/components/source/PrintButton";
 import { prayer, verseByRef } from "@/lib/source-of-life";
 
-const title = "Source of Life: Leader’s Guide for Small Groups | The Warthens";
+const title = "Source of Life Leader’s Guide: Small Group Bible Study";
 const description =
-  "A one-page guide for leading a 60-minute small group or Bible study through Source of Life: the quick check, the three acts, discussion questions, and care for people who are hurting.";
+  "A one-page guide for leading a 60-minute small group through Source of Life: the quick check, the three acts, discussion questions, and care for hurting people.";
 
 export const metadata: Metadata = {
   title: { absolute: title },
@@ -99,8 +99,32 @@ const steps: {
 
 export default function LeaderGuidePage() {
   const total = steps.reduce((n, s) => n + s.minutes, 0);
+  const graph = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Article",
+        headline: "Source of Life Leader’s Guide: Small Group Bible Study",
+        description,
+        author: { "@id": "https://thewarthens.com/#organization" },
+        publisher: { "@id": "https://thewarthens.com/#organization" },
+        mainEntityOfPage: "https://thewarthens.com/source-of-life/leader-guide",
+        isPartOf: { "@id": "https://thewarthens.com/#website" },
+        dateModified: "2026-11-14",
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "The Warthens", item: "https://thewarthens.com" },
+          { "@type": "ListItem", position: 2, name: "Source of Life", item: "https://thewarthens.com/source-of-life" },
+          { "@type": "ListItem", position: 3, name: "Leader’s Guide", item: "https://thewarthens.com/source-of-life/leader-guide" },
+        ],
+      },
+    ],
+  };
   return (
     <article className="mx-auto max-w-3xl px-6 py-14 sm:py-20">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(graph) }} />
       {/* Print: hide the site header, footer, and floating buttons so the guide prints cleanly. */}
       <style>{`@media print { header, footer, .fixed { display: none !important; } body { background: #fff !important; } a { text-decoration: none !important; color: inherit !important; } }`}</style>
 

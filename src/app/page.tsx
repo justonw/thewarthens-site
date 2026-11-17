@@ -8,37 +8,6 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "The Warthens",
-  alternateName: ["Tech Journey", "The Warthens Tech Journey"],
-  url: "https://thewarthens.com",
-  logo: "https://thewarthens.com/brand/icon-square.png",
-  description:
-    "Juston and Atiya Warthen, known as Tech Journey, share practical steps for a career change into tech, plus their journey of relying on God to discover, understand, and live out truth.",
-  founder: [
-    {
-      "@type": "Person",
-      name: "Juston Warthen",
-      sameAs: ["https://www.linkedin.com/in/juston-warthen-96aa13167"],
-    },
-    {
-      "@type": "Person",
-      name: "Atiya Warthen",
-      sameAs: ["https://www.linkedin.com/in/atiya-warthen-4062881b0"],
-    },
-  ],
-  sameAs: [
-    "https://youtube.com/@thewarthens",
-    "https://www.youtube.com/channel/UCJj_ar9Gs8YvcYK6jSh9a6g",
-    "https://www.instagram.com/thewarthens",
-    "https://www.tiktok.com/@thewarthens",
-    "https://www.linkedin.com/in/juston-warthen-96aa13167",
-    "https://www.linkedin.com/in/atiya-warthen-4062881b0",
-  ],
-};
-
 const startPaths = [
   {
     icon: "compass" as const,
@@ -52,7 +21,7 @@ const startPaths = [
     icon: "book" as const,
     title: "Start with a step-by-step guide",
     body: "Free guides for tech sales, cybersecurity, coding, and data analytics, with real video from people doing the job.",
-    href: "/tech#start-here",
+    href: "/tech/start-here",
     cta: "Pick a guide",
     chip: "bg-violet-100 text-violet-700",
   },
@@ -103,10 +72,6 @@ function PathIcon({ name }: { name: "compass" | "book" | "chat" }) {
 export default function Home() {
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
       {/* Hero */}
       <section
         className="relative overflow-hidden bg-[#090c14] text-white"
@@ -160,7 +125,7 @@ export default function Home() {
                 <div className="relative aspect-[4/5] overflow-hidden rounded-[2.1rem] bg-slate-200">
                   <Image
                     src="/team/atiya.png"
-                    alt="Atiya Warthen"
+                    alt="Atiya Warthen, who co-leads Faith Journey and hosts Women Who Seek"
                     fill
                     priority
                     sizes="(min-width: 1024px) 260px, 44vw"
@@ -177,7 +142,7 @@ export default function Home() {
                 <div className="relative aspect-[4/5] overflow-hidden rounded-[2.1rem] bg-blue-700">
                   <Image
                     src="/team/juston.jpg"
-                    alt="Juston Warthen"
+                    alt="Juston Warthen, co-host of Tech Journey and Faith Journey"
                     fill
                     priority
                     sizes="(min-width: 1024px) 260px, 44vw"

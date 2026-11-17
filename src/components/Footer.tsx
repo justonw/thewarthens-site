@@ -33,6 +33,12 @@ export default function Footer() {
               Juston &amp; Atiya Warthen: career transitions and a faith
               journey, side by side.
             </p>
+            <Link
+              href="/about"
+              className="mt-3 inline-block text-sm font-semibold text-foreground-muted underline-offset-4 transition-colors hover:text-foreground hover:underline"
+            >
+              About us
+            </Link>
           </div>
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
@@ -58,10 +64,28 @@ export default function Footer() {
                 Resume Builder
               </Link>
               <Link
-                href="/tech#start-here"
+                href="/tech/start-here"
                 className="text-sm text-foreground-muted transition-colors hover:text-foreground"
               >
                 Start Here, For Free
+              </Link>
+              <Link
+                href="/tech/guides"
+                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+              >
+                Hype vs. Reality guides
+              </Link>
+              <Link
+                href="/resume/keyword-matcher"
+                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+              >
+                Free resume keyword scanner
+              </Link>
+              <Link
+                href="/resume/guides"
+                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+              >
+                Resume and cover letter guides
               </Link>
               {guides.map((g) => (
                 <Link
@@ -174,7 +198,14 @@ export default function Footer() {
             </nav>
           </div>
         </div>
-        <p className="mt-8 text-xs text-foreground-muted">
+        <p className="mt-8 text-sm text-foreground-muted">
+          Going through something heavy? You don&apos;t have to carry it alone. In the U.S., you can call or text{" "}
+          <a href="tel:988" className="font-semibold underline underline-offset-2 hover:text-foreground">
+            988
+          </a>{" "}
+          any time to reach the Suicide &amp; Crisis Lifeline. We&apos;re not counselors, but we&apos;re glad you&apos;re here.
+        </p>
+        <p className="mt-4 text-xs text-foreground-muted">
           Some links on this site are affiliate links. Some provide free
           content, while others offer paid opportunities that provide
           compensation for us, and some offer you discounts or incentives

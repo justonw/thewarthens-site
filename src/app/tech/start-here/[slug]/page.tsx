@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { startHereGuides, getStartHere } from "@/lib/start-here";
 import { getGuideForPath } from "@/lib/guides";
+import { searchTitle, startHereSeo } from "@/lib/seo";
 import Reveal from "@/components/Reveal";
 import CoachingCallout from "@/components/coaching/CoachingCallout";
 import StartHereChecklist from "@/components/StartHereChecklist";
@@ -19,12 +20,15 @@ export async function generateMetadata({
   const { slug } = await params;
   const guide = getStartHere(slug);
   if (!guide) return {};
+  const seo = startHereSeo[guide.slug];
+  const title = seo?.title ?? guide.title;
+  const description = seo?.description ?? guide.dek;
   return {
-    title: `${guide.title} | The Warthens`,
-    description: guide.dek,
+    title: { absolute: searchTitle(title) },
+    description,
     alternates: { canonical: `/tech/start-here/${guide.slug}` },
-    openGraph: { title: guide.title, description: guide.dek, url: `/tech/start-here/${guide.slug}` },
-    twitter: { card: "summary_large_image", title: guide.title, description: guide.dek },
+    openGraph: { title, description, url: `/tech/start-here/${guide.slug}` },
+    twitter: { card: "summary_large_image", title, description },
   };
 }
 
@@ -44,7 +48,7 @@ export default async function StartHerePage({
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Tech Journey", item: "https://thewarthens.com/tech" },
-      { "@type": "ListItem", position: 2, name: "Start Here", item: "https://thewarthens.com/tech#start-here" },
+      { "@type": "ListItem", position: 2, name: "Start Here", item: "https://thewarthens.com/tech/start-here" },
       { "@type": "ListItem", position: 3, name: guide.title, item: `https://thewarthens.com/tech/start-here/${guide.slug}` },
     ],
   };

@@ -11,8 +11,8 @@ export const metadata: Metadata = {
   title,
   description,
   alternates: { canonical: "/resume/guides" },
-  openGraph: { title, description, url: "/resume/guides", type: "website" },
-  twitter: { card: "summary_large_image", title, description },
+  openGraph: { title, description, url: "/resume/guides", type: "website", images: [{ url: "/resume/opengraph-image", width: 1200, height: 630 }] },
+  twitter: { card: "summary_large_image", title, description, images: ["/resume/opengraph-image"] },
 };
 
 export default function ResumeGuidesPage() {

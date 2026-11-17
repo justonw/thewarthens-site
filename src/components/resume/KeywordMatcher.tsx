@@ -2,11 +2,13 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import AutoTextarea from "@/components/resume/AutoTextarea";
+import InputArea from "@/components/resume/InputArea";
 import { findPostingLink } from "@/lib/posting-link";
 import { markResume, matchKeywords, type TermKind, type TermResult } from "@/lib/keyword-match";
 import { saveHandoff } from "@/lib/resume-handoff";
 import { processFile } from "@/lib/resume-upload";
+import { pdfToText } from "@/lib/pdf-text";
+import { imageToText } from "@/lib/ocr";
 
 // The free keyword check. Paste a resume and a job posting (or a link to the posting, or a Word or text file for the
 // resume), press the button, and see which of the posting's key phrases are in the resume. Nothing here calls an AI:
@@ -32,9 +34,6 @@ What you'll do
 - Book meetings for account executives
 - Manage the sales pipeline and report on KPIs
 - Hand off qualified leads to customer success`;
-
-const field =
-  "w-full rounded-2xl border border-border-subtle bg-background px-4 py-3 text-base leading-relaxed text-foreground placeholder:text-foreground-muted/70 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30";
 
 const KINDS: { id: Exclude<TermKind, "name">; label: string }[] = [
   { id: "tool", label: "Tools" },
@@ -68,6 +67,10 @@ const linkErrors: Record<string, string> = {
   thin: "That page didn't have a job posting we could read. Paste the posting text instead.",
 };
 
+type Target = "resume" | "posting";
+type Note = { kind: "info" | "error"; message: string };
+const IMAGE = /\.(png|jpe?g|webp|gif|heic|heif|bmp)$/i;
+
 export default function KeywordMatcher() {
   const router = useRouter();
   const [resume, setResume] = useState("");
@@ -75,9 +78,13 @@ export default function KeywordMatcher() {
   const [checked, setChecked] = useState<{ resume: string; posting: string } | null>(null);
   const [hidden, setHidden] = useState<string[]>([]);
   const [copied, setCopied] = useState(false);
-  const [note, setNote] = useState<{ kind: "info" | "error"; message: string } | null>(null);
+  const [note, setNote] = useState<Note | null>(null);
   const [busy, setBusy] = useState(false);
+  const [fileNote, setFileNote] = useState<Note | null>(null);
+  const [drag, setDrag] = useState<Target | null>(null);
+  const [reading, setReading] = useState<{ resume: string | null; posting: string | null }>({ resume: null, posting: null });
   const picker = useRef<HTMLInputElement>(null);
+  const postingPicker = useRef<HTMLInputElement>(null);
   const postingRef = useRef(posting);
   const request = useRef(0);
   useEffect(() => {
@@ -113,21 +120,74 @@ export default function KeywordMatcher() {
     }
   };
 
-  async function readFile(list: FileList | null) {
+  async function readFile(list: FileList | File[] | null, target: Target) {
     const file = list?.[0];
     if (!file) return;
-    setNote({ kind: "info", message: "Reading your file…" });
+    const say = (n: Note | null) => (target === "resume" ? setFileNote(n) : setNote(n));
+    const work = (m: string | null) => setReading((r) => ({ ...r, [target]: m }));
+    const name = file.name || "your picture";
+    const subject = target === "resume" ? "resume" : "posting";
+    say(null);
     try {
-      const picked = await processFile(file);
-      if (picked.kind === "text" && picked.text) {
-        setResume(picked.text);
-        setNote({ kind: "info", message: "Added the text from your file. Read it over and fix anything that looks off." });
+      let text = "";
+      if (file.type.startsWith("image/") || IMAGE.test(file.name)) {
+        work("Reading the words in your picture…");
+        try {
+          text = await imageToText(file, (pct) => work(`Reading the words in your picture… ${pct}%`));
+        } catch (e) {
+          throw new Error(e instanceof Error ? e.message : "We couldn't read that picture. Paste the text instead.");
+        }
+        if (text.length < 40) throw new Error(`We couldn't find enough words in that picture. Try a sharper or larger one, or paste the text instead.`);
+      } else if (/\.pdf$/i.test(file.name) || file.type === "application/pdf") {
+        work(`Reading ${name}…`);
+        try {
+          text = await pdfToText(file);
+        } catch {
+          throw new Error("We couldn't open that PDF. Copy the text out of it and paste it into the box instead.");
+        }
+        if (text.length < 40) {
+          // A PDF that is a picture of a page has no words in it to read.
+          throw new Error("That PDF is a picture of a page, so there are no words for us to read. Take a screenshot of it and drop that in, or paste the text.");
+        }
       } else {
-        setNote({ kind: "error", message: "For a PDF or a picture, open it, copy the text, and paste it into the box. (The Resume Builder can read PDFs and screenshots directly.)" });
+        work(`Reading ${name}…`);
+        const picked = await processFile(file);
+        if (picked.kind !== "text" || !picked.text) throw new Error("We can read PDF, Word, text, and picture files here.");
+        text = picked.text;
       }
+      if (target === "resume") setResume(text);
+      else setPosting(text);
+      say({ kind: "info", message: `Added the text from ${name}. Read it over and fix anything that looks off, especially after a picture.` });
     } catch (e) {
-      setNote({ kind: "error", message: e instanceof Error ? e.message : "We couldn't read that file. Paste the text instead." });
+      say({ kind: "error", message: e instanceof Error ? e.message : `We couldn't read that ${subject} file. Paste the text instead.` });
+    } finally {
+      work(null);
     }
+  }
+
+  function dropHandlers(target: Target) {
+    return {
+      onDragOver: (e: React.DragEvent) => {
+        e.preventDefault();
+        setDrag(target);
+      },
+      onDragLeave: (e: React.DragEvent) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setDrag(null);
+      },
+      onDrop: (e: React.DragEvent) => {
+        e.preventDefault();
+        setDrag(null);
+        void readFile(e.dataTransfer.files, target);
+      },
+    };
+  }
+
+  function pastedFiles(e: React.ClipboardEvent<HTMLTextAreaElement>, target: Target) {
+    const files = Array.from(e.clipboardData.files);
+    if (files.length === 0) return false;
+    e.preventDefault();
+    void readFile(files, target);
+    return true;
   }
 
   async function readLink(url: string) {
@@ -177,61 +237,110 @@ export default function KeywordMatcher() {
   return (
     <div>
       <div className="grid gap-6 lg:grid-cols-2">
-        <div>
-          <label htmlFor="kw-resume" className="text-sm font-semibold">
-            1. Your resume
-          </label>
-          <p className="mb-2 text-sm text-foreground-muted">Paste the text of your resume, or add a Word or text file.</p>
-          <AutoTextarea id="kw-resume" value={resume} onChange={(e) => setResume(e.target.value)} placeholder="Paste your resume here" className={`${field} min-h-48`} />
-          <button type="button" onClick={() => picker.current?.click()} className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-blue-700 underline-offset-4 hover:underline">
-            Add a Word or text file instead
-          </button>
+        <div className="rounded-3xl border border-border-subtle bg-white p-5 shadow-lg shadow-blue-900/5 transition-all focus-within:border-blue-500/40 focus-within:shadow-xl sm:p-6">
+          <div className="flex items-center gap-3">
+            <span aria-hidden className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-base font-bold text-white shadow-sm transition-colors ${resume.trim().length >= 40 ? "bg-green-600" : "bg-gradient-to-br from-blue-600 to-violet-600"}`}>
+              {resume.trim().length >= 40 ? "✓" : "1"}
+            </span>
+            <label htmlFor="kw-resume" className="text-lg font-bold tracking-tight">
+              Your resume
+            </label>
+          </div>
+          <p className="mb-3 mt-1.5 text-sm text-foreground-muted sm:pl-12">Paste the text, or upload a PDF, Word file, or photo.</p>
+          <div {...dropHandlers("resume")}>
+            <InputArea
+              id="kw-resume"
+              value={resume}
+              onChange={setResume}
+              onPaste={(e) => void pastedFiles(e, "resume")}
+              title="Drop your resume here"
+              hint="Or click to paste the text. A phone photo of it works too."
+              formats={["PDF", "Word", "Photo", "Text"]}
+              noun="resume"
+              dragging={drag === "resume"}
+              working={reading.resume}
+              onChoose={() => picker.current?.click()}
+              placeholder="Paste your resume here"
+            />
+          </div>
+          {fileNote && (
+            <p role={fileNote.kind === "error" ? "alert" : "status"} className={`mt-3 rounded-xl px-4 py-3 text-sm ${fileNote.kind === "error" ? "border border-red-500/30 bg-red-500/5 text-red-700" : "bg-blue-500/5 text-foreground-muted"}`}>
+              {fileNote.message}
+            </p>
+          )}
           <input
             ref={picker}
             type="file"
-            accept=".docx,.txt,.md,.pdf"
+            accept=".docx,.txt,.md,.pdf,image/*"
             className="sr-only"
             tabIndex={-1}
             aria-label="Choose a resume file"
             onChange={(e) => {
               const files = e.target.files;
-              void readFile(files);
+              void readFile(files, "resume");
               e.target.value = "";
             }}
           />
         </div>
-        <div>
-          <label htmlFor="kw-posting" className="text-sm font-semibold">
-            2. The job posting
-          </label>
-          <p className="mb-2 text-sm text-foreground-muted">Paste the whole posting, or just the link to it.</p>
-          <AutoTextarea
-            id="kw-posting"
-            value={posting}
-            onChange={(e) => onPostingChange(e.target.value)}
-            onPaste={(e) => {
-              const url = findPostingLink(e.clipboardData.getData("text"));
-              if (url) {
-                e.preventDefault();
-                takeLink(url);
-              }
-            }}
-            placeholder="Paste the job posting here"
-            className={`${field} min-h-48`}
-          />
+        <div className="rounded-3xl border border-border-subtle bg-white p-5 shadow-lg shadow-blue-900/5 transition-all focus-within:border-blue-500/40 focus-within:shadow-xl sm:p-6">
+          <div className="flex items-center gap-3">
+            <span aria-hidden className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-base font-bold text-white shadow-sm transition-colors ${posting.trim().length >= 80 ? "bg-green-600" : "bg-gradient-to-br from-blue-600 to-violet-600"}`}>
+              {posting.trim().length >= 80 ? "✓" : "2"}
+            </span>
+            <label htmlFor="kw-posting" className="text-lg font-bold tracking-tight">
+              The job posting
+            </label>
+          </div>
+          <p className="mb-3 mt-1.5 text-sm text-foreground-muted sm:pl-12">Paste the posting or its link, or drop a screenshot.</p>
+          <div {...dropHandlers("posting")}>
+            <InputArea
+              id="kw-posting"
+              value={posting}
+              onChange={onPostingChange}
+              onPaste={(e) => {
+                if (pastedFiles(e, "posting")) return;
+                const url = findPostingLink(e.clipboardData.getData("text"));
+                if (url) {
+                  e.preventDefault();
+                  takeLink(url);
+                }
+              }}
+              icon="link"
+              title="Paste the job link or text"
+              hint="Or drop a screenshot or file of the posting here."
+              formats={["Link", "Text", "Screenshot", "PDF"]}
+              noun="job posting"
+              dragging={drag === "posting"}
+              working={reading.posting}
+              onChoose={() => postingPicker.current?.click()}
+              placeholder="Paste the job posting here"
+            />
+          </div>
           {postingLink && !busy ? (
             <button type="button" onClick={() => void readLink(postingLink)} className="mt-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-500">
               Get the posting from this link
             </button>
           ) : null}
+          {note && (
+            <p role={note.kind === "error" ? "alert" : "status"} className={`mt-3 rounded-xl px-4 py-3 text-sm ${note.kind === "error" ? "border border-red-500/30 bg-red-500/5 text-red-700" : "bg-blue-500/5 text-foreground-muted"}`}>
+              {note.message}
+            </p>
+          )}
+          <input
+            ref={postingPicker}
+            type="file"
+            accept=".docx,.txt,.md,.pdf,image/*"
+            className="sr-only"
+            tabIndex={-1}
+            aria-label="Choose a job posting file"
+            onChange={(e) => {
+              const files = e.target.files;
+              void readFile(files, "posting");
+              e.target.value = "";
+            }}
+          />
         </div>
       </div>
-
-      {note && (
-        <p role={note.kind === "error" ? "alert" : "status"} className={`mt-4 rounded-xl px-4 py-3 text-sm ${note.kind === "error" ? "border border-red-500/30 bg-red-500/5 text-red-700" : "bg-blue-500/5 text-foreground-muted"}`}>
-          {note.message}
-        </p>
-      )}
 
       <div className="mt-5 flex flex-wrap items-center gap-3">
         <button

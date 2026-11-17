@@ -13,10 +13,13 @@ import EmailGatedDownload from "@/components/EmailGatedDownload";
 import CourseSection from "@/components/CourseSection";
 import ResumeBuilderCallout from "@/components/ResumeBuilderCallout";
 import CoachingCallout from "@/components/coaching/CoachingCallout";
+import StartDoors from "@/components/StartDoors";
+import StayInTouch from "@/components/StayInTouch";
+import ThisWeekCard from "@/components/ThisWeekCard";
 
-const title = "Tech Journey | Career Change to Tech | The Warthens";
+const title = "Career Change to Tech: Free Quiz, Pay Data & Guides";
 const description =
-  "Real steps for a career change to tech, no experience or degree needed for most paths. Take the free 2-minute career quiz, see real 2026 pay data, and read our honest Hype vs. Reality guides before you commit.";
+  "Switching careers to tech? Take the free 2-minute career quiz, see real 2026 pay data, and read honest Hype vs. Reality guides. No degree needed for most paths.";
 
 const videoThumbnail = "https://img.youtube.com/vi/gQjj5E4SIlI/maxresdefault.jpg";
 
@@ -158,6 +161,8 @@ export default function TechJourneyPage() {
         </Reveal>
       </section>
 
+      <StartDoors variant="tech" />
+
       <div className="sticky top-14 z-40 border-y border-border-subtle bg-background/95 backdrop-blur sm:top-16">
         <nav
           aria-label="Page sections"
@@ -254,6 +259,11 @@ export default function TechJourneyPage() {
               </Link>
             ))}
           </div>
+          <p className="mt-6">
+            <Link href="/tech/guides" className="text-sm font-semibold text-blue-600 hover:text-blue-700">
+              See all Hype vs. Reality guides →
+            </Link>
+          </p>
         </Reveal>
       </section>
 
@@ -304,6 +314,11 @@ export default function TechJourneyPage() {
               </Reveal>
             ))}
           </div>
+          <p className="mt-8 text-center">
+            <Link href="/tech/start-here" className="text-sm font-semibold text-sky-100 underline underline-offset-4 hover:text-white">
+              See all step-by-step paths →
+            </Link>
+          </p>
         </div>
       </section>
 
@@ -415,6 +430,13 @@ export default function TechJourneyPage() {
       <section className="mx-auto max-w-3xl px-6 pb-16">
         <Reveal>
           <CoachingCallout from="tech-hub" />
+        </Reveal>
+      </section>
+
+      <section className="mx-auto max-w-5xl px-6 pb-16">
+        <Reveal className="grid gap-5 md:grid-cols-2">
+          <ThisWeekCard />
+          <StayInTouch from="tech" />
         </Reveal>
       </section>
 

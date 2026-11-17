@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SiteChrome from "@/components/SiteChrome";
 import SiteGuide from "@/components/SiteGuide";
+import { siteGraph } from "@/lib/site-schema";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,7 +19,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://thewarthens.com"),
-  title: "The Warthens | Tech Journey & Faith Journey",
+  title: "The Warthens: Career Change to Tech & Faith Journey",
   description:
     "Juston & Atiya Warthen share real steps for a career change into tech, plus their faith journey of relying on God to discover, understand, and live out truth.",
   keywords: [
@@ -42,13 +43,13 @@ export const metadata: Metadata = {
     type: "website",
     url: "https://thewarthens.com",
     siteName: "The Warthens",
-    title: "The Warthens | Tech Journey & Faith Journey",
+    title: "The Warthens: Career Change to Tech & Faith Journey",
     description:
       "Practical steps toward a career and a life that fit, plus our journey of relying on God to discover, understand, and live out truth.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "The Warthens | Tech Journey & Faith Journey",
+    title: "The Warthens: Career Change to Tech & Faith Journey",
     description:
       "Practical steps toward a career and a life that fit, plus our journey of relying on God to discover, understand, and live out truth.",
   },
@@ -61,6 +62,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteGraph) }} />
         {/* Impact.com (affiliate network) domain verification for Coursera partnership. Uses `value` per Impact.com's own snippet, not the usual `content`. */}
         <meta
           {...({

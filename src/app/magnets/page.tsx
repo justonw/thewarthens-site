@@ -7,7 +7,7 @@ const VIDEO_TITLE = "Our Kids Swallowed Magnets. This Is How We Trusted God.";
 const FAITH_YOUTUBE_URL = "https://www.youtube.com/channel/UCJj_ar9Gs8YvcYK6jSh9a6g";
 
 // Search title stays under about 60 characters; the on-page headline and social cards use the video title.
-const title = "Kids Swallowed Magnets: Our Story & Safety Tips | The Warthens";
+const title = "Kids Swallowed Magnets: Our Story & Safety Tips";
 const description =
   "Our kids swallowed magnetic beads. Watch our story of trusting God in a worst-case scenario, and learn what parents should know about magnet safety.";
 const thumbnail = `https://i.ytimg.com/vi/${VIDEO_ID}/maxresdefault.jpg`;
