@@ -26,6 +26,7 @@ import {
 import { creatorContent } from "@/lib/play-content";
 import type { BandId } from "@/lib/play-worlds";
 import Avatar from "./Avatar";
+import ArtIcon from "./ArtIcon";
 import { BigButton, CareerCard, Confetti, Panel, ReadAloud, ReadBox } from "./ui";
 
 type Step = "intro" | "power" | "who" | "look" | "name" | "poster" | "card";
@@ -501,7 +502,8 @@ export default function CreatorMission({ band, onFinish }: { band: BandId; onFin
         </Panel>
         <div className="text-center">
           <BigButton tone="amber" onClick={onFinish}>
-            ⭐ Earn my star!
+            <ArtIcon name="star" className="mr-2 inline h-8 w-8 align-middle" />
+            Earn my star!
           </BigButton>
         </div>
       </div>

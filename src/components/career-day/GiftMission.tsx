@@ -4,6 +4,7 @@ import { useState } from "react";
 import { giftQuestionSpoken, giftVerse, type GiftId } from "@/lib/career-day";
 import { giftContent } from "@/lib/play-content";
 import type { BandId } from "@/lib/play-worlds";
+import ArtIcon from "./ArtIcon";
 import { BigButton, Confetti, Panel, ReadAloud } from "./ui";
 
 type Step = "intro" | "quiz" | "result";
@@ -134,7 +135,8 @@ export default function GiftMission({ band, onFinish }: { band: BandId; onFinish
             Try again 🔁
           </BigButton>
           <BigButton tone="amber" onClick={onFinish}>
-            ⭐ Earn my star!
+            <ArtIcon name="star" className="mr-2 inline h-8 w-8 align-middle" />
+            Earn my star!
           </BigButton>
         </div>
       </div>

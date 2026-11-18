@@ -1,3 +1,5 @@
+import ArtIcon, { type ArtIconName } from "./ArtIcon";
+
 // Decorative artwork for the game. All of it is drawn in SVG, hidden from screen readers, and
 // holds no information, so it can be changed freely.
 
@@ -80,5 +82,156 @@ export function CardArt() {
         <path d="M0 20 L0 12 C40 0 80 0 120 8 C170 18 220 18 300 4 L300 20 Z" fill="currentColor" />
       </svg>
     </>
+  );
+}
+
+// Soft white shapes in the colored top of a card that hint at what the world is about, so each card
+// has its own look. Pure decoration.
+const scenes: Record<string, React.ReactNode> = {
+  // chat bubbles and hearts
+  helper: (
+    <>
+      <path d="M30 40 h54 a10 10 0 0 1 10 10 v16 a10 10 0 0 1 -10 10 h-34 l-12 12 v-12 h-8 a10 10 0 0 1 -10 -10 v-16 a10 10 0 0 1 10 -10z" />
+      <path d="M214 96 h50 a9 9 0 0 1 9 9 v14 a9 9 0 0 1 -9 9 h-6 v11 l-11 -11 h-33 a9 9 0 0 1 -9 -9 v-14 a9 9 0 0 1 9 -9z" />
+      <path d="M262 36 c-8 -5 -8 -13 -2 -13 c2 0 3 1 3 2.500 c0 -1.500 1 -2.500 3 -2.500 c6 0 6 8 -4 13z" />
+    </>
+  ),
+  // film frames and play triangles
+  creator: (
+    <>
+      <rect x="22" y="34" width="46" height="34" rx="6" />
+      <rect x="236" y="110" width="44" height="32" rx="6" />
+      <path d="M254 22 l16 9 -16 9z" />
+      <path d="M44 120 l14 8 -14 8z" />
+      <circle cx="262" cy="70" r="4" />
+      <circle cx="40" cy="92" r="3" />
+    </>
+  ),
+  // confetti pieces
+  gift: (
+    <>
+      <rect x="34" y="30" width="14" height="6" rx="3" transform="rotate(-25 41 33)" />
+      <rect x="250" y="34" width="14" height="6" rx="3" transform="rotate(30 257 37)" />
+      <rect x="262" y="104" width="12" height="5" rx="2.500" transform="rotate(-40 268 106)" />
+      <rect x="26" y="112" width="12" height="5" rx="2.500" transform="rotate(35 32 114)" />
+      <circle cx="78" cy="22" r="4" />
+      <circle cx="226" cy="26" r="3.500" />
+      <circle cx="288" cy="72" r="3" />
+      <path d="M52 76 q8 -10 16 0 t16 0" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" />
+    </>
+  ),
+  // lightning bolts and sparks
+  facts: (
+    <>
+      <path d="M44 28 l-14 22 h10 l-5 18 20 -26 h-11z" />
+      <path d="M262 96 l-12 19 h9 l-4 15 17 -22 h-9z" />
+      <circle cx="252" cy="36" r="5" />
+      <circle cx="70" cy="110" r="4" />
+      <circle cx="286" cy="60" r="3" />
+    </>
+  ),
+  // hex grid and a lock
+  cyber: (
+    <>
+      <path d="M40 30 l12 -7 12 7 v14 l-12 7 -12 -7z" />
+      <path d="M64 44 l12 -7 12 7 v14 l-12 7 -12 -7z" />
+      <path d="M246 104 l12 -7 12 7 v14 l-12 7 -12 -7z" />
+      <path d="M270 90 l12 -7 12 7 v14 l-12 7 -12 -7z" />
+      <rect x="236" y="30" width="26" height="20" rx="4" />
+      <path d="M241 30 v-5 a8 8 0 0 1 16 0 v5" fill="none" stroke="#fff" strokeWidth="3.500" />
+    </>
+  ),
+  // code brackets
+  coding: (
+    <>
+      <path d="M52 34 l-18 16 18 16" fill="none" stroke="#fff" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M248 34 l18 16 -18 16" fill="none" stroke="#fff" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M92 116 l8 -22" fill="none" stroke="#fff" strokeWidth="5" strokeLinecap="round" />
+      <circle cx="266" cy="116" r="4" />
+    </>
+  ),
+  // bars and dots
+  data: (
+    <>
+      <rect x="32" y="82" width="12" height="34" rx="3" />
+      <rect x="50" y="62" width="12" height="54" rx="3" />
+      <rect x="68" y="76" width="12" height="40" rx="3" />
+      <circle cx="248" cy="40" r="5" />
+      <circle cx="270" cy="62" r="4" />
+      <circle cx="238" cy="96" r="3.500" />
+      <path d="M248 40 L270 62 L238 96" fill="none" stroke="#fff" strokeWidth="2.500" strokeLinecap="round" />
+    </>
+  ),
+  // a sun and little flowers
+  "ages-5-7": (
+    <>
+      <circle cx="42" cy="38" r="14" />
+      <g stroke="#fff" strokeWidth="4" strokeLinecap="round">
+        <path d="M42 12 v-4 M42 64 v4 M16 38 h-4 M68 38 h4 M24 20 l-3 -3 M60 56 l3 3 M60 20 l3 -3 M24 56 l-3 3" />
+      </g>
+      <circle cx="262" cy="104" r="7" />
+      <circle cx="250" cy="116" r="5" />
+      <circle cx="276" cy="120" r="5" />
+    </>
+  ),
+  // bolts
+  "ages-8-10": (
+    <>
+      <path d="M46 26 l-16 25 h11 l-6 20 22 -29 h-12z" />
+      <path d="M262 92 l-13 21 h10 l-5 17 19 -24 h-10z" />
+      <circle cx="254" cy="34" r="5" />
+      <circle cx="84" cy="112" r="3.500" />
+    </>
+  ),
+};
+
+export function WorldScene({ id }: { id: string }) {
+  const scene = scenes[id];
+  if (!scene) return null;
+  return (
+    <svg
+      aria-hidden
+      className="pointer-events-none absolute inset-0 h-full w-full"
+      viewBox="0 0 300 150"
+      preserveAspectRatio="xMidYMid slice"
+      fill="#fff"
+      fillOpacity="0.22"
+    >
+      {scene}
+    </svg>
+  );
+}
+
+// A sweep of light that crosses the colored top of a card when it is hovered or tapped.
+export function Glint() {
+  return (
+    <span
+      aria-hidden
+      className="cd-glint pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-transparent via-white/35 to-transparent"
+    />
+  );
+}
+
+// Little icons floating at the sides of the game's title, like toys around a stage.
+export function HeroFloaters({ icons }: { icons: ArtIconName[] }) {
+  const spots = [
+    "left-[3%] top-12 h-14 w-14 lg:left-[7%] lg:h-16 lg:w-16",
+    "right-[3%] top-14 h-14 w-14 lg:right-[7%] lg:h-16 lg:w-16",
+    "left-[2%] top-[27rem] h-12 w-12 lg:left-[6%] lg:h-14 lg:w-14",
+    "right-[2%] top-[17rem] h-12 w-12 lg:right-[6%] lg:h-14 lg:w-14",
+  ];
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 hidden h-[26rem] md:block">
+      {icons.slice(0, spots.length).map((name, i) => (
+        <span key={name} className={`absolute ${spots[i]}`} style={{ rotate: `${i % 2 ? 8 : -8}deg` }}>
+          <span
+            className="cd-float block h-full w-full drop-shadow-[0_8px_14px_rgba(0,0,0,0.35)]"
+            style={{ animationDelay: `${i * 0.6}s` }}
+          >
+            <ArtIcon name={name} className="h-full w-full" />
+          </span>
+        </span>
+      ))}
+    </div>
   );
 }

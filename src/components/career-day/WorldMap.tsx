@@ -8,6 +8,7 @@ import {
   aboutFor,
   badgePath,
   levelFor,
+  levels,
   starWorldsFor,
   worldPath,
   worldThemes,
@@ -16,7 +17,8 @@ import {
   type World,
 } from "@/lib/play-worlds";
 import { usePlay } from "./PlayShell";
-import { CardArt } from "./Scenery";
+import ArtIcon, { bandArt, levelArt, worldArt } from "./ArtIcon";
+import { CardArt, Glint, HeroFloaters, WorldScene } from "./Scenery";
 import { crewById } from "@/lib/career-avatar";
 import Avatar from "./Avatar";
 import { AutoReadContext, ReadAloud } from "./ui";
@@ -36,33 +38,39 @@ function WorldCard({ world, band, done }: { world: World; band: Band; done: bool
   const soon = world.status === "soon";
   return (
     <article
-      className={`relative flex flex-col overflow-hidden rounded-[2rem] bg-white shadow-2xl ring-4 ring-white/70 transition ${theme.glow} ${
+      className={`cd-card relative flex flex-col overflow-hidden rounded-[2rem] bg-white shadow-2xl ring-4 ring-white/70 transition ${theme.glow} ${
         soon ? "" : "hover:-translate-y-1"
       }`}
     >
-      <div
-        className={`relative bg-gradient-to-br px-6 pb-9 pt-6 text-center [&>*:not(svg)]:relative ${theme.band} ${soon ? "saturate-[0.55]" : ""}`}
-      >
+      <div className={`relative overflow-hidden bg-gradient-to-br px-6 pb-11 pt-14 text-center ${theme.band} ${soon ? "saturate-[0.55]" : ""}`}>
+        <WorldScene id={world.id} />
         <CardArt />
+        {!soon && <Glint />}
+        {!soon && (
+          <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-black/25 py-1 pl-1.5 pr-3 text-sm font-extrabold text-white backdrop-blur-sm">
+            <ArtIcon name={world.star ? "star" : "facts"} className="h-6 w-6" />
+            {world.star ? "Earn a star" : "Bonus world"}
+          </span>
+        )}
         {done && (
-          <span className="absolute right-4 top-4 rounded-full bg-white px-3 py-1 text-sm font-extrabold text-emerald-700 shadow">
-            ✅ Done
+          <span className="absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-white py-1 pl-1.5 pr-3 text-sm font-extrabold text-emerald-700 shadow">
+            <ArtIcon name="check" className="h-6 w-6" />
+            Done
           </span>
         )}
         {soon && (
-          <span className="absolute right-4 top-4 rounded-full bg-slate-900/70 px-3 py-1 text-sm font-extrabold text-white">
-            🔒 Coming soon
+          <span className="absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-slate-900/70 py-1 pl-1.5 pr-3 text-sm font-extrabold text-white">
+            <ArtIcon name="lock" className="h-6 w-6" />
+            Coming soon
           </span>
         )}
         <span
           aria-hidden
-          className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-white/25 text-6xl ring-4 ring-white/40 backdrop-blur-sm"
+          className="cd-icon relative mx-auto flex h-28 w-28 -rotate-3 items-center justify-center rounded-[2rem] bg-white shadow-[0_8px_0_rgba(0,0,0,0.18),0_18px_30px_rgba(0,0,0,0.2)] ring-4 ring-white/60"
         >
-          {world.emoji}
+          <ArtIcon name={worldArt[world.id] ?? "star"} className={`h-20 w-20 ${soon ? "opacity-60 grayscale" : ""}`} />
         </span>
-        <h3 className="mt-3 text-3xl font-extrabold tracking-tight text-white drop-shadow-md">
-          {world.title}
-        </h3>
+        <h3 className="relative mt-4 text-3xl font-extrabold tracking-tight text-white drop-shadow-md">{world.title}</h3>
       </div>
       <div className="flex flex-1 flex-col items-center gap-3 p-5 text-center">
         <span className={`rounded-full px-3 py-1 text-sm font-extrabold ${theme.chip}`}>{world.tag}</span>
@@ -97,8 +105,9 @@ export default function WorldMap({ band }: { band: Band }) {
 
   return (
     <div>
-      <section className="text-center">
-        <ul className="flex flex-wrap justify-center gap-1 sm:gap-3">
+      <section className="relative text-center">
+        <HeroFloaters icons={["techpro", "cyber", "creator", "gift"]} />
+        <ul className="relative flex flex-wrap justify-center gap-1 sm:gap-3">
           {heroes.map((id, i) => {
             const member = crewById(id);
             if (!member) return null;
@@ -109,9 +118,9 @@ export default function WorldMap({ band }: { band: Band }) {
             );
           })}
         </ul>
-        <p className="mt-4 inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-full bg-white/10 px-5 py-2 text-lg font-extrabold text-amber-100 ring-1 ring-white/20">
-          <span>
-            <span aria-hidden>{band.emoji} </span>
+        <p className="relative mt-4 inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-full bg-white/10 px-5 py-2 text-lg font-extrabold text-amber-100 ring-1 ring-white/20">
+          <span className="inline-flex items-center gap-2">
+            <ArtIcon name={bandArt[band.id] ?? "star"} className="h-7 w-7" />
             {band.name}, ages {band.ages}
           </span>
           <Link
@@ -121,10 +130,13 @@ export default function WorldMap({ band }: { band: Band }) {
             Switch group
           </Link>
         </p>
-        <h1 className="mt-4 bg-gradient-to-r from-amber-200 via-pink-200 to-sky-200 bg-clip-text text-5xl font-extrabold tracking-tight text-transparent drop-shadow-[0_4px_20px_rgba(255,255,255,0.25)] sm:text-7xl">
+        <h1 className="relative mt-4 bg-gradient-to-r from-amber-200 via-pink-200 to-sky-200 bg-clip-text text-5xl font-extrabold tracking-tight text-transparent drop-shadow-[0_4px_20px_rgba(255,255,255,0.25)] sm:text-7xl">
           Tech Journey Jr.
         </h1>
-        <p className="mx-auto mt-4 max-w-2xl text-2xl font-bold text-indigo-50 sm:text-3xl">{band.intro}</p>
+        <svg aria-hidden viewBox="0 0 300 20" className="mx-auto -mt-1 h-4 w-56 sm:w-80">
+          <path d="M6 12 C60 2 110 18 160 9 S256 4 294 12" fill="none" stroke="#FDE047" strokeWidth="5" strokeLinecap="round" />
+        </svg>
+        <p className="relative mx-auto mt-4 max-w-2xl text-2xl font-bold text-indigo-50 sm:text-3xl">{band.intro}</p>
         <div className="mt-5 flex justify-center">
           <ReadAloud text={band.intro} auto={false} />
         </div>
@@ -134,13 +146,15 @@ export default function WorldMap({ band }: { band: Band }) {
             : "The voice is off. Tap 🔇 at the top to turn it on."}
         </p>
 
-        <div className="mx-auto mt-7 max-w-md rounded-3xl bg-white/10 p-4 ring-1 ring-white/20 backdrop-blur">
+        <div className="relative mx-auto mt-7 max-w-md rounded-3xl bg-white/10 p-4 ring-1 ring-white/20 backdrop-blur">
           <div className="flex items-center justify-between gap-3 text-white">
-            <span className="text-xl font-extrabold">
-              <span aria-hidden>{level.emoji}</span> Level: {level.name}
+            <span className="inline-flex items-center gap-2 text-xl font-extrabold">
+              <ArtIcon name={levelArt[level.name] ?? "rookie"} className="h-9 w-9" />
+              Level: {level.name}
             </span>
-            <span className="text-lg font-bold text-amber-200">
-              {stars} of {total} ⭐
+            <span className="inline-flex items-center gap-1.5 text-lg font-bold text-amber-200">
+              {stars} of {total}
+              <ArtIcon name="star" className="h-6 w-6" />
             </span>
           </div>
           <div
@@ -156,7 +170,15 @@ export default function WorldMap({ band }: { band: Band }) {
               style={{ width: `${(stars / total) * 100}%` }}
             />
           </div>
-          <p className="mt-2 text-sm font-semibold text-indigo-200">
+          <ol aria-hidden className="mt-4 flex items-end justify-between px-1">
+            {levels.map((l, i) => (
+              <li key={l.name} className={`flex flex-col items-center gap-1 ${i <= stars ? "" : "opacity-40 grayscale"}`}>
+                <ArtIcon name={levelArt[l.name]} className={i === Math.min(stars, levels.length - 1) ? "h-11 w-11" : "h-8 w-8"} />
+                <span className="text-xs font-extrabold text-indigo-100">{l.name}</span>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-3 text-sm font-semibold text-indigo-200">
             Finish the three star worlds to become a Tech Pro.
           </p>
         </div>
@@ -179,7 +201,8 @@ export default function WorldMap({ band }: { band: Band }) {
             href={badgePath(band.id)}
             className="inline-flex min-h-16 items-center rounded-2xl border-b-[6px] border-amber-700 bg-amber-400 px-8 py-3 text-2xl font-extrabold text-slate-900 shadow-lg transition hover:bg-amber-300 active:translate-y-1 active:border-b-2"
           >
-            🏅 See my badge
+            <ArtIcon name="medal" className="mr-2 h-9 w-9" />
+            See my badge
           </Link>
         </div>
       )}

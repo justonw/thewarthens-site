@@ -5,6 +5,7 @@ import { helperCardLead, helperRoundSpoken, type SoftSkillId } from "@/lib/caree
 import { helperContent } from "@/lib/play-content";
 import { littleHelperFeedbackSpoken } from "@/lib/play-little";
 import type { BandId } from "@/lib/play-worlds";
+import ArtIcon from "./ArtIcon";
 import { BigButton, CareerCard, Panel, ReadAloud, SkillChips } from "./ui";
 
 type Step = "intro" | "round" | "card";
@@ -77,7 +78,8 @@ export default function HelperMission({
         <CareerCard data={card} lead={helperCardLead} />
         <div className="text-center">
           <BigButton tone="amber" onClick={() => onFinish(earned)}>
-            ⭐ Earn my star!
+            <ArtIcon name="star" className="mr-2 inline h-8 w-8 align-middle" />
+            Earn my star!
           </BigButton>
         </div>
       </div>

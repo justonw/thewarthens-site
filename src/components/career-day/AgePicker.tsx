@@ -5,7 +5,8 @@ import { pickerPrompt } from "@/lib/play-little";
 import { bandPath, bands, worldsFor, worldThemes, type Band } from "@/lib/play-worlds";
 import { crewById } from "@/lib/career-avatar";
 import Avatar from "./Avatar";
-import { CardArt } from "./Scenery";
+import ArtIcon, { bandArt } from "./ArtIcon";
+import { CardArt, Glint, HeroFloaters, WorldScene } from "./Scenery";
 import { ReadAloud } from "./ui";
 
 const heroes = ["maya", "kenji", "emma", "jamal", "joy", "jackson"];
@@ -25,20 +26,22 @@ function BandCard({ band }: { band: Band }) {
   return (
     <Link
       href={bandPath(band.id)}
-      className={`group flex flex-col overflow-hidden rounded-[2rem] bg-white shadow-2xl ring-4 ring-white/70 transition hover:-translate-y-1 active:scale-[0.98] ${theme.glow}`}
+      className={`cd-card group flex flex-col overflow-hidden rounded-[2rem] bg-white shadow-2xl ring-4 ring-white/70 transition hover:-translate-y-1 active:scale-[0.98] ${theme.glow}`}
     >
-      <span className={`relative block bg-gradient-to-br px-6 pb-10 pt-7 text-center [&>*:not(svg)]:relative ${theme.band}`}>
+      <span className={`relative block overflow-hidden bg-gradient-to-br px-6 pb-11 pt-8 text-center ${theme.band}`}>
+        <WorldScene id={band.id} />
         <CardArt />
+        <Glint />
         <span
           aria-hidden
-          className="mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-white/25 text-7xl ring-4 ring-white/40 backdrop-blur-sm"
+          className="cd-icon relative mx-auto flex h-32 w-32 -rotate-3 items-center justify-center rounded-[2.25rem] bg-white shadow-[0_8px_0_rgba(0,0,0,0.18),0_18px_30px_rgba(0,0,0,0.2)] ring-4 ring-white/60"
         >
-          {band.emoji}
+          <ArtIcon name={bandArt[band.id] ?? "star"} className="h-24 w-24" />
         </span>
-        <span className="mt-3 block text-4xl font-extrabold tracking-tight text-white drop-shadow-md">
+        <span className="relative mt-4 block text-4xl font-extrabold tracking-tight text-white drop-shadow-md">
           {band.name}
         </span>
-        <span className="mt-1 block text-3xl font-extrabold text-white/95 drop-shadow">Ages {band.ages}</span>
+        <span className="relative mt-1 block text-3xl font-extrabold text-white/95 drop-shadow">Ages {band.ages}</span>
       </span>
       <span className="flex flex-1 flex-col items-center gap-3 p-5 text-center">
         <span className={`rounded-full px-3 py-1 text-sm font-extrabold ${theme.chip}`}>{band.grades}</span>
@@ -59,8 +62,9 @@ function BandCard({ band }: { band: Band }) {
 export default function AgePicker() {
   return (
     <div>
-      <section className="text-center">
-        <ul className="flex flex-wrap justify-center gap-1 sm:gap-3">
+      <section className="relative text-center">
+        <HeroFloaters icons={["techpro", "cyber", "creator", "gift"]} />
+        <ul className="relative flex flex-wrap justify-center gap-1 sm:gap-3">
           {heroes.map((id, i) => {
             const member = crewById(id);
             if (!member) return null;
@@ -71,7 +75,7 @@ export default function AgePicker() {
             );
           })}
         </ul>
-        <h1 className="mt-4 bg-gradient-to-r from-amber-200 via-pink-200 to-sky-200 bg-clip-text text-5xl font-extrabold tracking-tight text-transparent drop-shadow-[0_4px_20px_rgba(255,255,255,0.25)] sm:text-7xl">
+        <h1 className="relative mt-4 bg-gradient-to-r from-amber-200 via-pink-200 to-sky-200 bg-clip-text text-5xl font-extrabold tracking-tight text-transparent drop-shadow-[0_4px_20px_rgba(255,255,255,0.25)] sm:text-7xl">
           Tech Journey Jr.
         </h1>
         <p className="mx-auto mt-4 max-w-2xl text-3xl font-bold text-indigo-50 sm:text-4xl">How old are you?</p>

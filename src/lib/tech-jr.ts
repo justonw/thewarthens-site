@@ -17,6 +17,7 @@ export const ageGroups = [
   {
     id: "ages-5-7",
     emoji: "🌻",
+    art: "sprout",
     name: "Tech Sprouts",
     ages: "5 to 7",
     grades: "Kindergarten to 2nd grade",
@@ -33,6 +34,7 @@ export const ageGroups = [
   {
     id: "ages-8-10",
     emoji: "⚡",
+    art: "bolt",
     name: "Tech Trailblazers",
     ages: "8 to 10",
     grades: "3rd to 5th grade",
@@ -51,30 +53,35 @@ export const ageGroups = [
 export const gameParts = [
   {
     emoji: "🤝",
+    art: "helper",
     title: "Be the Helper",
     topic: "Tech sales and customer success",
     body: "A child plays a helper in short, real-feeling moments: a customer has a problem, and the child picks the kindest, most honest way to help. Each round shows why listening and honesty matter.",
   },
   {
     emoji: "🎥",
+    art: "creator",
     title: "Make a Show",
     topic: "Content creation",
     body: "A child builds a cartoon character that looks like them, names their own show, and picks who it is for. It teaches that creators start by helping an audience.",
   },
   {
     emoji: "🎁",
+    art: "gift",
     title: "Find Your Gift",
     topic: "Careers and you",
     body: "A few simple questions about how a child likes to help, then a list of grown-up jobs that use that gift. Every job on the list is a way of helping people. None is ranked above another.",
   },
   {
     emoji: "🤯",
+    art: "facts",
     title: "Cool Facts",
     topic: "Tech and creator history",
     body: "Dozens of tap-to-reveal facts in groups like games, robots, space, and kid inventors, plus real tech heroes from many backgrounds, like the mathematician who helped astronauts get home safely. Kids collect facts to rank up from Curious Kid to Fact Master, and play True or Made Up? to test what they learned.",
   },
   {
     emoji: "🛡️",
+    art: "cyber",
     title: "Cyber Defenders",
     topic: "Cybersecurity and staying safe online",
     body: "A child solves short cases about the things kids really see online, like a pop-up prize, a friend asking for a password, or a link that looks wrong. Every question is something a child can do, and the answer to the big ones is to tell a grown-up. Parents get a short list of things to do at home.",

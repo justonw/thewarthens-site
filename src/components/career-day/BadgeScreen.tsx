@@ -1,6 +1,7 @@
 "use client";
 
 import { badgeSpoken, badgeVerse, type SoftSkillId } from "@/lib/career-day";
+import ArtIcon from "./ArtIcon";
 import { BigButton, Confetti, Panel, ReadAloud, SkillChips } from "./ui";
 
 export default function BadgeScreen({
@@ -18,18 +19,23 @@ export default function BadgeScreen({
     <div className="mx-auto max-w-2xl space-y-5">
       <Confetti />
       <Panel className="cd-pop text-center">
-        <div aria-hidden className="text-8xl">
-          🏅
+        <div aria-hidden className="relative mx-auto flex h-48 w-48 items-center justify-center">
+          <svg viewBox="0 0 200 200" className="cd-spin-slow absolute inset-0 h-full w-full">
+            {Array.from({ length: 12 }, (_, i) => (
+              <path key={i} d="M100 100 L92 8 L108 8 Z" fill="#FDE047" fillOpacity="0.55" transform={`rotate(${i * 30} 100 100)`} />
+            ))}
+          </svg>
+          <span className="cd-pop relative block h-36 w-36 drop-shadow-[0_10px_16px_rgba(0,0,0,0.25)]">
+            <ArtIcon name="medal" className="h-full w-full" />
+          </span>
         </div>
         <h2 className="mt-2 text-5xl font-extrabold text-slate-900">Tech Pro Badge</h2>
         <p className="mt-3 text-2xl font-bold text-slate-700">
           You earned {stars} of 3 stars!
         </p>
-        <div aria-hidden className="mt-2 text-5xl">
+        <div aria-hidden className="mt-3 flex justify-center gap-2">
           {[0, 1, 2].map((i) => (
-            <span key={i} className={i < stars ? "" : "opacity-25 grayscale"}>
-              ⭐
-            </span>
+            <ArtIcon key={i} name="star" className={`h-14 w-14 ${i < stars ? "cd-pop" : "opacity-25 grayscale"}`} />
           ))}
         </div>
 

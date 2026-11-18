@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { boyHairStyles, girlHairStyles } from "@/lib/career-avatar";
+import ArtIcon, { type ArtIconName } from "@/components/career-day/ArtIcon";
 import CrewStrip from "@/components/career-day/CrewStrip";
+import { CardArt, WorldScene } from "@/components/career-day/Scenery";
 import Reveal from "@/components/Reveal";
 import { guides } from "@/lib/guides";
 import { articles } from "@/lib/techjr-articles";
@@ -61,6 +63,26 @@ const primaryButton =
 const secondaryButton =
   "inline-flex items-center justify-center gap-2 rounded-full border border-border-subtle bg-background-elevated px-7 py-3.5 text-sm font-semibold text-foreground transition-colors hover:border-blue-500/50 hover:text-blue-700 sm:text-base";
 const card = "rounded-2xl border border-border-subtle bg-background-elevated p-5";
+
+// The same colors the game uses, so a card here looks like the world it describes.
+const tileColors: Record<string, string> = {
+  helper: "from-sky-400 via-blue-500 to-indigo-600",
+  creator: "from-fuchsia-500 via-pink-500 to-orange-400",
+  gift: "from-amber-300 via-orange-400 to-rose-500",
+  facts: "from-violet-500 via-purple-500 to-fuchsia-600",
+  cyber: "from-emerald-400 via-teal-500 to-cyan-600",
+  sprout: "from-amber-300 via-orange-400 to-rose-500",
+  bolt: "from-indigo-500 via-violet-600 to-purple-700",
+};
+
+// The five worlds as little sticker cards, shown in the hero.
+const heroWorlds: { art: ArtIconName; label: string }[] = [
+  { art: "helper", label: "Be the Helper" },
+  { art: "creator", label: "Make a Show" },
+  { art: "gift", label: "Find Your Gift" },
+  { art: "cyber", label: "Cyber Defenders" },
+  { art: "facts", label: "Cool Facts" },
+];
 
 function Check() {
   return (
@@ -212,11 +234,41 @@ export default function TechJrPage() {
           <p className="mt-4 text-sm text-foreground-muted">
             No sign-in.
           </p>
-          <CrewStrip
-            ids={["maya", "kenji", "emma", "jamal", "joy", "joshua", "lily", "diego"]}
-            size={72}
-            className="mt-10"
-          />
+          <div className="cd-sky relative mx-auto mt-12 max-w-3xl overflow-hidden rounded-[2rem] px-4 pb-7 pt-6 shadow-2xl ring-1 ring-indigo-900/20 sm:px-8">
+            <div aria-hidden className="cd-stars pointer-events-none absolute inset-0" />
+            <svg aria-hidden viewBox="0 0 200 200" className="cd-drift pointer-events-none absolute -left-8 top-10 h-28 w-28 opacity-80 sm:h-36 sm:w-36">
+              <defs>
+                <radialGradient id="lp-planet" cx="35%" cy="30%" r="75%">
+                  <stop offset="0" stopColor="#FDA4AF" />
+                  <stop offset="0.6" stopColor="#E11D74" />
+                  <stop offset="1" stopColor="#7E1D5C" />
+                </radialGradient>
+              </defs>
+              <ellipse cx="100" cy="100" rx="92" ry="22" fill="none" stroke="#FBCFE8" strokeOpacity="0.55" strokeWidth="6" transform="rotate(-18 100 100)" />
+              <circle cx="100" cy="100" r="52" fill="url(#lp-planet)" />
+            </svg>
+            <svg aria-hidden viewBox="0 0 64 64" className="pointer-events-none absolute -right-3 top-3 h-20 w-20 opacity-90 sm:right-4 sm:h-24 sm:w-24">
+              <path d="M42 8 A26 26 0 1 0 56 40 A20 20 0 1 1 42 8 Z" fill="#FDE68A" />
+            </svg>
+            <p className="relative text-sm font-extrabold uppercase tracking-wider text-amber-200">A peek inside the game</p>
+            <CrewStrip
+              ids={["maya", "kenji", "emma", "jamal", "joy", "joshua", "lily", "diego"]}
+              size={64}
+              className="relative mt-4"
+            />
+            <ul className="relative mt-6 grid grid-cols-3 gap-3 sm:grid-cols-5">
+              {heroWorlds.map((w, i) => (
+                <li
+                  key={w.label}
+                  className="flex flex-col items-center gap-2 rounded-2xl bg-white/95 px-1.5 pb-3 pt-3 shadow-[0_6px_0_rgba(0,0,0,0.2)]"
+                  style={{ rotate: `${[-2, 1.5, -1, 2, -1.5][i]}deg` }}
+                >
+                  <ArtIcon name={w.art} className="h-12 w-12 sm:h-14 sm:w-14" />
+                  <span className="text-balance text-center text-xs font-extrabold leading-tight text-slate-800 sm:text-sm">{w.label}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </header>
 
@@ -285,13 +337,21 @@ export default function TechJrPage() {
           </p>
           <div className="mt-6 grid gap-4 md:grid-cols-2">
             {ageGroups.map((g) => (
-              <div key={g.id} className={`${card} flex flex-col`}>
-                <p className="text-4xl" aria-hidden>
-                  {g.emoji}
-                </p>
-                <h3 className="mt-3 text-xl font-semibold">
-                  {g.name}: ages {g.ages}
-                </h3>
+              <div key={g.id} className="cd-card flex flex-col overflow-hidden rounded-2xl border border-border-subtle bg-background-elevated">
+                <div className={`relative overflow-hidden bg-gradient-to-br px-5 pb-9 pt-6 ${tileColors[g.art]}`}>
+                  <WorldScene id={g.id} />
+                  <CardArt />
+                  <div className="relative flex items-center gap-4">
+                    <span className="cd-icon flex h-20 w-20 shrink-0 -rotate-3 items-center justify-center rounded-3xl bg-white shadow-[0_6px_0_rgba(0,0,0,0.18)] ring-4 ring-white/50">
+                      <ArtIcon name={g.art} className="h-14 w-14" />
+                    </span>
+                    <div className="text-left text-white">
+                      <h3 className="text-2xl font-extrabold drop-shadow">{g.name}</h3>
+                      <p className="text-lg font-bold drop-shadow">Ages {g.ages}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-1 flex-col p-5">
                 <p className="text-xs font-semibold uppercase tracking-wider text-blue-700">
                   {g.grades}
                 </p>
@@ -303,6 +363,7 @@ export default function TechJrPage() {
                   <Link href={g.path} className={primaryButton}>
                     Play {g.name}
                   </Link>
+                </div>
                 </div>
               </div>
             ))}
@@ -323,10 +384,15 @@ export default function TechJrPage() {
           </p>
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {gameParts.map((part) => (
-              <div key={part.title} className={card}>
-                <p className="text-3xl" aria-hidden>
-                  {part.emoji}
-                </p>
+              <div key={part.title} className={`${card} cd-card`}>
+                <span
+                  aria-hidden
+                  className={`cd-icon flex h-16 w-16 -rotate-3 items-center justify-center rounded-2xl bg-gradient-to-br shadow-md ring-4 ring-background-elevated ${tileColors[part.art]}`}
+                >
+                  <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-white">
+                    <ArtIcon name={part.art} className="h-9 w-9" />
+                  </span>
+                </span>
                 <h3 className="mt-3 text-lg font-semibold">{part.title}</h3>
                 <p className="text-xs font-semibold uppercase tracking-wider text-blue-700">
                   {part.topic}

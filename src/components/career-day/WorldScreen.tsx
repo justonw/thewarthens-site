@@ -9,6 +9,7 @@ import HelperMission from "./HelperMission";
 import CreatorMission from "./CreatorMission";
 import CyberMission from "./CyberMission";
 import { usePlay } from "./PlayShell";
+import ArtIcon, { worldArt } from "./ArtIcon";
 import { Panel } from "./ui";
 
 // Plays one world. To add a world with its own screen, add a case here and an entry in
@@ -21,8 +22,8 @@ export default function WorldScreen({ band, worldId }: { band: Band; worldId: st
   if (!world || world.status === "soon" || !world.kind || world.about[band.id] === undefined) {
     return (
       <Panel className="mx-auto max-w-xl text-center">
-        <div aria-hidden className="text-7xl">
-          {world?.emoji ?? "🚧"}
+        <div aria-hidden className="flex justify-center">
+          <ArtIcon name={world ? (worldArt[world.id] ?? "lock") : "lock"} className="h-24 w-24" />
         </div>
         <h2 className="mt-3 text-3xl font-extrabold text-slate-900">Coming soon!</h2>
         <p className="mt-2 text-xl text-slate-700">We are building this world now. Try another one.</p>
@@ -30,7 +31,8 @@ export default function WorldScreen({ band, worldId }: { band: Band; worldId: st
           href={mapPath}
           className="mt-6 inline-flex min-h-16 items-center rounded-3xl bg-blue-600 px-8 py-4 text-xl font-extrabold text-white shadow-lg transition hover:bg-blue-700 active:scale-95"
         >
-          🗺️ Back to the map
+          <ArtIcon name="map" className="mr-2 h-8 w-8" />
+          Back to the map
         </Link>
       </Panel>
     );

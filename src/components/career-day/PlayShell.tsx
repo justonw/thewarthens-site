@@ -24,6 +24,7 @@ import {
   type World,
 } from "@/lib/play-worlds";
 import { stopSpeech } from "./speech";
+import ArtIcon, { levelArt } from "./ArtIcon";
 import { SkyDecor } from "./Scenery";
 import { AutoReadContext } from "./ui";
 
@@ -211,13 +212,13 @@ export default function PlayShell({ children }: { children: ReactNode }) {
                   onClick={stopSpeech}
                   className="flex min-h-12 items-center gap-2 whitespace-nowrap rounded-2xl bg-white/10 px-3 py-2 text-base font-extrabold text-white ring-1 ring-white/20 transition hover:bg-white/20 active:scale-95 sm:px-4"
                 >
-                  <span aria-hidden>🗺️</span>
+                  <ArtIcon name="map" className="h-6 w-6" />
                   <span className="hidden sm:inline">All worlds</span>
                   <span className="sm:hidden">Map</span>
                 </Link>
               ) : (
                 <span className="flex min-h-12 items-center gap-2 whitespace-nowrap rounded-2xl px-3 py-2 text-base font-extrabold text-white sm:px-4">
-                  <span aria-hidden>🌟</span>
+                  <ArtIcon name="star" className="h-6 w-6" />
                   Tech Journey Jr.
                 </span>
               )}
@@ -229,16 +230,16 @@ export default function PlayShell({ children }: { children: ReactNode }) {
                 {band && (
                   <>
                     <span className="hidden items-center gap-1.5 whitespace-nowrap rounded-full bg-white/10 px-3 py-1.5 text-sm font-extrabold text-amber-200 ring-1 ring-white/15 sm:inline-flex">
-                      <span aria-hidden>{level.emoji}</span>
+                      <ArtIcon name={levelArt[level.name] ?? "rookie"} className="h-6 w-6" />
                       {level.name}
                     </span>
-                    <div className="flex items-center gap-1.5 text-2xl sm:text-3xl" aria-hidden>
+                    <div className="flex items-center gap-1 text-2xl sm:gap-1.5 sm:text-3xl" aria-hidden>
                       {starWorlds.map((w) => (
                         <span
                           key={w.id}
                           className={done[w.id] ? "cd-pop drop-shadow-[0_0_10px_rgba(253,224,71,0.9)]" : "opacity-30 grayscale"}
                         >
-                          ⭐
+                          <ArtIcon name="star" className="h-5 w-5 min-[400px]:h-6 min-[400px]:w-6 sm:h-8 sm:w-8" />
                         </span>
                       ))}
                       <span className="ml-1 whitespace-nowrap text-sm font-extrabold text-amber-200 sm:text-base">

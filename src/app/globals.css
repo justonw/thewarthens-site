@@ -262,11 +262,63 @@ article a[class*="rounded-3xl"] {
   animation-fill-mode: both;
 }
 
+@keyframes cd-wiggle {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(-7deg) scale(1.06);
+  }
+  75% {
+    transform: rotate(7deg) scale(1.06);
+  }
+}
+
+@keyframes cd-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes cd-shine {
+  from {
+    transform: translateX(-140%) skewX(-18deg);
+  }
+  to {
+    transform: translateX(340%) skewX(-18deg);
+  }
+}
+
+/* A game card: the icon wiggles and a glint sweeps across the colored top when the card is hovered or tapped. */
+.cd-card:hover .cd-icon,
+.cd-card:focus-visible .cd-icon,
+.cd-card:active .cd-icon {
+  animation: cd-wiggle 0.7s ease-in-out;
+}
+
+.cd-card .cd-glint {
+  transform: translateX(-140%) skewX(-18deg);
+}
+
+.cd-card:hover .cd-glint {
+  animation: cd-shine 0.9s ease-out;
+}
+
+.cd-spin-slow {
+  animation: cd-spin 60s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .cd-pop,
   .cd-float,
   .cd-drift,
   .cd-drift-slow,
+  .cd-spin-slow,
+  .cd-card:hover .cd-icon,
+  .cd-card:focus-visible .cd-icon,
+  .cd-card:active .cd-icon,
+  .cd-card:hover .cd-glint,
   .cd-stars {
     animation: none !important;
   }
