@@ -48,3 +48,6 @@ next-env.d.ts
 
 # resume builder test runs (can contain a real resume)
 /resume-evals/
+
+# Large video overlays made for the prayer video (kept on this computer, never deployed)
+/docs/video-overlays/*.mov
