@@ -11,6 +11,10 @@ import ResultView from "./ResultView";
 import VoiceInput from "./VoiceInput";
 import { takeHandoff } from "@/lib/resume-handoff";
 import BuyMore from "./BuyMore";
+import ProfilePanel from "./ProfilePanel";
+import { downloadBlob } from "@/lib/download";
+import { track } from "@/lib/track";
+import { STORIES_KEY, USE_STORIES_KEY, addStoryTo, buildProfileFile, noStories, profileFileName, storiesAsNotes, type Profile, type Story } from "@/lib/resume-profile";
 import ScratchForm, { emptyScratch, scratchReady, scratchToText, type Scratch } from "./ScratchForm";
 
 // The whole resume builder: the form, the progress screen, and the results. Anything worth keeping for
@@ -190,7 +194,26 @@ export default function ResumeBuilder() {
   const [matchDesign, setMatchDesign] = useState(true);
 
   const [saved, setSaved, hydrated] = usePersistentState<Saved | null>(SAVED_KEY, noSaved);
+  const [stories, setStories] = usePersistentState<Story[]>(STORIES_KEY, noStories);
+  const [includeStories, setIncludeStories] = usePersistentState<boolean>(USE_STORIES_KEY, true);
   const notesRef = useRef<HTMLTextAreaElement>(null);
+
+  // Private step counts (see lib/funnel.ts): opened, returned with a saved profile, and each step reached.
+  useEffect(() => {
+    track("resume-visit");
+  }, []);
+  useEffect(() => {
+    if (hydrated && saved !== null) track("returning-visit");
+  }, [hydrated, saved]);
+  useEffect(() => {
+    if (mode === "scratch" ? scratchReady(scratch) : resume.trim().length >= 150 || resumeFiles.length > 0) track("resume-added");
+  }, [mode, scratch, resume, resumeFiles.length]);
+  useEffect(() => {
+    if (posting.trim().length >= 80 || postingFiles.length > 0) track("job-added");
+  }, [posting, postingFiles.length]);
+  useEffect(() => {
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) && source) track("email-entered");
+  }, [email, source]);
 
   // Rotates the progress messages while the AI works.
   useEffect(() => {
@@ -201,6 +224,40 @@ export default function ResumeBuilder() {
 
   const formIsEmpty = !scratch.name.trim() && !scratch.story.trim() && !resume.trim() && !posting.trim() && !notes.trim() && resumeFiles.length === 0 && postingFiles.length === 0;
   const showSaved = hydrated && saved !== null && formIsEmpty && phase === "form";
+
+  // The notes sent with a build: what they typed, plus (if they want) the true answers they gave before.
+  function notesForBuild() {
+    const base = tidyNotes(notes);
+    if (!includeStories || stories.length === 0) return base;
+    const extra = storiesAsNotes(stories, MAX_NOTES_CHARS - base.length - 2);
+    return [base, extra].filter(Boolean).join("\n\n");
+  }
+
+  function exportProfile() {
+    track("profile-saved");
+    const json = buildProfileFile({ resume: saved?.resume ?? "", notes: saved?.notes ?? "", hiringManager: saved?.hiringManager ?? "", email: saved?.email ?? "", stories, filesOmitted: saved?.files.length ?? 0 });
+    downloadBlob(new Blob([json], { type: "application/json" }), profileFileName());
+  }
+
+  // Loads a profile file. "replace" puts everything back; "stories" only adds its stories and keeps what is here.
+  function importProfile(p: Profile, how: "replace" | "stories") {
+    if (how === "stories") {
+      setStories((cur) => p.stories.reduce((list, s) => addStoryTo(list, s), cur));
+      return;
+    }
+    setStories(p.stories);
+    setSaved({ resume: p.resume, notes: p.notes, hiringManager: p.hiringManager, email: p.email, source: saved?.source ?? "", wantLetter: saved?.wantLetter ?? false, files: [] });
+    setMode("have");
+    setResume(p.resume);
+    setNotes(p.notes);
+    setHiringManager(p.hiringManager);
+    if (p.email) setEmail(p.email);
+  }
+
+  function forgetProfile() {
+    setSaved(null);
+    setStories([]);
+  }
 
   function useSaved() {
     if (!saved) return;
@@ -250,6 +307,7 @@ export default function ResumeBuilder() {
     if (!source) return setError(errorText.source);
     if ([...resumeFiles, ...postingFiles].reduce((n, f) => n + f.size, 0) > 5_000_000) return setError(errorText["too-big"]);
 
+    track("build-started");
     setPhase("loading");
     setRetrying(false);
     setTick(0);
@@ -261,7 +319,7 @@ export default function ResumeBuilder() {
       fromScratch,
       resumeFiles: fromScratch ? [] : resumeFiles.flatMap((f) => (f.attachment ? [f.attachment] : [])),
       postingFiles: postingFiles.flatMap((f) => (f.attachment ? [f.attachment] : [])),
-      notes: tidyNotes(notes),
+      notes: notesForBuild(),
       coverLetter: wantLetter,
       hiringManager: hiringManager.trim(),
       matchDesign: !fromScratch && matchDesign && resumeFiles.some((f) => Boolean(f.attachment)),
@@ -323,6 +381,7 @@ export default function ResumeBuilder() {
     }
     setSaved({ resume: resumeText, notes: tidyNotes(notes), hiringManager, email: email.trim(), source, wantLetter, files });
 
+    track("build-finished");
     setResult(data.result);
     setDoc(data.result.resume);
     setLetter(data.result.coverLetter ?? null);
@@ -531,6 +590,7 @@ export default function ResumeBuilder() {
         usage={usage}
         original={original}
         onStartOver={startOver}
+        onSaveProfile={exportProfile}
       />
     );
   }
@@ -576,16 +636,31 @@ export default function ResumeBuilder() {
         </p>
       </div>
 
+      {hydrated && phase === "form" && mode === "have" && (
+        <ProfilePanel
+          hasSaved={saved !== null}
+          resumeText={saved?.resume ?? ""}
+          notesText={saved?.notes ?? ""}
+          stories={stories}
+          useStories={includeStories}
+          onUseStories={setIncludeStories}
+          onRemoveStory={(id) => setStories((cur) => cur.filter((s) => s.id !== id))}
+          onImport={importProfile}
+          onExport={exportProfile}
+          onForget={forgetProfile}
+        />
+      )}
+
       {showSaved && mode === "have" && (
         <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-3 rounded-2xl border border-blue-500/30 bg-blue-500/5 px-5 py-4">
           <p className="text-sm">
             <span className="font-semibold">Welcome back.</span> We kept your resume and notes on this device, so you can skip step 1.
           </p>
           <div className="flex items-center gap-3">
-            <button type="button" onClick={useSaved} className="rounded-full bg-blue-600 px-4 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-blue-500">
+            <button type="button" onClick={useSaved} className="inline-flex min-h-11 items-center rounded-full bg-blue-600 px-5 text-xs font-semibold text-white transition-colors hover:bg-blue-500 sm:min-h-9">
               Use my saved info
             </button>
-            <button type="button" onClick={() => setSaved(null)} className="text-xs text-foreground-muted underline underline-offset-2">
+            <button type="button" onClick={() => setSaved(null)} className="inline-flex min-h-11 items-center px-2 text-xs text-foreground-muted underline underline-offset-2 sm:min-h-9">
               Forget it
             </button>
           </div>
@@ -630,6 +705,7 @@ export default function ResumeBuilder() {
         onText={setResume}
         files={resumeFiles}
         onFiles={setResumeFiles}
+        onProfileFile={(p) => importProfile(p, "replace")}
         lookHint
       />
           {resumeFiles.some((f) => Boolean(f.attachment)) && (

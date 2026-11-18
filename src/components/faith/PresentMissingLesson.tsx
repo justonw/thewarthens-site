@@ -543,7 +543,7 @@ export default function PresentMissingLesson() {
           </form>
           <p className="mt-4 text-sm text-blue-200">
             {loaded ? "Your notes are saved on this device as you type." : ""}{" "}
-            <button type="button" onClick={clearNotes} className="underline underline-offset-4 hover:text-white">
+            <button type="button" onClick={clearNotes} className="inline-flex min-h-11 items-center underline underline-offset-4 hover:text-white">
               Clear my notes
             </button>
           </p>

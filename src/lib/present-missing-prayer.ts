@@ -11,7 +11,7 @@ export const prayerScripture: PrayerGroup[] = [
       {
         "ref": "Psalm 95:6",
         "text": "O come, let us worship and bow down: let us kneel before the LORD our maker.",
-        "note": "Kneeling is the body saying what the heart means: I belong to You, Lord."
+        "note": "The psalmist calls us to worship, bow down, and kneel before the LORD our maker."
       },
       {
         "ref": "Daniel 6:10",
@@ -61,7 +61,7 @@ export const prayerScripture: PrayerGroup[] = [
       {
         "ref": "Acts 5:29",
         "text": "...We ought to obey God rather than men.",
-        "note": "Told again, the apostles gave the same answer."
+        "note": "Being interrogated by the council, the apostles gave the same answer."
       }
     ]
   },

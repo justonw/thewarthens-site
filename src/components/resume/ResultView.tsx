@@ -7,6 +7,7 @@ import { contactGaps, type CoverLetter, type ResumeDoc, type ResumeGap, type Tai
 import { keywordCoverage, runAtsCheck } from "@/lib/resume-ats";
 import { RESUME_STYLES, buildCoverLetterDocx, buildCoverLetterPdf, buildDocx, buildPdf, coverLetterFileName, resumeFileName, resumeToPlainText, type ResumeStyle } from "@/lib/resume-files";
 import { downloadBlob } from "@/lib/download";
+import { track } from "@/lib/track";
 import { usePersistentState } from "@/lib/use-persistent-state";
 import { NO_TRACKER_ENTRIES, TRACKER_KEY, type TrackerEntry } from "@/lib/job-tracker";
 import ResumeEditor from "./ResumeEditor";
@@ -15,6 +16,7 @@ import NextSteps from "./NextSteps";
 import { Confetti, ReadinessRing } from "./Celebrate";
 import ShareCard from "./ShareCard";
 import StrengthenPanel from "./StrengthenPanel";
+import { STORIES_KEY, addStoryTo, newStory, noStories, type Story } from "@/lib/resume-profile";
 
 type Tab = "resume" | "letter";
 
@@ -112,6 +114,7 @@ export default function ResultView({
   onLetter,
   gaps,
   onGaps,
+  onSaveProfile,
   changes,
   onChanges,
   email,
@@ -129,6 +132,8 @@ export default function ResultView({
   onLetter: (l: CoverLetter) => void;
   gaps: ResumeGap[];
   onGaps: (g: ResumeGap[]) => void;
+  // Downloads the saved profile as a file (shown as a card once a resume is built).
+  onSaveProfile?: () => void;
   changes: string[];
   onChanges: (c: string[]) => void;
   email: string;
@@ -140,6 +145,8 @@ export default function ResultView({
   onStartOver: () => void;
 }) {
   const [tab, setTab] = useState<Tab>("resume");
+  // Each true answer to a gap-coach question is kept in this browser as a "story", for the next resume.
+  const [, setStories] = usePersistentState<Story[]>(STORIES_KEY, noStories);
   const [busy, setBusy] = useState<"" | "pdf" | "docx">("");
   const [justAdded, setJustAdded] = useState("");
   const design = result.design;
@@ -249,6 +256,7 @@ export default function ResultView({
   }
 
   async function download(kind: "pdf" | "docx") {
+    track("download");
     setBusy(kind);
     try {
       if (kind === "pdf") {
@@ -303,6 +311,8 @@ export default function ResultView({
       if (!res.ok || !data.ok) return refineErrors[data.error as string] ?? refineErrors.upstream;
       if (!data.added) return data.note || "Add a little more detail, like where you used it and for how long.";
       onDoc(data.resume as ResumeDoc);
+      track("gap-answered");
+      setStories((cur) => addStoryTo(cur, newStory(gaps[index].requirement, gaps[index].question ?? "", answer)));
       onGaps(gaps.filter((_, k) => k !== index));
       onChanges([data.note as string, ...changes]);
       setJustAdded(data.note as string);
@@ -534,6 +544,18 @@ export default function ResultView({
                 ))}
               </ul>
             </div>
+
+            {onSaveProfile && (
+              <div className={card}>
+                <p className="font-semibold">Take your profile with you</p>
+                <p className="mt-1 text-xs text-foreground-muted">
+                  Your resume, notes, and the true answers you gave are saved on this device, so your next resume starts faster. Download a copy to keep it safe, or to use on another phone or computer.
+                </p>
+                <button type="button" onClick={onSaveProfile} className="mt-3 inline-flex min-h-10 items-center rounded-full border border-border-subtle bg-white px-5 text-sm font-semibold shadow-sm transition-colors hover:border-blue-500/40">
+                  Download my profile
+                </button>
+              </div>
+            )}
 
             <form onSubmit={addToTracker} className={card}>
               <p className="font-semibold">Applying for this job?</p>

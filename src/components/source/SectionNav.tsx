@@ -59,7 +59,7 @@ export default function SectionNav({ items }: { items: NavItem[] }) {
             <a
               href={`#${it.id}`}
               aria-current={active === it.id ? "true" : undefined}
-              className={`block rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors sm:text-sm ${
+              className={`flex min-h-10 items-center rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors sm:text-sm ${
                 active === it.id ? "bg-sol-primary text-sol-on-primary" : "text-sol-ink/80 hover:text-sol-gold"
               }`}
             >

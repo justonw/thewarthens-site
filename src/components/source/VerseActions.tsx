@@ -32,7 +32,7 @@ export default function VerseActions({ id, text, reference }: { id: string; text
   }
 
   const btn =
-    "rounded-full border border-sol-line px-3 py-1 text-xs font-semibold text-sol-ink/80 transition-colors hover:border-sol-gold/60 hover:text-sol-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sol-gold";
+    "inline-flex min-h-10 items-center rounded-full border border-sol-line px-3 py-1 text-xs font-semibold text-sol-ink/80 transition-colors hover:border-sol-gold/60 hover:text-sol-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sol-gold";
   return (
     <div className="flex items-center gap-2" aria-live="polite">
       <button type="button" onClick={copy} className={btn}>

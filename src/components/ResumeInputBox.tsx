@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { findPostingLink } from "@/lib/posting-link";
 import InputArea from "@/components/resume/InputArea";
 import { processFile, type PickedFile } from "@/lib/resume-upload";
+import { MAX_NOTES_CHARS, MAX_RESUME_CHARS } from "@/lib/resume-input-limits";
+import { parseProfileFile, type Profile } from "@/lib/resume-profile";
 
 // One of the two input boxes on the resume tool. A person can type or paste text, upload files, drag
 // files in from their desktop, or paste a screenshot. For the job posting they can also paste a link.
@@ -32,6 +34,7 @@ export default function ResumeInputBox({
   onText,
   files,
   onFiles,
+  onProfileFile,
   allowLink = false,
   lookHint = false,
   step,
@@ -45,6 +48,8 @@ export default function ResumeInputBox({
   onText: (value: string) => void;
   files: PickedFile[];
   onFiles: (value: PickedFile[]) => void;
+  // A saved profile file (from "Download a copy") dropped or picked here is loaded instead of read as a resume.
+  onProfileFile?: (profile: Profile) => void;
   allowLink?: boolean;
   // On the resume box: remind people that a Word file gives us its words but not its look.
   lookHint?: boolean;
@@ -84,7 +89,20 @@ export default function ResumeInputBox({
     const added: PickedFile[] = [];
     const words: string[] = [];
     let sawWord = false;
+    let loadedProfile = false;
     for (const file of list) {
+      if (onProfileFile && /\.json$/i.test(file.name)) {
+        try {
+          const parsed = parseProfileFile(await file.text(), { resume: MAX_RESUME_CHARS, notes: MAX_NOTES_CHARS });
+          if (parsed.ok) {
+            onProfileFile(parsed.profile);
+            loadedProfile = true;
+            continue;
+          }
+        } catch {
+          /* falls through to the normal "we can't open that" message */
+        }
+      }
       if (/\.docx$/i.test(file.name)) sawWord = true;
       if (files.length + added.length >= MAX_FILES) {
         errors.push(`You can add up to ${MAX_FILES} files here. Skipped ${file.name || "a file"}.`);
@@ -101,6 +119,7 @@ export default function ResumeInputBox({
     if (added.length) onFiles([...files, ...added]);
     if (words.length) onText([text.trim(), ...words].filter(Boolean).join("\n\n"));
     if (errors.length) setNotice({ kind: "error", message: errors.join(" ") });
+    else if (loadedProfile) setNotice({ kind: "info", message: "Loaded your saved profile: your resume, notes, and stories are back." });
     else if (words.length) setNotice({ kind: "info", message: `Added the text from your file. Read it over and fix anything that looks off.${lookHint && sawWord ? " To copy its look as well, upload it as a PDF or a screenshot." : ""}` });
     setBusy(false);
   }

@@ -8,6 +8,7 @@ import { markResume, matchKeywords, type TermKind, type TermResult } from "@/lib
 import { saveHandoff } from "@/lib/resume-handoff";
 import { processFile } from "@/lib/resume-upload";
 import { pdfToText } from "@/lib/pdf-text";
+import { track } from "@/lib/track";
 import { imageToText } from "@/lib/ocr";
 
 // The free keyword check. Paste a resume and a job posting (or a link to the posting, or a Word or text file for the
@@ -102,8 +103,13 @@ export default function KeywordMatcher() {
   const required = terms.filter((t) => t.tier === "required");
   const requiredFound = required.filter((t) => t.status === "found").length;
 
+  useEffect(() => {
+    track("scanner-visit");
+  }, []);
+
   const run = () => {
     if (!canCheck) return;
+    track("scanner-checked");
     setHidden([]);
     setChecked({ resume, posting });
     setTimeout(() => document.getElementById("kw-results")?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);

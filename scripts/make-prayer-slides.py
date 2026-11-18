@@ -16,7 +16,7 @@ OUT = os.path.join(ROOT, "docs", "prayer-slides")
 # (reference, KJV words, short note under it)
 SLIDES = [
     ("The place of prayer", [
-        ("Psalm 95:6", "O come, let us worship and bow down: let us kneel before the LORD our maker.", "Kneeling is the body saying what the heart means: I belong to You, Lord."),
+        ("Psalm 95:6", "O come, let us worship and bow down: let us kneel before the LORD our maker.", "The psalmist calls us to worship, bow down, and kneel before the LORD our maker."),
         ("Daniel 6:10", "...he kneeled upon his knees three times a day, and prayed, and gave thanks before his God, as he did aforetime.", "The king's decree was signed, and Daniel still went to his place of prayer, as he always had."),
         ("Luke 22:41-42", "...and kneeled down, and prayed, Saying, Father, if thou be willing, remove this cup from me: nevertheless not my will, but thine, be done.", "Jesus knelt in the garden before He stood before Pilate."),
     ]),
@@ -28,7 +28,7 @@ SLIDES = [
     ("Who we answer to", [
         ("Galatians 1:10", "For do I now persuade men, or God? or do I seek to please men? for if I yet pleased men, I should not be the servant of Christ.", "Paul asks: am I living for people's approval, or for God's?"),
         ("Acts 4:19", "...Whether it be right in the sight of God to hearken unto you more than unto God, judge ye.", "Peter and John were told to stop speaking about Jesus, and they let God be the judge."),
-        ("Acts 5:29", "...We ought to obey God rather than men.", "Told again, the apostles gave the same answer."),
+        ("Acts 5:29", "...We ought to obey God rather than men.", "Being interrogated by the council, the apostles gave the same answer."),
     ]),
     ("Standing before kings", [
         ("Daniel 3:17-18", "If it be so, our God whom we serve is able to deliver us from the burning fiery furnace, and he will deliver us out of thine hand, O king. But if not, be it known unto thee, O king, that we will not serve thy gods, nor worship the golden image which thou hast set up.", "Shadrach, Meshach, and Abednego: God is able to rescue us, and even if He does not, we will not bow."),
@@ -55,8 +55,8 @@ SLIDES = [
         ("Proverbs 28:1", "The wicked flee when no man pursueth: but the righteous are bold as a lion.", "Those who live right before God can be bold as a lion."),
     ]),
 ]
-CLOSING = "I kneel before God, so I can stand before men."
-CLOSING_LINES = ["I kneel before God,", "so I can stand before men."]
+CLOSING = "We kneel before God, so we can stand before men."
+CLOSING_LINES = ["We kneel before God,", "so we can stand before men."]
 
 W, H = 1920, 1080
 BG_TOP, BG_BOT = (10, 14, 30), (22, 20, 46)
