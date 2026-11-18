@@ -8,6 +8,8 @@ import {
   LESSON_SUBTITLE,
   LESSON_TITLE,
   MAX_NOTE_LENGTH,
+  VIDEO_ID,
+  VIDEO_TITLE,
   actionFor,
   contexts,
   explanation,
@@ -298,12 +300,26 @@ export default function PresentMissingLesson() {
         </h1>
         <p className="mt-2 text-xl text-foreground-muted">{LESSON_SUBTITLE}</p>
         <p className="mt-5 max-w-2xl text-lg leading-relaxed text-foreground">{LESSON_LEAD}</p>
+        <div id="video" className="mt-8 scroll-mt-24 overflow-hidden rounded-3xl border border-border-subtle bg-black shadow-2xl shadow-blue-950/15">
+          <div className="aspect-video w-full">
+            <iframe
+              className="h-full w-full"
+              src={`https://www.youtube.com/embed/${VIDEO_ID}`}
+              title={VIDEO_TITLE}
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            />
+          </div>
+        </div>
         <p className="mt-5 rounded-2xl bg-background-elevated px-5 py-4 text-sm text-foreground-muted">
           Follow along and write in the boxes. What you write is saved only on this phone or computer.
           At the end, you can email yourself a PDF of the lesson with your notes.
         </p>
         <nav aria-label="On this page" className="mt-5 flex flex-wrap gap-2 text-sm">
           {[
+            ["#video", "Watch"],
             ["#synopsis", "Synopsis"],
             ["#explanation", "Explanation"],
             ["#questions", "Questions"],

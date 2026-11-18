@@ -10,7 +10,13 @@ export const LESSON_LABEL = "A lesson and exercise for men";
 // Search and sharing copy for the lesson page. The FAQ is shown on the page and also sent to search
 // engines as FAQ data, so keep every answer true to what the page actually does.
 export const LESSON_PUBLISHED = "2026-11-06";
-export const LESSON_MODIFIED = "2026-11-07";
+export const LESSON_MODIFIED = "2026-11-18";
+
+// The teaching video on the Faith Journey channel (embedded at the top of the page).
+export const VIDEO_ID = "lWuO8-l3d9c";
+export const VIDEO_TITLE = "How to Be the Man Your Family Is Missing";
+export const VIDEO_UPLOADED = "2026-11-18T05:00:02-08:00";
+export const VIDEO_DURATION = "PT45M8S";
 export const seoTitle = "Present but Missing: A Bible Lesson for Men | Faith Journey";
 export const seoDescription =
   "A free Bible lesson for men on being fully present, not just providing. Isaiah 58, Matthew 23, reflection questions, and a PDF of your notes.";

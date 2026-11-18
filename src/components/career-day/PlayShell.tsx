@@ -217,10 +217,15 @@ export default function PlayShell({ children }: { children: ReactNode }) {
                   <span className="sm:hidden">Map</span>
                 </Link>
               ) : (
-                <span className="flex min-h-12 items-center gap-2 whitespace-nowrap rounded-2xl px-3 py-2 text-base font-extrabold text-white sm:px-4">
-                  <ArtIcon name="star" className="h-6 w-6" />
-                  Tech Journey Jr.
-                </span>
+                <Link
+                  href="/techjr"
+                  onClick={stopSpeech}
+                  className="flex min-h-12 items-center gap-2 whitespace-nowrap rounded-2xl bg-white/10 px-3 py-2 text-base font-extrabold text-white ring-1 ring-white/20 transition hover:bg-white/20 active:scale-95 sm:px-4"
+                >
+                  <span aria-hidden>←</span>
+                  <span className="hidden min-[400px]:inline">The Warthens</span>
+                  <span className="min-[400px]:hidden">Back</span>
+                </Link>
               )}
 
               <div
@@ -286,6 +291,25 @@ export default function PlayShell({ children }: { children: ReactNode }) {
               </div>
             )}
             {children}
+            <nav
+              aria-label="Back to the website"
+              className="mx-auto mt-12 flex max-w-3xl flex-wrap items-center justify-center gap-x-6 gap-y-2 border-t border-white/15 pt-6 text-base font-bold"
+            >
+              <Link
+                href="/"
+                onClick={stopSpeech}
+                className="inline-flex min-h-11 items-center rounded-full bg-white/10 px-5 py-2 text-white ring-1 ring-white/25 transition hover:bg-white/20"
+              >
+                ← Back to The Warthens
+              </Link>
+              <Link
+                href="/techjr"
+                onClick={stopSpeech}
+                className="inline-flex min-h-11 items-center text-sky-200 underline underline-offset-4 hover:text-white"
+              >
+                For parents
+              </Link>
+            </nav>
           </main>
         </div>
       </AutoReadContext.Provider>
