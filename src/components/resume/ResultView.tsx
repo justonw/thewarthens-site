@@ -14,6 +14,7 @@ import CoverLetterEditor from "./CoverLetterEditor";
 import NextSteps from "./NextSteps";
 import { Confetti, ReadinessRing } from "./Celebrate";
 import ShareCard from "./ShareCard";
+import StrengthenPanel from "./StrengthenPanel";
 
 type Tab = "resume" | "letter";
 
@@ -45,64 +46,6 @@ function cleanDoc(d: ResumeDoc): ResumeDoc {
     training: d.training.map((x) => ({ name: t(x.name), detail: t(x.detail), dates: t(x.dates) })).filter((x) => x.name),
     education: d.education.map((e) => ({ school: t(e.school), credential: t(e.credential), dates: t(e.dates) })).filter((e) => e.school),
   };
-}
-
-function GapItem({ gap, onAdd }: { gap: ResumeGap; onAdd: (answer: string) => Promise<string | null> }) {
-  const [open, setOpen] = useState(false);
-  const [answer, setAnswer] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState("");
-
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    if (answer.trim().length < 3) {
-      setMessage("Write a short sentence about it.");
-      return;
-    }
-    setBusy(true);
-    setMessage("");
-    const problem = await onAdd(answer.trim());
-    setBusy(false);
-    if (problem) setMessage(problem);
-  }
-
-  return (
-    <li className="text-sm">
-      <p className="font-medium">{gap.requirement}</p>
-      {!open ? (
-        <button type="button" onClick={() => setOpen(true)} className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold text-blue-600 underline underline-offset-2 sm:min-h-0">
-          I have this
-        </button>
-      ) : (
-        <form onSubmit={submit} className="mt-2 space-y-2">
-          <label className="block text-xs text-foreground-muted" htmlFor={`gap-${gap.requirement}`}>
-            Tell us in a sentence: what you did, where, and for how long.
-          </label>
-          <textarea
-            id={`gap-${gap.requirement}`}
-            rows={2}
-            value={answer}
-            onChange={(e) => setAnswer(e.target.value)}
-            placeholder="For example: I used it daily at Harbor Table to track catering leads for 2 years."
-            className={input}
-          />
-          <div className="flex items-center gap-2">
-            <button type="submit" disabled={busy} className="rounded-full bg-blue-600 px-4 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-blue-500 disabled:opacity-60">
-              {busy ? "Adding…" : "Add it to my resume"}
-            </button>
-            <button type="button" onClick={() => setOpen(false)} className="text-xs text-foreground-muted underline underline-offset-2">
-              Cancel
-            </button>
-          </div>
-          {message && (
-            <p role="alert" className="text-xs text-red-700">
-              {message}
-            </p>
-          )}
-        </form>
-      )}
-    </li>
-  );
 }
 
 function Highlighted({ text, keywords }: { text: string; keywords: string[] }) {
@@ -350,7 +293,7 @@ export default function ResultView({
         body: JSON.stringify({
           email,
           doc: finalDoc,
-          requirement: gaps[index].requirement,
+          requirement: gaps[index].question ? `${gaps[index].requirement}. Question asked: ${gaps[index].question}` : gaps[index].requirement,
           answer,
           postingTitle: result.postingTitle,
           postingCompany: result.postingCompany,
@@ -420,6 +363,8 @@ export default function ResultView({
           </button>
         </div>
       </div>
+
+      <StrengthenPanel gaps={gaps} fit={result.fit} justAdded={justAdded} onAdd={addGap} />
 
     {(contactMissing.email || contactMissing.phone) && (
         <div role="alert" className="rounded-2xl border border-amber-500/50 bg-amber-500/10 p-5">
@@ -565,12 +510,6 @@ export default function ResultView({
           </div>
 
           <div className="space-y-4">
-            {justAdded && (
-              <p role="status" className="rounded-2xl border border-green-600/30 bg-green-600/5 px-4 py-3 text-sm text-green-800">
-                {justAdded}
-              </p>
-            )}
-
             <div className={card}>
               <p className="font-semibold">Resume check</p>
               <p className="mt-1 text-xs text-foreground-muted">
@@ -595,20 +534,6 @@ export default function ResultView({
                 ))}
               </ul>
             </div>
-
-            {gaps.length > 0 && (
-              <div className="rounded-2xl border border-amber-500/40 bg-amber-500/5 p-5">
-                <p className="font-semibold">The posting asks for these</p>
-                <p className="mt-1 text-xs text-foreground-muted">
-                  Your resume didn&apos;t show them, so we left them out. If you have one, tap &ldquo;I have this&rdquo; and we&apos;ll add it. Only add what&apos;s true.
-                </p>
-                <ul className="mt-3 space-y-4">
-                  {gaps.map((g, i) => (
-                    <GapItem key={g.requirement} gap={g} onAdd={(answer) => addGap(i, answer)} />
-                  ))}
-                </ul>
-              </div>
-            )}
 
             <form onSubmit={addToTracker} className={card}>
               <p className="font-semibold">Applying for this job?</p>

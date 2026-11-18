@@ -18,7 +18,7 @@ export default function ResumeEditor({ doc, onChange }: { doc: ResumeDoc; onChan
   const setJob = (i: number, patch: Partial<ResumeJob>) => set({ experience: doc.experience.map((j, k) => (k === i ? { ...j, ...patch } : j)) });
 
   return (
-    <div className="rounded-2xl border border-border-subtle bg-background p-4 font-sans text-sm leading-snug sm:p-8">
+    <div spellCheck className="rounded-2xl border border-border-subtle bg-background p-4 font-sans text-sm leading-snug sm:p-8">
       <input aria-label="Name" className={`${mini} text-2xl font-semibold`} value={doc.name} onChange={(e) => set({ name: e.target.value })} />
       <input aria-label="Target job title" className={`${mini} text-base`} value={doc.headline} onChange={(e) => set({ headline: e.target.value })} />
       <AutoTextarea

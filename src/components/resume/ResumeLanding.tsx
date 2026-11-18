@@ -112,7 +112,7 @@ export function ResumeHero() {
             </a>
           </div>
           <ul className="rb-rise mt-6 flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs font-medium text-foreground-muted lg:justify-start" style={delay(0.32)}>
-            {["Uses the job's own words", "Works for any field", "No account needed", "Only your real experience"].map((t) => (
+            {["Uses the job's own words", "Asks about your gaps, adds only what's true", "Works for any field", "No account needed"].map((t) => (
               <li key={t} className="flex items-center gap-1.5">
                 <Tick className="h-4 w-4" />
                 {t}
@@ -162,8 +162,8 @@ const steps = [
     ),
   },
   {
-    title: "Check, fill gaps, download",
-    body: "Edit anything on the page. If the posting asks for something you have but didn't list, tap \"I have this\" and we'll add it. Then download.",
+    title: "Answer a few questions, then download",
+    body: "If the job asks for something your resume doesn't show, our gap coach asks short, specific questions about your own experience and writes in what's true. Edit anything on the page, then download.",
     icon: (
       <svg {...iconProps} aria-hidden>
         <path d="M12 4v12m0 0l-4-4m4 4l4-4" />

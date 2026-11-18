@@ -92,7 +92,7 @@ export async function POST(req: NextRequest) {
   if (!owner && tooMany(ip)) return NextResponse.json({ error: "slow-down" }, { status: 429 });
 
   const email = typeof body.email === "string" ? body.email.trim() : "";
-  const requirement = cleanText(body.requirement, 240);
+  const requirement = cleanText(body.requirement, 520);
   const answer = cleanText(body.answer, 700);
   if (!isValidEmail(email)) return NextResponse.json({ error: "email" }, { status: 400 });
   if (!requirement || answer.length < 3) return NextResponse.json({ error: "answer-short" }, { status: 400 });

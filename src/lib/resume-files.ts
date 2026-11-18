@@ -248,7 +248,24 @@ export async function buildPdf(doc: ResumeDoc, style: ResumeStyle = "classic", d
     skills: () => {
       if (!doc.skills.length) return;
       heading("Skills");
-      for (const sk of doc.skills) paragraph(sk.label ? `${sk.label}: ${sk.items}` : sk.items);
+      // A tidy two-column block: the group name in bold on the left, and its items wrapping in their own column on
+      // the right, so a long list reads as a list and not as one run-on paragraph.
+      const labels = doc.skills.map((sk) => (sk.label ? `${pdfSafe(sk.label)}:` : ""));
+      const labelW = Math.min(contentW * 0.3, Math.max(0, ...labels.map((l) => (l ? bold.widthOfTextAtSize(l, BODY) : 0))) + 10);
+      doc.skills.forEach((sk, i) => {
+        if (i > 0) y -= 3;
+        if (!sk.label) {
+          paragraph(sk.items);
+          return;
+        }
+        const lines = wrap(sk.items, regular, BODY, contentW - labelW);
+        lines.forEach((l, idx) => {
+          ensure(LEAD);
+          y -= LEAD;
+          if (idx === 0) text(labels[i], M, BODY, bold);
+          text(l, M + labelW, BODY, regular);
+        });
+      });
     },
     experience: () => {
       if (!doc.experience.length) return;
@@ -325,8 +342,17 @@ export async function buildDocx(doc: ResumeDoc, style: ResumeStyle = "classic", 
     skills: () => {
       if (!doc.skills.length) return;
       kids.push(heading("Skills"));
+      // The group name in bold, then a tab, with the items wrapping in their own column (a hanging indent).
+      const longest = Math.max(0, ...doc.skills.map((sk) => (sk.label ? sk.label.length + 1 : 0)));
+      const hang = Math.min(3300, Math.round(longest * 6.4 * 20) + 200);
       for (const sk of doc.skills) {
-        kids.push(new Paragraph({ spacing: { after: 40 }, children: sk.label ? [run(`${sk.label}: `, { bold: true }), run(sk.items)] : [run(sk.items)] }));
+        kids.push(
+          new Paragraph({
+            spacing: { after: 50 },
+            ...(sk.label ? { indent: { left: hang, hanging: hang }, tabStops: [{ type: TabStopType.LEFT, position: hang }] } : {}),
+            children: sk.label ? [run(`${sk.label}:`, { bold: true }), new TextRun({ text: "\t" }), run(sk.items)] : [run(sk.items)],
+          })
+        );
       }
     },
     experience: () => {

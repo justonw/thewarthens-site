@@ -77,7 +77,20 @@ export type ResumeDoc = {
   education: ResumeSchool[];
 };
 
-export type ResumeGap = { requirement: string; note: string };
+// Something to ask the person, so the resume can say more of what is true about them. "missing" is something the
+// posting asks for that the resume does not show; "deepen" is something the resume only hints at.
+export type ResumeGap = {
+  requirement: string;
+  note: string;
+  // One specific question for the person, about their own history.
+  question?: string;
+  // One honest, practical line on how someone could really build this, for a person who does not have it yet.
+  ifNot?: string;
+  kind?: "missing" | "deepen";
+};
+
+// A plain, honest read of how the resume lines up with the posting.
+export type ResumeFit = { level: "strong" | "good" | "stretch"; reason: string };
 
 // The look of the resume the person uploaded, as the AI saw it. Used to rebuild the new resume to match,
 // within what a one-column, scanner-safe layout allows.
@@ -107,6 +120,7 @@ export type TailorResult = {
   postingCompany: string;
   postingKeywords: string[];
   gaps: ResumeGap[];
+  fit?: ResumeFit;
   changes: string[];
 };
 
@@ -123,8 +137,12 @@ Hard rules:
 - How to tailor (do this before writing). First list the posting's must-haves (its minimum qualifications), its main responsibilities, and its preferred qualifications. For each one, find the strongest TRUE proof in the resume or notes. Then: (1) The summary names 2 or 3 of the posting's main requirements that the person clearly meets (years of experience, kind of work, kind of customer, degree) with the strongest proof for each, in the posting's own words. (2) In every job, the bullets that prove those requirements come first. (3) Use the posting's exact phrases whenever the person's real work means the same thing, and only then. For example "C-suite" can become "C-level", "new accounts" can become "net-new accounts", and "from prospecting through close" can become "full sales cycle from lead generation to close". Never repeat a phrase just to stuff keywords. (4) Keep the specifics when you shorten a bullet: its numbers, the kind of customer, and what was sold or done.
 - Phrase coverage (a rule, not a suggestion). Fill in "postingKeywords" first. Then, for each of those phrases that the person's real work truly matches, the resume must contain that exact phrase at least once, in the summary, the skills, or a bullet, used naturally (never stuffed). Do this by reframing the bullet or summary line that proves it, keeping every number, name, and date. For example, if the resume says the person sat in front of senior leaders and surfaced customer problems, a posting that says "executive stakeholders" and "pain points" can be answered with "executive stakeholders" and "pain points" in those same bullets. If the person's work does not match a phrase, do not use it: leave it for "gaps".
 - Reframe, do not just copy. When a bullet already proves a posting requirement, reword it into the posting's framing and lead with that requirement. Leave a bullet nearly as it is only when it already uses the posting's language or proves nothing the posting asks for.
-- Keep anything that supports the posting. A company's industry may go in the company field in a few words in parentheses when it matches the posting (for example "Wonderly (marketing technology)"). A project or side work that shows something the posting asks for (for example audience growth or partnerships for a role that values marketing knowledge) may be its own entry under experience, using the title and dates the resume gives it. Leave a job or project off only when it adds nothing for this posting, and then say which one in "changes". Do not leave off a job from the last 10 years if that would leave a visible gap in the timeline: shorten it to one bullet instead.
-- Anything the posting asks for that neither the resume nor the notes show goes in "gaps" (one short line each, with a note that starts with "Add this only if it is true:" and says where it would go). Never put a gap into the resume itself.
+- Keep anything that supports the posting. A company's industry may go in the company field in a few words in parentheses when it matches the posting (for example "Wonderly (marketing technology)"), but only on the most recent entry for that company. Never repeat the parenthetical on the person's other roles at the same company, and keep it short, at most 4 words. A project or side work that shows something the posting asks for (for example audience growth or partnerships for a role that values marketing knowledge) may be its own entry under experience, using the title and dates the resume gives it. Leave a job or project off only when it adds nothing for this posting, and then say which one in "changes". Do not leave off a job from the last 10 years if that would leave a visible gap in the timeline: shorten it to one bullet instead.
+- Anything the posting asks for that neither the resume nor the notes show goes in "gaps" with kind "missing" (one short line for the requirement, with a note that starts with "Add this only if it is true:" and says where it would go). Never put a gap into the resume itself. At most 5 of these, the ones that matter most for this posting.
+- Every gap also needs a "question": ONE specific question to the person, written to "you", that a person could answer in a sentence if they have it. Tie it to their real history whenever you can, naming a job, a tool, or a project from their resume (for example, "At Wonderly you sell AI-powered front offices. Did you help set up, test, or tune the AI for a customer? What did you do?"), and not the generic "Do you have X?". Also give "ifNot": one honest, practical sentence on how someone could really build this (a free course, a small project, a way to volunteer for it), written for a person who does not have it yet, and never implying that they do.
+- Add up to 3 more gaps with kind "deepen": things the resume already hints at that matter for this posting but are stated too thinly. Examples: a tool listed with no context, a result with no number, a side project or a founder role with no detail, a skill used at work with no example. For these, "requirement" names the topic, "note" says why a fuller line would help, "question" asks for the missing true detail (what they did, for whom, how many, what changed), and "ifNot" is empty.
+- "fit": an honest, plain read of how the resume lines up with the posting. "level" is "strong" (they meet most must-haves), "good" (they meet many, with real gaps), or "stretch" (they miss several must-haves). "reason" is one or two plain sentences that name the strongest match and the one or two biggest gaps. Never flatter, and never say the person will or will not get the job.
+- Proofread before you answer. Re-read the summary, every bullet, and the skills for typos, doubled words, and wrong words (for example "pints" for "points"), and fix them. Spell names and tools exactly as the resume does.
 - "postingKeywords": the 8 to 15 most important skills, tools, and requirements named in the posting, in the posting's own wording.
 - Summary: at most 3 sentences, written to sound like a person, not a template. Say who they are, the strongest proof from their real experience, and what they are aiming for. The exact job title already sits in the headline, so do not repeat it in the summary: say "this role" or name the field instead. Do not restate a certificate or degree that is already listed under training or education, except to point to it briefly in a clause. Never use any pronouns for the person: no "I", "my", "he", "she", "his", "her", "him", or "they". Resumes leave the subject out ("Led a team of 22", not "He led a team"), so write that way everywhere. We do not know the person's pronouns, and a wrong guess is a real error. No clichés ("results-driven", "passionate", "dynamic", "proven track record"). Only state years of experience if you can work them out from the dates, rounding down. Mention a number of years once, as the total in the field, counted from the earliest relevant job, and never say the same number twice in one sentence.
 - Skills: 2 to 4 short groups (for example Sales, Tools, Strengths) with comma-separated items. Only include skills the resume shows or clearly implies from the work described.
@@ -239,9 +257,14 @@ export function buildResumeRequest(input: TailorInput, model: string = RESUME_MO
               maxItems: 8,
               items: {
                 type: "object",
-                properties: { requirement: str, note: str },
-                required: ["requirement", "note"],
+                properties: { requirement: str, note: str, question: str, ifNot: str, kind: { type: "string", enum: ["missing", "deepen"] } },
+                required: ["requirement", "note", "question"],
               },
+            },
+            fit: {
+              type: "object",
+              properties: { level: { type: "string", enum: ["strong", "good", "stretch"] }, reason: str },
+              required: ["level", "reason"],
             },
             changes: strArr,
             ...(input.matchDesign
@@ -331,6 +354,31 @@ function list(value: unknown, itemMax: number, countMax: number): string[] {
     .map((v) => cleanText(v, itemMax))
     .filter(Boolean)
     .slice(0, countMax);
+}
+
+function parseFit(value: unknown): ResumeFit | undefined {
+  if (!value || typeof value !== "object") return undefined;
+  const v = value as Record<string, unknown>;
+  const level = v.level === "strong" || v.level === "good" || v.level === "stretch" ? v.level : null;
+  const reason = cleanText(v.reason, 400);
+  return level && reason ? { level, reason } : undefined;
+}
+
+// A company's industry note ("Wonderly (marketing technology)") reads fine once. Repeated on every role at the same
+// company it makes each title wrap onto a second line, so it is kept on the first entry for that company only.
+export function tidyCompanies<T extends { company: string }>(jobs: T[]): T[] {
+  const seen = new Set<string>();
+  return jobs.map((j) => {
+    const m = /^(.*?)\s*\(([^)]*)\)\s*$/.exec(j.company);
+    const base = (m ? m[1] : j.company).trim().toLowerCase();
+    if (!base) return j;
+    // Only an industry note is trimmed. A note about how the person was employed ("via a staffing firm", "contract")
+    // is a fact about each role and stays.
+    const employment = m ? /^(via|through|contract|contractor|temp|temporary|formerly|f\/k\/a|now|acquired|remote|part[- ]time)\b/i.test(m[2].trim()) : false;
+    if (seen.has(base)) return m && !employment ? { ...j, company: m[1].trim() } : j;
+    seen.add(base);
+    return j;
+  });
 }
 
 function objects(value: unknown, countMax: number): Record<string, unknown>[] {
@@ -706,6 +754,7 @@ export function parseResumeResponse(data: unknown): ParsedTailor | null {
   const company = cleanText(i.postingCompany, 120);
   // The title under the name and the title shown for the job are the same short, clean one.
   resume.headline = tidyTitle(resume.headline || cleanText(i.postingTitle, 140), company);
+  resume.experience = tidyCompanies(resume.experience);
 
   return {
     ok: true,
@@ -717,8 +766,15 @@ export function parseResumeResponse(data: unknown): ParsedTailor | null {
       postingCompany: company,
       postingKeywords: list(i.postingKeywords, 60, 15),
       gaps: objects(i.gaps, 8)
-        .map((g) => ({ requirement: cleanText(g.requirement, 200), note: cleanText(g.note, 300) }))
+        .map((g) => ({
+          requirement: cleanText(g.requirement, 200),
+          note: cleanText(g.note, 300),
+          question: cleanText(g.question, 300),
+          ifNot: cleanText(g.ifNot, 300),
+          kind: g.kind === "deepen" ? ("deepen" as const) : ("missing" as const),
+        }))
         .filter((g) => g.requirement),
+      fit: parseFit(i.fit),
       // Notes about housekeeping (pronouns, dashes, and the like) are not useful to the person, so they are dropped.
       changes: list(i.changes, 320, 10)
         .filter((c) => !/\bpronouns?\b|first[- ]person|third[- ]person|\b(em|en)[- ]?dash(es)?\b|\bdashes\b|\bhyphens?\b|\b(under|as|to) (the )?gaps\b|\b(merged|combined)\b(?![^.]*\bbullets?\b)[^.]*\b(roles?|jobs?|entries|positions?)\b/i.test(c))
