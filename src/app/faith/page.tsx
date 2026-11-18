@@ -5,7 +5,9 @@ import Reveal from "@/components/Reveal";
 import StartDoors from "@/components/StartDoors";
 import StayInTouch from "@/components/StayInTouch";
 import ThisWeekCard from "@/components/ThisWeekCard";
-import { faithWritings, categoryLabels, type FaithWritingCategory } from "@/lib/faith-writings";
+import FaithLibrary from "@/components/faith/FaithLibrary";
+import { faithWritings } from "@/lib/faith-writings";
+import { extraLibraryItems, faithVideos, pinnedVideo, type LibraryItem } from "@/lib/faith-featured";
 
 const title = "Faith Journey: Bible Studies, Testimonies & Wisdom";
 const description =
@@ -73,13 +75,20 @@ const faithPoints = [
   },
 ];
 
-const categoryOrder: FaithWritingCategory[] = ["story-time", "topical-study", "reflections"];
-const writingGroups = categoryOrder
-  .map((category) => ({
-    category,
-    items: faithWritings.filter((w) => w.category === category),
-  }))
-  .filter((group) => group.items.length > 0);
+const newest = pinnedVideo;
+const olderVideos = faithVideos;
+
+// The lessons, communities and writings, newest lessons first, then writings by date as listed.
+const libraryItems: LibraryItem[] = [
+  ...extraLibraryItems,
+  ...faithWritings.map((w) => ({
+    href: `/faith/${w.category}/${w.slug}`,
+    title: w.title,
+    blurb: w.dek,
+    cta: "Read it",
+    tags: [w.category],
+  })),
+];
 
 export default function FaithJourneyPage() {
   const breadcrumbJsonLd = {
@@ -111,8 +120,7 @@ export default function FaithJourneyPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
-
-      {/* Hero: a short lead, then three points instead of one long paragraph */}
+      {/* Hero: short, so the newest thing is on the first screen */}
       <div className="relative">
         <div
           aria-hidden
@@ -122,69 +130,111 @@ export default function FaithJourneyPage() {
               "radial-gradient(55% 45% at 50% 0%, rgba(147,51,234,0.10), transparent)",
           }}
         />
-        <div className="mx-auto max-w-4xl px-6 pt-16 pb-16 text-center sm:pt-24 sm:pb-20">
+        <div className="mx-auto max-w-4xl px-6 pt-12 pb-8 text-center sm:pt-20 sm:pb-10">
           <p className="inline-flex items-center gap-2 rounded-full border border-purple-600/25 bg-purple-600/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-purple-700">
             Faith Journey with The Warthens
           </p>
-          <h1 className="text-balance mt-6 text-4xl font-semibold tracking-tight sm:text-5xl">
+          <h1 className="text-balance mt-5 text-3xl font-semibold tracking-tight sm:text-5xl">
             Learning, understanding, and living out God&apos;s wisdom, through
             faith, by His grace
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-balance text-lg text-foreground-muted">
+          <p className="mx-auto mt-5 max-w-2xl text-balance text-lg text-foreground-muted">
             We don&apos;t believe in adopting whatever culture hands us unless
             it&apos;s actually rooted in biblical, theological truth.
-          </p>
-
-          <div className="mt-12 grid gap-4 text-left md:grid-cols-2">
-            {faithPoints.map((point, i) => {
-              const featured = i === 2;
-              return (
-                <Reveal key={point.title} delay={i * 80} className={featured ? "md:col-span-2" : ""}>
-                  <div
-                    className={`group relative h-full overflow-hidden rounded-3xl border border-purple-600/15 bg-gradient-to-br from-background-elevated via-background-elevated to-purple-600/[0.07] p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-purple-600/40 hover:shadow-xl hover:shadow-purple-900/10 sm:p-8 ${
-                      featured ? "md:flex md:items-center md:gap-8" : ""
-                    }`}
-                  >
-                    {/* soft glow in the corner */}
-                    <div
-                      aria-hidden
-                      className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-purple-500/15 blur-3xl transition-opacity duration-300 group-hover:opacity-100"
-                    />
-                    <span className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-600 to-mauve-800 text-white shadow-lg shadow-purple-900/25 ring-1 ring-white/20">
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.8"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="h-7 w-7"
-                        aria-hidden
-                      >
-                        {point.icon}
-                      </svg>
-                    </span>
-                    <div className={`relative ${featured ? "mt-5 md:mt-0" : "mt-5"}`}>
-                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-purple-700">
-                        {point.label}
-                      </p>
-                      <p className="mt-1.5 text-xl font-semibold leading-snug">{point.title}</p>
-                      <p className="mt-2.5 text-foreground-muted">{point.body}</p>
-                    </div>
-                  </div>
-                </Reveal>
-              );
-            })}
-          </div>
-
-          <p className="mx-auto mt-10 max-w-2xl text-balance text-foreground-muted">
-            This is where we share what we&apos;re learning, from videos to Bible
-            studies and writings.
           </p>
         </div>
       </div>
 
+      {/* Pinned: our Jesus story stays at the top */}
+      <div className="mx-auto max-w-5xl px-6 pb-12">
+        <Reveal>
+          <div className="grid overflow-hidden rounded-[2rem] border border-purple-600/20 bg-background-elevated shadow-xl shadow-purple-950/10 md:grid-cols-[1.05fr_0.95fr]">
+            <Link href={newest.href} className="group relative block aspect-video md:aspect-auto md:min-h-72" aria-label={`${newest.title}: ${newest.cta}`}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`https://i.ytimg.com/vi/${newest.id}/maxresdefault.jpg`}
+                alt={newest.title}
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+              <span aria-hidden className="absolute inset-0 flex items-center justify-center bg-black/10 transition-colors group-hover:bg-black/20">
+                <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white text-purple-700 shadow-xl transition-transform duration-300 group-hover:scale-110">
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="ml-1 h-7 w-7">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </span>
+              </span>
+            </Link>
+            <div className="flex flex-col justify-center p-6 sm:p-8">
+              <p className="inline-flex w-fit items-center gap-2 rounded-full bg-purple-600/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-purple-800">
+                <span aria-hidden className="h-2 w-2 rounded-full bg-red-500" />
+                Start here: our story
+              </p>
+              <h2 className="text-balance mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">{newest.title}</h2>
+              <p className="mt-3 text-foreground-muted">{newest.blurb}</p>
+              {newest.perks && (
+                <ul className="mt-4 space-y-2 text-sm text-foreground">
+                  {newest.perks.map((perk) => (
+                    <li key={perk} className="flex gap-2.5">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 h-5 w-5 shrink-0 text-purple-700" aria-hidden>
+                        <path d="M20 6 9 17l-5-5" />
+                      </svg>
+                      <span>{perk}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <div className="mt-6">
+                <Link
+                  href={newest.href}
+                  className="inline-flex items-center gap-2 rounded-full bg-purple-700 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-purple-900/25 transition-all hover:-translate-y-0.5 hover:bg-purple-600 sm:text-base"
+                >
+                  {newest.cta}
+                  <span aria-hidden>→</span>
+                </Link>
+              </div>
+              <p className="mt-3 text-xs text-foreground-muted">Free to read and watch. No sign-up.</p>
+            </div>
+          </div>
+        </Reveal>
+      </div>
+
       <StartDoors variant="faith" />
+
+      <Reveal className="mx-auto grid max-w-5xl gap-5 px-6 pb-16 md:grid-cols-2">
+        <ThisWeekCard />
+        <StayInTouch from="faith" />
+      </Reveal>
+
+      {/* Newer videos */}
+      <div className="mx-auto max-w-5xl px-6 pb-14 pt-12 sm:pt-16">
+        <Reveal>
+          <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">New on the channel</h2>
+        </Reveal>
+        <ul className="mt-6 grid gap-4 md:grid-cols-2">
+          {olderVideos.map((v, i) => (
+            <li key={v.id} className="h-full">
+              <Reveal delay={i * 80} className="h-full">
+                <Link
+                  href={v.href}
+                  className="group flex h-full flex-col overflow-hidden rounded-3xl border border-border-subtle bg-background-elevated transition-all hover:-translate-y-0.5 hover:border-mauve-600/40 hover:shadow-xl hover:shadow-mauve-950/10"
+                >
+                  <div className="relative aspect-video">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={`https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg`} alt={v.title} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+                  </div>
+                  <div className="flex flex-1 flex-col p-5 sm:p-6">
+                    <h3 className="text-balance text-lg font-semibold leading-snug">{v.title}</h3>
+                    <p className="mt-2 flex-1 text-sm text-foreground-muted">{v.blurb}</p>
+                    <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-purple-700 transition-transform group-hover:translate-x-1">
+                      {v.cta} <span aria-hidden>→</span>
+                    </span>
+                  </div>
+                </Link>
+              </Reveal>
+            </li>
+          ))}
+        </ul>
+      </div>
 
       {/* Plug for the Faith Journey YouTube channel */}
       <div
@@ -306,106 +356,67 @@ export default function FaithJourneyPage() {
         </div>
       </div>
 
-      {/* Latest videos */}
-      <div className="mx-auto max-w-5xl space-y-6 px-6 pt-12 sm:pt-16">
-        <Reveal>
-          <Link
-            href="/jesus"
-            className="group grid overflow-hidden rounded-[2rem] border border-border-subtle bg-background-elevated transition-all hover:-translate-y-0.5 hover:border-mauve-600/40 hover:shadow-xl hover:shadow-mauve-950/10 md:grid-cols-[1.1fr_0.9fr]"
-          >
-            <div className="relative aspect-video md:aspect-auto md:min-h-60">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="https://i.ytimg.com/vi/HKWT347dZ3U/maxresdefault.jpg"
-                alt="She Grew Up in Church. I Didn’t. We Both Needed Jesus."
-                loading="lazy"
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-            </div>
-            <div className="flex flex-col justify-center p-6 sm:p-8">
-              <p className="text-xs font-semibold uppercase tracking-wider text-mauve-700">Latest video</p>
-              <h2 className="text-balance mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
-                She Grew Up in Church. I Didn’t. We Both Needed Jesus.
-              </h2>
-              <p className="mt-3 text-foreground-muted">
-                Why we believe in Jesus: Atiya’s story, Juston’s story, and how we both needed him.
-              </p>
-              <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-purple-700 transition-transform group-hover:translate-x-1">
-                Read the stories and watch <span aria-hidden>→</span>
-              </span>
-            </div>
-          </Link>
-        </Reveal>
-        <Reveal delay={80}>
-          <Link
-            href="/magnets"
-            className="group grid overflow-hidden rounded-[2rem] border border-border-subtle bg-background-elevated transition-all hover:-translate-y-0.5 hover:border-mauve-600/40 hover:shadow-xl hover:shadow-mauve-950/10 md:grid-cols-[1.1fr_0.9fr]"
-          >
-            <div className="relative aspect-video md:aspect-auto md:min-h-60">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="https://i.ytimg.com/vi/mKewhwS4Ys4/maxresdefault.jpg"
-                alt="Our Kids Swallowed Magnets. This Is How We Trusted God."
-                loading="lazy"
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-            </div>
-            <div className="flex flex-col justify-center p-6 sm:p-8">
-              <p className="text-xs font-semibold uppercase tracking-wider text-mauve-700">Previous video</p>
-              <h2 className="text-balance mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
-                Our Kids Swallowed Magnets. This Is How We Trusted God.
-              </h2>
-              <p className="mt-3 text-foreground-muted">
-                Our story, plus what every parent should know about magnetic beads.
-              </p>
-              <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-purple-700 transition-transform group-hover:translate-x-1">
-                Read the story and watch <span aria-hidden>→</span>
-              </span>
-            </div>
-          </Link>
-        </Reveal>
+      {/* Everything to read or do, filterable */}
+      <div id="writings" className="scroll-mt-32">
+        <div className="mx-auto max-w-5xl px-6 pb-16 pt-6">
+          <Reveal>
+            <p className="text-sm font-semibold uppercase tracking-wider text-purple-700">Read and do</p>
+            <h2 className="mt-2 text-2xl font-semibold sm:text-3xl">Read what we&apos;re learning</h2>
+            <p className="mt-2 mb-6 text-sm text-foreground-muted">
+              Lessons and exercises, Bible studies, and writings. Tap a filter to narrow it down.
+            </p>
+            <FaithLibrary items={libraryItems} />
+          </Reveal>
+        </div>
       </div>
 
-      {/* Women Who Seek */}
-      <div className="mx-auto max-w-5xl px-6 pb-16 pt-8 sm:pt-10">
+      {/* How we approach it */}
+      <div className="mx-auto max-w-4xl px-6 pb-16">
         <Reveal>
-          <Link
-            href="/faith/women-who-seek"
-            className="group grid overflow-hidden rounded-[2rem] border border-border-subtle bg-background-elevated transition-all hover:-translate-y-0.5 hover:border-mauve-600/40 hover:shadow-xl hover:shadow-mauve-950/10 md:grid-cols-[0.9fr_1.1fr]"
-          >
-            <div className="relative min-h-56">
-              <Image
-                src="/women-who-seek/study-group.png"
-                alt="Women studying the Bible together"
-                fill
-                sizes="(min-width: 768px) 440px, 100vw"
-                className="object-cover"
-              />
-            </div>
-            <div className="p-8 sm:p-10">
-              <p className="text-xs font-semibold uppercase tracking-wider text-mauve-700">
-                A Community for Women
-              </p>
-              <p className="mt-2 text-2xl font-semibold">Women Who Seek</p>
-              <p className="mt-3 text-foreground-muted">
-                Finding Jesus in the Scriptures, hosted by Atiya. Open to any woman, wherever she is
-                in her journey with Jesus.
-              </p>
-              <span className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-mauve-700">
-                Visit Women Who Seek
-                <span aria-hidden className="transition-transform group-hover:translate-x-1">
-                  →
-                </span>
-              </span>
-            </div>
-          </Link>
+          <h2 className="text-center text-2xl font-semibold tracking-tight sm:text-3xl">How we approach this</h2>
         </Reveal>
+          <div className="mt-8 grid gap-4 text-left md:grid-cols-2">
+            {faithPoints.map((point, i) => {
+              const featured = i === 2;
+              return (
+                <Reveal key={point.title} delay={i * 80} className={featured ? "md:col-span-2" : ""}>
+                  <div
+                    className={`group relative h-full overflow-hidden rounded-3xl border border-purple-600/15 bg-gradient-to-br from-background-elevated via-background-elevated to-purple-600/[0.07] p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-purple-600/40 hover:shadow-xl hover:shadow-purple-900/10 sm:p-8 ${
+                      featured ? "md:flex md:items-center md:gap-8" : ""
+                    }`}
+                  >
+                    {/* soft glow in the corner */}
+                    <div
+                      aria-hidden
+                      className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-purple-500/15 blur-3xl transition-opacity duration-300 group-hover:opacity-100"
+                    />
+                    <span className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-600 to-mauve-800 text-white shadow-lg shadow-purple-900/25 ring-1 ring-white/20">
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="h-7 w-7"
+                        aria-hidden
+                      >
+                        {point.icon}
+                      </svg>
+                    </span>
+                    <div className={`relative ${featured ? "mt-5 md:mt-0" : "mt-5"}`}>
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-purple-700">
+                        {point.label}
+                      </p>
+                      <p className="mt-1.5 text-xl font-semibold leading-snug">{point.title}</p>
+                      <p className="mt-2.5 text-foreground-muted">{point.body}</p>
+                    </div>
+                  </div>
+                </Reveal>
+              );
+            })}
+          </div>
       </div>
-
-      <Reveal className="mx-auto grid max-w-5xl gap-5 px-6 pb-16 md:grid-cols-2">
-        <ThisWeekCard />
-        <StayInTouch from="faith" />
-      </Reveal>
 
       <Reveal delay={100} className="mx-auto max-w-3xl px-6 pb-16 text-left">
         <h2 className="text-xl font-semibold sm:text-2xl">Quick Answers</h2>
@@ -451,102 +462,6 @@ export default function FaithJourneyPage() {
         </Link>
       </Reveal>
 
-      {faithWritings.length > 0 && (
-        <div id="writings" className="scroll-mt-32">
-          <div className="mx-auto max-w-5xl px-6 pb-4 pt-16 sm:pt-20">
-            <Reveal>
-              <p className="text-sm font-semibold uppercase tracking-wider text-purple-700">
-                Writings
-              </p>
-              <h2 className="mt-2 text-2xl font-semibold sm:text-3xl">Read what we&apos;re learning</h2>
-              <p className="mt-2 text-sm text-foreground-muted">
-                Story Time, Topical Study, and Reflections pieces as we publish
-                them, plus lessons and exercises.
-              </p>
-            </Reveal>
-            {writingGroups.map((group) => (
-              <div key={group.category} className="mt-10">
-                <Reveal>
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
-                    <Link href={`/faith/${group.category}`} className="hover:text-foreground">
-                      {categoryLabels[group.category]}
-                    </Link>
-                  </h3>
-                </Reveal>
-                <div className="mt-4 grid gap-4 md:grid-cols-2">
-                  {group.items.map((w, i) => (
-                    <Reveal key={w.slug} delay={Math.min(i, 3) * 60}>
-                      <Link
-                        href={`/faith/${w.category}/${w.slug}`}
-                        className="group flex h-full flex-col rounded-3xl border border-border-subtle bg-background-elevated p-6 transition-all hover:-translate-y-0.5 hover:border-purple-500/40 hover:shadow-lg hover:shadow-purple-950/5"
-                      >
-                        <p className="text-lg font-semibold leading-snug">{w.title}</p>
-                        <p className="mt-2 flex-1 text-sm text-foreground-muted">{w.dek}</p>
-                        <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-purple-700">
-                          Read it
-                          <span
-                            aria-hidden
-                            className="transition-transform group-hover:translate-x-1"
-                          >
-                            →
-                          </span>
-                        </span>
-                      </Link>
-                    </Reveal>
-                  ))}
-                </div>
-              </div>
-            ))}
-
-            <div className="mt-10">
-              <Reveal>
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
-                  Lessons and exercises
-                </h3>
-              </Reveal>
-              <div className="mt-4 grid gap-4 md:grid-cols-2">
-                <Reveal>
-                  <Link
-                    href="/faith/present-but-missing"
-                    className="group flex h-full flex-col rounded-3xl border border-border-subtle bg-background-elevated p-6 transition-all hover:-translate-y-0.5 hover:border-purple-500/40 hover:shadow-lg hover:shadow-purple-950/5"
-                  >
-                    <p className="text-lg font-semibold leading-snug">Present but Missing</p>
-                    <p className="mt-2 flex-1 text-sm text-foreground-muted">
-                      A lesson and exercise for men on providing everything but yourself. Follow the
-                      Scripture, write your notes, and email yourself a PDF.
-                    </p>
-                    <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-purple-700">
-                      Start the lesson
-                      <span aria-hidden className="transition-transform group-hover:translate-x-1">
-                        →
-                      </span>
-                    </span>
-                  </Link>
-                </Reveal>
-                <Reveal delay={60}>
-                  <Link
-                    href="/source-of-life"
-                    className="group flex h-full flex-col rounded-3xl border border-border-subtle bg-background-elevated p-6 transition-all hover:-translate-y-0.5 hover:border-purple-500/40 hover:shadow-lg hover:shadow-purple-950/5"
-                  >
-                    <p className="text-lg font-semibold leading-snug">Source of Life</p>
-                    <p className="mt-2 flex-1 text-sm text-foreground-muted">
-                      A Scripture study on who is really in control: is good always God, and bad always
-                      the devil? A short test, the verses in three acts, and a worksheet for where you
-                      are right now.
-                    </p>
-                    <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-purple-700">
-                      Start the study
-                      <span aria-hidden className="transition-transform group-hover:translate-x-1">
-                        →
-                      </span>
-                    </span>
-                  </Link>
-                </Reveal>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </section>
   );
 }
