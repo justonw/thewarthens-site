@@ -15,7 +15,7 @@ export default function Header() {
             className="rounded-md sm:h-9 sm:w-9"
             priority
           />
-          <span className="hidden text-lg font-semibold tracking-tight sm:inline">
+          <span className="hidden text-lg font-semibold tracking-tight lg:inline">
             The Warthens
           </span>
         </Link>

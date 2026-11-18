@@ -2,7 +2,7 @@
 """Builds a transparent lower-third text overlay (ProRes 4444 with alpha), 11 seconds. It eases up onto the screen and
 stays until the end. Nothing moves off.
 
-  python3 scripts/make-lower-third-question.py
+  python3 scripts/make-lower-third-question.py ["the question"] [file-name-part]
 
 Writes docs/video-overlays/overlay-lower-third-overwhelmed-question.mov and a preview image. No em dashes.
 """
@@ -12,7 +12,10 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "docs", "video-overlays")
 W, H, FPS, SECONDS = 1920, 1080, 30, 11
-TEXT = "What do others experience when I am overwhelmed?"
+import sys
+# Usage: make-lower-third-question.py ["the question"] [file-name-part]   (no arguments rebuilds the original one)
+TEXT = sys.argv[1] if len(sys.argv) > 1 else "What do others experience when I am overwhelmed?"
+NAME = sys.argv[2] if len(sys.argv) > 2 else "overwhelmed-question"
 GOLD = (222, 184, 112)
 WHITE = (248, 247, 242)
 FONT = "/System/Library/Fonts/Supplemental/Georgia Bold.ttf"
@@ -96,7 +99,7 @@ tmp = tempfile.mkdtemp(prefix="lower-")
 intro = int(1.4 * FPS)
 for i in range(intro):
     frame_at(i / FPS).save(os.path.join(tmp, f"f{i:03d}.png"))
-out = os.path.join(OUT, "overlay-lower-third-overwhelmed-question.mov")
+out = os.path.join(OUT, f"overlay-lower-third-{NAME}.mov")
 subprocess.run([
     "ffmpeg", "-y", "-loglevel", "error", "-framerate", str(FPS), "-i", os.path.join(tmp, "f%03d.png"),
     "-vf", f"tpad=stop_mode=clone:stop_duration={SECONDS - intro / FPS:.3f},format=yuva444p10le",
@@ -105,6 +108,6 @@ subprocess.run([
 ], check=True)
 still = Image.new("RGBA", (W, H), (40, 52, 84, 255))
 still.alpha_composite(Image.open(os.path.join(tmp, f"f{intro - 1:03d}.png")))
-still.convert("RGB").save(os.path.join(OUT, "preview-lower-third-overwhelmed-question.jpg"), quality=88)
+still.convert("RGB").save(os.path.join(OUT, f"preview-lower-third-{NAME}.jpg"), quality=88)
 shutil.rmtree(tmp)
 print(out)
