@@ -4,8 +4,13 @@ import { useSyncExternalStore } from "react";
 
 // A small win. Three gentle things to do this week, which can be ticked off. Ticks are remembered on this device only.
 const KEY = "warthens-this-week-v1";
+// The first item is worded for the page it appears on (the career quiz only exists on the Tech page).
+const stepText = {
+  tech: "Give 20 minutes to one thing for your next move: the career quiz, your resume, or one video.",
+  faith: "Give 20 minutes to one thing that helps you grow: watch a video, read a study, or work through a lesson.",
+};
 const items = [
-  { id: "step", label: "One step", text: "Give 20 minutes to one thing for your next move: the quiz, your resume, or one video." },
+  { id: "step", label: "One step", text: "" },
   { id: "person", label: "One person", text: "Text someone who matters to you and tell them one thing you appreciate about them." },
   { id: "question", label: "One question", text: "Ask yourself: what did I do this week that mattered to someone?" },
 ];
@@ -40,7 +45,7 @@ function save(next: string[]) {
   window.dispatchEvent(new Event(EVENT));
 }
 
-export default function ThisWeekCard() {
+export default function ThisWeekCard({ variant = "tech" }: { variant?: "tech" | "faith" }) {
   const raw = useSyncExternalStore(subscribe, snapshot, () => "[]");
   let done: string[] = [];
   try {
@@ -68,7 +73,7 @@ export default function ThisWeekCard() {
               <label className={`flex min-h-11 cursor-pointer items-start gap-3 rounded-2xl border p-3 transition-colors ${on ? "border-green-600/30 bg-green-600/5" : "border-border-subtle hover:border-purple-500/40"}`}>
                 <input type="checkbox" checked={on} onChange={() => toggle(it.id)} className="mt-1 h-5 w-5 shrink-0 accent-green-600" />
                 <span className="text-sm">
-                  <span className="font-semibold">{it.label}.</span> <span className={on ? "text-foreground-muted line-through" : "text-foreground-muted"}>{it.text}</span>
+                  <span className="font-semibold">{it.label}.</span> <span className={on ? "text-foreground-muted line-through" : "text-foreground-muted"}>{it.id === "step" ? stepText[variant] : it.text}</span>
                 </span>
               </label>
             </li>

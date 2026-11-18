@@ -201,7 +201,7 @@ export default function FaithJourneyPage() {
       <StartDoors variant="faith" />
 
       <Reveal className="mx-auto grid max-w-5xl gap-5 px-6 pb-16 md:grid-cols-2">
-        <ThisWeekCard />
+        <ThisWeekCard variant="faith" />
         <StayInTouch from="faith" />
       </Reveal>
 
