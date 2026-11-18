@@ -159,13 +159,13 @@ export default function StrengthenPanel({
           </div>
           {total > 0 && (
             <p className="text-sm font-semibold text-violet-800">
-              {handled} of {total} done{added > 0 ? `, ${added} added to your resume` : ""}
+              {handled} of {total} questions reviewed{added > 0 ? `, ${added} added to your resume` : ""}
             </p>
           )}
         </div>
 
         {total > 0 && (
-          <div className="mt-3 h-2 overflow-hidden rounded-full bg-violet-100" role="progressbar" aria-valuemin={0} aria-valuemax={total} aria-valuenow={handled} aria-label="Questions done">
+          <div className="mt-3 h-2 overflow-hidden rounded-full bg-violet-100" role="progressbar" aria-valuemin={0} aria-valuemax={total} aria-valuenow={handled} aria-label="Questions reviewed">
             <div className="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 transition-all duration-500" style={{ width: `${Math.round((handled / total) * 100)}%` }} />
           </div>
         )}

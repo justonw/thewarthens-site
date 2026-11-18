@@ -9,7 +9,8 @@ export function ReadinessRing({ passed, total }: { passed: number; total: number
   const ratio = total > 0 ? passed / total : 0;
   const done = passed === total;
   return (
-    <div className="relative h-16 w-16 shrink-0" role="img" aria-label={`${passed} of ${total} resume checks passed`}>
+    <div className="flex shrink-0 flex-col items-center gap-1" role="img" aria-label={`${passed} of ${total} resume checks passed`}>
+     <div className="relative h-16 w-16">
       <svg viewBox="0 0 56 56" className="h-16 w-16 -rotate-90">
         <circle cx="28" cy="28" r={R} fill="none" strokeWidth="6" className="rb-ring-track" />
         <circle
@@ -28,6 +29,8 @@ export function ReadinessRing({ passed, total }: { passed: number; total: number
       <span className="absolute inset-0 flex items-center justify-center text-sm font-bold">
         {passed}/{total}
       </span>
+     </div>
+     <span className="text-[10px] font-semibold uppercase tracking-wider text-foreground-muted">checks passed</span>
     </div>
   );
 }

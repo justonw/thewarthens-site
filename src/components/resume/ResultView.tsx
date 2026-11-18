@@ -335,10 +335,10 @@ export default function ResultView({
             <ReadinessRing passed={ats.rows.length - flags} total={ats.rows.length} />
             <div>
               {flags === 0 ? (
-                <p className="rb-pop inline-flex items-center rounded-full bg-green-600 px-3 py-1 text-xs font-bold uppercase tracking-wider text-white">Ready to apply</p>
+                <p className="rb-pop inline-flex items-center rounded-full bg-green-600 px-3 py-1 text-xs font-bold uppercase tracking-wider text-white">All checks passed</p>
               ) : (
                 <p className="rb-pop inline-flex items-center rounded-full bg-amber-500 px-3 py-1 text-xs font-bold uppercase tracking-wider text-white">
-                  {flags} thing{flags === 1 ? "" : "s"} to check before you apply
+                  {flags} check{flags === 1 ? "" : "s"} to fix
                 </p>
               )}
               <h2 className="mt-1.5 text-xl font-semibold tracking-tight sm:text-2xl">
@@ -510,7 +510,7 @@ export default function ResultView({
           </div>
 
           <div className="space-y-4">
-            <div className={card}>
+            <div id="resume-check" className={card}>
               <p className="font-semibold">Resume check</p>
               <p className="mt-1 text-xs text-foreground-muted">
                 {flags === 0 ? "Everything on our checklist is covered." : `${flags} thing${flags === 1 ? "" : "s"} to look at.`} This updates as you edit.

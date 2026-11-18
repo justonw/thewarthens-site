@@ -30,6 +30,8 @@ const refined: any = {
   ],
   training: [], education: [],
 };
+// A volunteer role the person described comes back as a new entry; training is never used for it.
+refined.experience.push({ title: "Volunteer Staff Onboarding", company: "Local church", location: "", dates: "", bullets: ["Onboarded new volunteer staff at a 3,000 member church."] });
 const out: any = mergeRefined(original, refined);
 const checks: [string, boolean][] = [
   ["contact kept", out.contact.length === 4 && out.contact.includes("justonwarthen@gmail.com")],
@@ -37,13 +39,15 @@ const checks: [string, boolean][] = [
   ["training kept", out.training.length === 1],
   ["headline kept", out.headline === original.headline],
   ["job dates kept", out.experience[0].dates === "Aug 2026 - Present"],
-  ["second job kept with dates", out.experience.length === 2 && out.experience[1].dates === "Sep 2022 - Present"],
+  ["second job kept with dates", out.experience.length >= 2 && out.experience[1].dates === "Sep 2022 - Present"],
   ["original bullets kept as written", out.experience[0].bullets[0] === original.experience[0].bullets[0]],
   ["reworded copy not duplicated", out.experience[0].bullets.filter((b: string) => /Advise owners/.test(b)).length === 1],
   ["new bullet added", out.experience[0].bullets.some((b: string) => /freelance digital advertising/.test(b))],
   ["skills group restored", out.skills.some((g: any) => g.label === "Sales")],
   ["new skills added", out.skills.find((g: any) => g.label === "Tools").items.includes("Google Ads")],
   ["summary kept when AI sent none", out.summary === original.summary],
+  ["volunteer entry added to experience", out.experience.length === 3 && /Volunteer Staff Onboarding/.test(out.experience[2].title) && out.experience[2].bullets.length === 1],
+  ["not added to training", out.training.length === 1],
 ];
 let bad = 0;
 for (const [name, ok] of checks) { console.log(ok ? "PASS" : "FAIL", name); if (!ok) bad++; }

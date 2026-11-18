@@ -614,7 +614,7 @@ const REFINE_SYSTEM = `You update a resume. A job posting asks for something the
 
 Rules:
 - Use only what the person said, at the level of detail they gave. Do not add numbers, tools, dates, employers, or results they did not state.
-- Put it where it belongs: a skill or tool goes in the best skills group (add a group only if none fits); something they did at a named job becomes one new bullet under that job (verb first, past tense for a past job, and only if the person named the job or it is clear from what they said); a course or certificate goes in training. If it is not clear which job it belongs to, put it in skills or training instead and do not attach it to a job.
+- Put it where it belongs. A skill or tool goes in the best skills group (add a group only if none fits). Something they did at a named job becomes one new bullet under that job (verb first, past tense for a past job, and only if the person named the job or it is clear from what they said). Volunteer, church, community, or other unpaid work, and side projects, become their own new entry under experience: the title is the role they describe in a few words (for example "Volunteer Staff Onboarding"), the company is the organization if they named one (otherwise leave it empty), dates only if they gave them, and one or two bullets in their own words. If the work clearly continues one of the entries already on the resume (for example their own brand or business), add a bullet under that entry instead. Training is ONLY for courses, certificates, licenses, and formal programs the person completed: never put a job duty, a volunteer role, or a project in training. If it is not clear where something belongs, put it in skills and do not attach it to a job.
 - Leave every other part of the resume exactly as it is. Do not rewrite, reorder, or shorten anything else. Always return EVERY section in full: the name, headline, contact details, summary, skills, every job with its title, company, location, dates, and bullets, training, and education. A section that does not change must still be returned exactly as given.
 - If what the person said does not actually answer the requirement, or is too vague to use, set "added" to false and use "note" to say, in one friendly sentence, what to add (for example: where they used it and for how long).
 - Never use em dashes or en dashes. No clichés.
@@ -680,11 +680,17 @@ export function mergeRefined(original: ResumeDoc, refined: ResumeDoc): ResumeDoc
   for (const group of original.skills) {
     if (!skills.some((g) => g.label.toLowerCase() === group.label.toLowerCase())) skills.push(group);
   }
+  // A volunteer role or side project the person described comes back as a new entry. Keep at most two, put them
+  // after the existing entries, and keep their bullets short. Anything that matches an entry already there is ignored.
+  const fresh = refined.experience
+    .filter((r) => (r.title || r.company) && !original.experience.some((o) => sameJob(o, r)))
+    .slice(0, 2)
+    .map((r) => ({ ...r, location: r.location || "", bullets: r.bullets.filter(Boolean).slice(0, 3) }));
   return {
     ...original,
     summary: refined.summary || original.summary,
     skills: skills.length ? skills : original.skills,
-    experience,
+    experience: [...experience, ...fresh],
     // a new course or certificate may be added, but nothing already listed is dropped
     training: [...original.training, ...refined.training.filter((t) => original.training.every((o) => similar(o.name, t.name) < 0.75))],
   };
