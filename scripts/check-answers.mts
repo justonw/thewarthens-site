@@ -3,7 +3,7 @@
 // src/lib/answers.ts:
 //   node --experimental-strip-types scripts/check-answers.mts
 import assert from "node:assert/strict";
-import { QUICK_QUESTIONS, buildAnswerRequest, buildVerifyRequest, inventedNumbers, isAnswerTweak, isPersonalQuestion, parseAnswerResponse, parseVerifyResponse, plainAnswer, repairInstruction, wordCount } from "../src/lib/answers.ts";
+import { QUICK_QUESTIONS, clearedByItsOwnReason, buildAnswerRequest, buildVerifyRequest, inventedNumbers, isAnswerTweak, isPersonalQuestion, parseAnswerResponse, parseVerifyResponse, plainAnswer, repairInstruction, wordCount } from "../src/lib/answers.ts";
 
 // Questions only the person can answer are never drafted.
 for (const q of [
@@ -73,6 +73,12 @@ const verifyTool = (list: any) => ({ content: [{ type: "tool_use", name: "check_
 const parsed = parseVerifyResponse(verifyTool([{ sentence: "The whole team picked it up and morale improved.", why: "not in the story" }, { sentence: "A sentence the checker invented that is not in the draft.", why: "x" }, { sentence: "short", why: "y" }]), draft)!;
 assert.deepEqual(parsed, [{ sentence: "The whole team picked it up and morale improved.", why: "not in the story" }], "only sentences that really appear in the draft are kept");
 assert.deepEqual(parseVerifyResponse(verifyTool([]), draft), [], "an empty list means everything was supported");
+assert.equal(clearedByItsOwnReason("The claim of working in it is consistent with the resume, so this is supported"), true, "a flag that clears itself is dropped");
+assert.equal(clearedByItsOwnReason("Resume lists Salesforce as a skill; the claim is supported"), true);
+assert.equal(clearedByItsOwnReason("Not supported: no award appears in the material"), false, "a real flag is kept");
+assert.equal(clearedByItsOwnReason("Resume shows a B.S., not an MBA; no PMP certification appears"), false);
+assert.equal(clearedByItsOwnReason("Award, Gainsight tool, and health-score work are not in the resume"), false);
+assert.equal(parseVerifyResponse(verifyTool([{ sentence: "Two agents kept clashing over shift swaps.", why: "This is consistent with the story" }]), draft)!.length, 0, "a self-cleared flag never reaches the person");
 assert.equal(parseVerifyResponse({ content: [{ type: "text", text: "ok" }] }, draft), null, "an unusable reply is reported as not checked");
 assert.equal(parseVerifyResponse(verifyTool("nope"), draft), null);
 assert.deepEqual(parseVerifyResponse(verifyTool([{ sentence: "the WHOLE  team picked it up and morale improved.", why: "w" }]), draft)!.length, 1, "spacing and case do not hide a match");
