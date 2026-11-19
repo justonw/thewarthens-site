@@ -17,6 +17,7 @@ export const FUNNEL_EVENTS = [
   "scanner-checked", // ran the scanner
   "outreach-opened", // opened "Reach out" on a finished resume
   "outreach-written", // got a message back from "Reach out"
+  "numbers-answered", // added a real number to a bullet with the numbers coach
   "followup-opened", // opened a follow-up message from a nudge on My applications
   "followup-written", // copied a follow-up message
   "next-job", // pressed "Next job" after a build (a second job in one visit)

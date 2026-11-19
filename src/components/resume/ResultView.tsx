@@ -17,6 +17,7 @@ import { Confetti, ReadinessRing } from "./Celebrate";
 import ShareCard from "./ShareCard";
 import StrengthenPanel from "./StrengthenPanel";
 import OutreachPanel from "./OutreachPanel";
+import NumbersCoach from "./NumbersCoach";
 import { STORIES_KEY, addStoryTo, newStory, noStories, type Story } from "@/lib/resume-profile";
 import { cleanDoc, sameJob, type SavedMessage } from "@/lib/resume-library";
 import type { Purpose } from "@/lib/outreach";
@@ -431,6 +432,14 @@ export default function ResultView({
 
       <div hidden={tab === "reach"} className="space-y-6">
       <StrengthenPanel gaps={gaps} fit={result.fit} justAdded={justAdded} onAdd={addGap} />
+
+      <NumbersCoach
+        doc={doc}
+        onDoc={onDoc}
+        email={email}
+        keywords={result.postingKeywords}
+        onAnswered={(topic, question, answer) => setStories((cur) => addStoryTo(cur, newStory(topic, question, answer)))}
+      />
 
     {(contactMissing.email || contactMissing.phone) && (
         <div role="alert" className="rounded-2xl border border-amber-500/50 bg-amber-500/10 p-5">
