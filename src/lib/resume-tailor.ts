@@ -205,7 +205,7 @@ const docProps = {
   summary: str,
   skills: {
     type: "array",
-    maxItems: 4,
+    maxItems: 6,
     items: { type: "object", properties: { label: str, items: str }, required: ["label", "items"] },
   },
   experience: {
@@ -421,7 +421,7 @@ export function parseDoc(i: Record<string, unknown>): ResumeDoc | null {
     headline: cleanText(i.headline, 120),
     contact: list(i.contact, 120, 6),
     summary: cleanText(i.summary, 700),
-    skills: objects(i.skills, 4)
+    skills: objects(i.skills, 6)
       .map((s) => ({ label: cleanText(s.label, 40), items: cleanText(s.items, 300) }))
       .filter((s) => s.items),
     experience,
