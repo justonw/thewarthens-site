@@ -22,6 +22,7 @@ assert.ok(text.includes("Hiring manager interview"), "the stage is sent");
 assert.ok(text.includes("Executive stakeholder reviews") && text.includes("<unmet>"), "the gaps are sent for the gap questions");
 assert.ok(!text.includes("dana@example.com") && !text.includes("614-555"), "the contact line is not sent");
 assert.ok(req.system.includes("Never write a story for the person") && req.system.includes("storyAsk") && req.system.includes("Never include questions about pay"), "the rules are in the prompt");
+assert.ok(req.system.includes("what a tool or skill is used FOR") && req.system.includes("self-praise"), "the stay-close rules are in the prompt");
 assert.equal(req.tools[0].name, "write_interview_prep");
 const none: any = lib.buildInterviewRequest({ ...input, unmet: [], stage: "phone" }, "claude-sonnet-5-5");
 assert.ok(JSON.stringify(none.messages).includes("Recruiter phone screen") && JSON.stringify(none.messages).includes("There are no known gaps"));
