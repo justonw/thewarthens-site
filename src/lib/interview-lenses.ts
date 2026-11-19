@@ -65,8 +65,8 @@ export const LENSES: Lens[] = [
     titleHints: ["administrative", "executive assistant", "office manager", "office coordinator", "receptionist", "secretary", "clerk", "data entry"],
     keywordHints: ["calendar management", "scheduling", "travel arrangements", "microsoft office", "filing", "phones", "correspondence"],
     measured: ["accuracy of the work", "turnaround on requests", "scheduling conflicts resolved", "supplies and vendor costs kept in line", "response time to messages and calls"],
-    exercises: ["prioritize several competing requests from different people right now", "a scheduling puzzle with conflicts", "write or proofread a short professional email", "how they would organize a messy shared folder or process"],
-    situations: ["two leaders who each want priority", "a last-minute change to travel or a meeting", "an error found after something was sent", "an upset caller or visitor"],
+    exercises: ["prioritize several competing requests from different people right now", "a scheduling puzzle with conflicts", "write or proofread a short professional email", "how they would organize a messy shared folder or process", "what they do when someone asks for information that is confidential", "how they decide what to handle themselves and what to bring to the person they support"],
+    situations: ["two leaders who each want priority", "a last-minute change to travel or a meeting", "an error found after something was sent", "an upset caller or visitor", "overhearing or seeing something private", "a temporary assignment that ends and the handoff to the next person"],
     compliance: ["confidentiality of what they see and hear", "handling sensitive documents", "access to private calendars and email"],
   },
   {
@@ -281,7 +281,7 @@ Role lens. This job is the kind of role below. These notes list what interviewer
 ${blocks}
 
 How to use the lens:
-- Ask 10 questions instead of 8. Keep every question the posting itself calls for (including anything specific to this job, such as a contract, a shift, or a setting), and add two to four from the lens: choose the ones that fit this posting and this resume best, and cover at least one metric and one exercise or situation.
+- Ask 10 questions instead of 8. Keep every question the posting itself calls for (including anything specific to this job, such as a contract, a shift, or a setting), and add two to four from the lens: choose the ones that fit this posting and this resume best, and cover at least one metric and one exercise or situation, and when the lens lists rules, privacy, or safety topics, at least one question on them (unless a question you are already asking covers it).
 - For a question about what the person was measured on, ask what numbers they were measured on, and set "storyAsk" to ask for their real figures. Never fill in a figure for them.
 - For an exercise, role-play, or situation, say in "approach" what the interviewer is looking for. In "points" use only real history from the resume or stories. When none fits, leave "points" short and set "storyAsk" to ask for a true example.
 - For a rules, privacy, or safety topic, ask how they handle it in their own words, and never claim a license, certification, or training the material does not show.
