@@ -104,6 +104,8 @@ export default function NumbersCoach({
 }) {
   const [skipped, setSkipped] = useState<Set<string>>(() => new Set());
   const [flash, setFlash] = useState("");
+  // The last change, so it can be undone with one tap if the number landed on the wrong thing.
+  const [last, setLast] = useState<{ job: number; bullet: number; before: string; after: string } | null>(null);
   const score = useMemo(() => quantifyScore(doc), [doc]);
   const asked = useMemo(() => findUnquantified(doc, keywords, skipped), [doc, keywords, skipped]);
 
@@ -127,10 +129,22 @@ export default function NumbersCoach({
       onAnswered?.(`${item.title}${item.company ? ` at ${item.company}`: ""}: ${item.text.slice(0, 80)}`, numberQuestion(item.text), answer);
       track("numbers-answered");
       setFlash(data.bullet as string);
+      setLast({ job: item.job, bullet: item.bullet, before: item.text, after: data.bullet as string });
       return null;
     } catch {
       return errors.upstream;
     }
+  }
+
+  // Puts the bullet back as it was, but only if it is still the one we wrote.
+  function undo() {
+    if (!last) return;
+    const current = doc.experience[last.job]?.bullets[last.bullet];
+    if (current?.trim() === last.after.trim()) {
+      onDoc({ ...doc, experience: doc.experience.map((j, ji) => (ji === last.job ? { ...j, bullets: j.bullets.map((b, bi) => (bi === last.bullet ? last.before : b)) } : j)) });
+    }
+    setLast(null);
+    setFlash("");
   }
 
   if (score.total === 0) return null;
@@ -142,6 +156,11 @@ export default function NumbersCoach({
       <p role="status" className="rounded-2xl border border-border-subtle bg-background-elevated px-4 py-3 text-sm">
         <span className="font-semibold text-green-700">{score.withNumber} of {score.total} bullets show a number.</span>{" "}
         <span className="text-foreground-muted">{flash ? "Your last number is in the resume." : "Numbers make a resume easier to believe."}</span>
+        {last && (
+          <button type="button" onClick={undo} className="ml-2 inline-flex min-h-11 items-center font-semibold text-blue-700 underline underline-offset-2 sm:min-h-0">
+            Undo
+          </button>
+        )}
       </p>
     );
   }
@@ -170,7 +189,12 @@ export default function NumbersCoach({
 
       {flash && (
         <p role="status" className="mt-4 rounded-xl border border-green-600/30 bg-green-600/10 px-4 py-3 text-sm">
-          <span className="font-semibold text-green-800">Added.</span> <span className="text-foreground">{flash}</span>
+          <span className="font-semibold text-green-800">Added.</span> <span className="text-foreground">{flash}</span>{" "}
+          <span className="text-foreground-muted">Read it once. If the number landed on the wrong thing,</span>{" "}
+          <button type="button" onClick={undo} className="inline-flex min-h-11 items-center font-semibold text-blue-700 underline underline-offset-2 sm:min-h-0">
+            undo it
+          </button>
+          <span className="text-foreground-muted"> or edit the bullet below.</span>
         </p>
       )}
 
