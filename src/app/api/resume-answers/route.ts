@@ -9,6 +9,10 @@ import {
   MAX_QUESTION_CHARS,
   MIN_LIMIT,
   buildAnswerRequest,
+  buildVerifyRequest,
+  parseVerifyResponse,
+  repairInstruction,
+  type Unsupported,
   inventedNumbers,
   isAnswerTweak,
   isPersonalQuestion,
@@ -31,6 +35,8 @@ const API_KEY = process.env.CLAUDE_API_KEY;
 const API_BASE = process.env.CLAUDE_API_BASE_URL || "https://api.anthropic.com";
 const MODEL = process.env.RESUME_MODEL || RESUME_MODEL;
 const OWNER_CODE = process.env.RESUME_OWNER_CODE || "";
+// The second look is a quick, focused job, so it runs on the faster model.
+const VERIFY_MODEL = process.env.RESUME_VERIFY_MODEL || "claude-haiku-5-5";
 
 const WINDOW_MS = 10 * 60 * 1000;
 const MAX_PER_WINDOW = 25;
@@ -81,6 +87,29 @@ async function ask(input: AnswerInput): Promise<AnswerResult | null> {
   return null;
 }
 
+// Compares a draft to the material. Returns the unsupported sentences, or null when the check could not be done.
+async function verify(input: AnswerInput, answer: string): Promise<Unsupported[] | null> {
+  const payload = JSON.stringify(buildVerifyRequest(input, answer, VERIFY_MODEL));
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      const res = await fetch(`${API_BASE}/v1/messages`, {
+        method: "POST",
+        headers: { "content-type": "application/json", "x-api-key": API_KEY as string, "anthropic-version": "2023-06-01" },
+        body: payload,
+        signal: AbortSignal.timeout(15000),
+      });
+      if (res.ok) {
+        const parsed = parseVerifyResponse(await res.json(), answer);
+        if (parsed) return parsed;
+      } else if (res.status !== 429 && res.status < 500) return null;
+    } catch {
+      /* try once more, then report that it was not checked */
+    }
+    await new Promise((resolve) => setTimeout(resolve, 600 * attempt));
+  }
+  return null;
+}
+
 export async function POST(req: NextRequest) {
   if (!API_KEY) return NextResponse.json({ error: "unavailable" }, { status: 503 });
 
@@ -116,6 +145,12 @@ export async function POST(req: NextRequest) {
   const tweak = isAnswerTweak(body.tweak) ? body.tweak : "";
   const rawLimit = typeof body.limit === "number" && Number.isFinite(body.limit) ? Math.round(body.limit) : 0;
   const limit = rawLimit >= MIN_LIMIT ? Math.min(MAX_LIMIT, rawLimit) : 0;
+
+  // For testing the second look on its own (owner only): check a draft someone wrote, without writing a new one.
+  if (owner && typeof body.verifyAnswer === "string") {
+    const probe: AnswerInput = { doc, stories: plainAnswer(body.stories, 3000), postingTitle: cleanText(body.postingTitle, 140), postingCompany: cleanText(body.postingCompany, 120), postingKeywords: strings(body.postingKeywords, 60, 14), fitReason: "", question, limit: 0, extra: plainAnswer(body.extra, MAX_EXTRA_CHARS), tweak: "", previous: "" };
+    return NextResponse.json({ ok: true, flagged: await verify(probe, plainAnswer(body.verifyAnswer, 6000)) });
+  }
 
   // A question about pay, work authorization, and the like is for the person to answer, so it costs nothing.
   if (isPersonalQuestion(question)) {
@@ -165,6 +200,7 @@ export async function POST(req: NextRequest) {
   // Everything the person gave us, so a number that appears nowhere in it can be caught.
   const sources = [JSON.stringify({ ...doc, contact: [] }), input.stories, input.extra, input.question, input.postingTitle, input.postingKeywords.join(" ")];
 
+  const started = Date.now();
   let result = await ask(input);
   // One careful second try if the first draft broke a rule that code can check.
   if (result?.outcome === "answer") {
@@ -191,7 +227,21 @@ export async function POST(req: NextRequest) {
       console.error("resume-answers refused a draft with numbers nobody gave us");
       return NextResponse.json({ error: "refused" }, { status: 422 });
     }
-    return NextResponse.json({ ok: true, result, overLimit: limit > 0 && result.answer.length > limit });
+    // The second look: is every sentence in the material? If not, one repair pass, then look again.
+    let flagged = await verify(input, result.answer);
+    if (flagged && flagged.length > 0 && Date.now() - started < 16000) {
+      const repaired = await ask({ ...input, fix: repairInstruction(flagged), previous: input.previous || result.answer });
+      if (repaired?.outcome === "answer" && inventedNumbers(repaired.answer, sources).length === 0 && !(limit > 0 && repaired.answer.length > limit + 40)) {
+        const again = await verify(input, repaired.answer);
+        // Keep the repaired draft only if it checks no worse than the first.
+        if (again && again.length <= flagged.length) {
+          result = repaired;
+          flagged = again;
+        }
+      }
+    }
+    const answerNow = result.outcome === "answer" ? result.answer : "";
+    return NextResponse.json({ ok: true, result, overLimit: limit > 0 && answerNow.length > limit, checked: flagged !== null, flagged: flagged ?? [] });
   }
   // A question back to the person, or "answer it yourself": no draft was written, so it costs nothing.
   await giveBack();

@@ -3,7 +3,7 @@
 // src/lib/answers.ts:
 //   node --experimental-strip-types scripts/check-answers.mts
 import assert from "node:assert/strict";
-import { QUICK_QUESTIONS, buildAnswerRequest, inventedNumbers, isAnswerTweak, isPersonalQuestion, parseAnswerResponse, plainAnswer, wordCount } from "../src/lib/answers.ts";
+import { QUICK_QUESTIONS, buildAnswerRequest, buildVerifyRequest, inventedNumbers, isAnswerTweak, isPersonalQuestion, parseAnswerResponse, parseVerifyResponse, plainAnswer, repairInstruction, wordCount } from "../src/lib/answers.ts";
 
 // Questions only the person can answer are never drafted.
 for (const q of [
@@ -66,5 +66,24 @@ assert.equal(req.tool_choice.type, "auto");
 assert.ok(isAnswerTweak("shorter") && isAnswerTweak("") && !isAnswerTweak("longer"));
 assert.equal(plainAnswer("a “quote” here", 50), 'a "quote" here');
 assert.equal(wordCount("  three little words "), 3);
+
+// ---------- The second look ----------
+const draft = "Two agents kept clashing over shift swaps. I set up a shared swap board. The whole team picked it up and morale improved.";
+const verifyTool = (list: any) => ({ content: [{ type: "tool_use", name: "check_answer", input: { unsupported: list } }] });
+const parsed = parseVerifyResponse(verifyTool([{ sentence: "The whole team picked it up and morale improved.", why: "not in the story" }, { sentence: "A sentence the checker invented that is not in the draft.", why: "x" }, { sentence: "short", why: "y" }]), draft)!;
+assert.deepEqual(parsed, [{ sentence: "The whole team picked it up and morale improved.", why: "not in the story" }], "only sentences that really appear in the draft are kept");
+assert.deepEqual(parseVerifyResponse(verifyTool([]), draft), [], "an empty list means everything was supported");
+assert.equal(parseVerifyResponse({ content: [{ type: "text", text: "ok" }] }, draft), null, "an unusable reply is reported as not checked");
+assert.equal(parseVerifyResponse(verifyTool("nope"), draft), null);
+assert.deepEqual(parseVerifyResponse(verifyTool([{ sentence: "the WHOLE  team picked it up and morale improved.", why: "w" }]), draft)!.length, 1, "spacing and case do not hide a match");
+assert.equal(parseVerifyResponse(verifyTool(Array.from({ length: 9 }, () => ({ sentence: "Two agents kept clashing over shift swaps.", why: "w" }))), draft)!.length, 1, "the same sentence is not listed twice");
+const vreq: any = buildVerifyRequest({ doc, stories: "- Billing: fixed an error for 3 customers.", extra: "", question: "Q?", postingTitle: "CSM", postingCompany: "Lumen", postingKeywords: ["onboarding"] }, draft, "claude-haiku-5-5");
+const vtext = JSON.stringify(vreq.messages);
+assert.ok(!vtext.includes("dana@example.com"), "contact details are not sent to the checker either");
+assert.ok(vtext.includes("<answer>") && vtext.includes("<true_stories>") && vtext.includes("<resume>"));
+assert.equal(vreq.tool_choice.type, "tool", "the fast model is forced to call the tool");
+assert.ok(vreq.system.includes("Be strict about added detail") && vreq.system.includes("Do not flag"));
+const repair = repairInstruction([{ sentence: "Morale improved.", why: "not in the story" }]);
+assert.ok(repair.includes("Morale improved.") && repair.includes("Remove them, or rewrite them using only the material"));
 
 console.log("answers checks passed");

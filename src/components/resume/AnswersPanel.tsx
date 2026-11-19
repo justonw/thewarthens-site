@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ANSWER_TWEAKS, QUICK_QUESTIONS, isPersonalQuestion, wordCount, type AnswerTweak } from "@/lib/answers";
+import { ANSWER_TWEAKS, QUICK_QUESTIONS, isPersonalQuestion, wordCount, type AnswerTweak, type Unsupported } from "@/lib/answers";
 import type { ResumeDoc, TailorResult } from "@/lib/resume-tailor";
 import { newMessageId, whenLabel, type SavedAnswer } from "@/lib/resume-library";
 import { storiesAsNotes, type Story } from "@/lib/resume-profile";
@@ -56,6 +56,9 @@ export default function AnswersPanel({
   const [drafted, setDrafted] = useState<Drafted | null>(null);
   const [answer, setAnswer] = useState("");
   const [overLimit, setOverLimit] = useState(false);
+  // The second look: whether the draft was checked against the material, and any sentences it could not find there.
+  const [checked, setChecked] = useState(false);
+  const [flagged, setFlagged] = useState<Unsupported[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
@@ -101,6 +104,8 @@ export default function AnswersPanel({
         setDrafted({ kind: "answer", basedOn: r.basedOn ?? "" });
         setAnswer(r.answer);
         setOverLimit(Boolean(data.overLimit));
+        setChecked(Boolean(data.checked));
+        setFlagged(Array.isArray(data.flagged) ? (data.flagged as Unsupported[]) : []);
         setExtra("");
         keep(r.answer);
         track("answers-written");
@@ -159,6 +164,8 @@ export default function AnswersPanel({
     setExtra("");
     setDrafted(null);
     setAnswer("");
+    setChecked(false);
+    setFlagged([]);
     setError("");
     keptId.current = "";
     window.setTimeout(() => topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
@@ -169,6 +176,15 @@ export default function AnswersPanel({
     if (extra.trim().length < 5) return setError("Write a sentence or two about a real time. It only has to be true.");
     onStory?.(question.trim().slice(0, 120), drafted?.kind === "ask" ? drafted.askBack : "", extra.trim());
     void write("", extra.trim());
+  }
+
+  // Flagged sentences still in the text (the person may have edited or removed them since).
+  const norm = (t: string) => t.replace(/\s+/g, " ").trim();
+  const visibleFlags = flagged.filter((f) => norm(answer).includes(norm(f.sentence)));
+  function removeSentence(sentence: string) {
+    const next = norm(answer).replace(norm(sentence), "").replace(/\s{2,}/g, " ").trim();
+    setAnswer(next);
+    setFlagged((cur) => cur.filter((f) => f.sentence !== sentence));
   }
 
   const chars = answer.length;
@@ -340,6 +356,30 @@ export default function AnswersPanel({
               </span>
               {(over || overLimit) && limitNumber > 0 && <span className="text-red-700">Over the form&apos;s limit. Tap Shorter, or trim a few words.</span>}
             </div>
+            {visibleFlags.length > 0 ? (
+              <div role="status" className="mt-3 rounded-xl border border-amber-500/40 bg-amber-500/10 p-3 text-sm">
+                <p className="font-semibold">Check {visibleFlags.length === 1 ? "this sentence" : "these sentences"}</p>
+                <p className="mt-0.5 text-xs text-foreground-muted">We couldn&apos;t find {visibleFlags.length === 1 ? "it" : "them"} in your resume or stories. Keep {visibleFlags.length === 1 ? "it" : "them"} only if true.</p>
+                <ul className="mt-2 space-y-2">
+                  {visibleFlags.map((f) => (
+                    <li key={f.sentence} className="rounded-lg bg-white p-2.5">
+                      <p>&ldquo;{f.sentence}&rdquo;</p>
+                      <p className="mt-0.5 text-xs text-foreground-muted">{f.why}</p>
+                      <button type="button" onClick={() => removeSentence(f.sentence)} className="mt-1.5 inline-flex min-h-10 items-center rounded-full border border-border-subtle bg-background px-4 text-xs font-semibold hover:border-blue-500/40">
+                        Remove it
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : checked ? (
+              <p role="status" className="mt-3 flex gap-2 text-sm text-green-800">
+                <span aria-hidden>✓</span>
+                <span>We checked each sentence against your resume and stories and found nothing extra. Still read it once.</span>
+              </p>
+            ) : (
+              <p role="status" className="mt-3 text-sm text-foreground-muted">We couldn&apos;t run the accuracy check this time. Read every sentence before you paste it.</p>
+            )}
             <button
               type="button"
               onClick={() => void copy(answer)}
