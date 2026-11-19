@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { cleanDoc, followUpDue, whenLabel, type LibraryEntry } from "@/lib/resume-library";
 import { downloadBlob } from "@/lib/download";
+import { usePersistentState } from "@/lib/use-persistent-state";
+import { DEFAULT_LOOK, LOOK_KEY, cleanLook, type LookOptions } from "@/lib/resume-look";
 
 // "My applications": every resume the person has built, kept on this device. Open one to edit it, download it again
 // without building it twice, mark it applied, or remove it. Shown under the build button, so the next job and the
@@ -29,6 +31,9 @@ export default function ApplicationsList({
   const [busy, setBusy] = useState("");
   const [confirming, setConfirming] = useState("");
   const [problem, setProblem] = useState("");
+  // The layout choices the person made on the result screen (skills, summary, size), so a quick download matches.
+  const [lookRaw] = usePersistentState<LookOptions>(LOOK_KEY, DEFAULT_LOOK);
+  const look = cleanLook(lookRaw);
 
   if (entries.length === 0) return null;
   const shown = all ? entries : entries.slice(0, SHOWN);
@@ -41,8 +46,8 @@ export default function ApplicationsList({
       const files = await import("@/lib/resume-files");
       const doc = cleanDoc(e.doc);
       const design = e.design ?? undefined;
-      if (kind === "pdf") downloadBlob(new Blob([(await files.buildPdf(doc, e.style, design)) as BlobPart], { type: "application/pdf" }), files.resumeFileName(doc, "pdf"));
-      else downloadBlob(await files.buildDocx(doc, e.style, design), files.resumeFileName(doc, "docx"));
+      if (kind === "pdf") downloadBlob(new Blob([(await files.buildPdf(doc, e.style, design, look)) as BlobPart], { type: "application/pdf" }), files.resumeFileName(doc, "pdf"));
+      else downloadBlob(await files.buildDocx(doc, e.style, design, look), files.resumeFileName(doc, "docx"));
     } catch {
       setProblem("That file didn't come out. Open the resume and download it from there.");
     } finally {

@@ -18,6 +18,8 @@ import ShareCard from "./ShareCard";
 import StrengthenPanel from "./StrengthenPanel";
 import OutreachPanel from "./OutreachPanel";
 import AnswersPanel from "./AnswersPanel";
+import LookPanel from "./LookPanel";
+import { DEFAULT_LOOK, LOOK_KEY, cleanLook, type LookOptions } from "@/lib/resume-look";
 import NumbersCoach from "./NumbersCoach";
 import { STORIES_KEY, addStoryTo, newStory, noStories, type Story } from "@/lib/resume-profile";
 import { cleanDoc, sameJob, type SavedAnswer, type SavedMessage } from "@/lib/resume-library";
@@ -205,6 +207,9 @@ export default function ResultView({
   }
   // Each true answer to a gap-coach question is kept in this browser as a "story", for the next resume.
   const [stories, setStories] = usePersistentState<Story[]>(STORIES_KEY, noStories);
+  // How the files are laid out (skills, summary, size). Remembered for the next resume; it never changes the words.
+  const [lookRaw, setLookRaw] = usePersistentState<LookOptions>(LOOK_KEY, DEFAULT_LOOK);
+  const look = useMemo(() => cleanLook(lookRaw), [lookRaw]);
   const [busy, setBusy] = useState<"" | "pdf" | "docx">("");
   const [justAdded, setJustAdded] = useState("");
   const design = result.design;
@@ -289,8 +294,8 @@ export default function ResultView({
         return base.length > 90 ? `${base.slice(0, 90).replace(/-+$/, "")}${name.slice(dot)}` : name;
       };
       const files = [
-        { name: short(resumeFileName(finalDoc, "pdf")), data: await b64(new Blob([(await buildPdf(finalDoc, style, design)) as BlobPart])) },
-        { name: short(resumeFileName(finalDoc, "docx")), data: await b64(await buildDocx(finalDoc, style, design)) },
+        { name: short(resumeFileName(finalDoc, "pdf")), data: await b64(new Blob([(await buildPdf(finalDoc, style, design, look)) as BlobPart])) },
+        { name: short(resumeFileName(finalDoc, "docx")), data: await b64(await buildDocx(finalDoc, style, design, look)) },
       ];
       if (letter) {
         files.push(
@@ -324,9 +329,9 @@ export default function ResultView({
     setBusy(kind);
     try {
       if (kind === "pdf") {
-        downloadBlob(new Blob([(await buildPdf(finalDoc, style, design)) as BlobPart], { type: "application/pdf" }), resumeFileName(finalDoc, "pdf"));
+        downloadBlob(new Blob([(await buildPdf(finalDoc, style, design, look)) as BlobPart], { type: "application/pdf" }), resumeFileName(finalDoc, "pdf"));
       } else {
-        downloadBlob(await buildDocx(finalDoc, style, design), resumeFileName(finalDoc, "docx"));
+        downloadBlob(await buildDocx(finalDoc, style, design, look), resumeFileName(finalDoc, "docx"));
       }
     } finally {
       setBusy("");
@@ -335,14 +340,14 @@ export default function ResultView({
 
   // A live preview of the PDF in the chosen style. It is rebuilt a moment after any edit or style change, and the
   // old one stays on screen (marked as updating) until the new one is ready.
-  const previewKey = useMemo(() => `${style}|${JSON.stringify(finalDoc)}|${design ? design.accent : ""}`, [style, finalDoc, design]);
+  const previewKey = useMemo(() => `${style}|${JSON.stringify(finalDoc)}|${design ? design.accent : ""}|${JSON.stringify(look)}`, [style, finalDoc, design, look]);
   const updating = preview && built.key !== previewKey;
   useEffect(() => {
     if (!preview) return;
     let cancelled = false;
     let url = "";
     const timer = setTimeout(async () => {
-      const bytes = await buildPdf(finalDoc, style, design);
+      const bytes = await buildPdf(finalDoc, style, design, look);
       if (cancelled) return;
       url = URL.createObjectURL(new Blob([bytes as BlobPart], { type: "application/pdf" }));
       setBuilt({ url, key: previewKey });
@@ -353,7 +358,7 @@ export default function ResultView({
       // The address of an older preview is released once a newer one has replaced it.
       if (url) window.setTimeout(() => URL.revokeObjectURL(url), 1500);
     };
-  }, [preview, finalDoc, style, design, previewKey]);
+  }, [preview, finalDoc, style, design, look, previewKey]);
 
   // "I have this": the person tells us in a sentence, and we add it to the resume.
   async function addGap(index: number, answer: string): Promise<string | null> {
@@ -575,6 +580,7 @@ export default function ResultView({
                   RESUME_STYLES.find((x) => x.id === style)?.note
                 )}
               </p>
+              <LookPanel value={look} onChange={setLookRaw} />
               {preview && (
                 <div className="relative overflow-hidden rounded-2xl border border-border-subtle bg-white shadow-sm">
                   <p className="border-b border-border-subtle bg-background-elevated px-4 py-2 text-xs font-semibold text-foreground-muted">
@@ -709,7 +715,7 @@ export default function ResultView({
             <details className={`${card} text-sm`}>
               <summary className="cursor-pointer py-1 font-semibold">How a scanner reads it</summary>
               <p className="mt-2 text-xs text-foreground-muted">Hiring software first turns your resume into plain text like this. Ours is one column with standard headings, which most systems read well. We can&apos;t test every system, so a clean view here is a good sign, not a guarantee.</p>
-              <pre className="mt-3 max-h-72 overflow-auto whitespace-pre-wrap rounded-lg bg-background p-3 text-xs">{resumeToPlainText(finalDoc)}</pre>
+              <pre className="mt-3 max-h-72 overflow-auto whitespace-pre-wrap rounded-lg bg-background p-3 text-xs">{resumeToPlainText(finalDoc, look)}</pre>
             </details>
           </div>
         </div>

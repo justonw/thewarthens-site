@@ -2,6 +2,7 @@
 // server. One layout for both formats: US Letter, one column, Arial/Helvetica, plain section
 // headings, no tables, icons, or graphics (the same rules as the Tech Journey resume checklist).
 import type { CoverLetter, ResumeDesign, ResumeDoc, SectionKey } from "./resume-tailor";
+import { DEFAULT_LOOK, SMALLER, lookToPlainLines, skillBlocks, summaryBlock, type LookOptions } from "./resume-look";
 
 export function resumeFileName(doc: ResumeDoc, ext: "pdf" | "docx") {
   const slug = (s: string) =>
@@ -15,15 +16,16 @@ export function resumeFileName(doc: ResumeDoc, ext: "pdf" | "docx") {
 }
 
 // The same words, in reading order, as a parser would see them.
-export function resumeToPlainText(doc: ResumeDoc): string {
+export function resumeToPlainText(doc: ResumeDoc, look: LookOptions = DEFAULT_LOOK): string {
+  const laidOut = lookToPlainLines(doc, look);
   const out: string[] = [];
   out.push(doc.name);
   if (doc.headline) out.push(doc.headline);
   if (doc.contact.length) out.push(doc.contact.join(" | "));
-  if (doc.summary) out.push("", "SUMMARY", doc.summary);
+  if (doc.summary) out.push("", "SUMMARY", ...laidOut.summary);
   if (doc.skills.length) {
     out.push("", "SKILLS");
-    for (const s of doc.skills) out.push(s.label ? `${s.label}: ${s.items}` : s.items);
+    out.push(...laidOut.skills);
   }
   if (doc.experience.length) {
     out.push("", "EXPERIENCE");
@@ -106,9 +108,19 @@ function lookFromDesign(d: ResumeDesign): Look {
   };
 }
 
-function resolveLook(style: ResumeStyle, design?: ResumeDesign): Look {
-  if (style === "custom") return design ? lookFromDesign(design) : LOOKS.classic;
-  return LOOKS[style];
+function resolveLook(style: ResumeStyle, design?: ResumeDesign, size: LookOptions["size"] = "standard"): Look {
+  const base = style === "custom" ? (design ? lookFromDesign(design) : LOOKS.classic) : LOOKS[style];
+  if (size !== "smaller") return base;
+  // "Smaller" only ever tightens: a look that is already tighter keeps its own numbers.
+  return {
+    ...base,
+    margin: Math.min(base.margin, SMALLER.margin),
+    body: Math.min(base.body, SMALLER.body),
+    lead: Math.min(base.lead, SMALLER.lead),
+    hdGap: Math.min(base.hdGap, SMALLER.hdGap),
+    docMargin: Math.min(base.docMargin, SMALLER.docMargin),
+    docBody: Math.min(base.docBody, SMALLER.docBody),
+  };
 }
 
 // ---------- PDF ----------
@@ -130,9 +142,9 @@ function pdfSafe(text: string) {
   return out;
 }
 
-export async function buildPdf(doc: ResumeDoc, style: ResumeStyle = "classic", design?: ResumeDesign): Promise<Uint8Array> {
+export async function buildPdf(doc: ResumeDoc, style: ResumeStyle = "classic", design?: ResumeDesign, look: LookOptions = DEFAULT_LOOK): Promise<Uint8Array> {
   const { PDFDocument, StandardFonts, rgb } = await import("pdf-lib");
-  const L = resolveLook(style, design);
+  const L = resolveLook(style, design, look.size);
   const pdf = await PDFDocument.create();
   pdf.setTitle(`${doc.name} - Resume`);
   pdf.setAuthor(doc.name);
@@ -243,22 +255,35 @@ export async function buildPdf(doc: ResumeDoc, style: ResumeStyle = "classic", d
     summary: () => {
       if (!doc.summary) return;
       heading("Summary");
-      paragraph(doc.summary);
+      const block = summaryBlock(doc.summary, look);
+      if (block.bullets) for (const l of block.lines) paragraph(l, { indent: 14, bullet: true });
+      else paragraph(block.lines.join(" "));
     },
     skills: () => {
       if (!doc.skills.length) return;
       heading("Skills");
       // A tidy two-column block: the group name in bold on the left, and its items wrapping in their own column on
       // the right, so a long list reads as a list and not as one run-on paragraph.
-      const labels = doc.skills.map((sk) => (sk.label ? `${pdfSafe(sk.label)}:` : ""));
+      const blocks = skillBlocks(doc.skills, look);
+      const labels = blocks.map((sk) => (sk.label ? `${pdfSafe(sk.label)}:` : ""));
       const labelW = Math.min(contentW * 0.3, Math.max(0, ...labels.map((l) => (l ? bold.widthOfTextAtSize(l, BODY) : 0))) + 10);
-      doc.skills.forEach((sk, i) => {
+      blocks.forEach((sk, i) => {
         if (i > 0) y -= 3;
-        if (!sk.label) {
-          paragraph(sk.items);
+        // One item per line: the group's name, then a bullet for each item.
+        if (sk.bullets.length > 0) {
+          if (sk.label) {
+            ensure(LEAD);
+            y -= LEAD;
+            text(`${pdfSafe(sk.label)}:`, M, BODY, bold);
+          }
+          for (const item of sk.bullets) paragraph(item, { indent: 14, bullet: true });
           return;
         }
-        const lines = wrap(sk.items, regular, BODY, contentW - labelW);
+        if (!sk.label) {
+          paragraph(sk.text);
+          return;
+        }
+        const lines = wrap(sk.text, regular, BODY, contentW - labelW);
         lines.forEach((l, idx) => {
           ensure(LEAD);
           y -= LEAD;
@@ -300,10 +325,10 @@ export async function buildPdf(doc: ResumeDoc, style: ResumeStyle = "classic", d
 
 // ---------- Word (.docx) ----------
 
-export async function buildDocx(doc: ResumeDoc, style: ResumeStyle = "classic", design?: ResumeDesign): Promise<Blob> {
+export async function buildDocx(doc: ResumeDoc, style: ResumeStyle = "classic", design?: ResumeDesign, look: LookOptions = DEFAULT_LOOK): Promise<Blob> {
   const d = await import("docx");
   const { Document, Packer, Paragraph, TextRun, TabStopType, BorderStyle, LevelFormat, AlignmentType } = d;
-  const L = resolveLook(style, design);
+  const L = resolveLook(style, design, look.size);
   const FONT = L.serif ? "Times New Roman" : "Arial";
   const PAGE_W = 12240;
   const MARGIN = L.docMargin;
@@ -337,20 +362,30 @@ export async function buildDocx(doc: ResumeDoc, style: ResumeStyle = "classic", 
 
   const sections: Record<SectionKey, () => void> = {
     summary: () => {
-      if (doc.summary) kids.push(heading("Summary"), body(doc.summary));
+      if (!doc.summary) return;
+      const block = summaryBlock(doc.summary, look);
+      kids.push(heading("Summary"));
+      if (block.bullets) for (const l of block.lines) kids.push(new Paragraph({ numbering: { reference: "bullets", level: 0 }, spacing: { after: 30 }, children: [run(l)] }));
+      else kids.push(body(block.lines.join(" ")));
     },
     skills: () => {
       if (!doc.skills.length) return;
       kids.push(heading("Skills"));
       // The group name in bold, then a tab, with the items wrapping in their own column (a hanging indent).
-      const longest = Math.max(0, ...doc.skills.map((sk) => (sk.label ? sk.label.length + 1 : 0)));
+      const blocks = skillBlocks(doc.skills, look);
+      const longest = Math.max(0, ...blocks.map((sk) => (sk.label ? sk.label.length + 1 : 0)));
       const hang = Math.min(3300, Math.round(longest * 6.4 * 20) + 200);
-      for (const sk of doc.skills) {
+      for (const sk of blocks) {
+        if (sk.bullets.length > 0) {
+          if (sk.label) kids.push(new Paragraph({ keepNext: true, spacing: { after: 30 }, children: [run(`${sk.label}:`, { bold: true })] }));
+          for (const item of sk.bullets) kids.push(new Paragraph({ numbering: { reference: "bullets", level: 0 }, spacing: { after: 30 }, children: [run(item)] }));
+          continue;
+        }
         kids.push(
           new Paragraph({
             spacing: { after: 50 },
             ...(sk.label ? { indent: { left: hang, hanging: hang }, tabStops: [{ type: TabStopType.LEFT, position: hang }] } : {}),
-            children: sk.label ? [run(`${sk.label}:`, { bold: true }), new TextRun({ text: "\t" }), run(sk.items)] : [run(sk.items)],
+            children: sk.label ? [run(`${sk.label}:`, { bold: true }), new TextRun({ text: "\t" }), run(sk.text)] : [run(sk.text)],
           })
         );
       }
