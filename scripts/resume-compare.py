@@ -77,6 +77,7 @@ PEOPLE = [
     ("spanish", "Spanish-language resume -> sales manager", sc.RESUME_SPANISH, POST_SALESMGR, "Sales Manager", 2),
 ]
 
+THIS_YEAR = time.localtime().tm_year
 TERMS = r"\b(CPA|CDL|RN|LPN|BSN|MBA|PMP|PhD|CNA|BLS|ACLS|OSHA|HazMat|forklift|Six Sigma|Scrum|Python|SQL|Salesforce|HubSpot|NetSuite|QuickBooks|Excel|Canva|Epic|Zendesk|Jira|Google Classroom|PowerPoint|Photoshop|AWS|Tableau)\b"
 PRON = re.compile(r"\b(he|she|his|her|him|they|their)\b", re.I)
 INTENT = re.compile(r"\b(aiming to|aims to|looking to|seeking to|seeks to|eager to|hoping to)\b", re.I)
@@ -125,7 +126,11 @@ def checks(result, source, kind, expect_jobs, posting=""):
     text = flat(doc)
     problems = []
     src_nums = {norm_num(n) for n in NUM.findall(source)} | {str(v) for w, v in WORDS.items() if re.search(rf"\b{w}\b", source, re.I)}
-    new_nums = sorted({norm_num(n) for n in NUM.findall(text)} - src_nums - {""} - {"0", "1"})
+    # "11 years of experience" worked out from the dates in the resume is arithmetic, not invention: allow any whole number
+    # of years between two years the resume gives (or from one of them to this year), give or take one.
+    years = sorted({int(y) for y in re.findall(r"\b(19[6-9]\d|20[0-4]\d)\b", source)})
+    span = {str(abs(x - y) + d) for x in years + [THIS_YEAR] for y in years + [THIS_YEAR] for d in (-1, 0, 1)}
+    new_nums = sorted({norm_num(n) for n in NUM.findall(text)} - src_nums - {""} - {"0", "1"} - span)
     # a 4-digit year the source also has, or a phone number, is not new; dates of a school or job come from the source
     new_nums = [n for n in new_nums if n not in {norm_num(x) for x in NUM.findall(posting)}]
     if new_nums:
@@ -165,7 +170,7 @@ def main():
     ap.add_argument("--base-url", default="https://thewarthens.com")
     ap.add_argument("--owner-code-file", default="~/.resume-owner-code")
     ap.add_argument("--only", default="", help="comma-separated person keys")
-    ap.add_argument("--variant", default="v1", help="prompt version for the tailored run (v1 or v2)")
+    ap.add_argument("--variant", default="v1", help="prompt version for the tailored run (v1, v2, or v3)")
     ap.add_argument("--skip", default="", help="comma-separated kinds to skip: tailored, baseline, general")
     ap.add_argument("--out", default="resume-evals")
     ap.add_argument("--jobs", type=int, default=3, help="requests at the same time")

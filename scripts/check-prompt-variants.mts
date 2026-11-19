@@ -72,4 +72,10 @@ assert.ok(!sysOf(now.buildResumeRequest(input, "claude-sonnet-5-5")).startsWith(
 // The general rules carry the two fixes.
 assert.ok(gReq.system.includes("aiming to") && gReq.system.includes("technical documentation"), "the general rules say no announced moves and no relabelled skills");
 
+// v3 is v1 plus the extra rules, and only the owner can reach it.
+const v3 = sysOf(now.buildResumeRequest(input, "claude-sonnet-5-5", [], "v3"));
+assert.ok(v3.startsWith(sysOf(now.buildResumeRequest(input, "claude-sonnet-5-5", [], "v1")).slice(0, 2000)), "v3 starts from v1");
+assert.ok(v3.includes('Never write "aiming to"') && v3.includes("Do not copy the posting"), "v3 carries the new rules");
+assert.ok(!v1.includes("Never write \"aiming to\""), "v1 is unchanged");
+
 console.log("prompt variant checks passed");
