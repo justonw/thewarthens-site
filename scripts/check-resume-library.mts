@@ -75,6 +75,18 @@ const kept = lib.cleanLibrary([{ ...JSON.parse(JSON.stringify(applied)), followe
 assert.ok(kept[0].followedUpAt.startsWith("2026-11-17") && kept[0].messages[0].purpose === "followup" && kept[0].messages[0].audience === "friend");
 assert.equal(kept[1].followedUpAt, "", "a bad follow-up date is dropped");
 
+// Drafted answers are kept per job, checked on the way in, and capped.
+const withAnswers = lib.cleanLibrary([{ ...JSON.parse(JSON.stringify(entry)), answers: [
+  { id: "a1", at: "2026-11-18T10:00:00Z", question: "Why do you want to work here?", answer: "I follow up on every lead within 24 hours, which suits this role." },
+  { id: "a2", question: "", answer: "A question is required for an answer to be kept." },
+  { id: "a3", question: "Short?", answer: "too short" },
+  ...Array.from({ length: 20 }, (_, i) => ({ id: `x${i}`, question: `Question ${i}?`, answer: "A long enough answer to be kept in the list." })),
+] }]);
+assert.equal(withAnswers[0].answers[0].id, "a1");
+assert.ok(!withAnswers[0].answers.some((a: any) => a.id === "a2" || a.id === "a3"), "an answer with no question, or a stub, is dropped");
+assert.ok(withAnswers[0].answers.length <= lib.MAX_ANSWERS_PER_ENTRY, "answers are capped");
+assert.deepEqual(lib.entryFromResult("n1", result, null).answers, [], "a new build starts with no answers");
+
 // Matching a job in the tracker ignores case and spaces.
 assert.ok(lib.sameJob({ company: " Spotify ", role: "account executive" }, { company: "spotify", role: "Account Executive " }));
 assert.ok(!lib.sameJob({ company: "Spotify", role: "Account Executive" }, { company: "Spotify", role: "Sales Rep" }));

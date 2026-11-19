@@ -17,12 +17,13 @@ import { Confetti, ReadinessRing } from "./Celebrate";
 import ShareCard from "./ShareCard";
 import StrengthenPanel from "./StrengthenPanel";
 import OutreachPanel from "./OutreachPanel";
+import AnswersPanel from "./AnswersPanel";
 import NumbersCoach from "./NumbersCoach";
 import { STORIES_KEY, addStoryTo, newStory, noStories, type Story } from "@/lib/resume-profile";
-import { cleanDoc, sameJob, type SavedMessage } from "@/lib/resume-library";
+import { cleanDoc, sameJob, type SavedAnswer, type SavedMessage } from "@/lib/resume-library";
 import type { Purpose } from "@/lib/outreach";
 
-type Tab = "resume" | "letter" | "reach";
+type Tab = "resume" | "letter" | "reach" | "answers";
 
 const card = "rounded-2xl border border-border-subtle bg-background-elevated p-5";
 const input =
@@ -147,6 +148,8 @@ export default function ResultView({
   messages,
   onMessage,
   startOnReach = false,
+  answers,
+  onAnswer,
   initialPurpose,
   appliedDaysAgo,
   onFollowedUp,
@@ -180,11 +183,20 @@ export default function ResultView({
   onMessage?: (m: SavedMessage) => void;
   // Opened from a follow-up nudge: start on "Reach out", on the follow-up message.
   startOnReach?: boolean;
+  // Application answers already drafted for this job, and a way to keep each new one.
+  answers?: SavedAnswer[];
+  onAnswer?: (a: SavedAnswer) => void;
   initialPurpose?: Purpose;
   appliedDaysAgo?: number | null;
   onFollowedUp?: () => void;
 }) {
   const [tab, setTab] = useState<Tab>(startOnReach ? "reach" : "resume");
+  // Opens "Answers" the same way.
+  function openAnswers() {
+    setTab("answers");
+    track("answers-opened");
+    window.setTimeout(() => document.getElementById("rt-tabs")?.scrollIntoView({ behavior: "smooth", block: "start" }), 30);
+  }
   // Opens "Reach out" and brings the tabs into view, so the new step is the first thing on screen.
   function openReach() {
     setTab("reach");
@@ -192,7 +204,7 @@ export default function ResultView({
     window.setTimeout(() => document.getElementById("rt-tabs")?.scrollIntoView({ behavior: "smooth", block: "start" }), 30);
   }
   // Each true answer to a gap-coach question is kept in this browser as a "story", for the next resume.
-  const [, setStories] = usePersistentState<Story[]>(STORIES_KEY, noStories);
+  const [stories, setStories] = usePersistentState<Story[]>(STORIES_KEY, noStories);
   const [busy, setBusy] = useState<"" | "pdf" | "docx">("");
   const [justAdded, setJustAdded] = useState("");
   const design = result.design;
@@ -379,7 +391,7 @@ export default function ResultView({
       type="button"
       role="tab"
       aria-selected={tab === id}
-      onClick={() => (id === "reach" ? openReach() : setTab(id))}
+      onClick={() => (id === "reach" ? openReach() : id === "answers" ? openAnswers() : setTab(id))}
       className={`inline-flex min-h-11 items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition-colors sm:min-h-0 ${
         tab === id ? "bg-foreground text-background" : "text-foreground-muted hover:text-foreground"
       }`}
@@ -428,9 +440,9 @@ export default function ResultView({
         </div>
       </div>
 
-      {tab !== "reach" && <ReachCallout company={result.postingCompany} onOpen={openReach} />}
+      {tab !== "reach" && tab !== "answers" && <ReachCallout company={result.postingCompany} onOpen={openReach} />}
 
-      <div hidden={tab === "reach"} className="space-y-6">
+      <div hidden={tab === "reach" || tab === "answers"} className="space-y-6">
       <StrengthenPanel gaps={gaps} fit={result.fit} justAdded={justAdded} onAdd={addGap} />
 
       <NumbersCoach
@@ -472,10 +484,24 @@ export default function ResultView({
         {tabButton("resume", "Resume")}
         {letter && tabButton("letter", "Cover letter")}
         {tabButton("reach", "Reach out", true)}
+        {tabButton("answers", "Answers", true)}
       </div>
 
       <div hidden={tab !== "reach"}>
         <OutreachPanel doc={finalDoc} result={result} gaps={gaps} email={email} saved={messages ?? []} onSave={onMessage} initialPurpose={initialPurpose} appliedDaysAgo={appliedDaysAgo} onFollowedUp={onFollowedUp} onBack={() => setTab("resume")} />
+      </div>
+
+      <div hidden={tab !== "answers"}>
+        <AnswersPanel
+          doc={finalDoc}
+          result={result}
+          email={email}
+          stories={stories}
+          saved={answers ?? []}
+          onSave={onAnswer}
+          onStory={(topic, question, answer) => setStories((cur) => addStoryTo(cur, newStory(topic, question, answer)))}
+          onBack={() => setTab("resume")}
+        />
       </div>
 
       {inApp && (
@@ -484,7 +510,7 @@ export default function ResultView({
         </p>
       )}
 
-      {tab === "reach" ? null : tab === "letter" && letter ? (
+      {tab === "reach" || tab === "answers" ? null : tab === "letter" && letter ? (
         <CoverLetterEditor letter={letter} doc={finalDoc} onChange={onLetter} />
       ) : (
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
@@ -689,7 +715,7 @@ export default function ResultView({
         </div>
       )}
 
-      {tab !== "reach" && <ReachCallout company={result.postingCompany} onOpen={openReach} />}
+      {tab !== "reach" && tab !== "answers" && <ReachCallout company={result.postingCompany} onOpen={openReach} />}
 
       <NextSteps title={`${result.postingTitle} ${doc.headline}`} extra={result.postingKeywords.join(" ")} />
 

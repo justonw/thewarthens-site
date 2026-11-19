@@ -13,7 +13,7 @@ import { takeHandoff } from "@/lib/resume-handoff";
 import BuyMore from "./BuyMore";
 import ProfilePanel from "./ProfilePanel";
 import ApplicationsList from "./ApplicationsList";
-import { LIBRARY_KEY, MAX_MESSAGES_PER_ENTRY, cleanLibrary, entryFromResult, entryToResult, followUpDue, noLibrary, sameJob, upsertEntry, type LibraryEntry, type SavedMessage } from "@/lib/resume-library";
+import { LIBRARY_KEY, MAX_ANSWERS_PER_ENTRY, MAX_MESSAGES_PER_ENTRY, cleanLibrary, entryFromResult, entryToResult, followUpDue, noLibrary, sameJob, upsertEntry, type LibraryEntry, type SavedAnswer, type SavedMessage } from "@/lib/resume-library";
 import { NO_TRACKER_ENTRIES, TRACKER_KEY, type TrackerEntry } from "@/lib/job-tracker";
 import type { ResumeStyle } from "@/lib/resume-files";
 import { downloadBlob } from "@/lib/download";
@@ -653,6 +653,13 @@ export default function ResumeBuilder() {
     );
   }
 
+  function saveAnswer(a: SavedAnswer) {
+    if (!entryId) return;
+    setLibrary((cur) =>
+      cur.map((x) => (x.id === entryId ? { ...x, updatedAt: new Date().toISOString(), answers: [a, ...x.answers.filter((y) => y.id !== a.id)].slice(0, MAX_ANSWERS_PER_ENTRY) } : x))
+    );
+  }
+
   function saveStyle(style: ResumeStyle) {
     if (!entryId) return;
     setLibrary((cur) => cur.map((x) => (x.id === entryId && x.style !== style ? { ...x, style } : x)));
@@ -747,6 +754,8 @@ export default function ResumeBuilder() {
         onToggleApplied={entryId ? () => toggleApplied(entryId) : undefined}
         messages={current?.messages}
         onMessage={saveMessage}
+        answers={current?.answers}
+        onAnswer={saveAnswer}
         startOnReach={openFollowUp}
         initialPurpose={openFollowUp ? "followup" : "intro"}
         appliedDaysAgo={current ? followUpDue(current).days || null : null}

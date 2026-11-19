@@ -11,8 +11,12 @@ export const LIBRARY_KEY = "warthens-resume-library-v1";
 // Small enough that a full list sits comfortably in browser storage next to the saved resume.
 export const MAX_LIBRARY = 40;
 export const MAX_MESSAGES_PER_ENTRY = 5;
+export const MAX_ANSWERS_PER_ENTRY = 12;
 
 export type SavedMessage = { id: string; at: string; purpose?: Purpose; audience: Audience; who: string; subject: string; note: string; message: string };
+
+// A drafted answer to an application question, kept with the job it was written for.
+export type SavedAnswer = { id: string; at: string; question: string; answer: string };
 
 export type LibraryEntry = {
   id: string;
@@ -33,6 +37,7 @@ export type LibraryEntry = {
   gaps: ResumeGap[];
   changes: string[];
   messages: SavedMessage[];
+  answers: SavedAnswer[];
 };
 
 export const noLibrary: LibraryEntry[] = [];
@@ -64,6 +69,7 @@ export function entryFromResult(id: string, r: TailorResult, letter: CoverLetter
     gaps: r.gaps,
     changes: r.changes,
     messages: [],
+    answers: [],
   };
 }
 
@@ -153,6 +159,15 @@ export function cleanLibrary(raw: unknown): LibraryEntry[] {
       if (!message || !AUDIENCES.includes(r.audience as Audience)) continue;
       messages.push({ id: text(r.id, 80) || `${messages.length}`, at: iso(r.at) || at, purpose: r.purpose === "followup" ? "followup" : "intro", audience: r.audience as Audience, who: text(r.who, 160), subject: text(r.subject, 90), note, message });
     }
+    const answers: SavedAnswer[] = [];
+    for (const a of Array.isArray(o.answers) ? o.answers.slice(0, MAX_ANSWERS_PER_ENTRY) : []) {
+      if (!a || typeof a !== "object") continue;
+      const r = a as Record<string, unknown>;
+      const question = text(r.question, 600);
+      const answer = text(r.answer, 6000);
+      if (!question || answer.length < 20) continue;
+      answers.push({ id: text(r.id, 80) || `${answers.length}`, at: iso(r.at) || at, question, answer });
+    }
     out.push({
       id,
       at,
@@ -171,6 +186,7 @@ export function cleanLibrary(raw: unknown): LibraryEntry[] {
       gaps,
       changes: (Array.isArray(o.changes) ? o.changes : []).map((c) => text(c, 300)).filter(Boolean).slice(0, 12),
       messages,
+      answers,
     });
   }
   return out;
