@@ -52,7 +52,7 @@ assert.deepEqual(matchLenses("Sales Administrative Assistant", [], true, fakeLib
 
 // The prompt text.
 const text = lensRules([LENSES[0]]);
-assert.ok(text.includes("Sales") && text.includes("Measured on") && text.includes("Ask 10 questions") && text.includes("Never invent a metric"), "the lens text names the role and the rules");
+assert.ok(text.includes("Sales") && text.includes("Measured on") && text.includes("Ask 10 questions") && text.includes("Never invent a metric") && text.includes("MUST be about one of them"), "the lens text names the role and the rules");
 assert.ok(GENERIC_LENS.includes("never invent a metric"), "the generic lens keeps the rules");
 
 // 3: sample titles land on the right lens (the first match must be this one).

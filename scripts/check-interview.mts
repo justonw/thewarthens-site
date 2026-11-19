@@ -23,7 +23,7 @@ assert.ok(text.includes("Executive stakeholder reviews") && text.includes("<unme
 assert.ok(!text.includes("dana@example.com") && !text.includes("614-555"), "the contact line is not sent");
 assert.ok(req.system.includes("Never write a story for the person") && req.system.includes("storyAsk") && req.system.includes("Never include questions about pay"), "the rules are in the prompt");
 assert.ok(req.system.includes("what a tool or skill is used FOR") && req.system.includes("self-praise"), "the stay-close rules are in the prompt");
-assert.ok(req.system.includes("is NOT their current title") && req.system.includes("If you have not done this directly") && req.system.includes("contract, temporary") && req.system.includes("its own question about that arrangement"), "the opening-title, gap, and arrangement rules are in the prompt");
+assert.ok(req.system.includes("is NOT their current title") && req.system.includes("If you have not done this directly") && req.system.includes("contract, temporary") && req.system.includes("its own question about that arrangement") && req.system.includes("Never praise a strength"), "the opening-title, gap, and arrangement rules are in the prompt");
 assert.ok(!req.system.includes("Role lens"), "visitors do not get the role lens");
 const lensed: any = lib.buildInterviewRequest({ ...input, lensText: "\n\nRole lens. Kind of role: Test." }, "claude-sonnet-5-5");
 assert.ok(lensed.system.startsWith(req.system) && lensed.system.includes("Role lens. Kind of role: Test."), "a lens is added after the base rules");
