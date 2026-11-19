@@ -114,6 +114,8 @@ export async function POST(req: NextRequest) {
     fitReason: plainText(body.fitReason, 400),
     unmet: strings(body.unmet, 200, 6),
     stage,
+    // Owner testing only: visitors never get the role-lens rules until they have proved better.
+    lens: owner && body.lens === true,
   };
 
   // Hands the count back if nothing usable came back, so a failed try costs the person nothing.
