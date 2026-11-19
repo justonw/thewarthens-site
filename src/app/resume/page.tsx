@@ -48,7 +48,7 @@ const faq = [
   {
     question: "Does it work for my field?",
     answer:
-      "Yes. It works for any industry and any job, because it builds from your own resume, the notes you add, and the posting, in the posting's own words. It isn't guessing what your field expects. A few things have their own formats: federal government resumes, academic CVs, and acting or creative resumes follow special rules, so treat the result as a draft there. Everything else, from healthcare and trades to teaching, finance, retail, and tech, fits the one-column layout we use.",
+      "Yes. It works for any industry and any job, because it builds from your own resume, the notes you add, and the posting, matched to what the posting asks for. It isn't guessing what your field expects. A few things have their own formats: federal government resumes, academic CVs, and acting or creative resumes follow special rules, so treat the result as a draft there. Everything else, from healthcare and trades to teaching, finance, retail, and tech, fits the one-column layout we use.",
   },
   {
     question: "Will it make things up to match the job?",

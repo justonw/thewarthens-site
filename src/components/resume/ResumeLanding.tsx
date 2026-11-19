@@ -83,9 +83,18 @@ const stats = [
   { big: "2 free", small: "builds per email, each with an optional cover letter" },
 ];
 
-// The top of the page is short on purpose: a headline and one line, so the tool itself is the first thing a visitor
-// reaches. The moving example, the numbers, and the evidence come after the tool (see ResumeProof), for anyone who
-// wants the reasons before they trust it.
+// What one job link gets you, in plain words. These are the things the tool really does, in the order a person uses them.
+const GET = [
+  { title: "A resume matched to that job", body: "We rework your experience to line up with what the company is asking for in the job description. A cover letter too, if you want one." },
+  { title: "A note for the hiring manager", body: "We write a short note to the recruiter or hiring manager, and a follow-up if you don't hear back. You copy it and send it yourself." },
+  { title: "Help with application questions", body: "When an application asks a question, paste it in and get a draft answer from your real experience. You edit it and submit it." },
+  { title: "Interview practice for that job", body: "Practice questions for that role, ideas for answering each from your own experience, and questions you can ask them." },
+];
+const EASY = ["Paste a link. We do the rest", "About a minute", "Download PDF and Word", "2 free builds"];
+
+// The top of the page: a headline, one line, and a plain list of what one job link gets you and how easy it is, so a visitor
+// sees the whole value before the tool. The moving example, the numbers, and the evidence come after the tool (see
+// ResumeProof), for anyone who wants the reasons before they trust it.
 export function ResumeHero() {
   return (
     <section className="relative overflow-hidden">
@@ -102,10 +111,32 @@ export function ResumeHero() {
           A resume <span className="rb-gradient-text">tailored</span> to the exact job you are applying for
         </h1>
         <p className="rb-rise mx-auto mt-4 max-w-xl text-balance text-base text-foreground-muted sm:text-lg" style={delay(0.16)}>
-          Paste the link to the job. We rewrite your resume in that posting&apos;s own words, so it fits that one job. This is not a generic resume.
+          Paste the link to the job. We rework your resume to match what the company is looking for, then help with the rest of the application.
         </p>
-        <ul className="rb-rise mt-5 flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs font-medium text-foreground-muted" style={delay(0.24)}>
-          {["Built from the job posting", "Uses the job's own words", "Asks about your gaps, adds only what's true", "No account needed"].map((t) => (
+      </div>
+
+      <div className="mx-auto max-w-5xl px-6 pb-8">
+        <p className="rb-rise text-center text-xs font-bold uppercase tracking-wider text-blue-700" style={delay(0.22)}>
+          What you get from one job link
+        </p>
+        <ol className="mt-3 grid gap-2 sm:grid-cols-2 sm:gap-3 lg:grid-cols-4">
+          {GET.map((g, i) => (
+            <li key={g.title} className="rb-rise flex items-center gap-3 rounded-2xl border border-border-subtle bg-white/90 px-4 py-3 shadow-sm backdrop-blur sm:items-start sm:py-4" style={delay(0.26 + i * 0.06)}>
+              <span aria-hidden className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-violet-600 text-sm font-bold text-white">
+                {i + 1}
+              </span>
+              <span className="min-w-0">
+                <span className="block text-sm font-semibold leading-snug">{g.title}</span>
+                <span className="mt-1 hidden text-xs leading-snug text-foreground-muted sm:block">{g.body}</span>
+              </span>
+            </li>
+          ))}
+        </ol>
+        <p className="rb-rise mt-5 text-center text-xs font-bold uppercase tracking-wider text-blue-700" style={delay(0.5)}>
+          Easy by design
+        </p>
+        <ul className="rb-rise mt-2 flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs font-medium text-foreground-muted" style={delay(0.54)}>
+          {EASY.map((t) => (
             <li key={t} className="flex items-center gap-1.5">
               <Tick className="h-4 w-4" />
               {t}

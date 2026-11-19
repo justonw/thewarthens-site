@@ -954,7 +954,7 @@ export default function ResumeBuilder() {
             id="rt-posting"
             step={1}
             done={postingReady}
-            label="The job"
+            label="The job you're applying for"
             help="Paste its link or the text, or drop a screenshot."
             placeholder="Paste the link to the job posting here, or paste the posting text, or drop a screenshot onto this box."
             text={posting}

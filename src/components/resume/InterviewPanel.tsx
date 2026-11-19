@@ -9,7 +9,7 @@ import { track } from "@/lib/track";
 import AutoTextarea from "./AutoTextarea";
 
 // "Interview prep": once a company replies, a prep sheet for that exact job, built only from the person's resume and the true
-// stories they have told us. It gives the likely questions for the kind of interview, why each is asked, how to approach it,
+// stories they have told us. It gives practice questions for the kind of interview, why each is asked, how to approach it,
 // and the real facts from their history to draw on. It never writes a story for them: when nothing real fits a question, it
 // asks for a true example and keeps what they say for their next resume and answers.
 
@@ -172,7 +172,7 @@ export default function InterviewPanel({
       <div>
         <h3 className="text-2xl font-semibold tracking-tight">Get ready for the interview</h3>
         <p className="mt-1 text-sm text-foreground-muted sm:text-base">
-          A prep sheet for {job}, built from your real experience. The likely questions, how to approach each one, and the facts from your own history to draw on. Nothing is made up.
+          A prep sheet for {job}, built from your real experience. Practice questions for this role, how to approach each one, and the facts from your own history to draw on. Nothing is made up.
         </p>
       </div>
 
@@ -215,7 +215,7 @@ export default function InterviewPanel({
           </div>
 
           <div>
-            <p className="mb-2 text-sm font-semibold">Likely questions ({sheet.questions.length})</p>
+            <p className="mb-2 text-sm font-semibold">Practice questions ({sheet.questions.length})</p>
             <div className="space-y-3">
               {sheet.questions.map((q, i) => (
                 <QuestionCard key={`${sheet.at}-${i}`} q={q} index={i} onStory={onStory} />

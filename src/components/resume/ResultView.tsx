@@ -465,7 +465,7 @@ export default function ResultView({
       {general && (
         <div role="note" className="rounded-3xl border border-violet-500/30 bg-violet-500/10 p-5">
           <p className="font-semibold">This is a general resume for {result.postingTitle || doc.headline}</p>
-          <p className="mt-1 text-sm text-foreground-muted">It is not tailored to a specific job yet. A resume written for one posting, in that posting&apos;s own words, is the one that gets read. When you find a job you want, add it and we&apos;ll rebuild this resume for it, with a cover letter, outreach messages, and answers for the application.</p>
+          <p className="mt-1 text-sm text-foreground-muted">It is not tailored to a specific job yet. A resume matched to one job description is the one that gets read. When you find a job you want, add it and we&apos;ll rebuild this resume for it, with a cover letter, outreach messages, and answers for the application.</p>
           <button type="button" onClick={onStartOver} className="mt-3 inline-flex min-h-10 items-center rounded-full border border-violet-500/40 bg-white px-5 text-sm font-semibold shadow-sm transition-colors hover:border-violet-500">
             Add a job and tailor this resume →
           </button>
