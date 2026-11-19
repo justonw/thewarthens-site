@@ -15,4 +15,11 @@ while [ "$left" -gt 0 ] && [ "$pass" -le 4 ]; do
   echo "Left: $left"
   pass=$((pass + 1))
 done
-[ "$left" -eq 0 ] && echo "All files are here." || { echo "Some files could not be downloaded. Check your internet connection and iCloud, then run this again."; exit 1; }
+if [ "$left" -eq 0 ]; then
+  echo "All files are here."
+else
+  echo "Some files could not be downloaded (they may no longer exist in iCloud). The first few:"
+  find node_modules src scripts public docs -type f -flags +dataless 2>/dev/null | head -5
+  echo "Check your internet connection and iCloud, then run this again."
+  exit 1
+fi
