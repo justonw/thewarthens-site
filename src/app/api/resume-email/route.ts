@@ -88,6 +88,9 @@ export async function POST(req: NextRequest) {
 
   // Only an address that has built a resume with us can be sent a copy, and only a few a day.
   const live = isLiveHost(req.headers.get("x-forwarded-host") ?? host);
+  // A copy is counted before it is sent. If the email service then refuses it (for example when its daily allowance is used
+  // up), the copy is handed back, so a failed send never uses up one of the person's two copies.
+  let giveBackCopy: () => Promise<unknown> = async () => {};
   try {
     const kv = await withTimeout(getKv(live), 5000, "open usage store");
     // Checked with has() first: reading a key that is not there hangs on Netlify's storage right now.
@@ -100,6 +103,7 @@ export async function POST(req: NextRequest) {
     const allowed = await withTimeout(copiesAllowed(kv, email, n), 8000, "work out the copies allowed");
     const sent = await withTimeout(bumpCounter(kv, mailedKey(email), 1, allowed), 8000, "count the copy");
     if (sent === null) return NextResponse.json({ error: "copies-used" }, { status: 429 });
+    giveBackCopy = () => bumpCounter(kv, mailedKey(email), -1, allowed).catch(() => null);
   } catch (err) {
     console.error("resume-email limit check failed", err);
     return NextResponse.json({ error: "unavailable" }, { status: 503 });
@@ -120,10 +124,12 @@ export async function POST(req: NextRequest) {
     });
     if (!res.ok) {
       console.error("resume-email: email service answered", res.status, (await res.text().catch(() => "")).slice(0, 200));
+      await giveBackCopy();
       return NextResponse.json({ error: "send-failed" }, { status: 502 });
     }
   } catch (err) {
     console.error("resume-email failed", err instanceof Error ? err.message : err);
+    await giveBackCopy();
     return NextResponse.json({ error: "send-failed" }, { status: 502 });
   }
   return NextResponse.json({ ok: true });

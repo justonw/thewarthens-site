@@ -315,7 +315,9 @@ export default function ResultView({
         setMailWhy(
           why.error === "copies-used"
             ? "Every build comes with 2 emailed copies (the one sent automatically and one resend), and you've used them. Your files are still here to download."
-            : why.error === "slow-down"
+            : why.error === "send-failed"
+              ? "We couldn't send your email just now, and it didn't use up one of your copies. Your files are ready to download below, and you can press \"Email me a copy\" again in a little while."
+              : why.error === "slow-down"
               ? "That was a lot of copies in a short time. Wait a few minutes and press \"Email me a copy\", or download your files below."
               : ""
         );
