@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { cleanDoc, followUpDue, whenLabel, type LibraryEntry } from "@/lib/resume-library";
 import { downloadBlob } from "@/lib/download";
 import { usePersistentState } from "@/lib/use-persistent-state";
+import { RESULTS, daysSince, insightSentence, insights as outcomeInsights, summarize, type Result } from "@/lib/outcomes";
+import { quantifyScore } from "@/lib/quantify";
 import { DEFAULT_LOOK, LOOK_KEY, cleanLook, type LookOptions } from "@/lib/resume-look";
 
 // "My applications": every resume the person has built, kept on this device. Open one to edit it, download it again
@@ -17,6 +19,7 @@ export default function ApplicationsList({
   entries,
   onOpen,
   onFollowUp,
+  onResult,
   onToggleApplied,
   onRemove,
 }: {
@@ -24,6 +27,8 @@ export default function ApplicationsList({
   onOpen: (id: string) => void;
   // Opens the job on a short follow-up message.
   onFollowUp: (id: string) => void;
+  // Where an application stands now (waiting, phone screen, interview, offer, not selected).
+  onResult: (id: string, result: Result) => void;
   onToggleApplied: (id: string) => void;
   onRemove: (id: string) => void;
 }) {
@@ -34,6 +39,17 @@ export default function ApplicationsList({
   // The layout choices the person made on the result screen (skills, summary, size), so a quick download matches.
   const [lookRaw] = usePersistentState<LookOptions>(LOOK_KEY, DEFAULT_LOOK);
   const look = cleanLook(lookRaw);
+
+  // What the whole list says, worked out here on the device from the person's own applications.
+  const summary = useMemo(() => summarize(entries), [entries]);
+  const patterns = useMemo(
+    () =>
+      outcomeInsights(entries, (e) => {
+        const q = quantifyScore(e.doc);
+        return q.total === 0 ? 0 : q.withNumber / q.total;
+      }),
+    [entries]
+  );
 
   if (entries.length === 0) return null;
   const shown = all ? entries : entries.slice(0, SHOWN);
@@ -69,6 +85,40 @@ export default function ApplicationsList({
         {applied > 0 && <p className="text-xs font-semibold text-green-700">{applied} marked applied</p>}
       </div>
 
+      {summary.applied > 0 && (
+        <div className="mt-4 rounded-2xl border border-border-subtle bg-white p-4 shadow-sm sm:p-5">
+          <p className="text-sm font-semibold">
+            You&apos;ve applied to {summary.applied} {summary.applied === 1 ? "job" : "jobs"}.
+          </p>
+          <dl className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-sm sm:grid-cols-4">
+            {[
+              ["Waiting", summary.waiting],
+              ["Heard back", summary.heard],
+              ["Talked to someone", summary.conversations],
+              ["Offers", summary.offers],
+            ].map(([label, n]) => (
+              <div key={label as string}>
+                <dt className="text-xs text-foreground-muted">{label}</dt>
+                <dd className="text-lg font-semibold">{n}</dd>
+              </div>
+            ))}
+          </dl>
+          {patterns.length > 0 ? (
+            <div className="mt-3 border-t border-border-subtle pt-3">
+              <p className="text-xs font-bold uppercase tracking-wider text-blue-700">What seems to be working</p>
+              <ul className="mt-1.5 space-y-1.5 text-sm">
+                {patterns.map((i) => (
+                  <li key={i.id}>{insightSentence(i)}</li>
+                ))}
+              </ul>
+              <p className="mt-2 text-xs text-foreground-muted">Small numbers, so take these as hints, not proof. They come from your own applications, kept on this device.</p>
+            </div>
+          ) : (
+            <p className="mt-3 border-t border-border-subtle pt-3 text-xs text-foreground-muted">Mark how each one goes below. After about three jobs each way (for example, with and without a cover letter), we&apos;ll show what seems to be working.</p>
+          )}
+        </div>
+      )}
+
       <ul className="mt-4 space-y-3">
         {shown.map((e) => {
           const isApplied = e.status === "applied";
@@ -99,6 +149,34 @@ export default function ApplicationsList({
                 </div>
               )}
               {e.followedUpAt && <p className="mt-2 text-xs font-semibold text-green-700">Followed up {whenLabel(e.followedUpAt).toLowerCase()}</p>}
+              {isApplied && (
+                <div className="mt-3">
+                  <p className="text-xs font-semibold text-foreground-muted" id={`res-${e.id}`}>
+                    Where is it now?{e.result === "" && e.appliedAt ? ` Waiting ${daysSince(e.appliedAt)} ${daysSince(e.appliedAt) === 1 ? "day" : "days"}.` : ""}
+                  </p>
+                  <div role="group" aria-labelledby={`res-${e.id}`} className="mt-1.5 flex flex-wrap gap-1.5">
+                    {RESULTS.map((r) => (
+                      <button
+                        key={r.id || "waiting"}
+                        type="button"
+                        aria-pressed={e.result === r.id}
+                        onClick={() => onResult(e.id, r.id)}
+                        className={`inline-flex min-h-11 items-center rounded-full border px-3.5 text-xs font-semibold transition-colors sm:min-h-9 ${
+                          e.result === r.id
+                            ? r.id === "rejected"
+                              ? "border-slate-600 bg-slate-600 text-white"
+                              : r.id === ""
+                                ? "border-foreground bg-foreground text-background"
+                                : "border-green-700 bg-green-700 text-white"
+                            : "border-border-subtle bg-white hover:border-blue-500/40"
+                        }`}
+                      >
+                        {r.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <button type="button" onClick={() => onOpen(e.id)} className="inline-flex min-h-10 items-center justify-center rounded-full bg-blue-600 px-5 text-xs font-semibold text-white transition-colors hover:bg-blue-500">
                   Open

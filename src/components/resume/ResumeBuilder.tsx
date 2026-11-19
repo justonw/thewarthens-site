@@ -15,6 +15,7 @@ import ProfilePanel from "./ProfilePanel";
 import ApplicationsList from "./ApplicationsList";
 import { LIBRARY_KEY, MAX_ANSWERS_PER_ENTRY, MAX_MESSAGES_PER_ENTRY, cleanLibrary, entryFromResult, entryToResult, followUpDue, noLibrary, sameJob, upsertEntry, type LibraryEntry, type SavedAnswer, type SavedMessage } from "@/lib/resume-library";
 import { NO_TRACKER_ENTRIES, TRACKER_KEY, type TrackerEntry } from "@/lib/job-tracker";
+import { RESULTS, type Result } from "@/lib/outcomes";
 import type { ResumeStyle } from "@/lib/resume-files";
 import { downloadBlob } from "@/lib/download";
 import { track } from "@/lib/track";
@@ -641,6 +642,23 @@ export default function ResumeBuilder() {
     track("followup-written");
   }
 
+  // Where an application stands now. The job tracker is kept in step, so the two never disagree.
+  function markOutcome(id: string, outcome: Result) {
+    const e = library.find((x) => x.id === id);
+    if (!e) return;
+    const stamp = new Date().toISOString();
+    setLibrary((cur) => cur.map((x) => (x.id === id ? { ...x, result: outcome, resultAt: outcome === "" ? "" : stamp, updatedAt: stamp } : x)));
+    const status = RESULTS.find((r) => r.id === outcome)?.tracker ?? "Applied";
+    if (e.company.trim() && e.title.trim()) {
+      setTracker((cur) => {
+        const hit = cur.find((x) => sameJob(x, { company: e.company, role: e.title }));
+        if (!hit) return [{ id: crypto.randomUUID(), company: e.company.trim(), role: e.title.trim(), status, dateApplied: new Date().toISOString().slice(0, 10), notes: "Resume tailored for this job." }, ...cur];
+        return cur.map((x) => (x === hit ? { ...x, status } : x));
+      });
+    }
+    if (outcome !== "") track("outcome-marked");
+  }
+
   function removeEntry(id: string) {
     setLibrary((cur) => cur.filter((x) => x.id !== id));
     if (entryId === id) setEntryId(null);
@@ -1192,7 +1210,7 @@ export default function ResumeBuilder() {
       </div>
     </form>
 
-    <ApplicationsList entries={library} onOpen={(id) => openEntry(id)} onFollowUp={(id) => openEntry(id, true)} onToggleApplied={toggleApplied} onRemove={removeEntry} />
+    <ApplicationsList entries={library} onOpen={(id) => openEntry(id)} onFollowUp={(id) => openEntry(id, true)} onResult={markOutcome} onToggleApplied={toggleApplied} onRemove={removeEntry} />
 
     {fast && hydrated && (
       <ProfilePanel

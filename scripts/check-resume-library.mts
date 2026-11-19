@@ -87,6 +87,19 @@ assert.ok(!withAnswers[0].answers.some((a: any) => a.id === "a2" || a.id === "a3
 assert.ok(withAnswers[0].answers.length <= lib.MAX_ANSWERS_PER_ENTRY, "answers are capped");
 assert.deepEqual(lib.entryFromResult("n1", result, null).answers, [], "a new build starts with no answers");
 
+// A reply stops the follow-up nudge, and results are checked on the way in.
+assert.equal(lib.followUpDue({ ...applied, result: "interview" }, asOf).due, false, "a reply means no follow-up is needed");
+const withResult = lib.cleanLibrary([
+  { ...JSON.parse(JSON.stringify(applied)), result: "interview", resultAt: "2026-11-16T10:00:00.000Z" },
+  { ...JSON.parse(JSON.stringify(entry)), id: "r2", result: "interview" },
+  { ...JSON.parse(JSON.stringify(applied)), id: "r3", result: "hired!" },
+]);
+assert.equal(withResult[0].result, "interview");
+assert.ok(withResult[0].resultAt.startsWith("2026-11-16"));
+assert.equal(withResult[1].result, "", "a job that was never applied to has no result");
+assert.equal(withResult[2].result, "", "an unknown stage is dropped");
+assert.equal(lib.entryFromResult("n2", result, null).result, "", "a new build starts out waiting");
+
 // Matching a job in the tracker ignores case and spaces.
 assert.ok(lib.sameJob({ company: " Spotify ", role: "account executive" }, { company: "spotify", role: "Account Executive " }));
 assert.ok(!lib.sameJob({ company: "Spotify", role: "Account Executive" }, { company: "Spotify", role: "Sales Rep" }));

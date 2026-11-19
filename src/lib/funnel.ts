@@ -18,6 +18,7 @@ export const FUNNEL_EVENTS = [
   "outreach-opened", // opened "Reach out" on a finished resume
   "outreach-written", // got a message back from "Reach out"
   "numbers-answered", // added a real number to a bullet with the numbers coach
+  "outcome-marked", // marked where an application stands (phone screen, interview, offer, or not selected)
   "answers-opened", // opened "Answers" on a finished resume
   "answers-written", // got a drafted answer to an application question
   "followup-opened", // opened a follow-up message from a nudge on My applications

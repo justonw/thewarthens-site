@@ -5,6 +5,7 @@
 import { cleanText, parseDesign, parseDoc, parseLetter } from "./resume-tailor";
 import type { CoverLetter, ResumeDesign, ResumeDoc, ResumeFit, ResumeGap, TailorResult } from "./resume-tailor";
 import type { Audience, Purpose } from "./outreach";
+import type { Result } from "./outcomes";
 import type { ResumeStyle } from "./resume-files";
 
 export const LIBRARY_KEY = "warthens-resume-library-v1";
@@ -28,6 +29,9 @@ export type LibraryEntry = {
   appliedAt: string;
   // When a follow-up message was last copied for this job, so it is not nudged again.
   followedUpAt: string;
+  // Where the application stands now: "" is still waiting. See outcomes.ts.
+  result: Result;
+  resultAt: string;
   doc: ResumeDoc;
   letter: CoverLetter | null;
   design: ResumeDesign | null;
@@ -60,6 +64,8 @@ export function entryFromResult(id: string, r: TailorResult, letter: CoverLetter
     status: "built",
     appliedAt: "",
     followedUpAt: "",
+    result: "",
+    resultAt: "",
     doc: r.resume,
     letter,
     design: r.design ?? null,
@@ -177,6 +183,8 @@ export function cleanLibrary(raw: unknown): LibraryEntry[] {
       status,
       appliedAt: status === "applied" ? iso(o.appliedAt) || at : "",
       followedUpAt: iso(o.followedUpAt),
+      result: status === "applied" && (o.result === "phone" || o.result === "interview" || o.result === "offer" || o.result === "rejected") ? o.result : "",
+      resultAt: status === "applied" ? iso(o.resultAt) : "",
       doc,
       letter: parseLetter(o.letter),
       design: parseDesign(o.design),
@@ -212,7 +220,7 @@ export function cleanDoc(d: ResumeDoc): ResumeDoc {
 
 // A job that was applied to a while ago, with no follow-up yet: the moment a short check-in is worth sending.
 export function followUpDue(e: LibraryEntry, now = new Date(), afterDays = 5): { due: boolean; days: number } {
-  if (e.status !== "applied" || !e.appliedAt || e.followedUpAt) return { due: false, days: 0 };
+  if (e.status !== "applied" || !e.appliedAt || e.followedUpAt || e.result !== "") return { due: false, days: 0 };
   const days = Math.floor((now.getTime() - new Date(e.appliedAt).getTime()) / 86_400_000);
   return { due: Number.isFinite(days) && days >= afterDays, days: Math.max(0, days) };
 }
