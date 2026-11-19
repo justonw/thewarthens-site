@@ -12,6 +12,10 @@ import VoiceInput from "./VoiceInput";
 import { takeHandoff } from "@/lib/resume-handoff";
 import BuyMore from "./BuyMore";
 import ProfilePanel from "./ProfilePanel";
+import ApplicationsList from "./ApplicationsList";
+import { LIBRARY_KEY, MAX_MESSAGES_PER_ENTRY, cleanLibrary, entryFromResult, entryToResult, noLibrary, sameJob, upsertEntry, type LibraryEntry, type SavedMessage } from "@/lib/resume-library";
+import { NO_TRACKER_ENTRIES, TRACKER_KEY, type TrackerEntry } from "@/lib/job-tracker";
+import type { ResumeStyle } from "@/lib/resume-files";
 import { downloadBlob } from "@/lib/download";
 import { track } from "@/lib/track";
 import { STORIES_KEY, USE_STORIES_KEY, addStoryTo, buildProfileFile, noStories, profileFileName, storiesAsNotes, type Profile, type Story } from "@/lib/resume-profile";
@@ -53,6 +57,8 @@ type Saved = {
   email: string;
   source: string;
   wantLetter: boolean;
+  // Whether to email a copy of each build. Remembered, so the next job does not ask again.
+  emailCopy?: boolean;
   files: SavedFile[];
 };
 
@@ -192,10 +198,16 @@ export default function ResumeBuilder() {
   const [usage, setUsage] = useState<Usage | null>(null);
   const [original, setOriginal] = useState<string | null>(null);
   const [matchDesign, setMatchDesign] = useState(true);
+  // "auto" shows the quick next-job screen when a profile is saved; "full" shows the whole form.
+  const [lanePref, setLanePref] = useState<"auto" | "full">("auto");
+  // The saved build on screen, so edits and messages are kept with it.
+  const [entryId, setEntryId] = useState<string | null>(null);
 
   const [saved, setSaved, hydrated] = usePersistentState<Saved | null>(SAVED_KEY, noSaved);
   const [stories, setStories] = usePersistentState<Story[]>(STORIES_KEY, noStories);
   const [includeStories, setIncludeStories] = usePersistentState<boolean>(USE_STORIES_KEY, true);
+  const [library, setLibrary] = usePersistentState<LibraryEntry[]>(LIBRARY_KEY, noLibrary);
+  const [, setTracker] = usePersistentState<TrackerEntry[]>(TRACKER_KEY, NO_TRACKER_ENTRIES);
   const notesRef = useRef<HTMLTextAreaElement>(null);
 
   // Private step counts (see lib/funnel.ts): opened, returned with a saved profile, and each step reached.
@@ -225,6 +237,32 @@ export default function ResumeBuilder() {
   const formIsEmpty = !scratch.name.trim() && !scratch.story.trim() && !resume.trim() && !posting.trim() && !notes.trim() && resumeFiles.length === 0 && postingFiles.length === 0;
   const showSaved = hydrated && saved !== null && formIsEmpty && phase === "form";
 
+  // The quick next-job screen: for someone whose resume, email, and source are already saved, the only thing left to ask
+  // for is the job. Anything that brings its own form contents (a payment return, the scanner, a reload) gets the full form.
+  const EMAIL_OK = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const canFast = hydrated && mode === "have" && saved !== null && (saved.resume.trim().length >= 150 || saved.files.length > 0) && EMAIL_OK.test(saved.email) && Boolean(saved.source);
+  const fast = canFast && lanePref === "auto" && phase === "form" && !justPaid && !fromScanner && !reloadNote && !draftBack;
+
+  // Puts the saved profile into the form the first time the quick screen shows, so the full form is ready if they want it.
+  const appliedFast = useRef(false);
+  useEffect(() => {
+    if (!fast || !formIsEmpty) return;
+    const timer = window.setTimeout(() => {
+      if (appliedFast.current) return;
+      appliedFast.current = true;
+      applySaved();
+    }, 0);
+    return () => window.clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fast, formIsEmpty]);
+
+  // On a computer, the job box is ready for a paste. (On a phone, focusing would pop the keyboard over the screen.)
+  useEffect(() => {
+    if (!fast || typeof window.matchMedia !== "function" || !window.matchMedia("(pointer: fine)").matches) return;
+    const timer = window.setTimeout(() => document.getElementById("rt-posting")?.focus({ preventScroll: true }), 600);
+    return () => window.clearTimeout(timer);
+  }, [fast]);
+
   // The notes sent with a build: what they typed, plus (if they want) the true answers they gave before.
   function notesForBuild() {
     const base = tidyNotes(notes);
@@ -235,16 +273,20 @@ export default function ResumeBuilder() {
 
   function exportProfile() {
     track("profile-saved");
-    const json = buildProfileFile({ resume: saved?.resume ?? "", notes: saved?.notes ?? "", hiringManager: saved?.hiringManager ?? "", email: saved?.email ?? "", stories, filesOmitted: saved?.files.length ?? 0 });
+    const json = buildProfileFile({ resume: saved?.resume ?? "", notes: saved?.notes ?? "", hiringManager: saved?.hiringManager ?? "", email: saved?.email ?? "", stories, library, filesOmitted: saved?.files.length ?? 0 });
     downloadBlob(new Blob([json], { type: "application/json" }), profileFileName());
   }
 
   // Loads a profile file. "replace" puts everything back; "stories" only adds its stories and keeps what is here.
   function importProfile(p: Profile, how: "replace" | "stories") {
+    // The saved builds in the file are checked entry by entry. A file with none (an older one) never wipes the ones here.
+    const imported = cleanLibrary(p.library ?? []);
     if (how === "stories") {
       setStories((cur) => p.stories.reduce((list, s) => addStoryTo(list, s), cur));
+      if (imported.length) setLibrary((cur) => imported.reduce((list, e) => (list.some((x) => x.id === e.id) ? list : upsertEntry(list, e)), cur));
       return;
     }
+    if (imported.length) setLibrary(imported);
     setStories(p.stories);
     setSaved({ resume: p.resume, notes: p.notes, hiringManager: p.hiringManager, email: p.email, source: saved?.source ?? "", wantLetter: saved?.wantLetter ?? false, files: [] });
     setMode("have");
@@ -257,10 +299,13 @@ export default function ResumeBuilder() {
   function forgetProfile() {
     setSaved(null);
     setStories([]);
+    setLibrary([]);
+    setEntryId(null);
   }
 
-  function useSaved() {
+  function applySaved() {
     if (!saved) return;
+    setEmailCopy(saved.emailCopy !== false);
     setMode("have");
     setResume(saved.resume);
     setNotes(saved.notes);
@@ -379,7 +424,14 @@ export default function ResumeBuilder() {
       if (total > MAX_SAVED_FILE_B64) break;
       files.push({ name: f.name, kind: f.attachment.kind, mediaType: f.attachment.mediaType, data: f.attachment.data, size: f.size });
     }
-    setSaved({ resume: resumeText, notes: tidyNotes(notes), hiringManager, email: email.trim(), source, wantLetter, files });
+    setSaved({ resume: resumeText, notes: tidyNotes(notes), hiringManager, email: email.trim(), source, wantLetter, emailCopy, files });
+
+    // Keep this build in "My applications" and put the job in the tracker, so there is nothing to remember to do.
+    const built = data.result;
+    const id = newBuildId();
+    setLibrary((cur) => upsertEntry(cur, entryFromResult(id, built, built.coverLetter ?? null)));
+    setEntryId(id);
+    trackJob(built.postingCompany, built.postingTitle);
 
     track("build-finished");
     setResult(data.result);
@@ -517,6 +569,8 @@ export default function ResumeBuilder() {
 
   function startOver() {
     // Keeps the resume, notes, and email, so the next job takes seconds.
+    track("next-job");
+    setEntryId(null);
     setPhase("form");
     setResult(null);
     setDoc(null);
@@ -525,6 +579,90 @@ export default function ResumeBuilder() {
     setPostingFiles([]);
     setError("");
   }
+
+  // ---------- My applications ----------
+
+  const todayIso = () => new Date().toISOString().slice(0, 10);
+
+  // Puts a job in the tracker (once). A job already there is left as it is, unless it is being marked applied.
+  function trackJob(company: string, role: string, status: "Not Yet Applied" | "Applied" = "Not Yet Applied") {
+    if (!company.trim() || !role.trim()) return;
+    setTracker((cur) => {
+      const hit = cur.find((x) => sameJob(x, { company, role }));
+      if (!hit) {
+        return [{ id: crypto.randomUUID(), company: company.trim(), role: role.trim(), status, dateApplied: todayIso(), notes: "Resume tailored for this job." }, ...cur];
+      }
+      if (status === "Applied" && hit.status === "Not Yet Applied") return cur.map((x) => (x === hit ? { ...x, status: "Applied", dateApplied: todayIso() } : x));
+      return cur;
+    });
+  }
+
+  function openEntry(id: string) {
+    const e = library.find((x) => x.id === id);
+    if (!e) return;
+    track("build-reopened");
+    if (!email.trim() && saved?.email) setEmail(saved.email);
+    setResult(entryToResult(e));
+    setDoc(e.doc);
+    setLetter(e.letter);
+    setLetterFailed(false);
+    setMailThis(false);
+    setGaps(e.gaps);
+    setChanges(e.changes);
+    setRemaining(null);
+    setUsage(null);
+    setOriginal(null);
+    setEntryId(id);
+    setPhase("result");
+  }
+
+  function toggleApplied(id: string) {
+    const e = library.find((x) => x.id === id);
+    if (!e) return;
+    const nowApplied = e.status !== "applied";
+    const stamp = new Date().toISOString();
+    setLibrary((cur) => cur.map((x) => (x.id === id ? { ...x, status: nowApplied ? "applied" : "built", appliedAt: nowApplied ? stamp : "", updatedAt: stamp } : x)));
+    if (nowApplied) {
+      trackJob(e.company, e.title, "Applied");
+    } else {
+      // Undoing only steps the tracker back if it still says "Applied", so a later stage is never overwritten.
+      setTracker((cur) => cur.map((x) => (sameJob(x, { company: e.company, role: e.title }) && x.status === "Applied" ? { ...x, status: "Not Yet Applied" } : x)));
+    }
+  }
+
+  function removeEntry(id: string) {
+    setLibrary((cur) => cur.filter((x) => x.id !== id));
+    if (entryId === id) setEntryId(null);
+  }
+
+  function saveMessage(m: SavedMessage) {
+    if (!entryId) return;
+    setLibrary((cur) =>
+      cur.map((x) => (x.id === entryId ? { ...x, updatedAt: new Date().toISOString(), messages: [m, ...x.messages.filter((y) => y.id !== m.id)].slice(0, MAX_MESSAGES_PER_ENTRY) } : x))
+    );
+  }
+
+  function saveStyle(style: ResumeStyle) {
+    if (!entryId) return;
+    setLibrary((cur) => cur.map((x) => (x.id === entryId && x.style !== style ? { ...x, style } : x)));
+  }
+
+  // Edits to the resume, the letter, and the questions keep flowing into the saved build, a moment after each change.
+  useEffect(() => {
+    if (phase !== "result" || !entryId || !doc) return;
+    const timer = window.setTimeout(() => {
+      setLibrary((cur) =>
+        cur.map((x) => {
+          if (x.id !== entryId) return x;
+          const same = JSON.stringify([x.doc, x.letter, x.gaps, x.changes]) === JSON.stringify([doc, letter, gaps, changes]);
+          return same ? x : { ...x, doc, letter, gaps, changes, updatedAt: new Date().toISOString() };
+        })
+      );
+    }, 700);
+    return () => window.clearTimeout(timer);
+  }, [phase, entryId, doc, letter, gaps, changes, setLibrary]);
+
+  const current = entryId ? library.find((x) => x.id === entryId) : undefined;
 
   if (phase === "loading") {
     const steps = progressSteps(wantLetter);
@@ -574,6 +712,7 @@ export default function ResumeBuilder() {
   if (phase === "result" && doc && result) {
     return (
       <ResultView
+        key={entryId ?? "new"}
         result={result}
         doc={doc}
         onDoc={setDoc}
@@ -584,13 +723,19 @@ export default function ResumeBuilder() {
         onGaps={setGaps}
         changes={changes}
         onChanges={setChanges}
-        email={email.trim()}
+        email={email.trim() || saved?.email || ""}
         emailCopy={mailThis}
         remaining={remaining}
         usage={usage}
         original={original}
         onStartOver={startOver}
         onSaveProfile={exportProfile}
+        initialStyle={current?.style}
+        onStyleChange={saveStyle}
+        applied={current?.status === "applied"}
+        onToggleApplied={entryId ? () => toggleApplied(entryId) : undefined}
+        messages={current?.messages}
+        onMessage={saveMessage}
       />
     );
   }
@@ -604,8 +749,20 @@ export default function ResumeBuilder() {
   const readyCount = Number(resumeReady) + Number(postingReady) + Number(emailReady);
   const missing = [!resumeReady && "your resume", !postingReady && "the job", !emailReady && "your email and how you found us"].filter(Boolean) as string[];
 
+  // What the quick screen says it is using, in a few words: the first line of the saved resume (usually the name), or the file.
+  const savedWords = saved?.resume.trim() ? saved.resume.trim().split(/\s+/).length : 0;
+  const savedFirstLine = saved?.resume.split("\n").map((l) => l.trim()).find(Boolean)?.slice(0, 70) ?? "";
+  const savedSummary = saved ? (savedFirstLine ? `${savedFirstLine}${savedWords ? ` · ${savedWords.toLocaleString()} words` : ""}` : saved.files.map((f) => f.name).join(", ")) : "";
+  const answerCount = includeStories ? stories.length : 0;
+  function showFullForm(focusId: string) {
+    setLanePref("full");
+    window.setTimeout(() => document.getElementById(focusId)?.scrollIntoView({ behavior: "smooth", block: "center" }), 80);
+  }
+
   return (
+    <div className="space-y-10">
     <form id="resume-tool" onSubmit={build} className="space-y-6" noValidate>
+      {!fast && (
       <div className="sticky top-14 z-30 mx-auto max-w-3xl rounded-2xl border border-border-subtle bg-white/90 px-4 py-3 shadow-md backdrop-blur sm:top-16 sm:px-6">
         <ol className="flex items-center" aria-label="Your progress">
           {(
@@ -635,9 +792,19 @@ export default function ResumeBuilder() {
           {readyCount === 3 ? "You're ready. Build it." : `${readyCount} of 3 steps done`}
         </p>
       </div>
+      )}
 
-      {hydrated && phase === "form" && mode === "have" && (
+      {canFast && lanePref === "full" && (
+        <p className="mx-auto max-w-3xl text-center text-sm">
+          <button type="button" onClick={() => setLanePref("auto")} className="inline-flex min-h-11 items-center font-semibold text-blue-700 underline underline-offset-2">
+            ← Back to the quick next-job screen
+          </button>
+        </p>
+      )}
+
+      {hydrated && phase === "form" && mode === "have" && !fast && (
         <ProfilePanel
+          applications={library.length}
           hasSaved={saved !== null}
           resumeText={saved?.resume ?? ""}
           notesText={saved?.notes ?? ""}
@@ -651,13 +818,13 @@ export default function ResumeBuilder() {
         />
       )}
 
-      {showSaved && mode === "have" && (
+      {showSaved && mode === "have" && !fast && (
         <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-3 rounded-2xl border border-blue-500/30 bg-blue-500/5 px-5 py-4">
           <p className="text-sm">
             <span className="font-semibold">Welcome back.</span> We kept your resume and notes on this device, so you can skip step 1.
           </p>
           <div className="flex items-center gap-3">
-            <button type="button" onClick={useSaved} className="inline-flex min-h-11 items-center rounded-full bg-blue-600 px-5 text-xs font-semibold text-white transition-colors hover:bg-blue-500 sm:min-h-9">
+            <button type="button" onClick={applySaved} className="inline-flex min-h-11 items-center rounded-full bg-blue-600 px-5 text-xs font-semibold text-white transition-colors hover:bg-blue-500 sm:min-h-9">
               Use my saved info
             </button>
             <button type="button" onClick={() => setSaved(null)} className="inline-flex min-h-11 items-center px-2 text-xs text-foreground-muted underline underline-offset-2 sm:min-h-9">
@@ -667,7 +834,55 @@ export default function ResumeBuilder() {
         </div>
       )}
 
-      {mode === "scratch" ? (
+      {fast ? (
+        <div className="mx-auto max-w-3xl space-y-4">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-wider text-blue-700">Next job</p>
+            <h2 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">Paste the next job. We&apos;ll do the rest.</h2>
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-green-600/30 bg-green-600/5 px-4 py-3">
+            <p className="min-w-0 text-sm">
+              <span className="font-semibold text-green-800">✓ Using your saved resume</span>
+              <span className="block truncate text-xs text-foreground-muted">{savedSummary}</span>
+            </p>
+            <button type="button" onClick={() => showFullForm("rt-resume")} className="inline-flex min-h-11 items-center rounded-full px-3 text-xs font-semibold text-blue-700 transition-colors hover:bg-blue-500/10 sm:min-h-9">
+              Change
+            </button>
+          </div>
+          <ResumeInputBox
+            id="rt-posting"
+            step={1}
+            done={postingReady}
+            label="The job"
+            help="Paste its link or the text, or drop a screenshot."
+            placeholder="Paste the link to the job posting here, or paste the posting text, or drop a screenshot onto this box."
+            text={posting}
+            onText={setPosting}
+            files={postingFiles}
+            onFiles={setPostingFiles}
+            allowLink
+          />
+          <div className="space-y-3 rounded-2xl border border-border-subtle bg-white px-4 py-4 shadow-sm">
+            <label className="flex cursor-pointer items-start gap-3">
+              <input type="checkbox" checked={wantLetter} onChange={(e) => setWantLetter(e.target.checked)} className="mt-0.5 h-4 w-4 shrink-0 accent-blue-600" />
+              <span className="text-sm font-semibold">Also write a cover letter</span>
+            </label>
+            <label className="flex cursor-pointer items-start gap-3">
+              <input type="checkbox" checked={emailCopy} onChange={(e) => setEmailCopy(e.target.checked)} className="mt-0.5 h-4 w-4 shrink-0 accent-blue-600" />
+              <span className="min-w-0 text-sm">
+                <span className="font-semibold">Email me a copy</span>
+                <span className="block truncate text-xs text-foreground-muted">Goes to {saved?.email}</span>
+              </span>
+            </label>
+            <p className="text-xs text-foreground-muted">
+              {tidyNotes(notes) || answerCount > 0 ? `Your saved notes${answerCount > 0 ? ` and ${answerCount} saved ${answerCount === 1 ? "answer" : "answers"}` : ""} are used too. ` : ""}
+              <button type="button" onClick={() => showFullForm("rt-resume")} className="font-semibold text-blue-700 underline underline-offset-2">
+                Change my resume, email, or notes
+              </button>
+            </p>
+          </div>
+        </div>
+      ) : mode === "scratch" ? (
         <div className="mx-auto max-w-3xl space-y-6">
         
           <p className="text-center text-xs text-foreground-muted">
@@ -743,6 +958,7 @@ export default function ResumeBuilder() {
       )}
 
       <div className="mx-auto max-w-3xl space-y-4">
+      {!fast && (<>
       <div className="rounded-3xl border border-border-subtle bg-white p-5 shadow-lg shadow-blue-900/5 transition-shadow focus-within:border-blue-500/40 focus-within:shadow-xl sm:p-6">
         <button
           type="button"
@@ -877,6 +1093,7 @@ export default function ResumeBuilder() {
           </div>
         )}
       </div>
+      </>)}
 
       {outOfBuilds ? (
         <div id="rt-problem">
@@ -888,7 +1105,8 @@ export default function ResumeBuilder() {
             onTryAnother={() => {
               setOutOfBuilds(false);
               setError("");
-              window.setTimeout(() => document.getElementById("rt-email")?.focus(), 50);
+              setLanePref("full");
+              window.setTimeout(() => document.getElementById("rt-email")?.focus(), 120);
             }}
           />
         </div>
@@ -949,6 +1167,25 @@ export default function ResumeBuilder() {
       )}
       </div>
     </form>
+
+    <ApplicationsList entries={library} onOpen={openEntry} onToggleApplied={toggleApplied} onRemove={removeEntry} />
+
+    {fast && hydrated && (
+      <ProfilePanel
+        applications={library.length}
+        hasSaved={saved !== null}
+        resumeText={saved?.resume ?? ""}
+        notesText={saved?.notes ?? ""}
+        stories={stories}
+        useStories={includeStories}
+        onUseStories={setIncludeStories}
+        onRemoveStory={(id) => setStories((cur) => cur.filter((s) => s.id !== id))}
+        onImport={importProfile}
+        onExport={exportProfile}
+        onForget={forgetProfile}
+      />
+    )}
+    </div>
   );
 }
 

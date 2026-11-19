@@ -520,7 +520,7 @@ export default function PresentMissingLesson() {
           <h2 className="text-2xl font-semibold sm:text-3xl">Get notes</h2>
           <p className="mt-3 text-blue-100">
             Type your email and we will send you a PDF with the lesson and everything you wrote. It goes
-            only to the address you enter. We do not receive a copy or keep your notes.
+            only to the address you enter.
           </p>
           <form onSubmit={send} className="mt-6 space-y-4">
             <div>

@@ -16,9 +16,11 @@ import NextSteps from "./NextSteps";
 import { Confetti, ReadinessRing } from "./Celebrate";
 import ShareCard from "./ShareCard";
 import StrengthenPanel from "./StrengthenPanel";
+import OutreachPanel from "./OutreachPanel";
 import { STORIES_KEY, addStoryTo, newStory, noStories, type Story } from "@/lib/resume-profile";
+import { cleanDoc, sameJob, type SavedMessage } from "@/lib/resume-library";
 
-type Tab = "resume" | "letter";
+type Tab = "resume" | "letter" | "reach";
 
 const card = "rounded-2xl border border-border-subtle bg-background-elevated p-5";
 const input =
@@ -31,24 +33,6 @@ const refineErrors: Record<string, string> = {
   cap: "We've reached our limit for quick updates this month. You can still edit your resume by hand.",
   email: "Add your email address above to use quick updates.",
 };
-
-// Drops blank lines and empty entries before the resume is checked or downloaded.
-function cleanDoc(d: ResumeDoc): ResumeDoc {
-  const t = (s: string) => s.trim();
-  return {
-    ...d,
-    name: t(d.name),
-    headline: t(d.headline),
-    summary: t(d.summary),
-    contact: d.contact.map(t).filter(Boolean),
-    skills: d.skills.map((s) => ({ label: t(s.label), items: t(s.items) })).filter((s) => s.items),
-    experience: d.experience
-      .map((j) => ({ ...j, title: t(j.title), company: t(j.company), location: t(j.location), dates: t(j.dates), bullets: j.bullets.map(t).filter(Boolean) }))
-      .filter((j) => j.title || j.company),
-    training: d.training.map((x) => ({ name: t(x.name), detail: t(x.detail), dates: t(x.dates) })).filter((x) => x.name),
-    education: d.education.map((e) => ({ school: t(e.school), credential: t(e.credential), dates: t(e.dates) })).filter((e) => e.school),
-  };
-}
 
 function Highlighted({ text, keywords }: { text: string; keywords: string[] }) {
   const escaped = keywords.map((k) => k.trim()).filter(Boolean).map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
@@ -105,6 +89,37 @@ function Compare({ original, tailored, keywords }: { original: string; tailored:
   );
 }
 
+// The nudge toward "Reach out": a short message to a real person. Shown under the result and again near the bottom,
+// so someone who finishes the resume sees it without hunting.
+function ReachCallout({ company, onOpen }: { company: string; onOpen: () => void }) {
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-blue-500/30 bg-gradient-to-r from-blue-600/10 via-background-elevated to-violet-600/10 p-4 shadow-sm sm:p-5">
+      <div className="flex items-center gap-3 sm:gap-4">
+        <span aria-hidden className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-violet-600 text-white shadow-md shadow-blue-900/20">
+          <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4 5h16a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V6a1 1 0 011-1z" />
+            <path d="M3.5 6.5l8.5 6.5 8.5-6.5" />
+          </svg>
+        </span>
+        <div>
+          <p className="font-semibold">Next: get it in front of a real person</p>
+          <p className="mt-0.5 text-sm text-foreground-muted">
+            We&apos;ll write a short message to a recruiter or the hiring manager{company ? ` at ${company}` : ""}, using this resume. About 15 seconds.
+          </p>
+        </div>
+      </div>
+      <button
+        type="button"
+        onClick={onOpen}
+        className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/25 transition-colors hover:bg-blue-500 sm:w-auto"
+      >
+        Write my message
+        <span aria-hidden>→</span>
+      </button>
+    </div>
+  );
+}
+
 export default function ResultView({
   result,
   doc,
@@ -123,6 +138,12 @@ export default function ResultView({
   usage,
   original,
   onStartOver,
+  initialStyle,
+  onStyleChange,
+  applied = false,
+  onToggleApplied,
+  messages,
+  onMessage,
 }: {
   result: TailorResult;
   doc: ResumeDoc;
@@ -143,15 +164,33 @@ export default function ResultView({
   // The resume text the person gave us, for the before-and-after view. Null when it came from a file or from scratch.
   original: string | null;
   onStartOver: () => void;
+  // A saved build keeps the template the person chose, and whether they have applied to the job.
+  initialStyle?: ResumeStyle;
+  onStyleChange?: (s: ResumeStyle) => void;
+  applied?: boolean;
+  onToggleApplied?: () => void;
+  // The messages already written for this job (from "My applications"), and a way to keep each new one.
+  messages?: SavedMessage[];
+  onMessage?: (m: SavedMessage) => void;
 }) {
   const [tab, setTab] = useState<Tab>("resume");
+  // Opens "Reach out" and brings the tabs into view, so the new step is the first thing on screen.
+  function openReach() {
+    setTab("reach");
+    track("outreach-opened");
+    window.setTimeout(() => document.getElementById("rt-tabs")?.scrollIntoView({ behavior: "smooth", block: "start" }), 30);
+  }
   // Each true answer to a gap-coach question is kept in this browser as a "story", for the next resume.
   const [, setStories] = usePersistentState<Story[]>(STORIES_KEY, noStories);
   const [busy, setBusy] = useState<"" | "pdf" | "docx">("");
   const [justAdded, setJustAdded] = useState("");
   const design = result.design;
   // When we could see the original's look, start with it, as the person asked for.
-  const [style, setStyle] = useState<ResumeStyle>(design ? "custom" : "classic");
+  const [style, setStyleState] = useState<ResumeStyle>(initialStyle ?? (design ? "custom" : "classic"));
+  const setStyle = (next: ResumeStyle) => {
+    setStyleState(next);
+    onStyleChange?.(next);
+  };
   // The preview is shown from the start: choosing a template changes only the download, so without a preview
   // nothing on the page would seem to change.
   // Phones cannot show a PDF inside a page (Android shows a blank box, iPhones show only the first page), so there the
@@ -174,6 +213,8 @@ export default function ResultView({
   const [company, setCompany] = useState(result.postingCompany);
   const [role, setRole] = useState(result.postingTitle);
   const [tracked, setTracked] = useState<"" | "added" | "exists">("");
+  // The builder puts every new job in the tracker, so most of the time this is already done.
+  const inTracker = entries.some((x) => sameJob(x, { company: result.postingCompany, role: result.postingTitle }));
 
   function addToTracker(e: React.FormEvent) {
     e.preventDefault();
@@ -322,17 +363,18 @@ export default function ResultView({
     }
   }
 
-  const tabButton = (id: Tab, label: string) => (
+  const tabButton = (id: Tab, label: string, isNew = false) => (
     <button
       type="button"
       role="tab"
       aria-selected={tab === id}
-      onClick={() => setTab(id)}
-      className={`rounded-full px-5 py-2 text-sm font-semibold transition-colors ${
+      onClick={() => (id === "reach" ? openReach() : setTab(id))}
+      className={`inline-flex min-h-11 items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition-colors sm:min-h-0 ${
         tab === id ? "bg-foreground text-background" : "text-foreground-muted hover:text-foreground"
       }`}
     >
       {label}
+      {isNew && tab !== id && <span className="rounded-full bg-violet-600 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">New</span>}
     </button>
   );
 
@@ -368,12 +410,16 @@ export default function ResultView({
               </p>
             </div>
           </div>
-          <button type="button" onClick={onStartOver} className="rounded-full border border-border-subtle bg-white px-5 py-2.5 text-sm font-semibold shadow-sm transition-colors hover:border-blue-500/40">
-            Tailor for another job
+          <button type="button" onClick={onStartOver} className="inline-flex min-h-11 items-center gap-2 rounded-full bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/25 transition-colors hover:bg-blue-500">
+            Next job
+            <span aria-hidden>→</span>
           </button>
         </div>
       </div>
 
+      {tab !== "reach" && <ReachCallout company={result.postingCompany} onOpen={openReach} />}
+
+      <div hidden={tab === "reach"} className="space-y-6">
       <StrengthenPanel gaps={gaps} fit={result.fit} justAdded={justAdded} onAdd={addGap} />
 
     {(contactMissing.email || contactMissing.phone) && (
@@ -398,16 +444,20 @@ export default function ResultView({
 
       {letterFailed && !letter && (
         <p role="status" className="rounded-2xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm">
-          Your resume is ready, but the cover letter did not come through this time. You can download the resume now, and use &quot;Tailor for another job&quot; to try the letter again. Your resume and notes are saved here, so it only takes a moment.
+          Your resume is ready, but the cover letter did not come through this time. You can download the resume now, and use &quot;Next job&quot; to try the letter again. Your resume and notes are saved here, so it only takes a moment.
         </p>
       )}
+      </div>
 
-      {letter && (
-        <div role="tablist" aria-label="Your documents" className="inline-flex rounded-full border border-border-subtle bg-background-elevated p-1">
-          {tabButton("resume", "Resume")}
-          {tabButton("letter", "Cover letter")}
-        </div>
-      )}
+      <div id="rt-tabs" role="tablist" aria-label="Your documents" className="inline-flex max-w-full scroll-mt-20 flex-wrap rounded-3xl border border-border-subtle bg-background-elevated p-1">
+        {tabButton("resume", "Resume")}
+        {letter && tabButton("letter", "Cover letter")}
+        {tabButton("reach", "Reach out", true)}
+      </div>
+
+      <div hidden={tab !== "reach"}>
+        <OutreachPanel doc={finalDoc} result={result} gaps={gaps} email={email} saved={messages ?? []} onSave={onMessage} onBack={() => setTab("resume")} />
+      </div>
 
       {inApp && (
         <p role="status" className="rounded-2xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm">
@@ -415,7 +465,7 @@ export default function ResultView({
         </p>
       )}
 
-      {tab === "letter" && letter ? (
+      {tab === "reach" ? null : tab === "letter" && letter ? (
         <CoverLetterEditor letter={letter} doc={finalDoc} onChange={onLetter} />
       ) : (
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
@@ -557,6 +607,28 @@ export default function ResultView({
               </div>
             )}
 
+            {inTracker ? (
+              <div className={card}>
+                <p className="font-semibold">In your job tracker ✓</p>
+                <p className="mt-1 text-xs text-foreground-muted">
+                  {result.postingTitle}
+                  {result.postingCompany ? ` at ${result.postingCompany}` : ""}.{" "}
+                  <Link href="/tech#tracker" className="font-semibold text-blue-600 underline underline-offset-2">
+                    Open my tracker
+                  </Link>
+                </p>
+                {onToggleApplied && (
+                  <button
+                    type="button"
+                    onClick={onToggleApplied}
+                    aria-pressed={applied}
+                    className={`mt-3 inline-flex min-h-10 items-center rounded-full px-5 text-sm font-semibold transition-colors ${applied ? "bg-green-600 text-white hover:bg-green-700" : "border border-border-subtle bg-white shadow-sm hover:border-blue-500/40"}`}
+                  >
+                    {applied ? "Applied ✓ (tap to undo)" : "I applied for this job"}
+                  </button>
+                )}
+              </div>
+            ) : (
             <form onSubmit={addToTracker} className={card}>
               <p className="font-semibold">Applying for this job?</p>
               <p className="mt-1 text-xs text-foreground-muted">Add it to your job tracker so you remember to follow up.</p>
@@ -576,6 +648,7 @@ export default function ResultView({
                 </p>
               )}
             </form>
+            )}
 
             {changes.length > 0 && (
               <div className={card}>
@@ -596,6 +669,8 @@ export default function ResultView({
           </div>
         </div>
       )}
+
+      {tab !== "reach" && <ReachCallout company={result.postingCompany} onOpen={openReach} />}
 
       <NextSteps title={`${result.postingTitle} ${doc.headline}`} extra={result.postingKeywords.join(" ")} />
 

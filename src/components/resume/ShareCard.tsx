@@ -5,7 +5,7 @@ import { useState } from "react";
 // "Know someone job hunting?" The message is generic on purpose: it never includes the person's name, the
 // job, or the company, since a job search is often private.
 const URL = "https://thewarthens.com/resume?from=share";
-const TEXT = "I just tailored my resume to a job posting in about a minute with this free Resume Builder from The Warthens.";
+const TEXT = "I just tailored my resume to a job posting in about a minute with this Resume Builder from The Warthens.";
 
 export default function ShareCard() {
   const [copied, setCopied] = useState(false);
@@ -34,7 +34,7 @@ export default function ShareCard() {
   return (
     <section className="rounded-2xl border border-border-subtle bg-background-elevated p-5">
       <p className="font-semibold">Know someone job hunting?</p>
-      <p className="mt-1 text-sm text-foreground-muted">Pass it on. It&apos;s free for them too.</p>
+      <p className="mt-1 text-sm text-foreground-muted">Pass it on to a friend who is applying for jobs.</p>
       <div className="mt-3 flex flex-wrap gap-2">
         {canShare && (
           <button type="button" onClick={nativeShare} className={btn}>

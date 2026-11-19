@@ -32,7 +32,7 @@ assert.match(profileFileName(new Date("2026-11-18T12:00:00Z")), /^my-career-prof
 assert.equal(parseProfileFile("not json", limits).ok, false);
 assert.equal(parseProfileFile(JSON.stringify({ app: "something-else", version: 1 }), limits).ok, false);
 assert.equal(parseProfileFile(JSON.stringify({ app: PROFILE_APP, version: 99 }), limits).ok, false);
-assert.equal(parseProfileFile("x".repeat(700_000), limits).ok, false);
+assert.equal(parseProfileFile("x".repeat(3_100_000), limits).ok, false);
 const hostile = parseProfileFile(JSON.stringify({ app: PROFILE_APP, version: 1, resume: "r".repeat(100000), notes: "<script>alert(1)</script>", stories: [{ topic: "ok", answer: "fine answer" }, { topic: "", answer: "no topic" }, "junk", null, { topic: "t", answer: "a".repeat(5000) }] }), limits);
 assert.ok(hostile.ok);
 if (hostile.ok) {
@@ -40,4 +40,11 @@ if (hostile.ok) {
   assert.equal(hostile.profile.stories.length, 2, "bad stories are dropped");
   assert.equal(hostile.profile.stories[1].answer.length, 700);
 }
+// Saved builds travel in the file as plain data (they are checked where they are used), and an older file without any is fine.
+const withLibrary = parseProfileFile(buildProfileFile({ resume: "r", notes: "", hiringManager: "", email: "", stories: [], library: [{ id: "a1" }, { id: "a2" }] }), limits);
+assert.ok(withLibrary.ok && withLibrary.profile.library?.length === 2, "saved builds round trip");
+const noLibrary = parseProfileFile(JSON.stringify({ app: PROFILE_APP, version: 1, resume: "r", stories: [] }), limits);
+assert.ok(noLibrary.ok && noLibrary.profile.library?.length === 0, "an older file has no saved builds");
+const tooMany = parseProfileFile(JSON.stringify({ app: PROFILE_APP, version: 1, resume: "r", stories: [], library: Array.from({ length: 500 }, (_, i) => ({ id: `x${i}` })) }), limits);
+assert.ok(tooMany.ok && (tooMany.profile.library?.length ?? 0) <= 60, "the number of saved builds in a file is capped");
 console.log("profile checks passed");

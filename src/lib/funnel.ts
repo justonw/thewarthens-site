@@ -15,6 +15,10 @@ export const FUNNEL_EVENTS = [
   "returning-visit", // came back with a saved profile on this device
   "scanner-visit", // opened the free keyword scanner
   "scanner-checked", // ran the scanner
+  "outreach-opened", // opened "Reach out" on a finished resume
+  "outreach-written", // got a message back from "Reach out"
+  "next-job", // pressed "Next job" after a build (a second job in one visit)
+  "build-reopened", // opened a saved build from "My applications"
 ] as const;
 
 export type FunnelEvent = (typeof FUNNEL_EVENTS)[number];

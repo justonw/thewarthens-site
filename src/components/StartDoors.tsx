@@ -8,7 +8,7 @@ type Door = { title: string; go: string; href: string };
 const DOORS: Record<"tech" | "faith", Door[]> = {
   tech: [
     { title: "I'm looking for a career change", go: "Take the 2-minute quiz", href: "#quiz" },
-    { title: "I need a better resume", go: "Tailor it to a job, free", href: "/resume" },
+    { title: "I need a better resume", go: "Tailor it to a job", href: "/resume" },
     { title: "I want to earn more", go: "See what tech roles pay", href: "#pay" },
     { title: "I'm curious about tech but don't know where to start", go: "Step-by-step starting paths", href: "#start-here" },
     { title: "I want to feel more settled", go: "Hear our story", href: "/jesus" },

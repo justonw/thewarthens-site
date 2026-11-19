@@ -9,9 +9,9 @@ import { resumeGuides } from "@/lib/resume-guides";
 
 // The title and description are written for the search results page: under about 60 and 160 characters, with the
 // words people type ("tailor resume to job description") near the front.
-const title = "Tailor Resume to a Job Description, Free | The Warthens";
+const title = "Tailor Your Resume to a Job Description | The Warthens";
 const description =
-  "Add your resume and a job posting. Get a tailored resume and matching cover letter as PDF and Word in about a minute. Your first 2 builds are free.";
+  "Add your resume and a job posting. Get a tailored resume and matching cover letter as PDF and Word in about a minute, built only from your real experience.";
 
 export const metadata: Metadata = {
   title,
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     "resume builder",
     "tailor resume to job posting",
     "ats friendly resume",
-    "free cover letter generator",
+    "cover letter generator",
     "resume for career change",
     "resume keywords job description",
     "career change resume",

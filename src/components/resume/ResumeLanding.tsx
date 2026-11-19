@@ -94,7 +94,7 @@ export function ResumeHero() {
               <span className="rb-ping absolute inline-flex h-full w-full rounded-full bg-green-500" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
             </span>
-            Resume Builder · Free · About a minute
+            Resume Builder · About a minute
           </p>
           <h1 className="rb-rise text-balance mt-5 text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl" style={delay(0.08)}>
             Boost your chances of an interview with a resume <span className="rb-gradient-text">tailored</span> to every job

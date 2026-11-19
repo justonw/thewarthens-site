@@ -421,7 +421,7 @@ export function parseDoc(i: Record<string, unknown>): ResumeDoc | null {
   return resume;
 }
 
-function parseLetter(value: unknown): CoverLetter | null {
+export function parseLetter(value: unknown): CoverLetter | null {
   if (!value || typeof value !== "object") return null;
   const v = value as Record<string, unknown>;
   const paragraphs = list(v.paragraphs, 1200, 5);
@@ -430,7 +430,7 @@ function parseLetter(value: unknown): CoverLetter | null {
   return { greeting, paragraphs, closing: cleanText(v.closing, 60) || "Sincerely," };
 }
 
-function parseDesign(value: unknown): ResumeDesign | null {
+export function parseDesign(value: unknown): ResumeDesign | null {
   if (!value || typeof value !== "object") return null;
   const v = value as Record<string, unknown>;
   const pick = <T extends string>(x: unknown, allowed: readonly T[], fallback: T): T => (allowed.includes(x as T) ? (x as T) : fallback);

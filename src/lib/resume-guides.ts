@@ -65,7 +65,7 @@ const baseGuides: ResumeGuide[] = [
     keywords: ["tailor resume to job description", "how to tailor your resume", "customize resume for job", "resume keywords from job posting", "match resume to job description"],
     intro: [
       "Tailoring means rewriting the top of your resume, your skills, and your strongest bullets so they answer what one specific job posting asks for. You keep every fact true. You change what comes first and which words you use.",
-      "Below is the process we use ourselves, in order, with examples. It takes about 30 to 45 minutes by hand the first time. If you would rather not do it by hand, the free Resume Builder follows these same steps for you.",
+      "Below is the process we use ourselves, in order, with examples. It takes about 30 to 45 minutes by hand the first time. If you would rather not do it by hand, the Resume Builder follows these same steps for you.",
     ],
     sections: [
       {
@@ -165,7 +165,7 @@ const baseGuides: ResumeGuide[] = [
         blocks: [
           {
             type: "p",
-            text: "The free Resume Builder does these steps for you. You add your resume and the job posting (as text, a file, a screenshot, or a link). It returns a tailored one-column resume and, if you want, a matching cover letter, as PDF and Word files, built only from your real experience. It also shows you what it changed and why, and lists anything the posting asks for that your resume does not show, so you can add it only if it is true. Your first two builds are free.",
+            text: "The Resume Builder does these steps for you. You add your resume and the job posting (as text, a file, a screenshot, or a link). It returns a tailored one-column resume and, if you want, a matching cover letter, as PDF and Word files, built only from your real experience. It also shows you what it changed and why, and lists anything the posting asks for that your resume does not show, so you can add it only if it is true. Your first two builds are free.",
           },
         ],
       },
@@ -174,7 +174,7 @@ const baseGuides: ResumeGuide[] = [
       {
         question: "How long does it take to tailor a resume?",
         answer:
-          "By hand, about 30 to 45 minutes for the first posting and 15 to 20 for later ones once you have a strong base resume. The free Resume Builder does it in about a minute.",
+          "By hand, about 30 to 45 minutes for the first posting and 15 to 20 for later ones once you have a strong base resume. The Resume Builder does it in about a minute.",
       },
       {
         question: "Should I rewrite my whole resume for every job?",
@@ -378,7 +378,7 @@ const baseGuides: ResumeGuide[] = [
         blocks: [
           {
             type: "p",
-            text: "The free Resume Builder is made for this situation. You add your current resume and the job posting, and it rewrites your experience in the posting's language, keeps your facts, and lists anything the posting asks for that your resume does not show, so you decide whether it is true for you. If you have skills or experience that are not on your resume, add them in a short note and they are used in your own words. Your first two builds are free.",
+            text: "The Resume Builder is made for this situation. You add your current resume and the job posting, and it rewrites your experience in the posting's language, keeps your facts, and lists anything the posting asks for that your resume does not show, so you decide whether it is true for you. If you have skills or experience that are not on your resume, add them in a short note and they are used in your own words. Your first two builds are free.",
           },
         ],
       },
@@ -477,7 +477,7 @@ const baseGuides: ResumeGuide[] = [
         blocks: [
           {
             type: "p",
-            text: "When you ask the free Resume Builder for a cover letter, there is a box for who it should be addressed to. Add the full name if you found one. If you leave it blank, the letter is addressed to the company's hiring team, or to 'Dear Hiring Team' if the company is unknown.",
+            text: "When you ask the Resume Builder for a cover letter, there is a box for who it should be addressed to. Add the full name if you found one. If you leave it blank, the letter is addressed to the company's hiring team, or to 'Dear Hiring Team' if the company is unknown.",
           },
         ],
       },

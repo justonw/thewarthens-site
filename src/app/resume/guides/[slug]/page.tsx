@@ -204,7 +204,7 @@ export default async function ResumeGuidePage({ params }: { params: Promise<{ sl
           </div>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link href="/resume" className={primaryButton}>
-              Tailor my resume free
+              Tailor my resume
             </Link>
             <Link href="/resume/guides" className={secondaryButton}>
               More resume guides
@@ -252,7 +252,7 @@ export default async function ResumeGuidePage({ params }: { params: Promise<{ sl
           <p className="mt-3 text-indigo-100">Add your resume and the job posting. Get a tailored resume and a matching cover letter as PDF and Word files, built only from your real experience. Your first two builds are free.</p>
           <div className="mt-6">
             <Link href="/resume" className="inline-flex rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-900 transition-transform hover:scale-[1.03]">
-              Open the free Resume Builder
+              Open the Resume Builder
             </Link>
           </div>
         </div>

@@ -63,7 +63,7 @@ export const starterChecklist: ChecklistGroup[] = [
         id: "resume-ai",
         text: "Use ChatGPT or Claude to help tailor your resume language to each posting.",
         why: "This is now standard competitive practice in 2026, not a shortcut to be embarrassed about.",
-        cta: { label: "Or let our free Resume Builder do it for you", href: "/resume" },
+        cta: { label: "Or let our Resume Builder do it for you", href: "/resume" },
       },
     ],
   },

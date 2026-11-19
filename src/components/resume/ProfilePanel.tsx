@@ -20,6 +20,7 @@ export default function ProfilePanel({
   onImport,
   onExport,
   onForget,
+  applications = 0,
 }: {
   hasSaved: boolean;
   resumeText: string;
@@ -31,6 +32,8 @@ export default function ProfilePanel({
   onImport: (profile: Profile, how: "replace" | "stories") => void;
   onExport: () => void;
   onForget: () => void;
+  // How many saved builds ("My applications") are on this device.
+  applications?: number;
 }) {
   const picker = useRef<HTMLInputElement>(null);
   const [error, setError] = useState("");
@@ -120,6 +123,9 @@ export default function ProfilePanel({
         <li>
           Stories: {stories.length} {stories.length === 1 ? "answer" : "answers"}
         </li>
+        <li>
+          Applications: {applications} saved {applications === 1 ? "build" : "builds"}
+        </li>
       </ul>
 
       {pending && (
@@ -189,7 +195,7 @@ export default function ProfilePanel({
       <div className="mt-4 border-t border-border-subtle pt-3 text-xs">
         {confirmForget ? (
           <span>
-            Erase your saved resume, notes, and stories from this browser?{" "}
+            Erase your saved resume, notes, stories, and saved builds from this browser?{" "}
             <button
               type="button"
               onClick={() => {

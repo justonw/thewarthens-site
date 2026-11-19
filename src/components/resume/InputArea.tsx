@@ -25,6 +25,7 @@ export default function InputArea({
   placeholder,
   aboveText,
   fileCount = 0,
+  heightClass = "h-72",
 }: {
   id: string;
   value: string;
@@ -45,6 +46,8 @@ export default function InputArea({
   aboveText?: React.ReactNode;
   // Files already attached (kept as files, not as text), so the box does not look empty.
   fileCount?: number;
+  // The height of the box. Tall by default, since a resume is long.
+  heightClass?: string;
 }) {
   const [focused, setFocused] = useState(false);
   const hasText = value.trim().length > 0;
@@ -77,7 +80,7 @@ export default function InputArea({
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           placeholder={placeholder}
-          className={`block h-72 w-full resize-y rounded-2xl border bg-background px-4 py-3 text-base leading-relaxed text-foreground outline-none transition-colors placeholder:text-foreground-muted/70 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 ${
+          className={`block ${heightClass} w-full resize-y rounded-2xl border bg-background px-4 py-3 text-base leading-relaxed text-foreground outline-none transition-colors placeholder:text-foreground-muted/70 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 ${
             inviting ? "cursor-text border-2 border-dashed border-blue-500/35 bg-blue-500/[0.03] placeholder:text-transparent hover:border-blue-500/60 hover:bg-blue-500/[0.06]" : "border-border-subtle hover:border-blue-500/40"
           } ${dragging ? "!border-solid !border-blue-500 !bg-blue-500/10" : ""}`}
         />

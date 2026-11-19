@@ -12,7 +12,11 @@ export const MAX_STORIES = 40;
 export type Story = { id: string; topic: string; question: string; answer: string; at: string };
 export const noStories: Story[] = [];
 
-export type Profile = { resume: string; notes: string; hiringManager: string; email: string; stories: Story[] };
+// "library" is the list of saved builds ("My applications"). It is carried here as plain data and checked where it is
+// used (see resume-library.ts), so this file stays free of the resume tailor.
+export type Profile = { resume: string; notes: string; hiringManager: string; email: string; stories: Story[]; library?: unknown[] };
+export const MAX_PROFILE_FILE = 3_000_000;
+export const MAX_LIBRARY_IN_FILE = 60;
 
 const clip = (v: unknown, max: number) => (typeof v === "string" ? v.replace(/\u0000/g, "").trim().slice(0, max) : "");
 
@@ -60,6 +64,7 @@ export function buildProfileFile(p: Profile & { filesOmitted?: number }, now = n
       email: p.email,
       filesOmitted: p.filesOmitted ?? 0,
       stories: p.stories,
+      library: p.library ?? [],
     },
     null,
     2
@@ -69,7 +74,7 @@ export function buildProfileFile(p: Profile & { filesOmitted?: number }, now = n
 export type ParsedProfile = { ok: true; profile: Profile } | { ok: false; error: string };
 
 export function parseProfileFile(text: string, limits: { resume: number; notes: number }): ParsedProfile {
-  if (text.length > 600_000) return { ok: false, error: "That file is too big to be a profile from this site." };
+  if (text.length > MAX_PROFILE_FILE) return { ok: false, error: "That file is too big to be a profile from this site." };
   let data: Record<string, unknown>;
   try {
     data = JSON.parse(text);
@@ -96,6 +101,7 @@ export function parseProfileFile(text: string, limits: { resume: number; notes: 
       hiringManager: clip(data.hiringManager, 120),
       email: clip(data.email, 200),
       stories,
+      library: Array.isArray(data.library) ? data.library.slice(0, MAX_LIBRARY_IN_FILE) : [],
     },
   };
 }

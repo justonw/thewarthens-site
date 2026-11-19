@@ -5,7 +5,7 @@ import { RESUME_GUIDES_UPDATED, resumeGuides } from "@/lib/resume-guides";
 
 const SITE = "https://thewarthens.com";
 const title = "Resume and Cover Letter Guides | The Warthens";
-const description = "Plain-English guides to tailoring your resume, passing hiring software, changing careers, and addressing a cover letter, plus a free builder.";
+const description = "Plain-English guides to tailoring your resume, passing hiring software, changing careers, and addressing a cover letter, plus a resume builder.";
 
 export const metadata: Metadata = {
   title,

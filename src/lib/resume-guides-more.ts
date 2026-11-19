@@ -349,7 +349,7 @@ export const moreResumeGuides: ResumeGuide[] = [
         heading: "What to leave out",
         blocks: [
           { type: "bullets", items: ["A paragraph that repeats your resume line by line.", "Generic praise ('your company is a leader in its industry').", "Apologies for what you lack. Lead with what you offer.", "Anything that is not true or that you could not talk about in an interview."] },
-          { type: "p", text: "Not sure who to address it to? See our guide on who to address a cover letter to. The free Resume Builder can also write a short matching letter from your real experience." },
+          { type: "p", text: "Not sure who to address it to? See our guide on who to address a cover letter to. The Resume Builder can also write a short matching letter from your real experience." },
           { type: "links", items: [{ label: "Who to address a cover letter to", href: "/resume/guides/who-to-address-a-cover-letter-to", text: "A real name, then the hiring team, then the team you would join." }, TOOLS.builder] },
         ],
       },

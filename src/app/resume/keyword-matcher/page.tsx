@@ -42,7 +42,7 @@ const faq = [
   },
   {
     question: "Does it cost anything?",
-    answer: "No. It is free and you do not need to make an account. If you want the changes written for you, the free Resume Builder does that and also writes a matching cover letter.",
+    answer: "No. It is free and you do not need to make an account. If you want the changes written for you, the Resume Builder does that and also writes a matching cover letter.",
   },
 ];
 

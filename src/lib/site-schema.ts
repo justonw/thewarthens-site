@@ -22,7 +22,7 @@ export const siteGraph = {
       url: SITE,
       name: "The Warthens",
       alternateName: ["Tech Journey", "Faith Journey with The Warthens"],
-      description: "Real steps for a career change into tech, free resume tools, and a faith journey of relying on God to discover, understand, and live out truth.",
+      description: "Real steps for a career change into tech, resume tools, and a faith journey of relying on God to discover, understand, and live out truth.",
       inLanguage: "en-US",
       publisher: { "@id": `${SITE}/#organization` },
     },
