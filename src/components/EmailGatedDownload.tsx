@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { HEARD_FROM } from "@/lib/heard-from";
+import { track } from "@/lib/track";
 
 type Status = "idle" | "loading" | "success" | "error";
 
@@ -60,6 +61,7 @@ export default function EmailGatedDownload({
         setStatus("error");
         return;
       }
+      track("toolkit-requested");
       setStatus("success");
     } catch {
       setErrorMsg("Something went wrong. Use the direct download links instead.");

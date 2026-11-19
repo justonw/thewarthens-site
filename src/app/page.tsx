@@ -8,34 +8,56 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-const startPaths = [
+// The front door: one question, and each answer goes straight to the right part of the site.
+const doors = [
   {
     icon: "compass" as const,
-    title: "Find your path",
-    body: "A free 2-minute quiz on how you like to work, what is pulling you toward a change, and your pace.",
+    title: "Find my next career move",
+    body: "A 2-minute quiz on how you like to work and what is pulling you toward a change.",
     href: "/tech#quiz",
+    track: "door-career",
     cta: "Take the quiz",
     chip: "bg-blue-100 text-blue-700",
   },
   {
-    icon: "book" as const,
-    title: "Start with a step-by-step guide",
-    body: "Free guides for tech sales, cybersecurity, coding, and data analytics, with real video from people doing the job.",
-    href: "/tech/start-here",
-    cta: "Pick a guide",
+    icon: "file" as const,
+    title: "Get a better resume",
+    body: "Add your resume and a job posting. Get a tailored version in about a minute.",
+    href: "/resume",
+    track: "door-resume",
+    cta: "Build my resume",
     chip: "bg-violet-100 text-violet-700",
+  },
+  {
+    icon: "book" as const,
+    title: "Grow in my faith",
+    body: "Our story, Scripture-based studies, and Women Who Seek.",
+    href: "/faith",
+    track: "door-faith",
+    cta: "Start with our story",
+    chip: "bg-rose-100 text-rose-700",
+  },
+  {
+    icon: "game" as const,
+    title: "Games for my kids",
+    body: "A career and online-safety game for ages 5 to 10. No sign-in.",
+    href: "/techjr",
+    track: "door-kids",
+    cta: "See the games",
+    chip: "bg-amber-100 text-amber-700",
   },
   {
     icon: "chat" as const,
     title: "Talk it through with a coach",
-    body: "1:1 coaching with Jermell Mitchell on interviewing, networking, and negotiation, starting with a free 15-minute intro call.",
+    body: "1:1 coaching with Jermell Mitchell on interviewing, networking, and negotiation.",
     href: "/tech/coaching?from=home",
+    track: "door-coaching",
     cta: "Learn about coaching",
     chip: "bg-emerald-100 text-emerald-700",
   },
 ];
 
-function PathIcon({ name }: { name: "compass" | "book" | "chat" }) {
+function PathIcon({ name }: { name: "compass" | "file" | "book" | "game" | "chat" }) {
   const common = {
     viewBox: "0 0 24 24",
     className: "h-6 w-6",
@@ -54,11 +76,27 @@ function PathIcon({ name }: { name: "compass" | "book" | "chat" }) {
       </svg>
     );
   }
+  if (name === "file") {
+    return (
+      <svg {...common}>
+        <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
+        <path d="M14 3v5h5M9 13h6M9 17h6" />
+      </svg>
+    );
+  }
   if (name === "book") {
     return (
       <svg {...common}>
         <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
         <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+      </svg>
+    );
+  }
+  if (name === "game") {
+    return (
+      <svg {...common}>
+        <rect x="2" y="7" width="20" height="11" rx="5" />
+        <path d="M7 10.5v4M5 12.5h4M15.5 11.5h.01M18 13.5h.01" />
       </svg>
     );
   }
@@ -99,6 +137,7 @@ export default function Home() {
             <div className="mt-9 flex flex-wrap items-center gap-3">
               <Link
                 href="/tech"
+                data-track="hero-tech"
                 className="inline-flex min-h-12 items-center rounded-full bg-white px-7 py-3 text-base font-semibold text-slate-900 shadow-lg shadow-black/30 transition-transform hover:scale-[1.03]"
               >
                 Start the Tech Journey
@@ -186,40 +225,41 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Where to begin */}
-      <section className="mx-auto max-w-6xl px-6 pb-16 pt-16 sm:pb-20 sm:pt-24">
+      {/* The front door */}
+      <section aria-labelledby="front-door" className="mx-auto max-w-6xl px-6 pb-14 pt-14 sm:pb-20 sm:pt-20">
         <Reveal>
-          <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
-            Where to begin
-          </p>
-          <h2 className="mt-2 text-2xl font-semibold sm:text-3xl">
-            Three ways into the Tech Journey
+          <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">Start here</p>
+          <h2 id="front-door" className="mt-2 text-2xl font-semibold sm:text-3xl">
+            What brings you here today?
           </h2>
         </Reveal>
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
-          {startPaths.map((path, i) => (
-            <Reveal key={path.title} delay={i * 70}>
-              <Link
-                href={path.href}
-                className="group flex h-full flex-col rounded-3xl border border-border-subtle bg-background-elevated p-6 transition-all hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-xl hover:shadow-blue-950/5"
-              >
-                <span
-                  className={`flex h-12 w-12 items-center justify-center rounded-2xl ${path.chip}`}
+        <ul className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-5 lg:gap-4">
+          {doors.map((door, i) => (
+            <li key={door.title}>
+              <Reveal delay={i * 60}>
+                <Link
+                  href={door.href}
+                  data-track={door.track}
+                  className="group flex h-full items-start gap-4 rounded-3xl border border-border-subtle bg-background-elevated p-5 transition-all hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-lg lg:flex-col lg:gap-0"
                 >
-                  <PathIcon name={path.icon} />
-                </span>
-                <p className="mt-5 text-lg font-semibold">{path.title}</p>
-                <p className="mt-2 flex-1 text-sm text-foreground-muted">{path.body}</p>
-                <span className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-blue-600">
-                  {path.cta}
-                  <span aria-hidden className="transition-transform group-hover:translate-x-1">
-                    →
+                  <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${door.chip}`}>
+                    <PathIcon name={door.icon} />
                   </span>
-                </span>
-              </Link>
-            </Reveal>
+                  <span className="flex min-w-0 flex-1 flex-col lg:mt-5">
+                    <span className="text-lg font-semibold leading-snug">{door.title}</span>
+                    <span className="mt-1.5 flex-1 text-sm text-foreground-muted">{door.body}</span>
+                    <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-blue-600">
+                      {door.cta}
+                      <span aria-hidden className="transition-transform group-hover:translate-x-1">
+                        →
+                      </span>
+                    </span>
+                  </span>
+                </Link>
+              </Reveal>
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
 
       {/* Two journeys */}

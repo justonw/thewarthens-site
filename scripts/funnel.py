@@ -47,3 +47,20 @@ for d in days:
     c = d["counts"]
     if any(c.values()):
         print(f"  {d['day']}:  {c.get('resume-visit', 0):>4} / {c.get('build-finished', 0):>3} / {c.get('download', 0):>3}")
+
+site_views = [("view-home", "Home"), ("view-tech", "Tech Journey"), ("view-faith", "Faith Journey"), ("view-techjr", "Tech Jr."), ("view-coaching", "Coaching"), ("view-contact", "Contact")]
+site_doors = [("hero-tech", "Home hero: Start the Tech Journey"), ("door-career", "Door: career move (quiz)"), ("door-resume", "Door: resume"), ("door-faith", "Door: faith"), ("door-kids", "Door: kids' games"), ("door-coaching", "Door: coaching")]
+site_done = [("contact-sent", "Sent a message"), ("coaching-requested", "Sent the coaching questionnaire"), ("notes-signup", "Joined the notes list"), ("toolkit-requested", "Asked for the printable toolkit")]
+def section(title, rows):
+    tot = {k: sum(d["counts"].get(k, 0) for d in days) for k, _ in rows}
+    print(f"\n{title}")
+    for k, label in rows:
+        print(f"{label:38} {tot[k]:>7}")
+print("\n--- Whole site, last %d days (visits are counted once per visit to each part) ---" % a.days)
+section("Parts visited", site_views)
+section("Home doors used", site_doors)
+section("Finished", site_done)
+home = sum(d["counts"].get("view-home", 0) for d in days)
+if home:
+    used = sum(sum(d["counts"].get(k, 0) for d in days) for k, _ in site_doors)
+    print(f"\nHome visits that used a door or the main button: {round(100 * used / home)}% (a visit can use more than one)")

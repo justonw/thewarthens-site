@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SiteChrome from "@/components/SiteChrome";
 import SiteGuide from "@/components/SiteGuide";
+import SiteTracker from "@/components/SiteTracker";
 import { siteGraph } from "@/lib/site-schema";
 
 const geistSans = Geist({
@@ -87,6 +88,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <SiteChrome>
           <Footer />
           <SiteGuide />
+          <SiteTracker />
         </SiteChrome>
       </body>
     </html>

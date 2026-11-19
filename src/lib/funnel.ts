@@ -19,6 +19,25 @@ export const FUNNEL_EVENTS = [
   "outreach-written", // got a message back from "Reach out"
   "next-job", // pressed "Next job" after a build (a second job in one visit)
   "build-reopened", // opened a saved build from "My applications"
+  // Which parts of the site get visited (once per visit, no cookies, no person attached).
+  "view-home",
+  "view-tech",
+  "view-faith",
+  "view-techjr",
+  "view-coaching",
+  "view-contact",
+  // Which doors on the Home page get used.
+  "hero-tech", // the main button in the Home hero
+  "door-career", // "Find my next career move"
+  "door-resume", // "Get a better resume"
+  "door-faith", // "Grow in my faith"
+  "door-kids", // "Games for my kids"
+  "door-coaching", // "Talk it through with a coach"
+  // Things people finished.
+  "contact-sent", // sent a message from Contact
+  "coaching-requested", // sent the coaching questionnaire
+  "notes-signup", // joined the occasional notes list
+  "toolkit-requested", // asked for the printable toolkit
 ] as const;
 
 export type FunnelEvent = (typeof FUNNEL_EVENTS)[number];

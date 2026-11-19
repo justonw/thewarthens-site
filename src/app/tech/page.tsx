@@ -3,6 +3,7 @@ import Link from "next/link";
 import { freeResources, techSections } from "@/lib/tech-links";
 import { guides } from "@/lib/guides";
 import { startHereGuides } from "@/lib/start-here";
+import FoldOnPhone from "@/components/FoldOnPhone";
 import Reveal from "@/components/Reveal";
 import ScrollCue from "@/components/ScrollCue";
 import CareerQuiz from "@/components/CareerQuiz";
@@ -238,12 +239,12 @@ export default function TechJourneyPage() {
             We Got It Wrong as Tech Influencers, Here&apos;s What We Missed,
             a transparent look at what we thought we knew but didn&apos;t.
           </p>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="-mx-6 mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-3 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3">
             {guides.map((guide) => (
               <Link
                 key={guide.slug}
                 href={`/tech/guides/${guide.slug}`}
-                className="group flex flex-col justify-between rounded-3xl border border-border-subtle bg-background-elevated p-6 transition-all hover:-translate-y-0.5 hover:border-blue-500/40 hover:shadow-lg hover:shadow-blue-950/5"
+                className="group flex w-[80%] shrink-0 snap-start flex-col justify-between rounded-3xl sm:w-auto border border-border-subtle bg-background-elevated p-6 transition-all hover:-translate-y-0.5 hover:border-blue-500/40 hover:shadow-lg hover:shadow-blue-950/5"
               >
                 <div>
                   <p className="font-semibold">{guide.title}</p>
@@ -289,9 +290,9 @@ export default function TechJourneyPage() {
               ready.
             </p>
           </Reveal>
-          <div className="mt-10 grid gap-4 sm:grid-cols-2">
+          <div className="-mx-6 mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-3 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0">
             {startHereGuides.map((g, i) => (
-              <Reveal key={g.slug} delay={Math.min(i, 3) * 60}>
+              <Reveal key={g.slug} delay={Math.min(i, 3) * 60} className="w-[80%] shrink-0 snap-start sm:w-auto">
                 <Link
                   href={`/tech/start-here/${g.slug}`}
                   className={`group flex h-full flex-col justify-between rounded-3xl border-t-4 ${startHereAccents[i % startHereAccents.length]} bg-white p-6 text-foreground shadow-xl shadow-black/15 transition-transform hover:-translate-y-1`}
@@ -361,7 +362,7 @@ export default function TechJourneyPage() {
               href="/resume"
               className="inline-flex items-center justify-center gap-2 rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-500"
             >
-              Tailor your resume to a job (first 2 free)
+              Tailor your resume to a job
               <span aria-hidden>→</span>
             </Link>
             <a href="#toolkit" className="text-sm font-semibold text-blue-600 hover:text-blue-700">
@@ -373,28 +374,9 @@ export default function TechJourneyPage() {
 
       <section id="checklist" className="mx-auto max-w-3xl scroll-mt-32 px-6 pb-16">
         <Reveal>
-          <StarterChecklist />
-        </Reveal>
-      </section>
-
-      <section className="mx-auto max-w-3xl px-6 pb-16">
-        <Reveal>
-          <div className="flex flex-col items-start justify-between gap-4 rounded-3xl border border-blue-500/30 bg-blue-500/5 p-6 sm:flex-row sm:items-center sm:p-8">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">Free tool</p>
-              <p className="mt-1 text-lg font-semibold">Let us tailor your resume and cover letter to the job</p>
-              <p className="mt-1 text-sm text-foreground-muted">
-                Add your resume and a job posting. Get a finished resume and a matching cover letter as PDF and Word files, built only from your real experience. Your first 2 are free.
-              </p>
-            </div>
-            <Link
-              href="/resume"
-              className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-500"
-            >
-              Open the Resume Builder
-              <span aria-hidden>→</span>
-            </Link>
-          </div>
+          <FoldOnPhone id="checklist" title="Resume and LinkedIn checklist" hint="Check things off as you go. Tap to open.">
+            <StarterChecklist />
+          </FoldOnPhone>
         </Reveal>
       </section>
 

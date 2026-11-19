@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { track } from "@/lib/track";
 import {
   coach,
   helpAreas,
@@ -151,6 +152,7 @@ export default function IntakeForm() {
         return;
       }
       setWinner(data.winner === true);
+      track("coaching-requested");
       setStatus("success");
     } catch {
       setServerError("Something went wrong. Please try again, or email info@thewarthens.com.");

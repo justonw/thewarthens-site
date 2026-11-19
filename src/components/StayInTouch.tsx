@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { track } from "@/lib/track";
 
 // "Want an occasional note from us?" A quiet email box, for people who are not ready to buy or book anything.
 export default function StayInTouch({ from }: { from: "tech" | "faith" }) {
@@ -16,7 +17,10 @@ export default function StayInTouch({ from }: { from: "tech" | "faith" }) {
     try {
       const res = await fetch("/api/stay-in-touch", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, from, company_url: trap }) });
       const data = await res.json().catch(() => ({}));
-      if (res.ok) return setStatus("done");
+      if (res.ok) {
+        track("notes-signup");
+        return setStatus("done");
+      }
       setMessage(data.error === "email" ? "That email doesn't look right. Check it and try again." : data.error === "slow-down" ? "That was a lot of tries. Please wait a few minutes." : "Something went wrong. Try again in a moment, or email info@thewarthens.com.");
       setStatus("error");
     } catch {

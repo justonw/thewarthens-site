@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { contactTopics, MESSAGE_MAX, STORY_MAX } from "@/lib/contact-topics";
+import { track } from "@/lib/track";
 
 const fieldClass =
   "w-full rounded-2xl border border-border-subtle bg-background px-4 py-3 text-base text-foreground outline-none transition focus:border-purple-600 focus:ring-4 focus:ring-purple-600/10";
@@ -44,6 +45,7 @@ export default function ContactForm({ email }: { email: string }) {
         setStatus("idle");
         return;
       }
+      track("contact-sent");
       setStatus("sent");
     } catch {
       setError(`We could not send that. Please check your connection or email ${email}.`);
