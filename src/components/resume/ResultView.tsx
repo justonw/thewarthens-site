@@ -19,6 +19,7 @@ import StrengthenPanel from "./StrengthenPanel";
 import OutreachPanel from "./OutreachPanel";
 import { STORIES_KEY, addStoryTo, newStory, noStories, type Story } from "@/lib/resume-profile";
 import { cleanDoc, sameJob, type SavedMessage } from "@/lib/resume-library";
+import type { Purpose } from "@/lib/outreach";
 
 type Tab = "resume" | "letter" | "reach";
 
@@ -144,6 +145,10 @@ export default function ResultView({
   onToggleApplied,
   messages,
   onMessage,
+  startOnReach = false,
+  initialPurpose,
+  appliedDaysAgo,
+  onFollowedUp,
 }: {
   result: TailorResult;
   doc: ResumeDoc;
@@ -172,8 +177,13 @@ export default function ResultView({
   // The messages already written for this job (from "My applications"), and a way to keep each new one.
   messages?: SavedMessage[];
   onMessage?: (m: SavedMessage) => void;
+  // Opened from a follow-up nudge: start on "Reach out", on the follow-up message.
+  startOnReach?: boolean;
+  initialPurpose?: Purpose;
+  appliedDaysAgo?: number | null;
+  onFollowedUp?: () => void;
 }) {
-  const [tab, setTab] = useState<Tab>("resume");
+  const [tab, setTab] = useState<Tab>(startOnReach ? "reach" : "resume");
   // Opens "Reach out" and brings the tabs into view, so the new step is the first thing on screen.
   function openReach() {
     setTab("reach");
@@ -456,7 +466,7 @@ export default function ResultView({
       </div>
 
       <div hidden={tab !== "reach"}>
-        <OutreachPanel doc={finalDoc} result={result} gaps={gaps} email={email} saved={messages ?? []} onSave={onMessage} onBack={() => setTab("resume")} />
+        <OutreachPanel doc={finalDoc} result={result} gaps={gaps} email={email} saved={messages ?? []} onSave={onMessage} initialPurpose={initialPurpose} appliedDaysAgo={appliedDaysAgo} onFollowedUp={onFollowedUp} onBack={() => setTab("resume")} />
       </div>
 
       {inApp && (

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { cleanDoc, whenLabel, type LibraryEntry } from "@/lib/resume-library";
+import { cleanDoc, followUpDue, whenLabel, type LibraryEntry } from "@/lib/resume-library";
 import { downloadBlob } from "@/lib/download";
 
 // "My applications": every resume the person has built, kept on this device. Open one to edit it, download it again
@@ -14,11 +14,14 @@ const pill = "inline-flex min-h-10 items-center justify-center rounded-full bord
 export default function ApplicationsList({
   entries,
   onOpen,
+  onFollowUp,
   onToggleApplied,
   onRemove,
 }: {
   entries: LibraryEntry[];
   onOpen: (id: string) => void;
+  // Opens the job on a short follow-up message.
+  onFollowUp: (id: string) => void;
   onToggleApplied: (id: string) => void;
   onRemove: (id: string) => void;
 }) {
@@ -64,6 +67,7 @@ export default function ApplicationsList({
       <ul className="mt-4 space-y-3">
         {shown.map((e) => {
           const isApplied = e.status === "applied";
+          const nudge = followUpDue(e);
           return (
             <li key={e.id} className="rounded-2xl border border-border-subtle bg-white p-4 shadow-sm">
               <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-1">
@@ -79,6 +83,17 @@ export default function ApplicationsList({
                 </div>
                 {isApplied && <span className="rounded-full bg-green-600 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide text-white">Applied</span>}
               </div>
+              {nudge.due && (
+                <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-amber-500/40 bg-amber-500/10 px-3 py-2.5">
+                  <p className="text-sm">
+                    <span className="font-semibold">Applied {nudge.days} days ago.</span> A short, polite check-in can bring a reply.
+                  </p>
+                  <button type="button" onClick={() => onFollowUp(e.id)} className="inline-flex min-h-10 items-center rounded-full bg-foreground px-4 text-xs font-semibold text-background transition-opacity hover:opacity-90">
+                    Write follow-up
+                  </button>
+                </div>
+              )}
+              {e.followedUpAt && <p className="mt-2 text-xs font-semibold text-green-700">Followed up {whenLabel(e.followedUpAt).toLowerCase()}</p>}
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <button type="button" onClick={() => onOpen(e.id)} className="inline-flex min-h-10 items-center justify-center rounded-full bg-blue-600 px-5 text-xs font-semibold text-white transition-colors hover:bg-blue-500">
                   Open

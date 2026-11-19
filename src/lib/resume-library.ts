@@ -4,7 +4,7 @@
 // profile too. A file is treated as data only: every entry is checked and trimmed on the way in.
 import { cleanText, parseDesign, parseDoc, parseLetter } from "./resume-tailor";
 import type { CoverLetter, ResumeDesign, ResumeDoc, ResumeFit, ResumeGap, TailorResult } from "./resume-tailor";
-import type { Audience } from "./outreach";
+import type { Audience, Purpose } from "./outreach";
 import type { ResumeStyle } from "./resume-files";
 
 export const LIBRARY_KEY = "warthens-resume-library-v1";
@@ -12,7 +12,7 @@ export const LIBRARY_KEY = "warthens-resume-library-v1";
 export const MAX_LIBRARY = 40;
 export const MAX_MESSAGES_PER_ENTRY = 5;
 
-export type SavedMessage = { id: string; at: string; audience: Audience; who: string; subject: string; note: string; message: string };
+export type SavedMessage = { id: string; at: string; purpose?: Purpose; audience: Audience; who: string; subject: string; note: string; message: string };
 
 export type LibraryEntry = {
   id: string;
@@ -22,6 +22,8 @@ export type LibraryEntry = {
   company: string;
   status: "built" | "applied";
   appliedAt: string;
+  // When a follow-up message was last copied for this job, so it is not nudged again.
+  followedUpAt: string;
   doc: ResumeDoc;
   letter: CoverLetter | null;
   design: ResumeDesign | null;
@@ -40,7 +42,7 @@ export function newMessageId(now = new Date()) {
 }
 
 const STYLES: ResumeStyle[] = ["classic", "modern", "compact", "traditional", "custom"];
-const AUDIENCES: Audience[] = ["recruiter", "manager", "peer"];
+const AUDIENCES: Audience[] = ["recruiter", "manager", "peer", "friend"];
 
 export function entryFromResult(id: string, r: TailorResult, letter: CoverLetter | null, now = new Date()): LibraryEntry {
   const stamp = now.toISOString();
@@ -52,6 +54,7 @@ export function entryFromResult(id: string, r: TailorResult, letter: CoverLetter
     company: cleanText(r.postingCompany, 120),
     status: "built",
     appliedAt: "",
+    followedUpAt: "",
     doc: r.resume,
     letter,
     design: r.design ?? null,
@@ -148,7 +151,7 @@ export function cleanLibrary(raw: unknown): LibraryEntry[] {
       const message = text(r.message, 1400);
       const note = text(r.note, 600);
       if (!message || !AUDIENCES.includes(r.audience as Audience)) continue;
-      messages.push({ id: text(r.id, 80) || `${messages.length}`, at: iso(r.at) || at, audience: r.audience as Audience, who: text(r.who, 160), subject: text(r.subject, 90), note, message });
+      messages.push({ id: text(r.id, 80) || `${messages.length}`, at: iso(r.at) || at, purpose: r.purpose === "followup" ? "followup" : "intro", audience: r.audience as Audience, who: text(r.who, 160), subject: text(r.subject, 90), note, message });
     }
     out.push({
       id,
@@ -158,6 +161,7 @@ export function cleanLibrary(raw: unknown): LibraryEntry[] {
       company: text(o.company, 120),
       status,
       appliedAt: status === "applied" ? iso(o.appliedAt) || at : "",
+      followedUpAt: iso(o.followedUpAt),
       doc,
       letter: parseLetter(o.letter),
       design: parseDesign(o.design),
@@ -188,4 +192,11 @@ export function cleanDoc(d: ResumeDoc): ResumeDoc {
     training: d.training.map((x) => ({ name: t(x.name), detail: t(x.detail), dates: t(x.dates) })).filter((x) => x.name),
     education: d.education.map((e) => ({ school: t(e.school), credential: t(e.credential), dates: t(e.dates) })).filter((e) => e.school),
   };
+}
+
+// A job that was applied to a while ago, with no follow-up yet: the moment a short check-in is worth sending.
+export function followUpDue(e: LibraryEntry, now = new Date(), afterDays = 5): { due: boolean; days: number } {
+  if (e.status !== "applied" || !e.appliedAt || e.followedUpAt) return { due: false, days: 0 };
+  const days = Math.floor((now.getTime() - new Date(e.appliedAt).getTime()) / 86_400_000);
+  return { due: Number.isFinite(days) && days >= afterDays, days: Math.max(0, days) };
 }

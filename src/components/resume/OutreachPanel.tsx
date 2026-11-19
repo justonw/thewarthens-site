@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AUDIENCES, NOTE_LIMIT, TWEAKS, looksLikeOnlyLink, MAX_RECIPIENT_FILES, type Audience, type OutreachResult, type Tweak } from "@/lib/outreach";
+import { AUDIENCES, NOTE_LIMIT, TWEAKS, looksLikeOnlyLink, MAX_RECIPIENT_FILES, type Audience, type OutreachResult, type Purpose, type Tweak } from "@/lib/outreach";
 import { MAX_ATTACH_B64_TOTAL, type ResumeDoc, type ResumeGap, type TailorResult } from "@/lib/resume-tailor";
 import { processFile, type PickedFile } from "@/lib/resume-upload";
 import { newMessageId, whenLabel, type SavedMessage } from "@/lib/resume-library";
@@ -44,6 +44,13 @@ const icons: Record<Audience, React.ReactNode> = {
       <path d="M19 9h1a2 2 0 012 2v5a2 2 0 01-2 2h-1v3l-3-3" />
     </svg>
   ),
+  friend: (
+    <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <circle cx="9" cy="8" r="3.2" />
+      <path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6" />
+      <path d="M16 5.2a3.2 3.2 0 010 5.6M18 14.4c2 .8 3.5 2.9 3.5 5.6" />
+    </svg>
+  ),
 };
 
 const wordCount = (s: string) => (s.trim() ? s.trim().split(/\s+/).length : 0);
@@ -77,6 +84,9 @@ export default function OutreachPanel({
   email,
   saved = [],
   onSave,
+  initialPurpose = "intro",
+  appliedDaysAgo = null,
+  onFollowedUp,
   onBack,
 }: {
   doc: ResumeDoc;
@@ -86,9 +96,16 @@ export default function OutreachPanel({
   // Messages already written for this job, kept with the saved build, and a way to keep the new ones.
   saved?: SavedMessage[];
   onSave?: (m: SavedMessage) => void;
+  // Opened from "follow up" on My applications: start on the follow-up message, and say how long ago they applied.
+  initialPurpose?: Purpose;
+  appliedDaysAgo?: number | null;
+  // Called when a follow-up message is copied, so the job is not nudged again.
+  onFollowedUp?: () => void;
   onBack: () => void;
 }) {
   const [audience, setAudience] = useState<Audience | null>(null);
+  const [purpose, setPurpose] = useState<Purpose>(initialPurpose);
+  const [relationship, setRelationship] = useState("");
   const [name, setName] = useState("");
   const [about, setAbout] = useState("");
   const [files, setFiles] = useState<PickedFile[]>([]);
@@ -202,6 +219,9 @@ export default function OutreachPanel({
           recipientText: linkOnly ? "" : about.trim(),
           recipientFiles: files.flatMap((f) => (f.attachment ? [f.attachment] : [])),
           tweak,
+          purpose,
+          daysSince: appliedDaysAgo ?? 7,
+          relationship: audience === "friend" ? relationship.trim() : "",
           previous: tweak && out ? { note, message } : null,
         }),
       });
@@ -234,6 +254,7 @@ export default function OutreachPanel({
     onSave({
       id: keptId.current,
       at: new Date().toISOString(),
+      purpose,
       audience,
       who: [r.recipient.name, r.recipient.role].filter(Boolean).join(", "),
       subject: text.subject,
@@ -254,6 +275,7 @@ export default function OutreachPanel({
       setError("");
       // What they copied is what they will send, so that is what is kept.
       if (out) keep(out, { note, message, subject });
+      if (purpose === "followup") onFollowedUp?.();
       setCopied(kind);
       window.setTimeout(() => setCopied((c) => (c === kind ? "" : c)), 2200);
     } else {
@@ -269,6 +291,7 @@ export default function OutreachPanel({
     setFileNote("");
     setError("");
     setAudience(null);
+    setRelationship("");
     keptId.current = "";
     window.setTimeout(() => topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
   }
@@ -342,7 +365,7 @@ export default function OutreachPanel({
         <section aria-labelledby="oc-note-title" className="rounded-2xl border border-border-subtle bg-white p-5 shadow-sm">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h4 id="oc-note-title" className="font-semibold">
-              Short note for a LinkedIn connection request
+              {audience === "friend" ? "Short text or direct message" : purpose === "followup" ? "Short version" : "Short note for a LinkedIn connection request"}
             </h4>
             <span className={`text-xs font-semibold ${noteOver ? "text-red-700" : "text-foreground-muted"}`} aria-live="polite">
               {note.length} / {NOTE_LIMIT}
@@ -411,10 +434,30 @@ export default function OutreachPanel({
   return (
     <div ref={topRef} className="space-y-5 scroll-mt-24">
       <div>
-        <h3 className="text-2xl font-semibold tracking-tight">Get your resume in front of a real person</h3>
+        <h3 className="text-2xl font-semibold tracking-tight">{purpose === "followup" ? "Follow up on your application" : "Get your resume in front of a real person"}</h3>
         <p className="mt-1 text-sm text-foreground-muted sm:text-base">
-          We&apos;ll write a short message to someone{company ? ` at ${company}` : " at the company"}, using your resume and the job. Two taps and about 15 seconds.
+          {purpose === "followup"
+            ? `A short, polite check-in${company ? ` for ${company}` : ""}${appliedDaysAgo ? `, since you applied about ${appliedDaysAgo} days ago` : ""}. Two taps and about 15 seconds.`
+            : `We'll write a short message to someone${company ? ` at ${company}` : " at the company"}, using your resume and the job. Two taps and about 15 seconds.`}
         </p>
+        <div role="group" aria-label="What is the message for?" className="mt-4 inline-flex max-w-full flex-wrap rounded-3xl border border-border-subtle bg-background-elevated p-1">
+          {(
+            [
+              ["intro", "Introduce myself"],
+              ["followup", "Follow up on my application"],
+            ] as [Purpose, string][]
+          ).map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              aria-pressed={purpose === id}
+              onClick={() => setPurpose(id)}
+              className={`inline-flex min-h-11 items-center rounded-full px-4 py-2 text-sm font-semibold transition-colors sm:min-h-10 ${purpose === id ? "bg-foreground text-background" : "text-foreground-muted hover:text-foreground"}`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {saved.length > 0 && (
@@ -452,7 +495,7 @@ export default function OutreachPanel({
             Who are you writing to?
           </h4>
         </div>
-        <div role="radiogroup" aria-labelledby="oc-who" className="mt-4 grid gap-3 sm:grid-cols-3">
+        <div role="radiogroup" aria-labelledby="oc-who" className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {AUDIENCES.map((a) => {
             const on = audience === a.id;
             return (
@@ -484,9 +527,11 @@ export default function OutreachPanel({
       <div className={`rounded-3xl border border-border-subtle bg-white p-5 shadow-lg shadow-blue-900/5 transition-opacity sm:p-6 ${ready ? "" : "opacity-60"}`}>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
           {step(2, hasAbout)}
-          <h4 className="text-lg font-bold tracking-tight">Tell us about them</h4>
+          <h4 className="text-lg font-bold tracking-tight">{purpose === "followup" ? "Who are you following up with?" : audience === "friend" ? "Tell us about your friend" : "Tell us about them"}</h4>
           <span className="rounded-full bg-blue-500/10 px-2.5 py-0.5 text-xs font-semibold text-blue-700">Optional</span>
         </div>
+        {purpose !== "followup" && (
+          <>
         <p className="mb-3 mt-1.5 text-sm text-foreground-muted sm:pl-12">
           Their profile makes the message sharper. Skip it and we&apos;ll write from the job posting.
         </p>
@@ -567,6 +612,8 @@ export default function OutreachPanel({
             <li>Paste it in the box above (Command or Ctrl + V), or tap Choose a file.</li>
           </ol>
         </details>
+          </>
+        )}
 
         <div className="mt-4">
           <label htmlFor="oc-name" className="text-xs font-semibold text-foreground-muted">
@@ -574,6 +621,15 @@ export default function OutreachPanel({
           </label>
           <input id="oc-name" value={name} onChange={(e) => setName(e.target.value)} maxLength={80} placeholder="For example, Jamie Alvarez" autoComplete="off" className={`${box} mt-1 sm:max-w-sm`} />
         </div>
+        {audience === "friend" && purpose !== "followup" && (
+          <div className="mt-4">
+            <label htmlFor="oc-relationship" className="text-xs font-semibold text-foreground-muted">
+              How do you know them? (optional, in a few words)
+            </label>
+            <input id="oc-relationship" value={relationship} onChange={(e) => setRelationship(e.target.value)} maxLength={200} placeholder="For example, we worked together at Northline" autoComplete="off" className={`${box} mt-1 sm:max-w-md`} />
+            <p className="mt-1 text-xs text-foreground-muted">We only mention what you tell us here, so nothing is made up about your history together.</p>
+          </div>
+        )}
       </div>
 
       {error && (

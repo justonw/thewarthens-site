@@ -64,6 +64,17 @@ assert.equal(lib.whenLabel(new Date("2026-11-17T23:00:00").toISOString(), now), 
 assert.match(lib.whenLabel(new Date("2026-11-10T12:00:00").toISOString(), now), /Nov 10/);
 assert.equal(lib.whenLabel("not a date", now), "");
 
+// Follow-up nudges: only an applied job, after enough days, and only once.
+const applied = { ...entry, status: "applied", appliedAt: "2026-11-12T10:00:00.000Z" };
+const asOf = new Date("2026-11-18T12:00:00.000Z");
+assert.deepEqual(lib.followUpDue(applied, asOf), { due: true, days: 6 });
+assert.equal(lib.followUpDue({ ...applied, appliedAt: "2026-11-16T10:00:00.000Z" }, asOf).due, false, "too soon");
+assert.equal(lib.followUpDue({ ...applied, followedUpAt: "2026-11-17T10:00:00.000Z" }, asOf).due, false, "already followed up");
+assert.equal(lib.followUpDue({ ...entry, status: "built" }, asOf).due, false, "not applied yet");
+const kept = lib.cleanLibrary([{ ...JSON.parse(JSON.stringify(applied)), followedUpAt: "2026-11-17T10:00:00.000Z", messages: [{ id: "f1", audience: "friend", purpose: "followup", message: "A message that is long enough." }] }, { ...JSON.parse(JSON.stringify(entry)), id: "z9", followedUpAt: "garbage" }]);
+assert.ok(kept[0].followedUpAt.startsWith("2026-11-17") && kept[0].messages[0].purpose === "followup" && kept[0].messages[0].audience === "friend");
+assert.equal(kept[1].followedUpAt, "", "a bad follow-up date is dropped");
+
 // Matching a job in the tracker ignores case and spaces.
 assert.ok(lib.sameJob({ company: " Spotify ", role: "account executive" }, { company: "spotify", role: "Account Executive " }));
 assert.ok(!lib.sameJob({ company: "Spotify", role: "Account Executive" }, { company: "Spotify", role: "Sales Rep" }));

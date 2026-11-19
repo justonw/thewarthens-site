@@ -13,7 +13,7 @@ import { takeHandoff } from "@/lib/resume-handoff";
 import BuyMore from "./BuyMore";
 import ProfilePanel from "./ProfilePanel";
 import ApplicationsList from "./ApplicationsList";
-import { LIBRARY_KEY, MAX_MESSAGES_PER_ENTRY, cleanLibrary, entryFromResult, entryToResult, noLibrary, sameJob, upsertEntry, type LibraryEntry, type SavedMessage } from "@/lib/resume-library";
+import { LIBRARY_KEY, MAX_MESSAGES_PER_ENTRY, cleanLibrary, entryFromResult, entryToResult, followUpDue, noLibrary, sameJob, upsertEntry, type LibraryEntry, type SavedMessage } from "@/lib/resume-library";
 import { NO_TRACKER_ENTRIES, TRACKER_KEY, type TrackerEntry } from "@/lib/job-tracker";
 import type { ResumeStyle } from "@/lib/resume-files";
 import { downloadBlob } from "@/lib/download";
@@ -202,6 +202,8 @@ export default function ResumeBuilder() {
   const [lanePref, setLanePref] = useState<"auto" | "full">("auto");
   // The saved build on screen, so edits and messages are kept with it.
   const [entryId, setEntryId] = useState<string | null>(null);
+  // Set when a saved build is opened from a follow-up nudge, so it opens on the follow-up message.
+  const [openFollowUp, setOpenFollowUp] = useState(false);
 
   const [saved, setSaved, hydrated] = usePersistentState<Saved | null>(SAVED_KEY, noSaved);
   const [stories, setStories] = usePersistentState<Story[]>(STORIES_KEY, noStories);
@@ -571,6 +573,7 @@ export default function ResumeBuilder() {
     // Keeps the resume, notes, and email, so the next job takes seconds.
     track("next-job");
     setEntryId(null);
+    setOpenFollowUp(false);
     setPhase("form");
     setResult(null);
     setDoc(null);
@@ -597,10 +600,11 @@ export default function ResumeBuilder() {
     });
   }
 
-  function openEntry(id: string) {
+  function openEntry(id: string, followUp = false) {
     const e = library.find((x) => x.id === id);
     if (!e) return;
-    track("build-reopened");
+    track(followUp ? "followup-opened" : "build-reopened");
+    setOpenFollowUp(followUp);
     if (!email.trim() && saved?.email) setEmail(saved.email);
     setResult(entryToResult(e));
     setDoc(e.doc);
@@ -628,6 +632,13 @@ export default function ResumeBuilder() {
       // Undoing only steps the tracker back if it still says "Applied", so a later stage is never overwritten.
       setTracker((cur) => cur.map((x) => (sameJob(x, { company: e.company, role: e.title }) && x.status === "Applied" ? { ...x, status: "Not Yet Applied" } : x)));
     }
+  }
+
+  // A follow-up was copied: remember it, so this job is not nudged again.
+  function markFollowedUp(id: string) {
+    const stamp = new Date().toISOString();
+    setLibrary((cur) => cur.map((x) => (x.id === id && !x.followedUpAt ? { ...x, followedUpAt: stamp, updatedAt: stamp } : x)));
+    track("followup-written");
   }
 
   function removeEntry(id: string) {
@@ -736,6 +747,10 @@ export default function ResumeBuilder() {
         onToggleApplied={entryId ? () => toggleApplied(entryId) : undefined}
         messages={current?.messages}
         onMessage={saveMessage}
+        startOnReach={openFollowUp}
+        initialPurpose={openFollowUp ? "followup" : "intro"}
+        appliedDaysAgo={current ? followUpDue(current).days || null : null}
+        onFollowedUp={entryId ? () => markFollowedUp(entryId) : undefined}
       />
     );
   }
@@ -1168,7 +1183,7 @@ export default function ResumeBuilder() {
       </div>
     </form>
 
-    <ApplicationsList entries={library} onOpen={openEntry} onToggleApplied={toggleApplied} onRemove={removeEntry} />
+    <ApplicationsList entries={library} onOpen={(id) => openEntry(id)} onFollowUp={(id) => openEntry(id, true)} onToggleApplied={toggleApplied} onRemove={removeEntry} />
 
     {fast && hydrated && (
       <ProfilePanel

@@ -9,6 +9,7 @@ import {
   OUTREACH_PER_MONTH,
   buildOutreachRequest,
   isAudience,
+  isPurpose,
   isTweak,
   parseOutreachResponse,
   plain,
@@ -108,6 +109,8 @@ export async function POST(req: NextRequest) {
   if (!isValidEmail(email)) return NextResponse.json({ error: "email" }, { status: 400 });
   if (!isAudience(body.audience)) return NextResponse.json({ error: "bad-request" }, { status: 400 });
   const tweak = isTweak(body.tweak) ? body.tweak : "";
+  const purpose = isPurpose(body.purpose) ? body.purpose : "intro";
+  const daysSince = typeof body.daysSince === "number" && Number.isFinite(body.daysSince) ? Math.min(90, Math.max(1, Math.round(body.daysSince))) : 7;
   const doc = body.doc && typeof body.doc === "object" ? (parseDoc(body.doc as Record<string, unknown>) as ResumeDoc | null) : null;
   if (!doc) return NextResponse.json({ error: "bad-request" }, { status: 400 });
 
@@ -158,6 +161,9 @@ export async function POST(req: NextRequest) {
         fitReason: plain(body.fitReason, 400),
         unmet: strings(body.unmet, 200, 12),
         recipientName: plain(body.recipientName, MAX_RECIPIENT_NAME),
+        purpose,
+        daysSince,
+        relationship: plain(body.relationship, 200),
         recipientText: plain(body.recipientText, MAX_RECIPIENT_CHARS),
         recipientFiles: files,
         tweak,

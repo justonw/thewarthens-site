@@ -33,7 +33,7 @@ steps = [("resume-visit", "Opened the builder"), ("resume-added", "Added a resum
          ("build-started", "Pressed Build"), ("build-finished", "Got a resume"), ("gap-answered", "Answered a gap question"), ("download", "Downloaded"),
          ("profile-saved", "Saved a profile file"), ("returning-visit", "Returned with a saved profile"), ("scanner-visit", "Opened the scanner"), ("scanner-checked", "Ran the scanner"),
          ("outreach-opened", "Opened Reach out"), ("outreach-written", "Wrote an outreach message"),
-         ("next-job", "Pressed Next job"), ("build-reopened", "Reopened a saved build")]
+         ("followup-opened", "Opened a follow-up"), ("followup-written", "Copied a follow-up"), ("next-job", "Pressed Next job"), ("build-reopened", "Reopened a saved build")]
 days = data["days"]
 total = {k: sum(d["counts"].get(k, 0) for d in days) for k, _ in steps}
 print(f"Last {a.days} days\n")

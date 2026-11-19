@@ -12,6 +12,7 @@ const doc: any = {
   training: [], education: [],
 };
 const base: any = {
+  purpose: "intro", daysSince: 7, relationship: "",
   audience: "manager", doc, postingTitle: "Customer Success Lead", postingCompany: "Globex", postingKeywords: ["onboarding", "renewals"],
   fitReason: "Strong on onboarding.", unmet: ["Salesforce administration"], recipientName: "Sam Lee", recipientText: "", recipientFiles: [], tweak: "", previous: null,
 };
@@ -34,6 +35,15 @@ check("profile text and screenshot are sent", JSON.stringify(withMaterial.messag
 const tweaked: any = buildOutreachRequest({ ...base, tweak: "shorter", previous: { note: "Old note.", message: "Old message." } }, "m");
 check("a tweak carries the previous version", JSON.stringify(tweaked.messages).includes("<previous_version>") && JSON.stringify(tweaked.messages).includes("a third shorter"));
 
+const friend: any = buildOutreachRequest({ ...base, audience: "friend", relationship: "we worked together at Northline" }, "m");
+check("a friend request carries how they know each other, as the person's own words", JSON.stringify(friend.messages).includes("<relationship>we worked together at Northline</relationship>"));
+const friendBlank: any = buildOutreachRequest({ ...base, audience: "friend" }, "m");
+check("with nothing said, the relationship stays general", JSON.stringify(friendBlank.messages).includes("did not say how they know this person"));
+check("the referral rules are in the prompt", friend.system.includes("introduction or a referral") && friend.system.includes("never invent shared history"));
+const follow: any = buildOutreachRequest({ ...base, purpose: "followup", daysSince: 6 }, "m");
+check("a follow-up says how long ago they applied", JSON.stringify(follow.messages).includes("FOLLOW-UP") && JSON.stringify(follow.messages).includes("about 6 days ago"));
+check("a follow-up does not ask for the person's profile", !JSON.stringify(follow.messages).includes("did not add anything about the person"));
+check("the follow-up rules are in the prompt", follow.system.includes("brief, polite check-in") && follow.system.includes("never suggest the company owes a reply"));
 check("em and en dashes become commas", plain("Led onboarding — and renewals – well", 200) === "Led onboarding, and renewals, well");
 check("number ranges keep a hyphen", plain("2020–2022", 50) === "2020-2022");
 
