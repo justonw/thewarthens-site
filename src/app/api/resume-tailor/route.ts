@@ -332,7 +332,9 @@ export async function POST(req: NextRequest) {
     const letter = letterResult && letterResult.ok ? letterResult.letter : null;
     if (letter) parsed.result.coverLetter = letter;
     const letterFailed = wantsLetter && !letter;
-    await notify(live, email, parsed.result.postingTitle, source, Boolean(letter));
+    // Owner test builds (the comparison scripts run dozens at a time) must not email the owner: each email counts against the
+    // daily Resend allowance that visitors' receipts and resume copies share.
+    if (!unlimited) await notify(live, email, parsed.result.postingTitle, source, Boolean(letter));
     if (mark && kv) await withTimeout(finishBuildMark(kv, mark), 5000, "finish the build record").catch(() => {});
 
     // "Free build 2 of 2" or "Paid build 3 of 15", for the page and the email. Never worth failing a finished build over.
