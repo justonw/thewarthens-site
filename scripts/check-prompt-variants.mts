@@ -31,4 +31,14 @@ if (before) assert.equal(v1, sysOf(old.buildResumeRequest(input, "claude-sonnet-
 assert.ok(!v1.includes("One point per bullet") && v1.includes("2 to 4 short groups"), "v1 keeps the old skills rule");
 assert.ok(v2.includes("One point per bullet") && v2.includes("3 to 6 groups") && v2.includes("two short sentences beat one long one"), "v2 has the new rules");
 assert.ok(v2.length > v1.length, "v2 only adds");
+
+// Skills that arrive as a list are kept, not dropped (a dropped list used to blank the whole skills section).
+const doc = now.parseDoc({
+  name: "Dana", headline: "CSM", contact: [], summary: "s",
+  skills: [{ label: "Tools", items: ["Zendesk", "Salesforce", "HubSpot"] }, { label: "CS", items: "Onboarding, Renewals" }, { label: "Empty", items: [] }],
+  experience: [{ title: "Lead", company: "Acme", location: "", dates: "2022 - Present", bullets: ["Led a team of 11."] }], training: [], education: [],
+});
+assert.deepEqual(doc.skills, [{ label: "Tools", items: "Zendesk, Salesforce, HubSpot" }, { label: "CS", items: "Onboarding, Renewals" }]);
+const seven = now.parseDoc({ name: "Dana", headline: "CSM", contact: [], summary: "s", skills: Array.from({ length: 9 }, (_, i) => ({ label: `G${i}`, items: "a, b" })), experience: [{ title: "Lead", company: "Acme", location: "", dates: "x", bullets: ["b"] }], training: [], education: [] });
+assert.equal(seven.skills.length, 6, "more groups than the cap are cut, not the whole section");
 console.log("prompt variant checks passed");

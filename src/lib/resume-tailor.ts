@@ -206,7 +206,14 @@ const docProps = {
   skills: {
     type: "array",
     maxItems: 6,
-    items: { type: "object", properties: { label: str, items: str }, required: ["label", "items"] },
+    items: {
+      type: "object",
+      properties: {
+        label: str,
+        items: { type: "string", description: "The items of this group as ONE comma-separated string, for example \"Zendesk, Salesforce, HubSpot\". Not a list." },
+      },
+      required: ["label", "items"],
+    },
   },
   experience: {
     type: "array",
@@ -404,6 +411,13 @@ function objects(value: unknown, countMax: number): Record<string, unknown>[] {
 }
 
 
+// The items of one skill group, as one comma-separated line. The AI is asked for a string, but sometimes sends a list;
+// a list used to be read as empty and the whole skills section vanished, so both are accepted.
+function skillItems(value: unknown): string {
+  if (Array.isArray(value)) return cleanText(value.map((v) => cleanText(v, 60)).filter(Boolean).join(", "), 400);
+  return cleanText(value, 400);
+}
+
 // Reads the resume fields out of a tool call and keeps only clean, bounded values.
 export function parseDoc(i: Record<string, unknown>): ResumeDoc | null {
   const experience: ResumeJob[] = objects(i.experience, 20)
@@ -422,7 +436,7 @@ export function parseDoc(i: Record<string, unknown>): ResumeDoc | null {
     contact: list(i.contact, 120, 6),
     summary: cleanText(i.summary, 700),
     skills: objects(i.skills, 6)
-      .map((s) => ({ label: cleanText(s.label, 40), items: cleanText(s.items, 300) }))
+      .map((s) => ({ label: cleanText(s.label, 40), items: skillItems(s.items) }))
       .filter((s) => s.items),
     experience,
     training: objects(i.training, 10)
