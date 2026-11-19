@@ -5,6 +5,7 @@
 import { cleanText, parseDesign, parseDoc, parseLetter } from "./resume-tailor";
 import type { CoverLetter, ResumeDesign, ResumeDoc, ResumeFit, ResumeGap, TailorResult } from "./resume-tailor";
 import type { Audience, Purpose } from "./outreach";
+import { cleanSheet, isStage, type PrepSheet } from "./interview";
 import type { Result } from "./outcomes";
 import type { ResumeStyle } from "./resume-files";
 
@@ -42,6 +43,8 @@ export type LibraryEntry = {
   changes: string[];
   messages: SavedMessage[];
   answers: SavedAnswer[];
+  // The interview prep sheet for this job, if one was built.
+  interview: PrepSheet | null;
   // A general resume for a kind of role (the title), not tailored to a posting. It is never "applied" to a job.
   general: boolean;
 };
@@ -78,6 +81,7 @@ export function entryFromResult(id: string, r: TailorResult, letter: CoverLetter
     changes: r.changes,
     messages: [],
     answers: [],
+    interview: null,
     general: r.general === true,
   };
 }
@@ -199,6 +203,7 @@ export function cleanLibrary(raw: unknown): LibraryEntry[] {
       changes: (Array.isArray(o.changes) ? o.changes : []).map((c) => text(c, 300)).filter(Boolean).slice(0, 12),
       messages,
       answers,
+      interview: o.general !== true && o.interview && typeof o.interview === "object" && isStage((o.interview as Record<string, unknown>).stage) ? cleanSheet(o.interview, (o.interview as { stage: "phone" | "manager" | "final" }).stage) : null,
       general: o.general === true,
     });
   }

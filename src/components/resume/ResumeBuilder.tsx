@@ -20,6 +20,7 @@ import type { ResumeStyle } from "@/lib/resume-files";
 import { downloadBlob } from "@/lib/download";
 import { track } from "@/lib/track";
 import GeneralTarget from "./GeneralTarget";
+import type { PrepSheet } from "@/lib/interview";
 import { STORIES_KEY, USE_STORIES_KEY, addStoryTo, buildProfileFile, noStories, profileFileName, storiesAsNotes, type Profile, type Story } from "@/lib/resume-profile";
 import ScratchForm, { emptyScratch, scratchReady, scratchToText, type Scratch } from "./ScratchForm";
 
@@ -687,6 +688,11 @@ export default function ResumeBuilder() {
     );
   }
 
+  function saveInterview(sheet: PrepSheet) {
+    if (!entryId) return;
+    setLibrary((cur) => cur.map((x) => (x.id === entryId ? { ...x, updatedAt: new Date().toISOString(), interview: sheet } : x)));
+  }
+
   function saveAnswer(a: SavedAnswer) {
     if (!entryId) return;
     setLibrary((cur) =>
@@ -790,6 +796,8 @@ export default function ResumeBuilder() {
         onMessage={saveMessage}
         answers={current?.answers}
         onAnswer={saveAnswer}
+        interview={current?.interview}
+        onInterview={saveInterview}
         startOnReach={openFollowUp}
         initialPurpose={openFollowUp ? "followup" : "intro"}
         appliedDaysAgo={current ? followUpDue(current).days || null : null}

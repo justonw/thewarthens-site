@@ -21,6 +21,8 @@ export const FUNNEL_EVENTS = [
   "outcome-marked", // marked where an application stands (phone screen, interview, offer, or not selected)
   "answers-opened", // opened "Answers" on a finished resume
   "answers-written", // got a drafted answer to an application question
+  "interview-opened", // opened "Interview prep" on a finished resume
+  "interview-written", // got an interview prep sheet back
   "followup-opened", // opened a follow-up message from a nudge on My applications
   "followup-written", // copied a follow-up message
   "general-chosen", // chose "Build a general resume instead" (no specific job)

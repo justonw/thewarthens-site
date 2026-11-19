@@ -12,7 +12,8 @@ import { join } from "node:path";
 const dir = mkdtempSync(join(tmpdir(), "resume-library-"));
 const read = (rel: string) => readFileSync(new URL(rel, import.meta.url), "utf8");
 writeFileSync(join(dir, "resume-tailor.mts"), read("../src/lib/resume-tailor.ts").split("\n").filter((l) => !l.includes('from "./resume-input-limits"')).join("\n"));
-writeFileSync(join(dir, "resume-library.mts"), read("../src/lib/resume-library.ts").replace('from "./resume-tailor";\nimport type', 'from "./resume-tailor.mts";\nimport type').replace('import type { CoverLetter, ResumeDesign, ResumeDoc, ResumeFit, ResumeGap, TailorResult } from "./resume-tailor";', 'import type { CoverLetter, ResumeDesign, ResumeDoc, ResumeFit, ResumeGap, TailorResult } from "./resume-tailor.mts";'));
+writeFileSync(join(dir, "interview.mts"), read("../src/lib/interview.ts").replace('from "./resume-tailor";', 'from "./resume-tailor.mts";'));
+writeFileSync(join(dir, "resume-library.mts"), read("../src/lib/resume-library.ts").replace('from "./resume-tailor";\nimport type', 'from "./resume-tailor.mts";\nimport type').replace('import type { CoverLetter, ResumeDesign, ResumeDoc, ResumeFit, ResumeGap, TailorResult } from "./resume-tailor";', 'import type { CoverLetter, ResumeDesign, ResumeDoc, ResumeFit, ResumeGap, TailorResult } from "./resume-tailor.mts";').replace('from "./interview";', 'from "./interview.mts";'));
 const lib: any = await import(join(dir, "resume-library.mts"));
 
 const doc: any = {
@@ -139,5 +140,24 @@ assert.equal(lib.entryFromResult("t1", result, null).general, false);
 const genBack = lib.cleanLibrary([{ ...JSON.parse(JSON.stringify(gen)), status: "applied", appliedAt: "2026-11-12T10:00:00.000Z" }]);
 assert.equal(genBack[0].general, true);
 assert.equal(genBack[0].status, "built", "a general resume cannot be marked applied");
+
+// A saved interview prep sheet is checked on the way in, kept per job, and never kept on a general resume.
+const sheet = { stage: "manager", opening: "I lead a support team of 11 and rebuilt onboarding, cutting time to first sale from 21 days to 13.", questions: [
+  { question: "Tell me about a time you improved a process.", kind: "behavioral", why: "They want proof you fix things.", approach: "Start with the result.", points: ["Your onboarding rebuild: 21 days to 13."], storyAsk: "" },
+  { question: "How do you handle an upset customer?", kind: "role", why: "Tests calm.", approach: "Name your steps.", points: ["You calm upset customers."], storyAsk: "" },
+  { question: "Why this role?", kind: "motivation", why: "Fit.", approach: "Tie it to the work.", points: ["Renewals experience."], storyAsk: "" },
+  { question: "x", kind: "role", why: "", approach: "", points: [], storyAsk: "" } ], askThem: ["What does success look like in six months?"], remember: ["Send a thank-you within a day."] };
+const withSheet = lib.cleanLibrary([
+  { ...JSON.parse(JSON.stringify(entry)), interview: sheet },
+  { ...JSON.parse(JSON.stringify(entry)), id: "s2", interview: { ...sheet, stage: "nonsense" } },
+  { ...JSON.parse(JSON.stringify(gen)), id: "s3", interview: sheet },
+  { ...JSON.parse(JSON.stringify(entry)), id: "s4", interview: { stage: "phone", opening: "short", questions: [] } },
+]);
+assert.equal(withSheet[0].interview.questions.length, 3, "a question with no real text is dropped");
+assert.equal(withSheet[0].interview.stage, "manager");
+assert.equal(withSheet[1].interview, null, "an unknown stage means no sheet");
+assert.equal(withSheet[2].interview, null, "a general resume has no interview sheet");
+assert.equal(withSheet[3].interview, null, "a sheet that is too thin is dropped");
+assert.equal(lib.entryFromResult("n3", result, null).interview, null, "a new build starts with no sheet");
 
 console.log("library checks passed");

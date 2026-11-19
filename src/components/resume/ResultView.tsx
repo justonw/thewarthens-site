@@ -18,6 +18,8 @@ import ShareCard from "./ShareCard";
 import StrengthenPanel from "./StrengthenPanel";
 import OutreachPanel from "./OutreachPanel";
 import AnswersPanel from "./AnswersPanel";
+import InterviewPanel from "./InterviewPanel";
+import type { PrepSheet } from "@/lib/interview";
 import LookPanel from "./LookPanel";
 import { DEFAULT_LOOK, LOOK_KEY, cleanLook, type LookOptions } from "@/lib/resume-look";
 import NumbersCoach from "./NumbersCoach";
@@ -25,7 +27,7 @@ import { STORIES_KEY, addStoryTo, newStory, noStories, type Story } from "@/lib/
 import { cleanDoc, sameJob, type SavedAnswer, type SavedMessage } from "@/lib/resume-library";
 import type { Purpose } from "@/lib/outreach";
 
-type Tab = "resume" | "letter" | "reach" | "answers";
+type Tab = "resume" | "letter" | "reach" | "answers" | "interview";
 
 const card = "rounded-2xl border border-border-subtle bg-background-elevated p-5";
 const input =
@@ -152,6 +154,8 @@ export default function ResultView({
   startOnReach = false,
   answers,
   onAnswer,
+  interview,
+  onInterview,
   initialPurpose,
   appliedDaysAgo,
   onFollowedUp,
@@ -188,6 +192,9 @@ export default function ResultView({
   // Application answers already drafted for this job, and a way to keep each new one.
   answers?: SavedAnswer[];
   onAnswer?: (a: SavedAnswer) => void;
+  // The interview prep sheet already built for this job, and a way to keep a new one.
+  interview?: PrepSheet | null;
+  onInterview?: (s: PrepSheet) => void;
   initialPurpose?: Purpose;
   appliedDaysAgo?: number | null;
   onFollowedUp?: () => void;
@@ -197,6 +204,12 @@ export default function ResultView({
   function openAnswers() {
     setTab("answers");
     track("answers-opened");
+    window.setTimeout(() => document.getElementById("rt-tabs")?.scrollIntoView({ behavior: "smooth", block: "start" }), 30);
+  }
+  // Opens "Interview prep" the same way.
+  function openInterview() {
+    setTab("interview");
+    track("interview-opened");
     window.setTimeout(() => document.getElementById("rt-tabs")?.scrollIntoView({ behavior: "smooth", block: "start" }), 30);
   }
   // Opens "Reach out" and brings the tabs into view, so the new step is the first thing on screen.
@@ -314,7 +327,7 @@ export default function ResultView({
         const why = (await res.json().catch(() => ({}))) as { error?: string };
         setMailWhy(
           why.error === "copies-used"
-            ? "Every build comes with 2 emailed copies (the one sent automatically and one resend), and you've used them. Your files are still here to download."
+            ? "The emailed copies that come with your builds (2 per build: the one sent automatically and one resend) are used up. Your files are still here to download."
             : why.error === "send-failed"
               ? "We couldn't send your email just now, and it didn't use up one of your copies. Your files are ready to download below, and you can press \"Email me a copy\" again in a little while."
               : why.error === "slow-down"
@@ -400,7 +413,7 @@ export default function ResultView({
       type="button"
       role="tab"
       aria-selected={tab === id}
-      onClick={() => (id === "reach" ? openReach() : id === "answers" ? openAnswers() : setTab(id))}
+      onClick={() => (id === "reach" ? openReach() : id === "answers" ? openAnswers() : id === "interview" ? openInterview() : setTab(id))}
       className={`inline-flex min-h-11 items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition-colors sm:min-h-0 ${
         tab === id ? "bg-foreground text-background" : "text-foreground-muted hover:text-foreground"
       }`}
@@ -459,9 +472,9 @@ export default function ResultView({
         </div>
       )}
 
-      {!general && tab !== "reach" && tab !== "answers" && <ReachCallout company={result.postingCompany} onOpen={openReach} />}
+      {!general && tab !== "reach" && tab !== "answers" && tab !== "interview" && <ReachCallout company={result.postingCompany} onOpen={openReach} />}
 
-      <div hidden={tab === "reach" || tab === "answers"} className="space-y-6">
+      <div hidden={tab === "reach" || tab === "answers" || tab === "interview"} className="space-y-6">
       <StrengthenPanel gaps={gaps} fit={result.fit} justAdded={justAdded} onAdd={addGap} />
 
       <NumbersCoach
@@ -504,6 +517,7 @@ export default function ResultView({
         {letter && tabButton("letter", "Cover letter")}
         {!general && tabButton("reach", "Reach out", true)}
         {!general && tabButton("answers", "Answers", true)}
+        {!general && tabButton("interview", "Interview prep", true)}
       </div>
 
       {!general && <div hidden={tab !== "reach"}>
@@ -523,13 +537,26 @@ export default function ResultView({
         />
       </div>}
 
+      {!general && tab === "interview" && (
+        <InterviewPanel
+          doc={finalDoc}
+          result={result}
+          email={email}
+          stories={stories}
+          saved={interview ?? null}
+          onSave={onInterview}
+          onStory={(topic, question, answer) => setStories((cur) => addStoryTo(cur, newStory(topic, question, answer)))}
+          onBack={() => setTab("resume")}
+        />
+      )}
+
       {inApp && (
         <p role="status" className="rounded-2xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm">
           You&apos;re in an app&apos;s built-in browser, which often blocks downloads. If a download doesn&apos;t start, use &quot;Email me a copy&quot; below, or open this page in Safari or Chrome (look for the menu or the &quot;Open in browser&quot; option).
         </p>
       )}
 
-      {tab === "reach" || tab === "answers" ? null : tab === "letter" && letter ? (
+      {tab === "reach" || tab === "answers" || tab === "interview" ? null : tab === "letter" && letter ? (
         <CoverLetterEditor letter={letter} doc={finalDoc} onChange={onLetter} />
       ) : (
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
@@ -735,7 +762,7 @@ export default function ResultView({
         </div>
       )}
 
-      {!general && tab !== "reach" && tab !== "answers" && <ReachCallout company={result.postingCompany} onOpen={openReach} />}
+      {!general && tab !== "reach" && tab !== "answers" && tab !== "interview" && <ReachCallout company={result.postingCompany} onOpen={openReach} />}
 
       <NextSteps title={`${result.postingTitle} ${doc.headline}`} extra={result.postingKeywords.join(" ")} />
 

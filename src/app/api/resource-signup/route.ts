@@ -115,7 +115,7 @@ export async function POST(req: NextRequest) {
       html: `<p>Hi,</p>
 <p>Here's your ${resource.label}:</p>
 <ul>${fileList}</ul>
-<p>They're yours. One more thing that might help: if you have a resume and a job you want, our Resume Builder tailors the resume and writes a cover letter for that job, as PDF and Word files. Your first 2 are free: <a href="${SITE_URL}/resume">thewarthens.com/resume</a>.</p>
+<p>They're yours. One more thing that might help: if you have a resume and a job you want, our Resume Builder tailors the resume and writes a cover letter for that job, as PDF and Word files. Your first 2 builds are free: <a href="${SITE_URL}/resume">thewarthens.com/resume</a>.</p>
 <p>If you haven't taken the free 2-minute career-path quiz yet, it's at <a href="${SITE_URL}/tech">thewarthens.com/tech</a>.</p>
 <p>Juston &amp; Atiya</p>`,
     });
