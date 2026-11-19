@@ -54,7 +54,7 @@ assert.ok(!text.includes("dana@example.com") && !text.includes("555-0147"), "con
 assert.ok(text.includes("<true_stories>") && text.includes("billing error"));
 assert.ok(text.includes("There is no character limit"));
 assert.ok(req.system.includes("Never invent") && req.system.includes("never write he, she, him, her, his, or they".replace("never", "Never")) && req.system.includes("outcome to \"ask\""));
-assert.ok(req.system.includes("Stay faithful to the material") && req.system.includes("A resume bullet alone is not enough to tell a story") && req.system.includes("Do not volunteer weaknesses"), "the faithfulness rules are in the prompt");
+assert.ok(req.system.includes("Stay faithful to the material") && req.system.includes("A resume bullet alone is not enough to tell a story") && req.system.includes("Do not volunteer weaknesses") && req.system.includes("The length of the answer follows the material"), "the faithfulness rules are in the prompt");
 assert.ok(JSON.stringify(buildAnswerRequest({ ...base, limit: 500 }, "m").messages).includes("at most 500 characters"));
 assert.ok(!JSON.stringify(buildAnswerRequest({ ...base, stories: "" }, "m").messages).includes("<true_stories>"), "no stories, no stories block");
 assert.ok(JSON.stringify(buildAnswerRequest({ ...base, extra: "I settled a scheduling fight between two agents." }, "m").messages).includes("<person_says>"));
