@@ -75,6 +75,7 @@ assert.deepEqual(parsed, [{ sentence: "The whole team picked it up and morale im
 assert.deepEqual(parseVerifyResponse(verifyTool([]), draft), [], "an empty list means everything was supported");
 assert.equal(clearedByItsOwnReason("The claim of working in it is consistent with the resume, so this is supported"), true, "a flag that clears itself is dropped");
 assert.equal(clearedByItsOwnReason("Resume lists Salesforce as a skill; the claim is supported"), true);
+assert.equal(clearedByItsOwnReason("Salesforce is listed on the resume, so the tool is supported; the team of 11 is supported too. No issue found with this sentence"), true, "a note that says no issue was found clears itself");
 assert.equal(clearedByItsOwnReason("Not supported: no award appears in the material"), false, "a real flag is kept");
 assert.equal(clearedByItsOwnReason("Resume shows a B.S., not an MBA; no PMP certification appears"), false);
 assert.equal(clearedByItsOwnReason("Award, Gainsight tool, and health-score work are not in the resume"), false);

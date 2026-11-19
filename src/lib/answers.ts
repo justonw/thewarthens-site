@@ -251,7 +251,7 @@ export function buildVerifyRequest(
 // A flag whose own reason says the claim holds up ("is consistent", "is supported") is the checker talking itself out of it.
 // It is dropped, unless the reason also says something is missing or not found.
 const SELF_CLEARED = /\b(is|are) (consistent|supported)\b|\bconsistent with\b|\bsupported by\b/i;
-const SAYS_MISSING = /\b(not|no|nothing|never|without|missing|isn't|aren't|doesn't)\b/i;
+const SAYS_MISSING = /\b(not (in|found|supported|listed|stated|mentioned|present|given)|isn't|aren't|doesn't|missing|no mention|nothing (about|in)|never|without)\b/i;
 export const clearedByItsOwnReason = (why: string) => SELF_CLEARED.test(why) && !SAYS_MISSING.test(why);
 
 const squash = (t: string) => t.toLowerCase().replace(/\s+/g, " ").trim();
