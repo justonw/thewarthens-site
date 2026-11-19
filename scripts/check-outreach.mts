@@ -43,6 +43,7 @@ check("the referral rules are in the prompt", friend.system.includes("introducti
 const follow: any = buildOutreachRequest({ ...base, purpose: "followup", daysSince: 6 }, "m");
 check("a follow-up says how long ago they applied", JSON.stringify(follow.messages).includes("FOLLOW-UP") && JSON.stringify(follow.messages).includes("about 6 days ago"));
 check("a follow-up does not ask for the person's profile", !JSON.stringify(follow.messages).includes("did not add anything about the person"));
+check("no guessing pronouns and no assumed time since they spoke", friend.system.includes("Never use he, she, him, her, his, or they for the job seeker") && friend.system.includes("never say how long it has been"));
 check("the follow-up rules are in the prompt", follow.system.includes("brief, polite check-in") && follow.system.includes("never suggest the company owes a reply"));
 check("em and en dashes become commas", plain("Led onboarding — and renewals – well", 200) === "Led onboarding, and renewals, well");
 check("number ranges keep a hyphen", plain("2020–2022", 50) === "2020-2022");
