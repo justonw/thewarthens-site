@@ -97,21 +97,37 @@ export default function Home() {
               understand, and live out truth.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-3">
+              <Link
+                href="/tech"
+                className="inline-flex min-h-12 items-center rounded-full bg-white px-7 py-3 text-base font-semibold text-slate-900 shadow-lg shadow-black/30 transition-transform hover:scale-[1.03]"
+              >
+                Start the Tech Journey
+              </Link>
               <a
                 href="https://youtube.com/@thewarthens?si=hMA8NuKtm0vox8X4"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-900 shadow-lg shadow-black/30 transition-transform hover:scale-[1.03]"
+                className="inline-flex min-h-12 items-center rounded-full px-4 py-3 text-sm font-semibold text-white underline decoration-white/40 underline-offset-4 transition-colors hover:decoration-white"
               >
                 Watch on YouTube
               </a>
-              <Link
-                href="/tech"
-                className="rounded-full border border-white/25 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/15"
-              >
-                Start the Tech Journey
-              </Link>
             </div>
+            <nav aria-label="Other places to start" className="mt-4">
+              <p className="text-sm text-slate-300">Looking for something else?</p>
+              <ul className="mt-1 flex flex-wrap gap-x-5">
+                {[
+                  ["Resume help", "/resume"],
+                  ["Faith Journey", "/faith"],
+                  ["Games for kids", "/techjr"],
+                ].map(([label, href]) => (
+                  <li key={href}>
+                    <Link href={href} className="inline-flex min-h-11 items-center text-sm font-semibold text-white underline decoration-white/40 underline-offset-4 hover:decoration-white">
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           </div>
 
           {/* The two of us */}

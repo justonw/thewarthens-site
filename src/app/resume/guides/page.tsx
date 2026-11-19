@@ -43,7 +43,7 @@ export default function ResumeGuidesPage() {
   };
 
   return (
-    <main className="mx-auto max-w-3xl px-6 pb-20 pt-12 sm:pt-16">
+    <div className="mx-auto max-w-3xl px-6 pb-20 pt-12 sm:pt-16">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(graph) }} />
       <nav aria-label="Breadcrumb" className="text-sm text-foreground-muted">
         <ol className="flex flex-wrap items-center gap-2">
@@ -93,6 +93,6 @@ export default function ResumeGuidesPage() {
           Open the Resume Builder
         </Link>
       </div>
-    </main>
+    </div>
   );
 }

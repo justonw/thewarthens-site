@@ -275,7 +275,7 @@ files.length > 0 && (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={f.previewUrl} alt="" className="h-8 w-8 rounded object-cover" />
               ) : (
-                <span aria-hidden className="inline-flex h-8 w-8 items-center justify-center rounded bg-blue-500/10 text-[10px] font-bold text-blue-700">
+                <span aria-hidden className="inline-flex h-8 w-8 items-center justify-center rounded bg-blue-500/10 text-xs font-bold text-blue-700">
                   PDF
                 </span>
               )}

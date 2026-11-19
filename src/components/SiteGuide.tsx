@@ -31,7 +31,7 @@ const AUTO_OPEN_PATHS = ["/", "/tech", "/faith", "/techjr"];
 // The coaching page has a sticky "book a call" bar, so the launcher sits above it there.
 const LIFTED_PREFIXES = ["/tech/coaching"];
 // On the resume pages the floating button sits on top of the form and the Build button on a phone, so it is hidden there.
-const HIDDEN_ON_PHONE_PREFIXES = ["/resume"];
+const HIDDEN_ON_PHONE_PREFIXES = ["/resume", "/contact", "/faith/present-but-missing"];
 const AUTO_OPEN_DELAY_MS = 1200;
 const COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 const STORAGE_KEY = "warthens-guide-seen";
@@ -77,6 +77,10 @@ export default function SiteGuide() {
   const listRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const launcherRef = useRef<HTMLButtonElement>(null);
+  // On a phone the button shrinks to a round icon once the visitor has scrolled, so it covers less of the page, and it
+  // steps aside completely while they type in any field, so it never sits on top of what they are writing.
+  const [scrolledFar, setScrolledFar] = useState(false);
+  const [typingInField, setTypingInField] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   // Focus moves into the box only when the visitor opened it, and back to the button when they close it.
   const openedByVisitor = useRef(false);
@@ -263,6 +267,21 @@ export default function SiteGuide() {
 
   const node = guideNodes[nodeId];
   const busy = typing || leaving;
+  useEffect(() => {
+    const onScroll = () => setScrolledFar(window.scrollY > 400);
+    const onFocusIn = (e: FocusEvent) => setTypingInField(e.target instanceof HTMLElement && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName));
+    const onFocusOut = () => setTypingInField(false);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    document.addEventListener("focusin", onFocusIn);
+    document.addEventListener("focusout", onFocusOut);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      document.removeEventListener("focusin", onFocusIn);
+      document.removeEventListener("focusout", onFocusOut);
+    };
+  }, []);
+
   const lifted = !!pathname && LIFTED_PREFIXES.some((prefix) => pathname.startsWith(prefix));
   const hiddenOnPhone = !!pathname && HIDDEN_ON_PHONE_PREFIXES.some((prefix) => pathname.startsWith(prefix));
   const inResults = results !== null;
@@ -403,7 +422,7 @@ export default function SiteGuide() {
               Go
             </button>
           </form>
-          <p className="border-t border-border-subtle bg-background-elevated/60 px-4 pb-2.5 pt-0 text-[11px] leading-snug text-foreground-muted">
+          <p className="border-t border-border-subtle bg-background-elevated/60 px-4 pb-2.5 pt-0 text-xs leading-snug text-foreground-muted">
             Typed questions are sent to an AI to find the right page. Please don&apos;t include personal details.
           </p>
         </div>
@@ -412,10 +431,11 @@ export default function SiteGuide() {
           ref={launcherRef}
           type="button"
           onClick={openByVisitor}
-          className={`fixed right-4 z-[60] inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-950/25 transition-colors hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ${hiddenOnPhone ? "max-sm:hidden " : ""}${lifted ? "bottom-24 sm:right-6 sm:bottom-24" : "bottom-4 sm:right-6 sm:bottom-6"}`}
+          style={typingInField ? { display: "none" } : undefined}
+          className={`fixed right-4 z-[60] inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-950/25 transition-colors hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ${scrolledFar ? "max-sm:h-12 max-sm:w-12 max-sm:justify-center max-sm:gap-0 max-sm:px-0 max-sm:py-0 " : ""}${hiddenOnPhone ? "max-sm:hidden " : ""}${lifted ? "bottom-24 sm:right-6 sm:bottom-24" : "bottom-4 sm:right-6 sm:bottom-6"}`}
         >
-          <span aria-hidden>💬</span>
-          Where to start?
+          <span aria-hidden className="text-base">💬</span>
+          <span className={scrolledFar ? "max-sm:sr-only" : ""}>Where to start?</span>
         </button>
       )}
     </div>

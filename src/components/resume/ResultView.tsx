@@ -374,7 +374,7 @@ export default function ResultView({
       }`}
     >
       {label}
-      {isNew && tab !== id && <span className="rounded-full bg-violet-600 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">New</span>}
+      {isNew && tab !== id && <span className="rounded-full bg-violet-600 px-1.5 py-0.5 text-xs font-bold uppercase tracking-wide text-white">New</span>}
     </button>
   );
 

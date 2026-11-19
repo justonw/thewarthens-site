@@ -9,7 +9,7 @@ const mini =
 
 function Heading({ children }: { children: string }) {
   return (
-    <p className="mb-1 mt-5 border-b border-foreground/70 pb-0.5 text-[11px] font-semibold uppercase tracking-wider">{children}</p>
+    <p className="mb-1 mt-5 border-b border-foreground/70 pb-0.5 text-xs font-semibold uppercase tracking-wider">{children}</p>
   );
 }
 

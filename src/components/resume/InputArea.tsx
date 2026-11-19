@@ -113,7 +113,7 @@ export default function InputArea({
             </span>
             <span className="mt-1 flex flex-wrap justify-center gap-1.5">
               {formats.map((f) => (
-                <span key={f} className="rounded-full border border-blue-500/20 bg-white px-2.5 py-0.5 text-[11px] font-semibold text-blue-700">
+                <span key={f} className="rounded-full border border-blue-500/20 bg-white px-2.5 py-0.5 text-xs font-semibold text-blue-700">
                   {f}
                 </span>
               ))}

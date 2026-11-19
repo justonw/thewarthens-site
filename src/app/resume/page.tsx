@@ -4,7 +4,7 @@ import Reveal from "@/components/Reveal";
 import ResumeBuilder from "@/components/resume/ResumeBuilder";
 import CoachingCallout from "@/components/coaching/CoachingCallout";
 import FieldExplorer from "@/components/resume/FieldExplorer";
-import { FinalCta, HowItWorks, ResumeHero } from "@/components/resume/ResumeLanding";
+import { FinalCta, HowItWorks, ResumeHero, ResumeProof } from "@/components/resume/ResumeLanding";
 import { resumeGuides } from "@/lib/resume-guides";
 
 // The title and description are written for the search results page: under about 60 and 160 characters, with the
@@ -136,7 +136,7 @@ const jsonLd = {
 
 export default function ResumePage() {
   return (
-    <main>
+    <div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <ResumeHero />
@@ -145,12 +145,14 @@ export default function ResumePage() {
         <div aria-hidden className="pointer-events-none absolute inset-x-0 top-10 -z-10 mx-auto h-[70%] max-w-5xl rounded-[3rem] bg-gradient-to-b from-blue-500/5 via-violet-500/5 to-transparent" />
         <div className="mx-auto max-w-5xl">
           <div className="mx-auto mb-6 max-w-3xl text-center">
-            <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">Start here. It takes about a minute.</h2>
+            <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">Start here</h2>
             <p className="mt-2 text-sm text-foreground-muted">Add your resume and the job. Everything else is optional.</p>
           </div>
           <ResumeBuilder />
         </div>
       </section>
+
+      <ResumeProof />
 
       <HowItWorks />
 
@@ -224,6 +226,6 @@ export default function ResumePage() {
           <CoachingCallout from="resume-builder" />
         </Reveal>
       </section>
-    </main>
+    </div>
   );
 }

@@ -49,7 +49,7 @@ export default function AboutPage() {
     ],
   };
   return (
-    <main className="mx-auto max-w-3xl px-6 pb-20 pt-12 sm:pt-16">
+    <div className="mx-auto max-w-3xl px-6 pb-20 pt-12 sm:pt-16">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(graph) }} />
       <Reveal>
         <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">About</p>
@@ -145,6 +145,6 @@ export default function AboutPage() {
           .
         </p>
       </section>
-    </main>
+    </div>
   );
 }

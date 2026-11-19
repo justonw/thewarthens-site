@@ -73,9 +73,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <SiteChrome>
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[100] focus:rounded-full focus:bg-white focus:px-5 focus:py-3 focus:text-sm focus:font-semibold focus:text-slate-900 focus:shadow-xl"
+          >
+            Skip to content
+          </a>
           <Header />
         </SiteChrome>
-        <main className="flex-1">{children}</main>
+        <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
+          {children}
+        </main>
         <SiteChrome>
           <Footer />
           <SiteGuide />

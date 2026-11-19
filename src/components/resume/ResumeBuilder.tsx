@@ -763,7 +763,7 @@ export default function ResumeBuilder() {
     <div className="space-y-10">
     <form id="resume-tool" onSubmit={build} className="space-y-6" noValidate>
       {!fast && (
-      <div className="sticky top-14 z-30 mx-auto max-w-3xl rounded-2xl border border-border-subtle bg-white/90 px-4 py-3 shadow-md backdrop-blur sm:top-16 sm:px-6">
+      <div className="z-30 mx-auto max-w-3xl rounded-2xl border border-border-subtle bg-white/90 px-4 py-3 shadow-md backdrop-blur sm:px-6 md:sticky md:top-16">
         <ol className="flex items-center" aria-label="Your progress">
           {(
             [

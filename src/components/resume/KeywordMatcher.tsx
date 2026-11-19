@@ -455,8 +455,8 @@ export default function KeywordMatcher() {
                       {list.map((t) => (
                         <li key={t.phrase} className={`flex items-center gap-2 rounded-full border py-1.5 pl-3.5 pr-2 text-sm ${STATUS[status].chip}`}>
                           <span className="font-medium">{t.phrase}</span>
-                          {t.tier === "required" ? <span className="rounded-full bg-foreground px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-background">Required</span> : null}
-                          {t.tier === "preferred" ? <span className="rounded-full border border-border-subtle px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-foreground-muted">Nice to have</span> : null}
+                          {t.tier === "required" ? <span className="rounded-full bg-foreground px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-background">Required</span> : null}
+                          {t.tier === "preferred" ? <span className="rounded-full border border-border-subtle px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-foreground-muted">Nice to have</span> : null}
                           {t.count > 1 ? <span className="text-xs text-foreground-muted">used {t.count}x</span> : null}
                           <button
                             type="button"

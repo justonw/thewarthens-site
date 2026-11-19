@@ -40,7 +40,7 @@ export default function HeaderNav() {
     <nav className="flex items-center gap-0.5 sm:gap-1.5 xl:gap-2.5">
       {items.map((it) => {
         const on = it.href === current;
-        const base = "relative whitespace-nowrap text-[11px] font-extrabold tracking-tight max-[359px]:text-[10px] transition-all duration-150 min-[400px]:text-xs sm:text-sm lg:text-[15px] xl:text-base";
+        const base = "relative max-sm:after:absolute max-sm:after:-inset-y-2 max-sm:after:-inset-x-1 whitespace-nowrap text-[11px] font-extrabold tracking-tight max-[359px]:text-[10px] transition-all duration-150 min-[380px]:text-xs sm:text-sm lg:text-[15px] xl:text-base";
         const cls = it.cta
           ? `${base} ml-0.5 rounded-full bg-purple-700 px-2.5 py-2 text-white max-[359px]:px-2 shadow-lg shadow-purple-900/30 hover:-translate-y-0.5 hover:bg-purple-800 hover:shadow-xl active:translate-y-0 active:scale-95 min-[360px]:ml-1 min-[400px]:px-3 sm:px-4 xl:px-6 ${on ? "ring-2 ring-purple-300" : ""}`
           : `${base} border-b-[3px] px-1 py-1.5 max-[359px]:px-0.5 active:scale-95 min-[400px]:px-1.5 before:absolute before:-left-[3px] before:top-1/2 before:h-3.5 before:w-px before:-translate-y-1/2 before:bg-slate-300 ${it.firstOnPhone ? "before:hidden" : ""} sm:rounded-full sm:border-b-0 sm:px-2.5 sm:py-2 sm:before:hidden lg:px-3.5 xl:px-5 ${

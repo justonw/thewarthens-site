@@ -471,7 +471,7 @@ export default function OutreachPanel({
                   <span className="mt-0.5 block text-xs text-foreground-muted">{a.blurb}</span>
                 </span>
                 {on && (
-                  <span aria-hidden className="absolute right-3 top-3 inline-flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-[11px] font-bold text-white">
+                  <span aria-hidden className="absolute right-3 top-3 inline-flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
                     ✓
                   </span>
                 )}

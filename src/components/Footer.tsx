@@ -35,7 +35,7 @@ export default function Footer() {
             </p>
             <Link
               href="/about"
-              className="mt-3 inline-block text-sm font-semibold text-foreground-muted underline-offset-4 transition-colors hover:text-foreground hover:underline"
+              className="mt-2 inline-block py-1.5 text-sm font-semibold text-foreground-muted underline-offset-4 transition-colors hover:text-foreground hover:underline"
             >
               About us
             </Link>
@@ -44,46 +44,46 @@ export default function Footer() {
             <p className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
               Tech Journey
             </p>
-            <nav className="mt-3 flex flex-col gap-2">
+            <nav className="mt-3 flex flex-col">
               <Link
                 href="/tech"
-                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+                className="py-1 text-sm text-foreground-muted transition-colors hover:text-foreground max-sm:py-2"
               >
                 Explore Tech Journey
               </Link>
               <Link
                 href="/tech#quiz"
-                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+                className="py-1 text-sm text-foreground-muted transition-colors hover:text-foreground max-sm:py-2"
               >
                 Take the Career Quiz
               </Link>
               <Link
                 href="/resume"
-                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+                className="py-1 text-sm text-foreground-muted transition-colors hover:text-foreground max-sm:py-2"
               >
                 Resume Builder
               </Link>
               <Link
                 href="/tech/start-here"
-                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+                className="py-1 text-sm text-foreground-muted transition-colors hover:text-foreground max-sm:py-2"
               >
                 Start Here, For Free
               </Link>
               <Link
                 href="/tech/guides"
-                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+                className="py-1 text-sm text-foreground-muted transition-colors hover:text-foreground max-sm:py-2"
               >
                 Hype vs. Reality guides
               </Link>
               <Link
                 href="/resume/keyword-matcher"
-                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+                className="py-1 text-sm text-foreground-muted transition-colors hover:text-foreground max-sm:py-2"
               >
                 Free resume keyword scanner
               </Link>
               <Link
                 href="/resume/guides"
-                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+                className="py-1 text-sm text-foreground-muted transition-colors hover:text-foreground max-sm:py-2"
               >
                 Resume and cover letter guides
               </Link>
@@ -91,32 +91,32 @@ export default function Footer() {
                 <Link
                   key={g.slug}
                   href={`/tech/guides/${g.slug}`}
-                  className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+                  className="py-1 text-sm text-foreground-muted transition-colors hover:text-foreground max-sm:py-2"
                 >
                   {g.title}
                 </Link>
               ))}
               <Link
                 href="/tech/coaching"
-                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+                className="py-1 text-sm text-foreground-muted transition-colors hover:text-foreground max-sm:py-2"
               >
                 1:1 Coaching with Jermell
               </Link>
               <Link
                 href="/techjr"
-                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+                className="py-1 text-sm text-foreground-muted transition-colors hover:text-foreground max-sm:py-2"
               >
                 Tech Journey Jr. (for kids)
               </Link>
               <Link
                 href="/techjr/internet-safety-for-kids"
-                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+                className="py-1 text-sm text-foreground-muted transition-colors hover:text-foreground max-sm:py-2"
               >
                 Internet safety for kids
               </Link>
               <Link
                 href="/techjr/cool-tech-facts-for-kids"
-                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+                className="py-1 text-sm text-foreground-muted transition-colors hover:text-foreground max-sm:py-2"
               >
                 Cool tech facts for kids
               </Link>
@@ -126,52 +126,52 @@ export default function Footer() {
             <p className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
               Faith Journey
             </p>
-            <nav className="mt-3 flex flex-col gap-2">
+            <nav className="mt-3 flex flex-col">
               <Link
                 href="/faith"
-                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+                className="py-1 text-sm text-foreground-muted transition-colors hover:text-foreground max-sm:py-2"
               >
                 Explore Faith Journey
               </Link>
               <Link
                 href="/faith/women-who-seek"
-                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+                className="py-1 text-sm text-foreground-muted transition-colors hover:text-foreground max-sm:py-2"
               >
                 Women Who Seek
               </Link>
               <Link
                 href="/faith/present-but-missing"
-                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+                className="py-1 text-sm text-foreground-muted transition-colors hover:text-foreground max-sm:py-2"
               >
                 Present but Missing
               </Link>
               <Link
                 href="/faith/topical-study/is-tithing-biblical"
-                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+                className="py-1 text-sm text-foreground-muted transition-colors hover:text-foreground max-sm:py-2"
               >
                 Is Tithing Biblical?
               </Link>
               <Link
                 href="/faith/topical-study/did-paul-wait-14-years-to-preach"
-                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+                className="py-1 text-sm text-foreground-muted transition-colors hover:text-foreground max-sm:py-2"
               >
                 Did Paul Wait 14 Years to Preach?
               </Link>
               <Link
                 href="/magnets"
-                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+                className="py-1 text-sm text-foreground-muted transition-colors hover:text-foreground max-sm:py-2"
               >
                 Our Kids Swallowed Magnets
               </Link>
               <Link
                 href="/jesus"
-                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+                className="py-1 text-sm text-foreground-muted transition-colors hover:text-foreground max-sm:py-2"
               >
                 Why We Believe in Jesus
               </Link>
               <Link
                 href="/source-of-life"
-                className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+                className="py-1 text-sm text-foreground-muted transition-colors hover:text-foreground max-sm:py-2"
               >
                 Source of Life
               </Link>
@@ -181,7 +181,7 @@ export default function Footer() {
             <p className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
               Follow Along
             </p>
-            <nav className="mt-3 flex flex-col gap-2">
+            <nav className="mt-3 flex flex-col">
               {socials.map((s) => {
                 const isMailto = s.href.startsWith("mailto:");
                 return (
@@ -189,7 +189,7 @@ export default function Footer() {
                     key={s.label}
                     href={s.href}
                     {...(!isMailto && { target: "_blank", rel: "noopener noreferrer" })}
-                    className="text-sm text-foreground-muted transition-colors hover:text-foreground"
+                    className="py-1 text-sm text-foreground-muted transition-colors hover:text-foreground max-sm:py-2"
                   >
                     {s.label}
                   </a>

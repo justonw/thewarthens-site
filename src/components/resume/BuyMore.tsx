@@ -204,7 +204,7 @@ export default function BuyMore({
                   <span className="rb-gradient-text text-xl font-bold">{p.display}</span>
                 </span>
                 <span className="mt-1 block text-xs text-foreground-muted">{busy === id ? "Opening the payment page..." : p.note}</span>
-                {p.best && <span className="mt-2 inline-block rounded-full bg-violet-600 px-2.5 py-0.5 text-[11px] font-bold text-white">Best value</span>}
+                {p.best && <span className="mt-2 inline-block rounded-full bg-violet-600 px-2.5 py-0.5 text-xs font-bold text-white">Best value</span>}
               </button>
             );
           })}

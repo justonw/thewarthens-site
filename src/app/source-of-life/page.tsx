@@ -87,7 +87,7 @@ const card = "rounded-3xl border border-sol-line bg-sol-card";
 function OurTake({ children }: { children: React.ReactNode }) {
   return (
     <div className="mt-5 rounded-2xl border border-sol-violet/30 bg-sol-violet/[0.07] p-5">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-sol-violet">My take</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-sol-violet">My take</p>
       <p className="mt-2 text-base leading-relaxed text-sol-ink sm:text-lg">{children}</p>
     </div>
   );
@@ -285,7 +285,7 @@ export default function SourceOfLifePage() {
 
         <Reveal delay={80}>
           <div className="mt-10 rounded-3xl border border-sol-violet/30 bg-sol-violet/[0.07] p-6 sm:p-8">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-sol-violet">Where I stand</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-sol-violet">Where I stand</p>
             <p className="mt-3 text-lg leading-relaxed text-sol-ink">
               I believe what is on this page. I am not claiming to have the absolute full picture, and I am open to other views. Please test it for yourself, the way the Bereans did.
             </p>
@@ -306,7 +306,7 @@ export default function SourceOfLifePage() {
                 <p className="font-sol text-lg text-sol-ink">Gold line, serif type: the Bible itself, in the King James Version.</p>
               </div>
               <div className="rounded-2xl border border-sol-violet/30 bg-sol-violet/[0.07] p-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-sol-violet">My take</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-sol-violet">My take</p>
                 <p className="mt-1 text-base text-sol-ink">Purple box: what I think it means, open to other views.</p>
               </div>
             </div>

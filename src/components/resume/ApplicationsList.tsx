@@ -77,7 +77,7 @@ export default function ApplicationsList({
                     {e.messages.length > 0 ? ` · ${e.messages.length} ${e.messages.length === 1 ? "message" : "messages"} written` : ""}
                   </p>
                 </div>
-                {isApplied && <span className="rounded-full bg-green-600 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-white">Applied</span>}
+                {isApplied && <span className="rounded-full bg-green-600 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide text-white">Applied</span>}
               </div>
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <button type="button" onClick={() => onOpen(e.id)} className="inline-flex min-h-10 items-center justify-center rounded-full bg-blue-600 px-5 text-xs font-semibold text-white transition-colors hover:bg-blue-500">

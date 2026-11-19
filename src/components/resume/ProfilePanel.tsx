@@ -179,7 +179,7 @@ export default function ProfilePanel({
               {[...stories].reverse().map((s) => (
                 <li key={s.id} className="flex items-start justify-between gap-3 text-sm">
                   <span>
-                    <span className="block text-[11px] font-semibold uppercase tracking-wide text-foreground-muted">{s.topic}</span>
+                    <span className="block text-xs font-semibold uppercase tracking-wide text-foreground-muted">{s.topic}</span>
                     <span className="block">{s.answer}</span>
                   </span>
                   <button type="button" onClick={() => onRemoveStory(s.id)} aria-label={`Remove: ${s.topic}`} className="min-h-8 shrink-0 px-2 text-lg leading-none text-foreground-muted hover:text-red-700">

@@ -30,7 +30,7 @@ export function ReadinessRing({ passed, total }: { passed: number; total: number
         {passed}/{total}
       </span>
      </div>
-     <span className="text-[10px] font-semibold uppercase tracking-wider text-foreground-muted">checks passed</span>
+     <span className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">checks passed</span>
     </div>
   );
 }

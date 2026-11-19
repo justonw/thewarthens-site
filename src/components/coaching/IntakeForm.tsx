@@ -331,6 +331,7 @@ export default function IntakeForm() {
               onChange={(e) => setAnswer(e.target.value)}
               maxLength={INTAKE_MAX_CHARS}
               rows={7}
+              aria-label={question.question}
               aria-describedby={`hint-${step}`}
               aria-invalid={fieldError ? true : undefined}
               placeholder={

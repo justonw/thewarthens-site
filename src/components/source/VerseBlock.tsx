@@ -28,7 +28,7 @@ export default function VerseBlock({ verse, size = "compact", domId }: { verse: 
       <figcaption className="mt-4 flex flex-wrap items-center justify-between gap-3">
         <span className="text-xs font-semibold uppercase tracking-[0.16em] text-sol-gold">
           {verse.ref} <span className="text-sol-muted">KJV</span>
-          {verse.added && <span className="ml-2 rounded-full bg-sol-line px-2 py-0.5 text-[10px] text-sol-muted">added</span>}
+          {verse.added && <span className="ml-2 rounded-full bg-sol-line px-2 py-0.5 text-xs text-sol-muted">added</span>}
         </span>
         <VerseActions id={verse.id} text={verse.text} reference={verse.ref} />
       </figcaption>

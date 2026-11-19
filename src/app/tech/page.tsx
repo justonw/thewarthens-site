@@ -162,7 +162,7 @@ export default function TechJourneyPage() {
 
       <StartDoors variant="tech" />
 
-      <div className="sticky top-14 z-40 border-y border-border-subtle bg-background/95 backdrop-blur sm:top-16">
+      <div className="z-40 border-y border-border-subtle bg-background/95 backdrop-blur md:sticky md:top-16">
         <nav
           aria-label="Page sections"
           className="mx-auto flex max-w-6xl flex-nowrap items-center gap-2 overflow-x-auto px-6 py-3 [-ms-overflow-style:none] [scrollbar-width:none] lg:flex-wrap lg:overflow-visible [&::-webkit-scrollbar]:hidden"
@@ -259,7 +259,7 @@ export default function TechJourneyPage() {
             ))}
           </div>
           <p className="mt-6">
-            <Link href="/tech/guides" className="text-sm font-semibold text-blue-600 hover:text-blue-700">
+            <Link href="/tech/guides" className="inline-flex min-h-11 items-center text-sm font-semibold text-blue-600 hover:text-blue-700">
               See all Hype vs. Reality guides →
             </Link>
           </p>
@@ -314,7 +314,7 @@ export default function TechJourneyPage() {
             ))}
           </div>
           <p className="mt-8 text-center">
-            <Link href="/tech/start-here" className="text-sm font-semibold text-sky-100 underline underline-offset-4 hover:text-white">
+            <Link href="/tech/start-here" className="inline-flex min-h-11 items-center text-sm font-semibold text-sky-100 underline underline-offset-4 hover:text-white">
               See all step-by-step paths →
             </Link>
           </p>

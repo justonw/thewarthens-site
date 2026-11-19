@@ -88,6 +88,8 @@ export default function EmailGatedDownload({
         <input
           type="email"
           required
+          aria-label="Your email"
+          autoComplete="email"
           placeholder="you@email.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}

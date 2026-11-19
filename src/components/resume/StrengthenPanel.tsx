@@ -48,7 +48,7 @@ function QuestionItem({ n, gap, onAdd, onHide }: { n: number; gap: ResumeGap; on
         <span aria-hidden className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet-600 text-xs font-bold text-white">
           {n}
         </span>
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-foreground-muted">
+        <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">
           {deepen ? "You already have this, say more" : "The job asks for"}: {gap.requirement}
         </p>
       </div>
@@ -151,7 +151,7 @@ export default function StrengthenPanel({
               </svg>
             </span>
             <div>
-              <p className="inline-flex rounded-full bg-violet-600 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-white">Gap coach</p>
+              <p className="inline-flex rounded-full bg-violet-600 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider text-white">Gap coach</p>
               <h2 id="strengthen-title" className="mt-1 text-xl font-bold tracking-tight sm:text-2xl">
                 {open.length > 0 ? "Let's make this resume stronger" : "You've gone through every question"}
               </h2>

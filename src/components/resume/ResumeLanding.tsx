@@ -24,7 +24,7 @@ function HeroDemo() {
       <div className="rb-glow absolute -inset-8 -z-10 rounded-[2.5rem] bg-gradient-to-tr from-blue-500/25 via-violet-500/20 to-sky-400/20 blur-2xl" />
 
       <div className="rb-float relative mr-10 rounded-2xl border border-border-subtle bg-white p-4 shadow-xl sm:mr-16" style={{ ["--rb-tilt" as string]: "-2deg" }}>
-        <p className="text-[11px] font-semibold uppercase tracking-wider text-foreground-muted">The job asks for</p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">The job asks for</p>
         <div className="mt-2 flex flex-wrap gap-2">
           {["Follow-up", "Pipeline", "Customer-facing", "Salesforce"].map((w, i) => (
             <span key={w} className="rb-pop rounded-full bg-violet-600/10 px-3 py-1 text-xs font-semibold text-violet-700" style={delay(0.5 + i * 0.25)}>
@@ -36,8 +36,8 @@ function HeroDemo() {
 
       <div className="rb-rise relative -mt-3 ml-6 rounded-2xl border border-border-subtle bg-white p-5 shadow-2xl sm:ml-14" style={delay(0.3)}>
         <div className="flex items-center justify-between">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-foreground-muted">Your tailored resume</p>
-          <span className="rounded-full bg-background-elevated-2 px-2 py-0.5 text-[10px] font-semibold text-foreground-muted">Example</span>
+          <p className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">Your tailored resume</p>
+          <span className="rounded-full bg-background-elevated-2 px-2 py-0.5 text-xs font-semibold text-foreground-muted">Example</span>
         </div>
         <div className="mt-3 h-3.5 w-40 rounded bg-foreground/85" />
         <p className="mt-2 text-sm font-semibold text-foreground">
@@ -83,56 +83,57 @@ const stats = [
   { big: "2 free", small: "builds per email, each with an optional cover letter" },
 ];
 
+// The top of the page is short on purpose: a headline and one line, so the tool itself is the first thing a visitor
+// reaches. The moving example, the numbers, and the evidence come after the tool (see ResumeProof), for anyone who
+// wants the reasons before they trust it.
 export function ResumeHero() {
   return (
     <section className="relative overflow-hidden">
       <div aria-hidden className="rb-mesh pointer-events-none absolute inset-0 -z-10" />
-      <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 pb-8 pt-12 sm:pt-16 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:pt-20">
-        <div className="text-center lg:text-left">
-          <p className="rb-rise inline-flex items-center gap-2 rounded-full border border-border-subtle bg-white/80 px-3.5 py-1.5 text-xs font-semibold text-foreground-muted shadow-sm backdrop-blur">
-            <span className="relative flex h-2 w-2">
-              <span className="rb-ping absolute inline-flex h-full w-full rounded-full bg-green-500" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
-            </span>
-            Resume Builder · About a minute
-          </p>
-          <h1 className="rb-rise text-balance mt-5 text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl" style={delay(0.08)}>
-            Boost your chances of an interview with a resume <span className="rb-gradient-text">tailored</span> to every job
-          </h1>
-          <p className="rb-rise mx-auto mt-5 max-w-xl text-balance text-lg text-foreground-muted lg:mx-0" style={delay(0.16)}>
-            Add your resume and the job description. We rewrite your resume to match that exact job, in the words the posting uses, and write a cover letter if you want one.
-          </p>
-          <div className="rb-rise mt-7 flex flex-col items-center gap-4 sm:flex-row sm:justify-center lg:justify-start" style={delay(0.24)}>
-            <a href="#start" className="rb-cta inline-flex items-center justify-center gap-2 rounded-full px-8 py-4 text-base font-semibold text-white">
-              Build my tailored resume
-              <span aria-hidden>→</span>
-            </a>
-            <a href="#how" className="inline-flex min-h-11 items-center text-sm font-semibold text-foreground-muted underline-offset-4 transition-colors hover:text-foreground hover:underline">
-              See how it works
-            </a>
-          </div>
-          <ul className="rb-rise mt-6 flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs font-medium text-foreground-muted lg:justify-start" style={delay(0.32)}>
-            {["Uses the job's own words", "Asks about your gaps, adds only what's true", "Works for any field", "No account needed"].map((t) => (
-              <li key={t} className="flex items-center gap-1.5">
-                <Tick className="h-4 w-4" />
-                {t}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <HeroDemo />
-      </div>
-
-      <div className="mx-auto max-w-6xl px-6 pb-12">
-        <ul className="grid gap-3 sm:grid-cols-3">
-          {stats.map((s, i) => (
-            <li key={s.big} className="rb-rise rounded-2xl border border-border-subtle bg-white/80 p-5 text-center shadow-sm backdrop-blur" style={delay(0.4 + i * 0.1)}>
-              <p className="rb-gradient-text text-3xl font-bold tracking-tight sm:text-4xl">{s.big}</p>
-              <p className="mt-1.5 text-sm text-foreground-muted">{s.small}</p>
+      <div className="mx-auto max-w-3xl px-6 pb-6 pt-8 text-center sm:pt-12">
+        <p className="rb-rise inline-flex items-center gap-2 rounded-full border border-border-subtle bg-white/80 px-3.5 py-1.5 text-xs font-semibold text-foreground-muted shadow-sm backdrop-blur">
+          <span className="relative flex h-2 w-2">
+            <span className="rb-ping absolute inline-flex h-full w-full rounded-full bg-green-500" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
+          </span>
+          Resume Builder · About a minute
+        </p>
+        <h1 className="rb-rise text-balance mt-4 text-3xl font-bold leading-[1.1] tracking-tight sm:text-4xl lg:text-5xl" style={delay(0.08)}>
+          Boost your chances of an interview with a resume <span className="rb-gradient-text">tailored</span> to every job
+        </h1>
+        <p className="rb-rise mx-auto mt-4 max-w-xl text-balance text-base text-foreground-muted sm:text-lg" style={delay(0.16)}>
+          Add your resume and the job description. We rewrite your resume in the words that job uses, and write a cover letter if you want one.
+        </p>
+        <ul className="rb-rise mt-5 flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs font-medium text-foreground-muted" style={delay(0.24)}>
+          {["Uses the job's own words", "Asks about your gaps, adds only what's true", "Works for any field", "No account needed"].map((t) => (
+            <li key={t} className="flex items-center gap-1.5">
+              <Tick className="h-4 w-4" />
+              {t}
             </li>
           ))}
         </ul>
-        <EvidenceDropdown />
+      </div>
+    </section>
+  );
+}
+
+// The reasons to trust it: a picture of what the tool does, the numbers, and the evidence. Below the tool, not above it.
+export function ResumeProof() {
+  return (
+    <section aria-label="Why tailoring works" className="relative overflow-hidden pb-14">
+      <div className="mx-auto grid max-w-6xl items-center gap-10 px-6 lg:grid-cols-[0.95fr_1.05fr] lg:gap-14">
+        <HeroDemo />
+        <div>
+          <ul className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+            {stats.map((s, i) => (
+              <li key={s.big} className="rb-rise rounded-2xl border border-border-subtle bg-white/80 p-5 text-center shadow-sm backdrop-blur lg:text-left" style={delay(0.1 + i * 0.1)}>
+                <p className="rb-gradient-text text-3xl font-bold tracking-tight sm:text-4xl">{s.big}</p>
+                <p className="mt-1.5 text-sm text-foreground-muted">{s.small}</p>
+              </li>
+            ))}
+          </ul>
+          <EvidenceDropdown />
+        </div>
       </div>
     </section>
   );

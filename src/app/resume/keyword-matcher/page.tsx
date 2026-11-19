@@ -88,7 +88,7 @@ export default function KeywordMatcherPage() {
   const guides = resumeGuides.filter((g) => ["tailor-resume-to-job-description", "ats-friendly-resume"].includes(g.slug));
 
   return (
-    <main className="mx-auto max-w-5xl px-6 pb-20 pt-12 sm:pt-16">
+    <div className="mx-auto max-w-5xl px-6 pb-20 pt-12 sm:pt-16">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(graph) }} />
       <nav aria-label="Breadcrumb" className="text-sm text-foreground-muted">
         <ol className="flex flex-wrap items-center gap-2">
@@ -186,6 +186,6 @@ export default function KeywordMatcherPage() {
           ))}
         </ul>
       </section>
-    </main>
+    </div>
   );
 }

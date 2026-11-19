@@ -81,6 +81,7 @@ export default function JobTracker() {
       <form onSubmit={addEntry} className="mt-6 flex flex-col gap-3 sm:flex-row">
         <input
           type="text"
+          aria-label="Company"
           placeholder="Company"
           value={company}
           onChange={(e) => setCompany(e.target.value)}
@@ -88,6 +89,7 @@ export default function JobTracker() {
         />
         <input
           type="text"
+          aria-label="Role or title"
           placeholder="Role / Title"
           value={role}
           onChange={(e) => setRole(e.target.value)}
@@ -133,6 +135,7 @@ export default function JobTracker() {
             </div>
             <div className="flex items-center gap-2">
               <select
+                aria-label={`Status for ${entry.role || "this job"} at ${entry.company || "this company"}`}
                 value={entry.status}
                 onChange={(e) => updateStatus(entry.id, e.target.value as Status)}
                 className={`rounded-full border-0 px-3 py-1.5 text-xs font-semibold outline-none ${statusColor[entry.status]}`}
