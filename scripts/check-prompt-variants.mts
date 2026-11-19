@@ -65,4 +65,11 @@ assert.equal(tOut.result.general, undefined, "a normal build is not marked gener
 assert.equal(tOut.result.postingCompany, "Spotify");
 assert.equal(tOut.result.gaps.length, 1);
 
+// The owner-only plain baseline: a one-line system prompt, and nothing visitors can reach.
+const base = sysOf(now.buildResumeRequest(input, "claude-sonnet-5-5", [], "baseline"));
+assert.ok(base.startsWith("You are a resume writer.") && !base.includes("Hard rules"), "the baseline is the plain prompt");
+assert.ok(!sysOf(now.buildResumeRequest(input, "claude-sonnet-5-5")).startsWith("You are a resume writer."), "visitors never get the baseline");
+// The general rules carry the two fixes.
+assert.ok(gReq.system.includes("aiming to") && gReq.system.includes("technical documentation"), "the general rules say no announced moves and no relabelled skills");
+
 console.log("prompt variant checks passed");

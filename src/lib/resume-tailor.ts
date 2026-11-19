@@ -171,6 +171,8 @@ IMPORTANT: In this request there is NO job posting. The person named the kind of
 - Treat the target role as the headline: a short, clean job title of 50 characters or fewer, under the name. If it is a field ("customer success") and not a title, use the most common title for it ("Customer Success Manager" only if that is clearly the field; otherwise keep their words).
 - Put the experience that is most relevant to that kind of role first and give it the most space. Shorten what is unrelated. Use the words typical postings for that role use ONLY where the person's real experience matches them.
 - "postingKeywords": the 8 to 15 phrases that typical postings for that kind of role use, in plain wording. They guide the writing. Do not claim any of them unless the resume or notes support it.
+- The summary states what the person has done, in plain facts from the resume. Do NOT write that they are "aiming to", "looking to", or "seeking to" move into the role, UNLESS their past work is clearly in a different field from the target role (then one short clause saying they are moving toward that role is fine). A person already working in or near the target field gets a summary of that work and no statement of intent.
+- List a skill, tool, or ability only when the resume's own words name it or plainly show it in a bullet. Do not relabel what they did into a skill the resume does not show (for example, help center articles do not make "technical documentation" a skill: say "help center articles" or leave it out). The same goes for the "postingKeywords" you claim in bullets: use a typical-posting phrase only where the person's real work matches it.
 - Leave "postingCompany" as an empty string. Return "gaps" as an empty list and leave out "fit". Do not write a cover letter.
 - "changes": say plainly what you did and what would make it stronger once they have a specific job (for example, "Add a real posting to tailor the keywords to one company").
 - All the hard rules still apply: no invented facts, numbers, titles, dates, or skills.`;
@@ -254,14 +256,19 @@ const docProps = {
 // Two versions of the formatting rules, so a change can be tried live (by the owner, with the owner code) before any
 // visitor sees it. "v1" is what visitors get; "v2" asks for more, smaller named skill groups, one point per bullet,
 // and shorter summary sentences. When v2 has proved better, DEFAULT_VARIANT is switched and v1 can be deleted.
-export type PromptVariant = "v1" | "v2";
+export type PromptVariant = "v1" | "v2" | "baseline";
 export const DEFAULT_VARIANT: PromptVariant = "v1";
 const V2_TO_V1: [string, string][] = [
   ["- Summary: at most 3 sentences, written to sound like a person, not a template. Each sentence makes one point in about 25 words or fewer. Never chain several ideas together with commas and \"and\": two short sentences beat one long one.", "- Summary: at most 3 sentences, written to sound like a person, not a template."],
   ["- Skills: 3 to 6 groups, each named for exactly what it holds (for example Sales, Customer Service, Tools, Leadership), so a recruiter can scan the labels and skip to what they need. Each group holds up to 8 short items (one to three words each, never a sentence). Do not pour everything into one long comma-separated line: when a group would run longer than 8, split it into two named groups instead of cutting items. List every item once, in the one group where it truly belongs: software and platforms together, practices and strengths elsewhere, and never a result such as a satisfaction score as if it were a tool. Keep every skill and tool the posting asks for, and do not drop a skill just to make a group shorter. Only include skills the resume shows or clearly implies from the work described.", "- Skills: 2 to 4 short groups (for example Sales, Tools, Strengths) with comma-separated items. Only include skills the resume shows or clearly implies from the work described."],
   ["- One point per bullet. If a bullet runs a list of three or more things together with commas, split it into separate bullets or keep only the strongest one or two, so the page reads as short, scannable lines and not as a wall of words.\n", ""],
 ];
+// Owner testing only: the plainest possible request, the way someone would ask a general chatbot, so the real prompt can be
+// compared against it. It is never used for a visitor.
+const BASELINE_SYSTEM = "You are a resume writer. The person gives you their resume and a job posting. Rewrite their resume so it is tailored to the job posting.";
+
 function systemFor(variant: PromptVariant) {
+  if (variant === "baseline") return BASELINE_SYSTEM;
   return variant === "v2" ? SYSTEM : V2_TO_V1.reduce((text, [v2, v1]) => text.replace(v2, v1), SYSTEM);
 }
 
