@@ -78,4 +78,8 @@ assert.ok(v3.startsWith(sysOf(now.buildResumeRequest(input, "claude-sonnet-5-5",
 assert.ok(v3.includes('Never write "aiming to"') && v3.includes("Do not copy the posting"), "v3 carries the new rules");
 assert.ok(!v1.includes("Never write \"aiming to\""), "v1 is unchanged");
 
+// v3b is v3 plus the posting-wording rule.
+const v3b = sysOf(now.buildResumeRequest(input, "claude-sonnet-5-5", [], "v3b"));
+assert.ok(v3b.startsWith(v3) && v3b.includes("The posting's own words"), "v3b is v3 plus the wording rule");
+
 console.log("prompt variant checks passed");

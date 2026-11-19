@@ -170,7 +170,7 @@ def main():
     ap.add_argument("--base-url", default="https://thewarthens.com")
     ap.add_argument("--owner-code-file", default="~/.resume-owner-code")
     ap.add_argument("--only", default="", help="comma-separated person keys")
-    ap.add_argument("--variant", default="v1", help="prompt version for the tailored run (v1, v2, or v3)")
+    ap.add_argument("--variant", default="v1", help="prompt version for the tailored run (v1, v2, v3, or v3b)")
     ap.add_argument("--skip", default="", help="comma-separated kinds to skip: tailored, baseline, general")
     ap.add_argument("--out", default="resume-evals")
     ap.add_argument("--jobs", type=int, default=3, help="requests at the same time")

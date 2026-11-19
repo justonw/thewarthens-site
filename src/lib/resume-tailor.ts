@@ -256,7 +256,7 @@ const docProps = {
 // Two versions of the formatting rules, so a change can be tried live (by the owner, with the owner code) before any
 // visitor sees it. "v1" is what visitors get; "v2" asks for more, smaller named skill groups, one point per bullet,
 // and shorter summary sentences. When v2 has proved better, DEFAULT_VARIANT is switched and v1 can be deleted.
-export type PromptVariant = "v1" | "v2" | "v3" | "baseline";
+export type PromptVariant = "v1" | "v2" | "v3" | "v3b" | "baseline";
 export const DEFAULT_VARIANT: PromptVariant = "v1";
 const V2_TO_V1: [string, string][] = [
   ["- Summary: at most 3 sentences, written to sound like a person, not a template. Each sentence makes one point in about 25 words or fewer. Never chain several ideas together with commas and \"and\": two short sentences beat one long one.", "- Summary: at most 3 sentences, written to sound like a person, not a template."],
@@ -277,8 +277,14 @@ More rules for the summary, skills, and bullets:
 - Skills: list only tools, certifications, and abilities that the resume names or plainly shows. Do not turn the posting's phrases (for example "strong communication" or "customer-facing") into skills the resume does not show, and do not repeat an item in two groups.
 - Bullets: do not add a setting, purpose, or adjective that the resume does not give (for example "high-traffic", "to keep records accurate", "precise", "safety-conscious", "adapting content to different learning levels"). Reword what is there and put the posting's wording on it where it is true; do not embellish.`;
 
+// "v3b" is v3 plus a rule to win back the posting's real keywords: the first test of v3 stopped the padding but also used fewer
+// of the posting's own words, which hiring software scans for.
+const V3B_RULES = `
+- The posting's own words: whenever the resume shows that the person did or has something the posting names (a duty, tool, skill, or credential), use the posting's exact term for it in the summary, the skills, or a bullet, instead of a paraphrase. Never use a posting term for something the resume does not show.`;
+
 function systemFor(variant: PromptVariant): string {
   if (variant === "baseline") return BASELINE_SYSTEM;
+  if (variant === "v3b") return systemFor("v3") + V3B_RULES;
   if (variant === "v3") return systemFor("v1") + V3_RULES;
   return variant === "v2" ? SYSTEM : V2_TO_V1.reduce((text, [v2, v1]) => text.replace(v2, v1), SYSTEM);
 }
