@@ -13,6 +13,7 @@ import {
   type PrepSheet,
   type Stage,
 } from "@/lib/interview";
+import { GENERIC_LENS, lensRules, matchLenses } from "@/lib/interview-lenses";
 import { getKv, bumpCounter, monthKey, emailKey } from "@/lib/resume-limits";
 import { isLiveHost } from "@/lib/coaching-recipients";
 
@@ -105,17 +106,26 @@ export async function POST(req: NextRequest) {
   if (!doc) return NextResponse.json({ error: "bad-request" }, { status: 400 });
   const stage: Stage = isStage(body.stage) ? body.stage : "manager";
 
+  // The lens library: owner test builds may use drafts (and the generic lens when nothing matches); visitors only ever get
+  // lenses marked reviewed.
+  const postingTitle = cleanText(body.postingTitle, 140);
+  const postingKeywords = strings(body.postingKeywords, 60, 14);
+  const wantsDrafts = owner && body.lens === true;
+  const lenses = matchLenses(postingTitle, postingKeywords, wantsDrafts).map((m) => m.lens);
+  const lensText = lenses.length > 0 ? lensRules(lenses) : wantsDrafts ? GENERIC_LENS : "";
+  const lensIds = lenses.map((l) => l.id);
+  console.info(`resume-interview lens: ${lensIds.join("+") || "none"} | ${postingTitle || "(no title)"}`);
+
   const input: InterviewInput = {
     doc,
     stories: plainText(body.stories, 3000),
-    postingTitle: cleanText(body.postingTitle, 140),
+    postingTitle,
     postingCompany: cleanText(body.postingCompany, 120),
-    postingKeywords: strings(body.postingKeywords, 60, 14),
+    postingKeywords,
     fitReason: plainText(body.fitReason, 400),
     unmet: strings(body.unmet, 200, 6),
     stage,
-    // Owner testing only: visitors never get the role-lens rules until they have proved better.
-    lens: owner && body.lens === true,
+    lensText,
   };
 
   // Hands the count back if nothing usable came back, so a failed try costs the person nothing.
@@ -164,5 +174,5 @@ export async function POST(req: NextRequest) {
     console.error("resume-interview refused a sheet with numbers nobody gave us");
     return NextResponse.json({ error: "refused" }, { status: 422 });
   }
-  return NextResponse.json({ ok: true, sheet });
+  return NextResponse.json({ ok: true, sheet, ...(owner ? { lens: lensIds.length > 0 ? lensIds : wantsDrafts ? ["generic"] : [] } : {}) });
 }
