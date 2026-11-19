@@ -185,9 +185,12 @@ export async function POST(req: NextRequest) {
   const postingText = text(body.postingText);
   const source = text(body.source);
   const notes = text(body.notes);
-  const wantsLetter = body.coverLetter === true;
+  const wantsLetter = body.coverLetter === true && body.general !== true;
   const hiringManager = text(body.hiringManager).slice(0, 120);
   const fromScratch = body.fromScratch === true;
+  // A general resume: no posting, just the kind of role the person is aiming for.
+  const general = body.general === true;
+  const targetRole = text(body.targetRole).replace(/\s+/g, " ").slice(0, 120);
   const matchDesign = body.matchDesign === true && !fromScratch;
   const resumeFiles = cleanAttachments(body.resumeFiles);
   const postingFiles = cleanAttachments(body.postingFiles);
@@ -197,7 +200,9 @@ export async function POST(req: NextRequest) {
   if (!resumeFiles || !postingFiles) return NextResponse.json({ error: "files" }, { status: 400 });
   // Either pasted text or at least one file is needed for each of the two.
   if (resumeText.length < 150 && resumeFiles.length === 0) return NextResponse.json({ error: "resume-short" }, { status: 400 });
-  if (postingText.length < 80 && postingFiles.length === 0) return NextResponse.json({ error: "posting-short" }, { status: 400 });
+  if (general) {
+    if (targetRole.length < 3) return NextResponse.json({ error: "target-short" }, { status: 400 });
+  } else if (postingText.length < 80 && postingFiles.length === 0) return NextResponse.json({ error: "posting-short" }, { status: 400 });
   if (resumeText.length > MAX_RESUME_CHARS || postingText.length > MAX_POSTING_CHARS || notes.length > MAX_NOTES_CHARS) {
     return NextResponse.json({ error: "too-long" }, { status: 413 });
   }
@@ -257,11 +262,11 @@ export async function POST(req: NextRequest) {
   try {
     // The resume and the cover letter are written by two requests at the same time. A letter is a different job,
     // and asking for both in one answer often left the letter missing or half-written.
-    const base: TailorInput = { resumeText, resumeFiles, postingText, postingFiles, notes, coverLetter: false, hiringManager, fromScratch, matchDesign: matchDesign && resumeFiles.length > 0 };
+    const base: TailorInput = { general, targetRole, resumeText, resumeFiles, postingText: general ? "" : postingText, postingFiles: general ? [] : postingFiles, notes, coverLetter: false, hiringManager, fromScratch, matchDesign: matchDesign && resumeFiles.length > 0 };
     const startedAll = Date.now();
     const fileState: { badFile?: boolean } = {};
     const [firstParsed, letterResult] = await Promise.all([
-      askClaude("resume-tailor", (m) => buildResumeRequest(base, m, [], variant), parseResumeResponse, model, 55000, fileState),
+      askClaude("resume-tailor", (m) => buildResumeRequest(base, m, [], variant), (d) => parseResumeResponse(d, general), model, 55000, fileState),
       wantsLetter ? askClaude("resume-letter", (m) => buildLetterRequest(base, m), parseLetterResponse, model) : Promise.resolve(null),
     ]);
     let parsed = firstParsed;
@@ -299,7 +304,7 @@ export async function POST(req: NextRequest) {
 
     // A draw can come back with too little of the posting's own wording. When that happens and there is time, one
     // more pass names the missed phrases. The better of the two drafts is kept, and a draft that dropped jobs is not.
-    if (parsed.ok && !fromScratch && parsed.result.postingKeywords.length >= 6) {
+    if (parsed.ok && !fromScratch && !general && parsed.result.postingKeywords.length >= 6) {
      try {
       const first = keywordCoverage(resumeToPlainText(parsed.result.resume), parsed.result.postingKeywords);
       const total = parsed.result.postingKeywords.length;

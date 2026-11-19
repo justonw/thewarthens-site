@@ -33,7 +33,7 @@ const STARTERS = [
 
 const field = "w-full rounded-xl border border-border-subtle bg-background px-4 py-2.5 text-sm outline-none focus:border-blue-500/50";
 
-export default function ScratchForm({ value, onChange, done }: { value: Scratch; onChange: (update: (previous: Scratch) => Scratch) => void; done: boolean }) {
+export default function ScratchForm({ value, onChange, done, step = 1 }: { value: Scratch; onChange: (update: (previous: Scratch) => Scratch) => void; done: boolean; step?: number }) {
   const storyRef = useRef<HTMLTextAreaElement>(null);
   // Updates build on the latest values, so words arriving from the microphone never overwrite each other.
   const set = (patch: Partial<Scratch>) => onChange((prev) => ({ ...prev, ...patch }));
@@ -52,7 +52,7 @@ export default function ScratchForm({ value, onChange, done }: { value: Scratch;
     <div className="rounded-2xl border border-border-subtle bg-background-elevated p-4 shadow-sm transition-shadow focus-within:border-blue-500/40 focus-within:shadow-md sm:p-5">
       <div className="flex items-center gap-3">
         <span aria-hidden className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors ${done ? "bg-green-600 text-white" : "bg-blue-600/10 text-blue-700"}`}>
-          {done ? "✓" : 1}
+          {done ? "✓" : step}
         </span>
         <p className="text-base font-semibold">Tell us about you</p>
       </div>

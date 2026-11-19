@@ -146,7 +146,7 @@ export default function ResumePage() {
         <div className="mx-auto max-w-5xl">
           <div className="mx-auto mb-6 max-w-3xl text-center">
             <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">Start here</h2>
-            <p className="mt-2 text-sm text-foreground-muted">Add your resume and the job. Everything else is optional.</p>
+            <p className="mt-2 text-sm text-foreground-muted">Add the job you want, then your resume. Everything else is optional.</p>
           </div>
           <ResumeBuilder />
         </div>

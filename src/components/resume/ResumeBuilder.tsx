@@ -19,6 +19,7 @@ import { RESULTS, type Result } from "@/lib/outcomes";
 import type { ResumeStyle } from "@/lib/resume-files";
 import { downloadBlob } from "@/lib/download";
 import { track } from "@/lib/track";
+import GeneralTarget from "./GeneralTarget";
 import { STORIES_KEY, USE_STORIES_KEY, addStoryTo, buildProfileFile, noStories, profileFileName, storiesAsNotes, type Profile, type Story } from "@/lib/resume-profile";
 import ScratchForm, { emptyScratch, scratchReady, scratchToText, type Scratch } from "./ScratchForm";
 
@@ -75,6 +76,8 @@ type Draft = {
   scratch?: Scratch;
   resume?: string;
   posting?: string;
+  general?: boolean;
+  targetRole?: string;
   notes?: string;
   hiringManager?: string;
   wantLetter?: boolean;
@@ -98,6 +101,7 @@ const errorText: Record<string, string> = {
   "too-big": "Your files add up to more than we can send at once (about 4 MB). Remove one, or paste the text instead.",
   "resume-short": "Add your resume first: paste the text, or upload a file or screenshot.",
   "posting-short": "Add the job posting: paste it, paste its link, or upload a file or screenshot.",
+  "target-short": "Tell us the kind of role you want, like Customer Success Manager.",
   "too-long": "That's more text than we can read at once. Trim the resume or the posting and try again.",
   limit: "You're out of builds.",
   cap: "We've reached our free limit for this month. It resets on the 1st. Email info@thewarthens.com to join the wait.",
@@ -158,6 +162,9 @@ export default function ResumeBuilder() {
   const [resume, setResume] = useState("");
   const [resumeFiles, setResumeFiles] = useState<PickedFile[]>([]);
   const [posting, setPosting] = useState("");
+  // A general resume: no posting, just the kind of role the person is aiming for.
+  const [general, setGeneral] = useState(false);
+  const [targetRole, setTargetRole] = useState("");
   const [postingFiles, setPostingFiles] = useState<PickedFile[]>([]);
   const [notes, setNotes] = useState("");
   const [hiringManager, setHiringManager] = useState("");
@@ -347,7 +354,9 @@ export default function ResumeBuilder() {
     } else if (resume.trim().length < 150 && resumeFiles.length === 0) {
       return setError(errorText["resume-short"]);
     }
-    if (posting.trim().length < 80 && postingFiles.length === 0) return setError(errorText["posting-short"]);
+    if (general) {
+      if (targetRole.trim().length < 3) return setError(errorText["target-short"]);
+    } else if (posting.trim().length < 80 && postingFiles.length === 0) return setError(errorText["posting-short"]);
     if (resumeText.length > MAX_RESUME_CHARS) return setError(`Your resume text is very long (${resumeText.length.toLocaleString()} characters). Keep it under ${MAX_RESUME_CHARS.toLocaleString()}, or upload it as a file instead.`);
     if (posting.length > MAX_POSTING_CHARS) return setError(`The posting text is very long (${posting.length.toLocaleString()} characters). Keep it under ${MAX_POSTING_CHARS.toLocaleString()}, or paste just the job description.`);
     if (notes.length > MAX_NOTES_CHARS) return setError(`Your notes are a bit long (${notes.length.toLocaleString()} characters). Keep them under ${MAX_NOTES_CHARS.toLocaleString()}.`);
@@ -363,12 +372,14 @@ export default function ResumeBuilder() {
       email: email.trim(),
       source,
       resumeText,
-      postingText: posting,
+      postingText: general ? "" : posting,
+      general,
+      targetRole: general ? targetRole.trim() : "",
       fromScratch,
       resumeFiles: fromScratch ? [] : resumeFiles.flatMap((f) => (f.attachment ? [f.attachment] : [])),
-      postingFiles: postingFiles.flatMap((f) => (f.attachment ? [f.attachment] : [])),
+      postingFiles: general ? [] : postingFiles.flatMap((f) => (f.attachment ? [f.attachment] : [])),
       notes: notesForBuild(),
-      coverLetter: wantLetter,
+      coverLetter: wantLetter && !general,
       hiringManager: hiringManager.trim(),
       matchDesign: !fromScratch && matchDesign && resumeFiles.some((f) => Boolean(f.attachment)),
     };
@@ -434,9 +445,10 @@ export default function ResumeBuilder() {
     const id = newBuildId();
     setLibrary((cur) => upsertEntry(cur, entryFromResult(id, built, built.coverLetter ?? null)));
     setEntryId(id);
-    trackJob(built.postingCompany, built.postingTitle);
+    if (!built.general) trackJob(built.postingCompany, built.postingTitle);
 
     track("build-finished");
+    if (built.general) track("general-built");
     setResult(data.result);
     setDoc(data.result.resume);
     setLetter(data.result.coverLetter ?? null);
@@ -469,7 +481,7 @@ export default function ResumeBuilder() {
   // for the trip, in this tab only, and put back (once) when they return from a payment.
   function saveDraft(key = DRAFT_KEY) {
     try {
-      const draft = { mode, scratch, resume, posting, notes, hiringManager, wantLetter, email, source, emailCopy, matchDesign, resumeFiles: resumeFiles.map(stripPreview), postingFiles: postingFiles.map(stripPreview) };
+      const draft = { mode, scratch, resume, posting, general, targetRole, notes, hiringManager, wantLetter, email, source, emailCopy, matchDesign, resumeFiles: resumeFiles.map(stripPreview), postingFiles: postingFiles.map(stripPreview) };
       const json = JSON.stringify(draft);
       // Files can be large. If they do not fit, keep the typed parts and tell the person to add the files again.
       window.sessionStorage.setItem(key, json.length < 3_500_000 ? json : JSON.stringify({ ...draft, resumeFiles: [], postingFiles: [], filesDropped: true }));
@@ -488,6 +500,8 @@ export default function ResumeBuilder() {
       setNotes(d.notes ?? "");
       setHiringManager(d.hiringManager ?? "");
       setWantLetter(Boolean(d.wantLetter));
+      setGeneral(d.general === true);
+      setTargetRole(d.targetRole ?? "");
       setEmail(d.email ?? "");
       setSource(d.source ?? "");
       setEmailCopy(d.emailCopy !== false);
@@ -581,6 +595,8 @@ export default function ResumeBuilder() {
     setLetter(null);
     setPosting("");
     setPostingFiles([]);
+    setGeneral(false);
+    setTargetRole("");
     setError("");
   }
 
@@ -786,16 +802,51 @@ export default function ResumeBuilder() {
   const notesShown = notesOpen || notes.trim().length > 0;
   const input = "w-full rounded-xl border border-border-subtle bg-background px-4 py-2.5 text-sm outline-none focus:border-blue-500/50";
   const resumeReady = mode === "scratch" ? scratchReady(scratch) : resume.trim().length >= 150 || resumeFiles.length > 0;
-  const postingReady = posting.trim().length >= 80 || postingFiles.length > 0;
+  const postingReady = general ? targetRole.trim().length >= 3 : posting.trim().length >= 80 || postingFiles.length > 0;
   const emailReady = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) && Boolean(source);
   const readyCount = Number(resumeReady) + Number(postingReady) + Number(emailReady);
-  const missing = [!resumeReady && "your resume", !postingReady && "the job", !emailReady && "your email and how you found us"].filter(Boolean) as string[];
+  const missing = [!postingReady && (general ? "the kind of role" : "the job"), !resumeReady && "your resume", !emailReady && "your email and how you found us"].filter(Boolean) as string[];
 
   // What the quick screen says it is using, in a few words: the first line of the saved resume (usually the name), or the file.
   const savedWords = saved?.resume.trim() ? saved.resume.trim().split(/\s+/).length : 0;
   const savedFirstLine = saved?.resume.split("\n").map((l) => l.trim()).find(Boolean)?.slice(0, 70) ?? "";
   const savedSummary = saved ? (savedFirstLine ? `${savedFirstLine}${savedWords ? ` · ${savedWords.toLocaleString()} words` : ""}` : saved.files.map((f) => f.name).join(", ")) : "";
   const answerCount = includeStories ? stories.length : 0;
+  const jobBox = (
+    <ResumeInputBox
+      id="rt-posting"
+      step={1}
+      done={postingReady}
+      label="The job you are applying for"
+      help="Paste the link to the job posting. We rewrite your resume for this exact job. You can also paste the text or drop in a screenshot."
+      placeholder="Paste the link to the job posting here, or paste the posting text, or drop a screenshot onto this box."
+      text={posting}
+      onText={setPosting}
+      files={postingFiles}
+      onFiles={setPostingFiles}
+      allowLink
+    />
+  );
+  function chooseGeneral() {
+    track("general-chosen");
+    setGeneral(true);
+    setWantLetter(false);
+    setLanePref("full");
+    window.setTimeout(() => document.getElementById("rt-target")?.scrollIntoView({ behavior: "smooth", block: "center" }), 120);
+  }
+  const jobArea = general ? (
+    <GeneralTarget value={targetRole} onChange={setTargetRole} done={postingReady} onBack={() => setGeneral(false)} />
+  ) : (
+    <div className="space-y-2">
+      {jobBox}
+      <p className="text-center text-xs text-foreground-muted">
+        No specific job yet?{" "}
+        <button type="button" onClick={chooseGeneral} className="inline-flex min-h-11 items-center px-1 font-semibold text-blue-600 underline underline-offset-2">
+          Build a general resume instead
+        </button>
+      </p>
+    </div>
+  );
   function showFullForm(focusId: string) {
     setLanePref("full");
     window.setTimeout(() => document.getElementById(focusId)?.scrollIntoView({ behavior: "smooth", block: "center" }), 80);
@@ -809,8 +860,8 @@ export default function ResumeBuilder() {
         <ol className="flex items-center" aria-label="Your progress">
           {(
             [
+              [general ? "Role" : "Job", postingReady, general ? "rt-target" : "rt-posting"],
               ["Resume", resumeReady, mode === "scratch" ? "sc-name" : "rt-resume"],
-              ["Job", postingReady, "rt-posting"],
               ["Email", emailReady, "rt-email"],
             ] as [string, boolean, string][]
           ).map(([label, done, target], i) => (
@@ -863,7 +914,7 @@ export default function ResumeBuilder() {
       {showSaved && mode === "have" && !fast && (
         <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-3 rounded-2xl border border-blue-500/30 bg-blue-500/5 px-5 py-4">
           <p className="text-sm">
-            <span className="font-semibold">Welcome back.</span> We kept your resume and notes on this device, so you can skip step 1.
+            <span className="font-semibold">Welcome back.</span> We kept your resume and notes on this device, so you can skip step 2.
           </p>
           <div className="flex items-center gap-3">
             <button type="button" onClick={applySaved} className="inline-flex min-h-11 items-center rounded-full bg-blue-600 px-5 text-xs font-semibold text-white transition-colors hover:bg-blue-500 sm:min-h-9">
@@ -904,6 +955,12 @@ export default function ResumeBuilder() {
             onFiles={setPostingFiles}
             allowLink
           />
+          <p className="text-center text-xs text-foreground-muted">
+            No specific job yet?{" "}
+            <button type="button" onClick={chooseGeneral} className="inline-flex min-h-11 items-center px-1 font-semibold text-blue-600 underline underline-offset-2">
+              Build a general resume instead
+            </button>
+          </p>
           <div className="space-y-3 rounded-2xl border border-border-subtle bg-white px-4 py-4 shadow-sm">
             <label className="flex cursor-pointer items-start gap-3">
               <input type="checkbox" checked={wantLetter} onChange={(e) => setWantLetter(e.target.checked)} className="mt-0.5 h-4 w-4 shrink-0 accent-blue-600" />
@@ -932,28 +989,16 @@ export default function ResumeBuilder() {
               ← Back: I have a resume to tailor
             </button>
           </p>
-          <ScratchForm value={scratch} onChange={setScratch} done={resumeReady} />
-
-          <ResumeInputBox
-        id="rt-posting"
-        step={2}
-        done={postingReady}
-        label="The job you want"
-        help="Paste a link to the posting, or paste the text, or upload a file or screenshot."
-        placeholder="Paste the link to the job posting here, or paste the posting text, or drop a screenshot onto this box."
-        text={posting}
-        onText={setPosting}
-        files={postingFiles}
-        onFiles={setPostingFiles}
-        allowLink
-      />
+          {jobArea}
+          <ScratchForm value={scratch} onChange={setScratch} done={resumeReady} step={2} />
         </div>
       ) : (
         <div className="grid items-start gap-6 lg:grid-cols-2">
+          {jobArea}
           <div className="space-y-3">
             <ResumeInputBox
         id="rt-resume"
-        step={1}
+        step={2}
         done={resumeReady}
         label="Your current resume"
         help="Upload a file, drag one in, paste a screenshot, or paste the text."
@@ -983,19 +1028,7 @@ export default function ResumeBuilder() {
           </p>
 
           </div>
-      <ResumeInputBox
-        id="rt-posting"
-        step={2}
-        done={postingReady}
-        label="The job you want"
-        help="Paste a link to the posting, or paste the text, or upload a file or screenshot."
-        placeholder="Paste the link to the job posting here, or paste the posting text, or drop a screenshot onto this box."
-        text={posting}
-        onText={setPosting}
-        files={postingFiles}
-        onFiles={setPostingFiles}
-        allowLink
-      />
+
         </div>
       )}
 
@@ -1090,7 +1123,7 @@ export default function ResumeBuilder() {
         </label>
       </div>
 
-      <div className="rounded-3xl border border-border-subtle bg-white p-5 shadow-lg shadow-blue-900/5 transition-shadow focus-within:border-blue-500/40 focus-within:shadow-xl sm:p-6">
+      <div hidden={general} className="rounded-3xl border border-border-subtle bg-white p-5 shadow-lg shadow-blue-900/5 transition-shadow focus-within:border-blue-500/40 focus-within:shadow-xl sm:p-6">
         <label className="flex cursor-pointer items-start gap-3">
           <input type="checkbox" checked={wantLetter} onChange={(e) => setWantLetter(e.target.checked)} className="mt-0.5 h-4 w-4 shrink-0 accent-blue-600" />
           <span>

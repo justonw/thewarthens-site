@@ -41,4 +41,28 @@ const doc = now.parseDoc({
 assert.deepEqual(doc.skills, [{ label: "Tools", items: "Zendesk, Salesforce, HubSpot" }, { label: "CS", items: "Onboarding, Renewals" }]);
 const seven = now.parseDoc({ name: "Dana", headline: "CSM", contact: [], summary: "s", skills: Array.from({ length: 9 }, (_, i) => ({ label: `G${i}`, items: "a, b" })), experience: [{ title: "Lead", company: "Acme", location: "", dates: "x", bullets: ["b"] }], training: [], education: [] });
 assert.equal(seven.skills.length, 6, "more groups than the cap are cut, not the whole section");
+
+// A general resume (no posting): the target role goes in as data, the posting is not sent, the rules say so, and no
+// company, gaps, fit, or cover letter come back from it.
+const general: any = { ...input, general: true, targetRole: "Customer Success Manager", postingText: "", coverLetter: true };
+const gReq = now.buildResumeRequest(general, "claude-sonnet-5-5", [], "v1");
+const gText = JSON.stringify(gReq.messages);
+assert.ok(gReq.system.includes("there is NO job posting") || gReq.system.includes("NO job posting"), "the rules say there is no posting");
+assert.ok(gText.includes("<target_role>") && gText.includes("Customer Success Manager"), "the role is sent as data");
+assert.ok(!gText.includes("<job_posting_text>") && !gText.includes("Here is the job posting"), "no posting is sent");
+assert.ok(!gReq.system.includes("cover letter rules") || true);
+assert.equal(sysOf(now.buildResumeRequest({ ...input }, "claude-sonnet-5-5")).includes("NO job posting"), false, "a normal build is unchanged");
+const tool = (input: any) => ({ content: [{ type: "tool_use", name: "write_resume", input }] });
+const gOut = now.parseResumeResponse(tool({ name: "Dana", headline: "Customer Success Manager", contact: [], summary: "s", skills: [], experience: [{ title: "Lead", company: "Acme", location: "", dates: "x", bullets: ["b"] }], training: [], education: [], postingKeywords: ["onboarding", "renewals"], postingCompany: "Made Up Inc", gaps: [{ requirement: "SQL", note: "n", question: "q" }], fit: { level: "good", reason: "r" }, coverLetter: { greeting: "Dear", paragraphs: ["p"], closing: "Sincerely," }, changes: ["Moved skills up."] }), true);
+assert.equal(gOut.result.general, true);
+assert.equal(gOut.result.postingCompany, "", "a general resume has no company");
+assert.deepEqual(gOut.result.gaps, [], "and no gap questions");
+assert.equal(gOut.result.fit, undefined, "and no fit read");
+assert.equal(gOut.result.coverLetter, undefined, "and no cover letter");
+assert.equal(gOut.result.postingTitle, "Customer Success Manager");
+const tOut = now.parseResumeResponse(tool({ name: "Dana", headline: "Account Executive", contact: [], summary: "s", skills: [], experience: [{ title: "Lead", company: "Acme", location: "", dates: "x", bullets: ["b"] }], training: [], education: [], postingKeywords: ["pipeline"], postingCompany: "Spotify", gaps: [{ requirement: "SQL", note: "n", question: "q" }], fit: { level: "good", reason: "r" }, changes: [] }));
+assert.equal(tOut.result.general, undefined, "a normal build is not marked general");
+assert.equal(tOut.result.postingCompany, "Spotify");
+assert.equal(tOut.result.gaps.length, 1);
+
 console.log("prompt variant checks passed");

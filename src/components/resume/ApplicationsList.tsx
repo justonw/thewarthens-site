@@ -130,6 +130,7 @@ export default function ApplicationsList({
                   <p className="font-semibold leading-snug">
                     {e.title || e.doc.headline || "Untitled job"}
                     {e.company && <span className="font-normal text-foreground-muted"> at {e.company}</span>}
+                    {e.general && <span className="ml-2 rounded-full bg-violet-500/10 px-2 py-0.5 text-xs font-semibold text-violet-700">General</span>}
                   </p>
                   <p className="mt-0.5 text-xs text-foreground-muted">
                     {whenLabel(e.at)} · {e.letter ? "Resume and cover letter" : "Resume"}
@@ -187,9 +188,11 @@ export default function ApplicationsList({
                 <button type="button" onClick={() => void download(e, "docx")} disabled={busy !== ""} className={pill}>
                   {busy === `${e.id}:docx` ? "Preparing…" : "Word"}
                 </button>
-                <button type="button" onClick={() => onToggleApplied(e.id)} aria-pressed={isApplied} className={pill}>
-                  {isApplied ? "Applied ✓" : "Mark applied"}
-                </button>
+                {!e.general && (
+                  <button type="button" onClick={() => onToggleApplied(e.id)} aria-pressed={isApplied} className={pill}>
+                    {isApplied ? "Applied ✓" : "Mark applied"}
+                  </button>
+                )}
                 {confirming === e.id ? (
                   <span className="inline-flex items-center gap-1 text-xs">
                     <button type="button" onClick={() => { onRemove(e.id); setConfirming(""); }} className="inline-flex min-h-10 items-center rounded-full px-3 font-semibold text-red-700 hover:bg-red-500/10">

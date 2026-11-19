@@ -42,6 +42,8 @@ export type LibraryEntry = {
   changes: string[];
   messages: SavedMessage[];
   answers: SavedAnswer[];
+  // A general resume for a kind of role (the title), not tailored to a posting. It is never "applied" to a job.
+  general: boolean;
 };
 
 export const noLibrary: LibraryEntry[] = [];
@@ -76,6 +78,7 @@ export function entryFromResult(id: string, r: TailorResult, letter: CoverLetter
     changes: r.changes,
     messages: [],
     answers: [],
+    general: r.general === true,
   };
 }
 
@@ -91,6 +94,7 @@ export function entryToResult(e: LibraryEntry): TailorResult {
     gaps: e.gaps,
     fit: e.fit ?? undefined,
     changes: e.changes,
+    ...(e.general ? { general: true } : {}),
   };
 }
 
@@ -145,7 +149,7 @@ export function cleanLibrary(raw: unknown): LibraryEntry[] {
     if (!doc || !id || seen.has(id)) continue;
     seen.add(id);
     const at = iso(o.at) || new Date().toISOString();
-    const status = o.status === "applied" ? "applied" : "built";
+    const status = o.status === "applied" && o.general !== true ? "applied" : "built";
     const gaps: ResumeGap[] = [];
     for (const g of Array.isArray(o.gaps) ? o.gaps.slice(0, 12) : []) {
       if (!g || typeof g !== "object") continue;
@@ -195,6 +199,7 @@ export function cleanLibrary(raw: unknown): LibraryEntry[] {
       changes: (Array.isArray(o.changes) ? o.changes : []).map((c) => text(c, 300)).filter(Boolean).slice(0, 12),
       messages,
       answers,
+      general: o.general === true,
     });
   }
   return out;

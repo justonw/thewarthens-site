@@ -257,7 +257,7 @@ export default function ResumeInputBox({
         onChange={handleChange}
         onPaste={handlePaste}
         icon={allowLink ? "link" : "document"}
-        title={allowLink ? "Paste the job link or text" : "Drop your resume here"}
+        title={allowLink ? "Paste the job link here" : "Drop your resume here"}
         hint={allowLink ? "Or drop a screenshot or file of the posting here." : "Or click to paste the text. A PDF, Word file, photo, or screenshot all work."}
         formats={allowLink ? ["Link", "Text", "Screenshot", "PDF"] : ["PDF", "Word", "Photo", "Text"]}
         noun={allowLink ? "job posting" : "resume"}

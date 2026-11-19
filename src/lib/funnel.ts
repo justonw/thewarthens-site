@@ -23,6 +23,8 @@ export const FUNNEL_EVENTS = [
   "answers-written", // got a drafted answer to an application question
   "followup-opened", // opened a follow-up message from a nudge on My applications
   "followup-written", // copied a follow-up message
+  "general-chosen", // chose "Build a general resume instead" (no specific job)
+  "general-built", // got a general resume back
   "next-job", // pressed "Next job" after a build (a second job in one visit)
   "build-reopened", // opened a saved build from "My applications"
   // Which parts of the site get visited (once per visit, no cookies, no person attached).

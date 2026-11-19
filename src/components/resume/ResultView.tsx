@@ -242,6 +242,8 @@ export default function ResultView({
   const [role, setRole] = useState(result.postingTitle);
   const [tracked, setTracked] = useState<"" | "added" | "exists">("");
   // The builder puts every new job in the tracker, so most of the time this is already done.
+  // A general resume (no posting): there is no company to reach, no job to answer for, and nothing to track yet.
+  const general = result.general === true;
   const inTracker = entries.some((x) => sameJob(x, { company: result.postingCompany, role: result.postingTitle }));
 
   function addToTracker(e: React.FormEvent) {
@@ -422,7 +424,7 @@ export default function ResultView({
                 </p>
               )}
               <h2 className="mt-1.5 text-xl font-semibold tracking-tight sm:text-2xl">
-                Your {letter ? "resume and cover letter" : "resume"} for {result.postingTitle || doc.headline}
+                Your {general ? "general resume" : letter ? "resume and cover letter" : "resume"} for {result.postingTitle || doc.headline}
                 {result.postingCompany ? ` at ${result.postingCompany}` : ""}
               </h2>
               {mailed !== "" && (
@@ -439,13 +441,23 @@ export default function ResultView({
             </div>
           </div>
           <button type="button" onClick={onStartOver} className="inline-flex min-h-11 items-center gap-2 rounded-full bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/25 transition-colors hover:bg-blue-500">
-            Next job
+            {general ? "Tailor it to a job" : "Next job"}
             <span aria-hidden>→</span>
           </button>
         </div>
       </div>
 
-      {tab !== "reach" && tab !== "answers" && <ReachCallout company={result.postingCompany} onOpen={openReach} />}
+      {general && (
+        <div role="note" className="rounded-3xl border border-violet-500/30 bg-violet-500/10 p-5">
+          <p className="font-semibold">This is a general resume for {result.postingTitle || doc.headline}</p>
+          <p className="mt-1 text-sm text-foreground-muted">It is not tailored to a specific job yet. A resume written for one posting, in that posting&apos;s own words, is the one that gets read. When you find a job you want, add it and we&apos;ll rebuild this resume for it, with a cover letter, outreach messages, and answers for the application.</p>
+          <button type="button" onClick={onStartOver} className="mt-3 inline-flex min-h-10 items-center rounded-full border border-violet-500/40 bg-white px-5 text-sm font-semibold shadow-sm transition-colors hover:border-violet-500">
+            Add a job and tailor this resume →
+          </button>
+        </div>
+      )}
+
+      {!general && tab !== "reach" && tab !== "answers" && <ReachCallout company={result.postingCompany} onOpen={openReach} />}
 
       <div hidden={tab === "reach" || tab === "answers"} className="space-y-6">
       <StrengthenPanel gaps={gaps} fit={result.fit} justAdded={justAdded} onAdd={addGap} />
@@ -488,15 +500,15 @@ export default function ResultView({
       <div id="rt-tabs" role="tablist" aria-label="Your documents" className="inline-flex max-w-full scroll-mt-20 flex-wrap rounded-3xl border border-border-subtle bg-background-elevated p-1">
         {tabButton("resume", "Resume")}
         {letter && tabButton("letter", "Cover letter")}
-        {tabButton("reach", "Reach out", true)}
-        {tabButton("answers", "Answers", true)}
+        {!general && tabButton("reach", "Reach out", true)}
+        {!general && tabButton("answers", "Answers", true)}
       </div>
 
-      <div hidden={tab !== "reach"}>
+      {!general && <div hidden={tab !== "reach"}>
         <OutreachPanel doc={finalDoc} result={result} gaps={gaps} email={email} saved={messages ?? []} onSave={onMessage} initialPurpose={initialPurpose} appliedDaysAgo={appliedDaysAgo} onFollowedUp={onFollowedUp} onBack={() => setTab("resume")} />
-      </div>
+      </div>}
 
-      <div hidden={tab !== "answers"}>
+      {!general && <div hidden={tab !== "answers"}>
         <AnswersPanel
           doc={finalDoc}
           result={result}
@@ -507,7 +519,7 @@ export default function ResultView({
           onStory={(topic, question, answer) => setStories((cur) => addStoryTo(cur, newStory(topic, question, answer)))}
           onBack={() => setTab("resume")}
         />
-      </div>
+      </div>}
 
       {inApp && (
         <p role="status" className="rounded-2xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm">
@@ -658,7 +670,7 @@ export default function ResultView({
               </div>
             )}
 
-            {inTracker ? (
+            {general ? null : inTracker ? (
               <div className={card}>
                 <p className="font-semibold">In your job tracker ✓</p>
                 <p className="mt-1 text-xs text-foreground-muted">
@@ -721,7 +733,7 @@ export default function ResultView({
         </div>
       )}
 
-      {tab !== "reach" && tab !== "answers" && <ReachCallout company={result.postingCompany} onOpen={openReach} />}
+      {!general && tab !== "reach" && tab !== "answers" && <ReachCallout company={result.postingCompany} onOpen={openReach} />}
 
       <NextSteps title={`${result.postingTitle} ${doc.headline}`} extra={result.postingKeywords.join(" ")} />
 

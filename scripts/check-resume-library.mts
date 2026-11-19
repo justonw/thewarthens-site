@@ -131,4 +131,13 @@ assert.equal(cleanedList[2].messages.length, 0, "a message with an unknown audie
 assert.deepEqual(lib.cleanLibrary("nope"), []);
 assert.equal(lib.cleanLibrary(Array.from({ length: 200 }, (_, i) => ({ ...goodFile, id: `n${i}` }))).length, lib.MAX_LIBRARY);
 
+// A general resume (no posting) is kept as one, and is never counted as applied.
+const gen = lib.entryFromResult("g1", { ...result, general: true, postingCompany: "", gaps: [], fit: undefined }, null);
+assert.equal(gen.general, true);
+assert.equal(lib.entryToResult(gen).general, true, "a general resume opens as a general resume");
+assert.equal(lib.entryFromResult("t1", result, null).general, false);
+const genBack = lib.cleanLibrary([{ ...JSON.parse(JSON.stringify(gen)), status: "applied", appliedAt: "2026-11-12T10:00:00.000Z" }]);
+assert.equal(genBack[0].general, true);
+assert.equal(genBack[0].status, "built", "a general resume cannot be marked applied");
+
 console.log("library checks passed");

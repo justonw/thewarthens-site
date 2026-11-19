@@ -249,7 +249,7 @@ export default async function ResumeGuidePage({ params }: { params: Promise<{ sl
       <section className="mx-auto max-w-3xl px-6 pb-12">
         <div className="rounded-[2rem] bg-gradient-to-br from-indigo-950 via-indigo-800 to-blue-900 p-8 text-white shadow-xl shadow-indigo-950/20 sm:p-10">
           <h2 className="text-2xl font-semibold sm:text-3xl">Get it done in about a minute</h2>
-          <p className="mt-3 text-indigo-100">Add your resume and the job posting. Get a tailored resume and a matching cover letter as PDF and Word files, built only from your real experience. Your first two builds are free.</p>
+          <p className="mt-3 text-indigo-100">Add the job posting and your resume. Get a resume tailored to that job, plus a matching cover letter, as PDF and Word files, built only from your real experience. Your first two builds are free.</p>
           <div className="mt-6">
             <Link href="/resume" className="inline-flex rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-900 transition-transform hover:scale-[1.03]">
               Open the Resume Builder

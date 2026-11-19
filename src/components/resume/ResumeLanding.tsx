@@ -99,13 +99,13 @@ export function ResumeHero() {
           Resume Builder · About a minute
         </p>
         <h1 className="rb-rise text-balance mt-4 text-3xl font-bold leading-[1.1] tracking-tight sm:text-4xl lg:text-5xl" style={delay(0.08)}>
-          Boost your chances of an interview with a resume <span className="rb-gradient-text">tailored</span> to every job
+          A resume <span className="rb-gradient-text">tailored</span> to the exact job you are applying for
         </h1>
         <p className="rb-rise mx-auto mt-4 max-w-xl text-balance text-base text-foreground-muted sm:text-lg" style={delay(0.16)}>
-          Add your resume and the job description. We rewrite your resume in the words that job uses, and write a cover letter if you want one.
+          Paste the link to the job. We rewrite your resume in that posting&apos;s own words, so it fits that one job. This is not a generic resume.
         </p>
         <ul className="rb-rise mt-5 flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs font-medium text-foreground-muted" style={delay(0.24)}>
-          {["Uses the job's own words", "Asks about your gaps, adds only what's true", "Works for any field", "No account needed"].map((t) => (
+          {["Built from the job posting", "Uses the job's own words", "Asks about your gaps, adds only what's true", "No account needed"].map((t) => (
             <li key={t} className="flex items-center gap-1.5">
               <Tick className="h-4 w-4" />
               {t}
@@ -143,8 +143,8 @@ const iconProps = { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", 
 
 const steps = [
   {
-    title: "Add two things",
-    body: "Your current resume and the job description. Paste text, upload a file, drop in a screenshot, or paste the posting's link.",
+    title: "Add the job, then your resume",
+    body: "Start with the link to the job you want. Then add your current resume: paste text, upload a file, or drop in a screenshot.",
     icon: (
       <svg {...iconProps} aria-hidden>
         <path d="M12 16V4m0 0l-4 4m4-4l4 4" />

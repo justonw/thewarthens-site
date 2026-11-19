@@ -9,7 +9,7 @@ export default function ResumeBuilderCallout({ className = "" }: { className?: s
         <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">Resume Builder</p>
         <p className="mt-1 text-base font-semibold">Next: tailor your resume to the job you want</p>
         <p className="mt-1 text-sm text-foreground-muted">
-          Add your resume and the job posting. Get a finished resume and cover letter as PDF and Word files, built only from your real experience. Your first 2 are free.
+          Add the job posting and your resume. Get a resume tailored to that job, plus a cover letter, as PDF and Word files, built only from your real experience. Your first 2 are free.
         </p>
       </div>
       <Link
