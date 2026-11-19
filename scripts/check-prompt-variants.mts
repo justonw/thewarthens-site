@@ -25,8 +25,9 @@ const v1 = sysOf(now.buildResumeRequest(input, "claude-sonnet-5-5", [], "v1"));
 const v2 = sysOf(now.buildResumeRequest(input, "claude-sonnet-5-5", [], "v2"));
 const dflt = sysOf(now.buildResumeRequest(input, "claude-sonnet-5-5"));
 
-assert.equal(now.DEFAULT_VARIANT, "v1", "visitors get v1 until v2 is proven");
-assert.equal(dflt, v1, "no variant means the default");
+assert.equal(now.DEFAULT_VARIANT, "v3b", "visitors get v3b, the version that won the cross-industry comparison");
+assert.equal(dflt, sysOf(now.buildResumeRequest(input, "claude-sonnet-5-5", [], "v3b")), "no variant means the default");
+assert.notEqual(dflt, v1, "the default is no longer v1");
 if (before) assert.equal(v1, sysOf(old.buildResumeRequest(input, "claude-sonnet-5-5")), "v1 is exactly what was live before");
 assert.ok(!v1.includes("One point per bullet") && v1.includes("2 to 4 short groups"), "v1 keeps the old skills rule");
 assert.ok(v2.includes("One point per bullet") && v2.includes("3 to 6 groups") && v2.includes("two short sentences beat one long one"), "v2 has the new rules");
@@ -81,5 +82,9 @@ assert.ok(!v1.includes("Never write \"aiming to\""), "v1 is unchanged");
 // v3b is v3 plus the posting-wording rule.
 const v3b = sysOf(now.buildResumeRequest(input, "claude-sonnet-5-5", [], "v3b"));
 assert.ok(v3b.includes("Never write \"aiming to\"") && v3b.includes("The posting's own words") && !v3.includes("The posting's own words"), "v3b is v3 plus the wording rule");
+
+// A general resume has no posting, so it keeps the base prompt: no posting-wording rule, but its own two fixes.
+const gDefault = sysOf(now.buildResumeRequest({ ...input, general: true, targetRole: "Nurse", postingText: "" }, "claude-sonnet-5-5"));
+assert.ok(!gDefault.includes("The posting's own words") && gDefault.includes("NO job posting"), "general resumes do not get the posting-wording rules");
 
 console.log("prompt variant checks passed");
