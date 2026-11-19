@@ -33,6 +33,15 @@ assert.ok(!v1.includes("One point per bullet") && v1.includes("2 to 4 short grou
 assert.ok(v2.includes("One point per bullet") && v2.includes("3 to 6 groups") && v2.includes("two short sentences beat one long one"), "v2 has the new rules");
 assert.ok(v2.length > v1.length, "v2 only adds");
 
+// v3c (owner-only): v3b plus the honest headline rule, for tailored builds and general ones, and nothing else.
+const v3c = sysOf(now.buildResumeRequest(input, "claude-sonnet-5-5", [], "v3c"));
+assert.ok(v3c.startsWith(sysOf(now.buildResumeRequest(input, "claude-sonnet-5-5", [], "v3b")).slice(0, 2000)) && v3c.includes('write "Aspiring "') && v3c.includes("without \"Aspiring\""), "v3c adds the headline rule");
+assert.ok(!dflt.includes('write "Aspiring "'), "visitors do not get the headline rule");
+const gV3c = sysOf(now.buildResumeRequest({ ...input, general: true, targetRole: "Teacher", postingText: "" }, "claude-sonnet-5-5", [], "v3c"));
+assert.ok(gV3c.includes('write "Aspiring "') && gV3c.lastIndexOf("Headline (this replaces") > gV3c.lastIndexOf("NO job posting"), "a general v3c build gets the headline rule after the general rules");
+assert.ok(!sysOf(now.buildResumeRequest({ ...input, general: true, targetRole: "Teacher", postingText: "" }, "claude-sonnet-5-5", [], "v3b")).includes('write "Aspiring "'), "a general default build does not");
+assert.equal(now.parseResumeResponse({ content: [{ type: "tool_use", name: "write_resume", input: { name: "Dana", headline: "Aspiring Teacher", contact: [], summary: "s", skills: [], experience: [{ title: "Lead", company: "Acme", location: "", dates: "x", bullets: ["b"] }], training: [], education: [], postingKeywords: [], postingCompany: "", gaps: [], changes: [] } }] }, true).result.postingTitle, "Teacher", "the target title does not carry 'Aspiring'");
+
 // Skills that arrive as a list are kept, not dropped (a dropped list used to blank the whole skills section).
 const doc = now.parseDoc({
   name: "Dana", headline: "CSM", contact: [], summary: "s",

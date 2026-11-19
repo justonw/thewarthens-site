@@ -52,17 +52,27 @@ export function findUnquantified(doc: ResumeDoc, keywords: string[] = [], skip: 
     .sort((x, y) => x.job - y.job || x.bullet - y.bullet);
 }
 
+// People a bullet can say someone led. "Led outreach to professionals" does not match: that is not leading a team.
+const PEOPLE = "(?:team|teams|people|staff|agents?|reps?|representatives?|employees|associates|engineers|developers|analysts|specialists|coordinators|consultants|technicians|cashiers|drivers|workers|students|interns|volunteers|members|crew|group|department|managers|nurses|aides|clerks)";
+const LEAD_VERBS = "(?:led|lead|leads|leading|managed|manage|manages|supervised|supervise|supervises|directed|oversaw|oversee|oversees)";
+
+// Phrases where "build" means something that has no count ("build trust"), so they are not "built a thing" bullets.
+const NOT_BUILT = /\b(?:build|builds|built|building)\s+(?:trust|relationships?|rapport|consensus|business cases?|a case|credibility|confidence|buy-in|momentum)\b/gi;
+
 const QUESTIONS: [RegExp, string][] = [
-  [/\b(led|lead|leads|leading|managed|manage|manages|supervised|supervise|supervises|directed|oversaw)\b/i, "How many people did you lead or manage?"],
+  [new RegExp(`\\b${LEAD_VERBS}\\b(?:\\s+[\\w'-]+){0,3}\\s+${PEOPLE}\\b`, "i"), "How many people did you lead or manage?"],
   [/\b(trained|train|trains|coached|coach|coaches|mentored|mentor|onboarded|onboard)\b/i, "About how many people did you train or coach?"],
   [/\b(sold|sell|sells|closed|generated|grew|grow|grows|increased|increase|boosted|raised|improved|improve|reduced|reduce|cut|decreased|lowered|saved|shortened|speed|sped)\b/i, "By how much did it change? A percent, a dollar amount, or time saved all work."],
+  [/\b(own|owned|owns|owning)\b/i, "About how many customers, accounts, or projects did you own at a time?"],
+  [/\b(outreach|reached out|contacted|recruited|invited|interviewed|sourced|coordinated|booked|scheduled)\b/i, "About how many people or companies, and how often?"],
   [/\b(resolved|resolve|handled|handle|answered|processed|responded|triaged|fielded|managed|reviewed|screened|prepared|prepare|tracked|updated)\b/i, "About how many, and how often (per day, week, or month)?"],
   [/\b(wrote|write|created|create|built|build|developed|develop|designed|design|launched|launch|implemented|implement|rebuilt|set up|organized|planned|ran|run|runs|hosted)\b/i, "How many, how often, or how big was it? For example, how many people used it."],
 ];
 export const DEFAULT_QUESTION = "Is there a number that fits this: how many, how often, how much, or how long?";
 
 export function numberQuestion(bullet: string): string {
-  for (const [re, q] of QUESTIONS) if (re.test(bullet)) return q;
+  const text = bullet.replace(NOT_BUILT, " ");
+  for (const [re, q] of QUESTIONS) if (re.test(text)) return q;
   return DEFAULT_QUESTION;
 }
 

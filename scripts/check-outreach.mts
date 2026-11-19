@@ -35,6 +35,13 @@ check("profile text and screenshot are sent", JSON.stringify(withMaterial.messag
 const tweaked: any = buildOutreachRequest({ ...base, tweak: "shorter", previous: { note: "Old note.", message: "Old message." } }, "m");
 check("a tweak carries the previous version", JSON.stringify(tweaked.messages).includes("<previous_version>") && JSON.stringify(tweaked.messages).includes("a third shorter"));
 
+const withImpl: any = buildOutreachRequest({ ...base, implication: true }, "claude-sonnet-5-5");
+check("visitors do not get the implication clause", !req.system.includes("Peer-professional implication"));
+check("the owner can turn the implication clause on", withImpl.system.startsWith(req.system) && withImpl.system.includes("Peer-professional implication") && withImpl.system.includes("one professional to another") || withImpl.system.includes("professional to another professional"));
+check("the implication clause is skipped for a follow-up and for a friend", !(buildOutreachRequest({ ...base, implication: true, purpose: "followup" }, "m") as any).system.includes("Peer-professional implication") && !(buildOutreachRequest({ ...base, implication: true, audience: "friend" }, "m") as any).system.includes("Peer-professional implication"));
+check("the clause is hedged, general, and never about their own team", withImpl.system.includes("tends to") && withImpl.system.includes("never the reader's own team") && withImpl.system.includes("No numbers"));
+check("everyone is told to name a group in full words", req.system.includes('never a clipped shorthand like "on your grade"'));
+
 const friend: any = buildOutreachRequest({ ...base, audience: "friend", relationship: "we worked together at Northline" }, "m");
 check("a friend request carries how they know each other, as the person's own words", JSON.stringify(friend.messages).includes("<relationship>we worked together at Northline</relationship>"));
 const friendBlank: any = buildOutreachRequest({ ...base, audience: "friend" }, "m");

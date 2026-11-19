@@ -220,7 +220,7 @@ export async function POST(req: NextRequest) {
 
   const model = unlimited && typeof body.model === "string" && OWNER_MODELS.has(body.model) ? body.model : MODEL;
   // Only the owner can try the newer formatting rules; visitors always get the default version.
-  const variant: PromptVariant = unlimited && (body.promptVariant === "v2" || body.promptVariant === "v3" || body.promptVariant === "v3b" || body.promptVariant === "baseline") ? body.promptVariant : DEFAULT_VARIANT;
+  const variant: PromptVariant = unlimited && (body.promptVariant === "v2" || body.promptVariant === "v3" || body.promptVariant === "v3b" || body.promptVariant === "v3c" || body.promptVariant === "baseline") ? body.promptVariant : DEFAULT_VARIANT;
 
   // The usage counters live in Netlify Blobs. If that storage is slow or down, the person should still get their
   // resume: we log it loudly and let the build through uncounted, instead of making them wait for a timeout.

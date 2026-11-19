@@ -168,6 +168,8 @@ export async function POST(req: NextRequest) {
         recipientFiles: files,
         tweak,
         previous,
+        // Owner testing only: visitors do not get the implication clause until it has proved better.
+        implication: owner && body.implication === true,
       },
       MODEL
     )

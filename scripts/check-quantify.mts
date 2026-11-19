@@ -35,6 +35,15 @@ assert.match(numberQuestion("Resolved tickets for customers"), /how often/);
 assert.match(numberQuestion("Built the onboarding checklist"), /How many, how often, or how big/);
 assert.match(numberQuestion("Prepared daily sales reports"), /how often/);
 assert.equal(numberQuestion("Strategic thinking"), DEFAULT_QUESTION);
+// Found on a real build: the question has to fit the bullet.
+assert.doesNotMatch(numberQuestion("Led outreach to professionals and coordinated guest interviews for the platform."), /lead or manage/, "leading outreach is not leading people");
+assert.match(numberQuestion("Led outreach to professionals and coordinated guest interviews for the platform."), /people or companies/);
+assert.doesNotMatch(numberQuestion("Own the customer lifecycle from discovery through onboarding and expansion, engaging stakeholders to build trust."), /how many people used it/, "build trust is not building a thing");
+assert.match(numberQuestion("Own the customer lifecycle from discovery through onboarding and expansion, engaging stakeholders to build trust."), /customers, accounts, or projects/);
+assert.match(numberQuestion("Led a team of support agents"), /How many people/);
+assert.match(numberQuestion("Managed cashiers and the front end"), /How many people/);
+assert.match(numberQuestion("Oversaw the sales team"), /How many people/);
+assert.match(numberQuestion("Built the onboarding checklist"), /How many, how often, or how big/, "building a thing still asks how big");
 
 assert.ok(answerHasNumber("about 40") && answerHasNumber("15%") && answerHasNumber("$2,500") && !answerHasNumber("a lot") && !answerHasNumber("forty"));
 

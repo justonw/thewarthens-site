@@ -256,7 +256,7 @@ const docProps = {
 // Two versions of the formatting rules, so a change can be tried live (by the owner, with the owner code) before any
 // visitor sees it. "v1" is what visitors get; "v2" asks for more, smaller named skill groups, one point per bullet,
 // and shorter summary sentences. When v2 has proved better, DEFAULT_VARIANT is switched and v1 can be deleted.
-export type PromptVariant = "v1" | "v2" | "v3" | "v3b" | "baseline";
+export type PromptVariant = "v1" | "v2" | "v3" | "v3b" | "v3c" | "baseline";
 // v3b is the default since the Nov 19 2026 comparison across nine people from different industries (see scripts/resume-compare.py):
 // it stopped summaries from announcing a move, stopped skills and bullets from being padded with the posting's phrases, and kept
 // more of the posting's real keywords than v3. v1 stays available to the owner for comparison.
@@ -285,8 +285,15 @@ More rules for the summary, skills, and bullets:
 const V3B_RULES = `
 - The posting's own words: whenever the resume shows that the person did or has something the posting names (a duty, tool, skill, or credential), use the posting's exact term for it in the summary, the skills, or a bullet, instead of a paraphrase. Never use a posting term for something the resume does not show.`;
 
+// "v3c" is v3b plus an honest headline: the target title when the person has held that kind of job, and "Aspiring" plus the
+// target title when they have not (a change of field, or a credential the resume does not show). Owner-only until tested across
+// industries: a plain target-title headline is the usual resume advice, so this must not cost people interviews.
+const HEADLINE_RULES = `
+- Headline (this replaces the earlier rule about the headline): it shows the role the person is targeting, and it must never claim a title they have not held. Compare the target with the job titles in their experience. If one of their jobs is the same kind of job (the same title, or the same role at another level or another employer), write the target title exactly as the posting words it. If none is, because the target is a different kind of job or needs a license or credential the resume does not show, write "Aspiring " followed by the exact target title as the posting words it, and nothing else (for example "Aspiring Teacher" or "Aspiring Journeyman Electrician"). A step up within the same field (a Sales Development Representative applying for Account Executive, a Support Specialist applying for Support Lead) counts as the same kind of job: use the target title alone. When you cannot tell, use "Aspiring". Keep it 50 characters or fewer. The "postingTitle" is always the target title without "Aspiring".`;
+
 function systemFor(variant: PromptVariant): string {
   if (variant === "baseline") return BASELINE_SYSTEM;
+  if (variant === "v3c") return systemFor("v3b") + HEADLINE_RULES;
   if (variant === "v3b") return systemFor("v3") + V3B_RULES;
   if (variant === "v3") return systemFor("v1") + V3_RULES;
   return variant === "v2" ? SYSTEM : V2_TO_V1.reduce((text, [v2, v1]) => text.replace(v2, v1), SYSTEM);
@@ -303,7 +310,7 @@ export function buildResumeRequest(input: TailorInput, model: string = RESUME_MO
     // Medium effort keeps the thinking short: a rewrite does not need deep reasoning, and it costs less.
     output_config: { effort: "medium" },
     // A general resume has no posting, so the posting-wording rules do not apply: it keeps the base prompt it was tested with.
-    system: `${systemFor(input.general && variant !== "baseline" ? "v1" : variant)}${input.fromScratch ? SCRATCH_RULES : ""}${input.general ? GENERAL_RULES : ""}${input.matchDesign ? DESIGN_RULES : ""}${input.coverLetter && !input.general ? COVER_LETTER_RULES : ""}\n\nToday\'s date is ${new Date().toISOString().slice(0, 10)}. A job that says "Present" is still current.\n\nAlways answer by calling the ${TOOL_NAME} tool exactly once. Do not write any other text.`,
+    system: `${systemFor(input.general && variant !== "baseline" ? "v1" : variant)}${input.fromScratch ? SCRATCH_RULES : ""}${input.general ? GENERAL_RULES : ""}${input.general && variant === "v3c" ? HEADLINE_RULES : ""}${input.matchDesign ? DESIGN_RULES : ""}${input.coverLetter && !input.general ? COVER_LETTER_RULES : ""}\n\nToday\'s date is ${new Date().toISOString().slice(0, 10)}. A job that says "Present" is still current.\n\nAlways answer by calling the ${TOOL_NAME} tool exactly once. Do not write any other text.`,
     tools: [
       {
         name: TOOL_NAME,
@@ -846,7 +853,7 @@ export function parseResumeResponse(data: unknown, general = false): ParsedTailo
       ...(general ? { general: true } : {}),
       ...(input_hasLetter(i) && !general ? { coverLetter: parseLetter(i.coverLetter) as CoverLetter } : {}),
       ...(parseDesign(i.design) ? { design: parseDesign(i.design) as ResumeDesign } : {}),
-      postingTitle: resume.headline,
+      postingTitle: resume.headline.replace(/^aspiring\s+/i, ""),
       postingCompany: general ? "" : company,
       postingKeywords: list(i.postingKeywords, 60, 15),
       gaps: objects(general ? [] : i.gaps, 8)
