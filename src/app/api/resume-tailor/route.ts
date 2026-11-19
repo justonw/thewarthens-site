@@ -5,6 +5,8 @@ import {
   buildContactRequest,
   buildLetterRequest,
   buildResumeRequest,
+  DEFAULT_VARIANT,
+  type PromptVariant,
   cleanAttachments,
   contactFromText,
   contactGaps,
@@ -212,6 +214,8 @@ export async function POST(req: NextRequest) {
 
 
   const model = unlimited && typeof body.model === "string" && OWNER_MODELS.has(body.model) ? body.model : MODEL;
+  // Only the owner can try the newer formatting rules; visitors always get the default version.
+  const variant: PromptVariant = unlimited && body.promptVariant === "v2" ? "v2" : DEFAULT_VARIANT;
 
   // The usage counters live in Netlify Blobs. If that storage is slow or down, the person should still get their
   // resume: we log it loudly and let the build through uncounted, instead of making them wait for a timeout.
@@ -257,7 +261,7 @@ export async function POST(req: NextRequest) {
     const startedAll = Date.now();
     const fileState: { badFile?: boolean } = {};
     const [firstParsed, letterResult] = await Promise.all([
-      askClaude("resume-tailor", (m) => buildResumeRequest(base, m), parseResumeResponse, model, 55000, fileState),
+      askClaude("resume-tailor", (m) => buildResumeRequest(base, m, [], variant), parseResumeResponse, model, 55000, fileState),
       wantsLetter ? askClaude("resume-letter", (m) => buildLetterRequest(base, m), parseLetterResponse, model) : Promise.resolve(null),
     ]);
     let parsed = firstParsed;
@@ -302,7 +306,7 @@ export async function POST(req: NextRequest) {
       const elapsed = Date.now() - startedAll;
       if (first.found.length / total < 0.65 && first.missing.length >= 3 && elapsed < REPAIR_ONLY_IF_FASTER_THAN_MS) {
         const missing = first.missing.slice(0, 8);
-        const second = await askClaude("resume-repair", (m) => buildResumeRequest(base, m, missing), parseResumeResponse, model, 54000 - elapsed);
+        const second = await askClaude("resume-repair", (m) => buildResumeRequest(base, m, missing, variant), parseResumeResponse, model, 54000 - elapsed);
         if (second && second.ok) {
           const after = keywordCoverage(resumeToPlainText(second.result.resume), second.result.postingKeywords);
           const better = after.found.length / Math.max(1, second.result.postingKeywords.length) > first.found.length / total;

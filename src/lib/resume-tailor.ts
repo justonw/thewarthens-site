@@ -144,9 +144,10 @@ Hard rules:
 - "fit": an honest, plain read of how the resume lines up with the posting. "level" is "strong" (they meet most must-haves), "good" (they meet many, with real gaps), or "stretch" (they miss several must-haves). "reason" is one or two plain sentences that name the strongest match and the one or two biggest gaps. Never flatter, and never say the person will or will not get the job.
 - Proofread before you answer. Re-read the summary, every bullet, and the skills for typos, doubled words, and wrong words (for example "pints" for "points"), and fix them. Spell names and tools exactly as the resume does.
 - "postingKeywords": the 8 to 15 most important skills, tools, and requirements named in the posting, in the posting's own wording.
-- Summary: at most 3 sentences, written to sound like a person, not a template. Say who they are, the strongest proof from their real experience, and what they are aiming for. The exact job title already sits in the headline, so do not repeat it in the summary: say "this role" or name the field instead. Do not restate a certificate or degree that is already listed under training or education, except to point to it briefly in a clause. Never use any pronouns for the person: no "I", "my", "he", "she", "his", "her", "him", or "they". Resumes leave the subject out ("Led a team of 22", not "He led a team"), so write that way everywhere. We do not know the person's pronouns, and a wrong guess is a real error. No clichés ("results-driven", "passionate", "dynamic", "proven track record"). Only state years of experience if you can work them out from the dates, rounding down. Mention a number of years once, as the total in the field, counted from the earliest relevant job, and never say the same number twice in one sentence.
-- Skills: 2 to 4 short groups (for example Sales, Tools, Strengths) with comma-separated items. Only include skills the resume shows or clearly implies from the work described.
+- Summary: at most 3 sentences, written to sound like a person, not a template. Each sentence makes one point in about 25 words or fewer. Never chain several ideas together with commas and "and": two short sentences beat one long one. Say who they are, the strongest proof from their real experience, and what they are aiming for. The exact job title already sits in the headline, so do not repeat it in the summary: say "this role" or name the field instead. Do not restate a certificate or degree that is already listed under training or education, except to point to it briefly in a clause. Never use any pronouns for the person: no "I", "my", "he", "she", "his", "her", "him", or "they". Resumes leave the subject out ("Led a team of 22", not "He led a team"), so write that way everywhere. We do not know the person's pronouns, and a wrong guess is a real error. No clichés ("results-driven", "passionate", "dynamic", "proven track record"). Only state years of experience if you can work them out from the dates, rounding down. Mention a number of years once, as the total in the field, counted from the earliest relevant job, and never say the same number twice in one sentence.
+- Skills: 3 to 6 groups, each named for exactly what it holds (for example Sales, Customer Service, Tools, Leadership), so a recruiter can scan the labels and skip to what they need. Each group holds 3 to 7 short items (one to three words each, never a sentence). Do not pour everything into one long comma-separated line: split a long group into two named groups instead. Only include skills the resume shows or clearly implies from the work described.
 - Experience: reverse chronological, exactly as the resume lists the jobs. Aim for 3 to 5 bullets for the most recent job and 2 to 3 for older ones, but never pad: if the resume supports only 2 strong bullets for a job, write 2. Each bullet starts with a strong verb (past tense for past jobs, present tense for a current job), says what they did and the result, and is at most 2 lines.
+- One point per bullet. If a bullet runs a list of three or more things together with commas, split it into separate bullets or keep only the strongest one or two, so the page reads as short, scannable lines and not as a wall of words.
 - Put the bullets in each job in order of how much they help for this posting. When a job involved leading or managing people, a budget, or a large volume of work, make the bullet that states that scope the first one.
 - Every bullet must carry a concrete fact from the resume (what they did, for whom, how many, or what changed). Cut generic filler such as "turned issues into resolved outcomes", "handled various tasks", or "worked with the team". Drop details that do not help for this posting.
 - You may restate an activity in the posting's vocabulary only when it is truly the same activity (for example "handled guest complaints" can become "resolved customer complaints"). Never rename an activity into a different skill: do not call complaint handling "objection handling", or scheduling "project management". If the posting asks for a skill the resume does not show, put it in "gaps" instead.
@@ -228,7 +229,21 @@ const docProps = {
   },
 };
 
-export function buildResumeRequest(input: TailorInput, model: string = RESUME_MODEL, missingPhrases: string[] = []) {
+// Two versions of the formatting rules, so a change can be tried live (by the owner, with the owner code) before any
+// visitor sees it. "v1" is what visitors get; "v2" asks for more, smaller named skill groups, one point per bullet,
+// and shorter summary sentences. When v2 has proved better, DEFAULT_VARIANT is switched and v1 can be deleted.
+export type PromptVariant = "v1" | "v2";
+export const DEFAULT_VARIANT: PromptVariant = "v1";
+const V2_TO_V1: [string, string][] = [
+  ["- Summary: at most 3 sentences, written to sound like a person, not a template. Each sentence makes one point in about 25 words or fewer. Never chain several ideas together with commas and \"and\": two short sentences beat one long one.", "- Summary: at most 3 sentences, written to sound like a person, not a template."],
+  ["- Skills: 3 to 6 groups, each named for exactly what it holds (for example Sales, Customer Service, Tools, Leadership), so a recruiter can scan the labels and skip to what they need. Each group holds 3 to 7 short items (one to three words each, never a sentence). Do not pour everything into one long comma-separated line: split a long group into two named groups instead. Only include skills the resume shows or clearly implies from the work described.", "- Skills: 2 to 4 short groups (for example Sales, Tools, Strengths) with comma-separated items. Only include skills the resume shows or clearly implies from the work described."],
+  ["- One point per bullet. If a bullet runs a list of three or more things together with commas, split it into separate bullets or keep only the strongest one or two, so the page reads as short, scannable lines and not as a wall of words.\n", ""],
+];
+function systemFor(variant: PromptVariant) {
+  return variant === "v2" ? SYSTEM : V2_TO_V1.reduce((text, [v2, v1]) => text.replace(v2, v1), SYSTEM);
+}
+
+export function buildResumeRequest(input: TailorInput, model: string = RESUME_MODEL, missingPhrases: string[] = [], variant: PromptVariant = DEFAULT_VARIANT) {
   // Sonnet 5.5 rejects a forced tool call (HTTP 400), so it gets "auto" plus an instruction to call the
   // tool; Haiku accepts the forced call. A reply with no tool call is treated as a failed try upstream.
   const forceTool = model.startsWith("claude-haiku");
@@ -238,7 +253,7 @@ export function buildResumeRequest(input: TailorInput, model: string = RESUME_MO
     max_tokens: 8000,
     // Medium effort keeps the thinking short: a rewrite does not need deep reasoning, and it costs less.
     output_config: { effort: "medium" },
-    system: `${SYSTEM}${input.fromScratch ? SCRATCH_RULES : ""}${input.matchDesign ? DESIGN_RULES : ""}${input.coverLetter ? COVER_LETTER_RULES : ""}\n\nToday\'s date is ${new Date().toISOString().slice(0, 10)}. A job that says "Present" is still current.\n\nAlways answer by calling the ${TOOL_NAME} tool exactly once. Do not write any other text.`,
+    system: `${systemFor(variant)}${input.fromScratch ? SCRATCH_RULES : ""}${input.matchDesign ? DESIGN_RULES : ""}${input.coverLetter ? COVER_LETTER_RULES : ""}\n\nToday\'s date is ${new Date().toISOString().slice(0, 10)}. A job that says "Present" is still current.\n\nAlways answer by calling the ${TOOL_NAME} tool exactly once. Do not write any other text.`,
     tools: [
       {
         name: TOOL_NAME,

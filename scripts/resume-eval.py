@@ -208,6 +208,7 @@ def main():
     ap.add_argument("--match-design", action="store_true", help="ask for the original's look (PDF or image resumes)")
     ap.add_argument("--model", choices=["claude-sonnet-5-5", "claude-haiku-5-5"], help="default: the site's own choice")
     ap.add_argument("--expect-entries", type=int, default=0, help="how many jobs and projects the original has")
+    ap.add_argument("--variant", choices=["v1", "v2"], default="v1", help="v1 is what visitors get; v2 is the newer formatting rules (owner only)")
     ap.add_argument("--base-url", default="https://thewarthens.com")
     ap.add_argument("--owner-code-file", default="~/.resume-owner-code")
     ap.add_argument("--out", default="resume-evals")
@@ -226,6 +227,7 @@ def main():
         "email": "resume-eval@example.com",
         "source": "Other",
         "ownerCode": code,
+        "promptVariant": a.variant,
     }
     if a.model:
         body["model"] = a.model
