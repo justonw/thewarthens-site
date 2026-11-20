@@ -11,6 +11,7 @@ Created Nov 19, 2026. I am not a lawyer. These files are working drafts for you 
 | `security-checklist.md` | Accounts to lock down, what the code already does, what to add | You do Part 1 (about 1 hour) |
 | `tester-consent-draft.md` | A short agreement for people who test before launch | Fill the brackets, send before anyone tests |
 | `claims-and-wording-audit.md` | Statements about results and privacy on the site | You decide the "needs your decision" list |
+| `third-parties.json` | The approved list of outside services the code talks to. `scripts/check-third-parties.mts` fails if the code uses one that is not listed | Run the check before every push; add any new service here and in `data-map.md` first |
 
 ## Order I would do things
 1. Security checklist, Part 1 (you). This has the biggest risk reduction for the least time.
@@ -18,6 +19,9 @@ Created Nov 19, 2026. I am not a lawyer. These files are working drafts for you 
 3. Refund policy decided: all sales final.
 4. Send the data map, privacy policy, terms, and refund policy to an attorney for one review (ask them to also look at the partner program and the plan for an opt-in sharing program).
 5. I build the three pages and the footer links from the final text, you preview, then push.
+
+## Third parties and the policy
+The public policy describes **kinds** of providers (AI provider, email service, payment processor, host, video platform) so it stays true as providers change. The real company names live in `third-parties.json` and `data-map.md`. Rule: nothing that receives visitor data ships until it is added to both and the policy still fits. Run `node --experimental-strip-types scripts/check-third-parties.mts` before each push.
 
 ## When the opt-in sharing program is built
 Add a section to the privacy policy covering: what is shared, how it is redacted (and that redaction cannot be guaranteed), who reads it, how long it is kept, that it is not used to train AI models, how to withdraw and delete by sharing ID. Do not publish that section before the feature exists.

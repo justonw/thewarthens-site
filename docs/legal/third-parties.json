@@ -1,0 +1,27 @@
+{
+  "_about": "The approved list of outside services the site code talks to. scripts/check-third-parties.mts fails when the code uses something that is not listed here. Before a new service is added: (1) add it here, (2) add it to docs/legal/data-map.md, (3) make sure the privacy policy still describes its kind of provider. Real names live here and in the data map; the public policy only describes kinds of providers.",
+  "hosts": {
+    "api.anthropic.com": { "kind": "AI provider", "receives": "resume, job posting, and what the person typed, to write the documents" },
+    "api.resend.com": { "kind": "email service", "receives": "email addresses and the message, to send copies and notes" },
+    "api.stripe.com": { "kind": "payment processor", "receives": "email, price, and the pack bought, to open a checkout" },
+    "www.youtube.com": { "kind": "video platform", "receives": "the visitor's browser, when an embedded video loads" },
+    "i.ytimg.com": { "kind": "video platform", "receives": "the visitor's browser, when a video thumbnail loads" }
+  },
+  "secrets": {
+    "CLAUDE_API_KEY": "AI provider key",
+    "RESEND_API_KEY": "email service key",
+    "STRIPE_SECRET_KEY": "payment processor key",
+    "STRIPE_WEBHOOK_SECRET": "payment processor webhook signing secret"
+  },
+  "packages": {
+    "@netlify/blobs": "website host: stores counters and lists",
+    "docx": "builds Word files in the server (no data leaves)",
+    "mammoth": "reads Word files in the server (no data leaves)",
+    "next": "web framework",
+    "pdf-lib": "builds PDFs (no data leaves)",
+    "pdfjs-dist": "reads PDFs (no data leaves)",
+    "react": "web framework",
+    "react-dom": "web framework",
+    "tesseract.js": "reads pictures of text in the browser (no data leaves)"
+  }
+}

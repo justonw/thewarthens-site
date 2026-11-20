@@ -26,7 +26,7 @@ You keep ownership of what you submit and of the documents you produce. You give
 ## Free allowance, purchases, and fair use
 - Each email address gets a set number of free builds, and tools have monthly limits per email. We may change them.
 - Do not try to get around limits, use the tools to send unsolicited messages to other people, copy our site in bulk with automated tools, or interfere with the site.
-- Paid packs add builds to the email address used at checkout. Payments are processed by Stripe. See the Refund Policy.
+- Paid packs add builds to the email address used at checkout. Payments are processed by our payment processor. **All sales are final.** See the Refund Policy.
 
 ## Our content
 The site's text, designs, videos, and software belong to us or our licensors. You may use the documents you create for your own job search. You may not copy or resell our site content or tools.
