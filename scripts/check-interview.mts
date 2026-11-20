@@ -129,4 +129,10 @@ assert.ok(complete.seconds >= 40 && complete.seconds <= 55, `about 45 seconds fo
 assert.ok(lib.openingCheck(nWords(200), undefined).items[0].ok === false, "too long is flagged");
 assert.ok(lib.openingCheck("I led 11 agents, cut 21 days to 13, and grew 30 percent in 2024 with 45 accounts. " + nWords(80), undefined).items.some((i: any) => !i.ok && i.label.includes("pile of numbers")), "stacked numbers are flagged");
 
+// A spelled-out length of time counts as a number, and the opening may not work out years from dates.
+const spelledSheet = lib.cleanSheet({ ...good, opening: good.opening + " I have done acute care for seven years." }, "manager");
+assert.ok(lib.inventedNumbers(spelledSheet, [JSON.stringify({ x: "Support lead, 2022 to present, 11 agents, 21 days to 13" })]).includes("7"), "an invented spelled-out length of time is caught");
+assert.equal(lib.inventedNumbers(lib.cleanSheet({ ...good, opening: good.opening + " I volunteered for four years." }, "manager"), ["I volunteered at a food pantry for four years"]).includes("4"), false, "a spelled-out time the person said is allowed");
+assert.ok(v2.system.includes("Do not state how long they have done something") && v2.system.includes("until 2024"), "no worked-out lengths of time, and ended jobs are said plainly");
+
 console.log("interview checks passed");

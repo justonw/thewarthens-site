@@ -2,7 +2,7 @@ import { timingSafeEqual } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { RESUME_MODEL, cleanText, parseDoc, type ResumeDoc } from "@/lib/resume-tailor";
 import { DEEP_PER_EMAIL_PER_MONTH, DEEP_PER_MONTH, INTERVIEW_V2, isStage, plainText, type DeepAnswer, type QuestionKind, type Stage } from "@/lib/interview";
-import { buildDeepRequest, deepNumbers, parseDeepResponse, type DeepInput } from "@/lib/interview-deep";
+import { blankRisky, buildDeepRequest, deepNumbers, parseDeepResponse, riskyClaims, type DeepInput } from "@/lib/interview-deep";
 import { getKv, bumpCounter, monthKey, emailKey } from "@/lib/resume-limits";
 import { isLiveHost } from "@/lib/coaching-recipients";
 
@@ -163,6 +163,15 @@ export async function POST(req: NextRequest) {
       const second = await ask({ ...input, fix: `Your last answer used numbers that are not in the material: ${invented.join(", ")}. Remove them, or use only numbers from the resume, the stories, or the example. Keep every rule.` });
       if (second) deep = second;
     }
+  }
+  // Sentences about what the person did, or how they usually act, that nobody told us: ask once more, then leave a blank for their own detail.
+  if (deep) {
+    const claims = riskyClaims(deep.draft, sources);
+    if (claims.length > 0) {
+      const again = await ask({ ...input, fix: `Your last answer described things the person never said they did or how they act: "${claims.join('" and "')}". Remove them. Say only what the resume, the stories, or their example say, and leave a [short blank] for any detail only they know. Keep every rule.` });
+      if (again && deepNumbers(again, sources).length === 0) deep = again;
+    }
+    deep = { ...deep, draft: blankRisky(deep.draft, sources) };
   }
   if (!deep) {
     await giveBack();

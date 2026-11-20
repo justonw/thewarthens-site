@@ -91,7 +91,10 @@ export function parseDeepResponse(data: unknown, example: string): DeepAnswer | 
   return deep;
 }
 
-const numbersIn = (text: string) => (text.replace(/(\d),(?=\d{3}\b)/g, "$1").match(/\d+(?:\.\d+)?/g) ?? []).map((n) => n.replace(/^0+(?=\d)/, ""));
+const SPELLED: Record<string, string> = { one: "1", two: "2", three: "3", four: "4", five: "5", six: "6", seven: "7", eight: "8", nine: "9", ten: "10", eleven: "11", twelve: "12" };
+// "seven years" is a number too: a spelled-out length of time counts the same as digits, so an invented one is caught.
+const spelledNumbers = (text: string) => text.replace(/\b(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\b(?=\s+(?:years?|months?)\b)/gi, (m) => SPELLED[m.toLowerCase()]);
+const numbersIn = (text: string) => (spelledNumbers(text).replace(/(\d),(?=\d{3}\b)/g, "$1").match(/\d+(?:\.\d+)?/g) ?? []).map((n) => n.replace(/^0+(?=\d)/, ""));
 
 // Numbers in the answer (and the coaching) that appear nowhere in what the person gave us. Any such number is a possible invention.
 // The question and the posting's own words may carry numbers (for example "3+ years"), so they count as sources.
@@ -103,5 +106,31 @@ export function deepNumbers(deep: DeepAnswer, sources: string[]): string[] {
 
 // Highlights: the [short blanks] in a draft, so the screen can show them and a check can count them.
 export const blanksIn = (text: string): string[] => text.match(/\[[^\]\n]{2,60}\]/g) ?? [];
+
+// Sentences in the first person that describe what the person did in the moment, or how they usually act, in words the material never
+// uses: habits, stances, and scenes the AI made up. The first answer may only hold what the person gave us, plus [blanks].
+const RISKY =
+  /\b(people tell me|i always|i usually|i never|i make sure|i made sure|i'd rather|i would rather|i first|first, i|i go to|i went back|i check|i look at|i looked|i listen|i listened|i stayed|i talked|i dealt|i took (?:ownership|charge)|i stepped in|i pulled|i didn't skip|i did not skip|instead of passing|i'm someone who|i am someone who|i tend to)\b/i;
+const sentencesOf = (text: string) => text.split(/(?<=[.!?])\s+/).filter(Boolean);
+
+export function riskyClaims(draft: string, sources: string[]): string[] {
+  const hay = sources.join(" ").toLowerCase();
+  return sentencesOf(draft).filter((sent) => {
+    const hit = sent.match(RISKY);
+    return !!hit && !hay.includes(hit[0].toLowerCase());
+  });
+}
+
+// What is left when those sentences are replaced by one blank for the person's own true detail.
+export function blankRisky(draft: string, sources: string[]): string {
+  const bad = new Set(riskyClaims(draft, sources));
+  if (bad.size === 0) return draft;
+  const out: string[] = [];
+  for (const sent of sentencesOf(draft)) {
+    if (!bad.has(sent)) out.push(sent);
+    else if (out[out.length - 1] !== "[what you did, in your own words]") out.push("[what you did, in your own words]");
+  }
+  return out.join(" ");
+}
 
 export { plainText };

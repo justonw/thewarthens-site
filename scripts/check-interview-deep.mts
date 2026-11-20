@@ -73,6 +73,18 @@ check("a number nobody gave is caught", deep.deepNumbers(invented, sources).join
 check("a number in a follow-up hint is caught too", deep.deepNumbers({ ...parsed, followUps: [{ q: "Did it grow 300 percent?", hint: "" }] }, sources).join() === "300");
 check("blanks are counted", deep.blanksIn("I led [how many people] and [what happened].").length === 2 && deep.blanksIn("no blanks here").length === 0);
 
+// Made-up habits and scenes are caught, and left as a blank for the person's own detail.
+const src2 = [JSON.stringify({ ...doc, contact: [] }), "I stayed steady when everything landed at once."];
+const risky = "I handle complaints at Brightcart. First, I go to the guest and listen to the whole story. People tell me I am steady. I stayed steady, which came from my family's restaurant. I'd rather stay with them until it is sorted. [what happened in the end]";
+const found = deep.riskyClaims(risky, src2);
+check("made-up actions and habits are found", found.length === 3 && found.some((x: string) => x.includes("People tell me")) && found.some((x: string) => x.includes("I'd rather")) && found.some((x: string) => x.startsWith("First, I go")));
+check("a habit the person really said is allowed", !found.some((x: string) => x.includes("I stayed steady")));
+const cleaned = deep.blankRisky(risky, src2);
+check("they become one blank each, and what the person gave stays", cleaned.includes("[what you did, in your own words]") && !cleaned.includes("People tell me") && cleaned.includes("I handle complaints at Brightcart") && cleaned.includes("I stayed steady") && cleaned.includes("[what happened in the end]"));
+check("a clean draft is not changed", deep.blankRisky(good.input.draft, src2) === good.input.draft && deep.riskyClaims(good.input.draft, src2).length === 0);
+check("a spelled-out length of time is a number too", deep.deepNumbers({ ...parsed, draft: parsed.draft + " I did this for seven years." }, sources).join() === "7");
+check("the rule against invented habits is in the prompt", req.system.includes("Do not state habits or rules the person never said"));
+
 if (failed) {
   console.error(`\n${failed} check(s) failed.`);
   process.exit(1);
