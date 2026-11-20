@@ -41,6 +41,10 @@ check("the owner can turn the implication clause on", withImpl.system.startsWith
 check("the implication clause is skipped for a follow-up and for a friend", !(buildOutreachRequest({ ...base, implication: true, purpose: "followup" }, "m") as any).system.includes("Peer-professional implication") && !(buildOutreachRequest({ ...base, implication: true, audience: "friend" }, "m") as any).system.includes("Peer-professional implication"));
 check("the clause is hedged, general, and never about their own team", withImpl.system.includes("tends to") && withImpl.system.includes("never the reader's own team") && withImpl.system.includes("No numbers"));
 check("everyone is told to name a group in full words", req.system.includes('never a clipped shorthand like "on your grade"'));
+check("the note and message are written in the first person, never as '{Name} has'", req.system.includes('Write the "note" and the "message" in the first person') && req.system.includes('Never call the job seeker by name inside the note'));
+check("the old rule that told the model to use the person's name is gone", !req.system.includes("Use their name, or leave the subject out") && req.system.includes("The only text that describes the job seeker from the outside is the short summary a friend can forward"));
+check("the job title is said the short, plain way", req.system.includes('"Executive Assistant", not "Executive Assistant, Office of the CEO (Hybrid)"') && req.system.includes("This applies to the note and the subject too"));
+check("the first-person rule holds for every audience and a follow-up", (["recruiter", "manager", "peer", "friend"] as const).every((a) => (buildOutreachRequest({ ...base, audience: a }, "m") as any).system.includes("Never call the job seeker by name inside the note")) && (buildOutreachRequest({ ...base, purpose: "followup" }, "m") as any).system.includes("in the first person, as the job seeker"));
 
 const friend: any = buildOutreachRequest({ ...base, audience: "friend", relationship: "we worked together at Northline" }, "m");
 check("a friend request carries how they know each other, as the person's own words", JSON.stringify(friend.messages).includes("<relationship>we worked together at Northline</relationship>"));
@@ -50,7 +54,7 @@ check("the referral rules are in the prompt", friend.system.includes("introducti
 const follow: any = buildOutreachRequest({ ...base, purpose: "followup", daysSince: 6 }, "m");
 check("a follow-up says how long ago they applied", JSON.stringify(follow.messages).includes("FOLLOW-UP") && JSON.stringify(follow.messages).includes("about 6 days ago"));
 check("a follow-up does not ask for the person's profile", !JSON.stringify(follow.messages).includes("did not add anything about the person"));
-check("no guessing pronouns and no assumed time since they spoke", friend.system.includes("Never use he, she, him, her, his, or they for the job seeker") && friend.system.includes("never say how long it has been"));
+check("no guessing pronouns and no assumed time since they spoke", friend.system.includes("never use he, she, him, her, his, or they, because their gender is not known") && friend.system.includes("never say how long it has been"));
 check("the follow-up rules are in the prompt", follow.system.includes("brief, polite check-in") && follow.system.includes("never suggest the company owes a reply"));
 check("em and en dashes become commas", plain("Led onboarding — and renewals – well", 200) === "Led onboarding, and renewals, well");
 check("number ranges keep a hyphen", plain("2020–2022", 50) === "2020-2022");

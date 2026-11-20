@@ -47,6 +47,9 @@ export type LibraryEntry = {
   interview: PrepSheet | null;
   // A general resume for a kind of role (the title), not tailored to a posting. It is never "applied" to a job.
   general: boolean;
+  // Set when the person checked "use my session to improve this web application" for this build, and a copy was kept.
+  // It is the id used to stop sharing. Cleared once they stop sharing.
+  shareId?: string;
 };
 
 export const noLibrary: LibraryEntry[] = [];
@@ -205,6 +208,7 @@ export function cleanLibrary(raw: unknown): LibraryEntry[] {
       answers,
       interview: o.general !== true && o.interview && typeof o.interview === "object" && isStage((o.interview as Record<string, unknown>).stage) ? cleanSheet(o.interview, (o.interview as { stage: "phone" | "manager" | "final" }).stage) : null,
       general: o.general === true,
+      shareId: typeof o.shareId === "string" && /^[A-Za-z0-9-]{16,64}$/.test(o.shareId) ? o.shareId : undefined,
     });
   }
   return out;

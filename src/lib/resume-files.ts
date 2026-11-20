@@ -128,7 +128,7 @@ function resolveLook(style: ResumeStyle, design?: ResumeDesign, size: LookOption
 // Helvetica can only draw Western European characters. Keep those and flatten anything else.
 const LOOKALIKES: Record<string, string> = { "\u0141": "L", "\u0142": "l", "\u0110": "D", "\u0111": "d", "\u0131": "i", "\u0126": "H", "\u0127": "h" };
 
-function pdfSafe(text: string) {
+export function pdfSafe(text: string) {
   let out = "";
   for (const raw of text) {
     const ch = LOOKALIKES[raw] ?? raw;

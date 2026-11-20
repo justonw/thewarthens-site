@@ -206,6 +206,9 @@ export default function ContactForm({ email }: { email: string }) {
           Goes straight to our inbox, and we read it ourselves.
         </p>
       </div>
+      <p className="mt-3 text-xs text-foreground-muted">
+        By submitting your email, you consent to receive communications from The Warthens, such as replies to your message. You can opt out at any time.
+      </p>
     </form>
   );
 }

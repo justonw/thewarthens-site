@@ -557,6 +557,9 @@ export default function PresentMissingLesson() {
               {message}
             </p>
           </form>
+          <p className="mt-3 text-xs text-blue-200">
+            By submitting your email, you consent to receive communications from The Warthens, starting with your PDF. You can unsubscribe at any time.
+          </p>
           <p className="mt-4 text-sm text-blue-200">
             {loaded ? "Your notes are saved on this device as you type." : ""}{" "}
             <button type="button" onClick={clearNotes} className="inline-flex min-h-11 items-center underline underline-offset-4 hover:text-white">

@@ -4,6 +4,7 @@ import { RESUME_MODEL, cleanText, parseDoc, type ResumeDoc } from "@/lib/resume-
 import {
   INTERVIEW_PER_EMAIL_PER_MONTH,
   INTERVIEW_PER_MONTH,
+  INTERVIEW_V2,
   buildInterviewRequest,
   inventedNumbers,
   isStage,
@@ -126,6 +127,8 @@ export async function POST(req: NextRequest) {
     unmet: strings(body.unmet, 200, 6),
     stage,
     lensText,
+    // The new opening rules: the owner can test them first; everyone gets them once INTERVIEW_V2 is switched on.
+    voice: body.voice === true && (owner || INTERVIEW_V2) ? true : INTERVIEW_V2,
   };
 
   // Hands the count back if nothing usable came back, so a failed try costs the person nothing.

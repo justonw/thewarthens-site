@@ -157,7 +157,7 @@ export default function BuyMore({
               {waitState === "sending" ? "Saving..." : "Join the waitlist"}
               <span aria-hidden>→</span>
             </button>
-            <p className="mt-2 text-center text-xs text-foreground-muted">You get one email when paid builds open, and nothing else from this.</p>
+            <p className="mt-2 text-center text-xs text-foreground-muted">By submitting your email, you consent to receive communications from The Warthens. You&apos;ll get an email when paid builds open.</p>
             {waitState === "error" && (
               <p role="alert" className="mt-2 text-center text-sm text-red-700">
                 We couldn&apos;t save that. Check the email address and try again, or email info@thewarthens.com.

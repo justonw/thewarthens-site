@@ -51,7 +51,7 @@ export default function BeforeYouSend({
   const ready = open === 0;
 
   return (
-    <section aria-labelledby="before-send-title" className="rounded-3xl border border-border-subtle bg-background-elevated p-4 sm:p-5">
+    <section id="before-you-send" aria-labelledby="before-send-title" className="scroll-mt-24 rounded-3xl border border-border-subtle bg-background-elevated p-4 sm:p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-3">
           <h3 id="before-send-title" className="text-base font-semibold tracking-tight">

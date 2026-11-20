@@ -20,7 +20,8 @@ import {
   parseResumeResponse,
   type TailorInput,
 } from "@/lib/resume-tailor";
-import { DEFAULT_MONTHLY_CAP, FREE_PER_EMAIL, getKv, purchasedTotal, refund, reserve, withTimeout, type Reservation } from "@/lib/resume-limits";
+import { DEFAULT_MONTHLY_CAP, FREE_PER_EMAIL, emailKey, getKv, purchasedTotal, refund, reserve, withTimeout, type Reservation } from "@/lib/resume-limits";
+import { saveShare } from "@/lib/session-share";
 import { claimRefund, finishBuildMark, startBuildMark, validBuildId, type BuildMark } from "@/lib/resume-builds";
 import { isLiveHost } from "@/lib/coaching-recipients";
 import { fieldNotes, matchLenses } from "@/lib/interview-lenses";
@@ -339,6 +340,17 @@ export async function POST(req: NextRequest) {
     // daily Resend allowance that visitors' receipts and resume copies share.
     if (!unlimited) await notify(live, email, parsed.result.postingTitle, source, Boolean(letter));
     if (mark && kv) await withTimeout(finishBuildMark(kv, mark), 5000, "finish the build record").catch(() => {});
+    // Only when the person checked "use my session to improve this web application" for THIS build. A failure here never
+    // fails the build: the page is told whether a copy was kept, and shows the choice accordingly. Owner test builds are never kept.
+    let shareId: string | null = null;
+    if (body.shareOk === true && !unlimited && kv && validBuildId(buildId)) {
+      const kept = await withTimeout(
+        saveShare(kv, buildId, emailKey(email), { resumeText, postingText: general ? "" : postingText, notes, result: parsed.result, name: parsed.result.resume.name, hadFiles: resumeFiles.length + postingFiles.length > 0, email }),
+        6000,
+        "keep a shared copy"
+      ).catch(() => false);
+      if (kept) shareId = buildId;
+    }
     // A count of the kind of job (never anything from the resume), for the owner report. Real visitors on the live site only.
     if (!unlimited && live && kv) await withTimeout(countField(kv, parsed.result.postingTitle, parsed.result.postingKeywords, general), 4000, "count the field").catch(() => {});
 
@@ -359,6 +371,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       ok: true,
       usage,
+      shareId,
       result: parsed.result,
       letterFailed,
       // Free builds left, plus any paid builds they bought.

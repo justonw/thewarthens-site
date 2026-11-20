@@ -69,7 +69,7 @@ export default function StayInTouch({ from }: { from: "tech" | "faith" }) {
           {message}
         </p>
       )}
-      <p className="mt-3 text-xs text-foreground-muted">Every note has an unsubscribe link.</p>
+      <p className="mt-3 text-xs text-foreground-muted">By submitting your email, you consent to receive communications from The Warthens. Every note has an unsubscribe link.</p>
     </div>
   );
 }

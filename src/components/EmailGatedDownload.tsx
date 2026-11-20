@@ -132,8 +132,7 @@ export default function EmailGatedDownload({
         </p>
       )}
       <p className="mt-3 text-xs text-foreground-muted">
-        No spam, just these downloads and the occasional resource we think is
-        worth your time. Unsubscribe anytime.
+        By submitting your email, you consent to receive communications from The Warthens.
       </p>
     </div>
   );

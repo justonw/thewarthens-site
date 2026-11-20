@@ -31,6 +31,25 @@ export function addStoryTo(list: Story[], story: Story): Story[] {
   return next.slice(-MAX_STORIES);
 }
 
+// The three questions that let the interview opening sound like the person. Each answer is kept as a story whose topic starts with
+// "Your story", so every later build can use it (interview prep reads exactly those lines for the human part of the opening).
+export const YOUR_STORY_PREFIX = "Your story";
+export const YOUR_STORY_PROMPTS: { topic: string; question: string; placeholder: string }[] = [
+  { topic: "Your story, what connects my work", question: "What connects the jobs and seasons of life on your resume?", placeholder: "For example: I keep ending up as the person who keeps everyone moving." },
+  { topic: "Your story, what shaped how I work", question: "What from outside work (family, faith, a hard season, something you lived through) shapes how you work?", placeholder: "A sentence or two, in your own words." },
+  { topic: "Your story, why this work and why now", question: "Why this kind of work, and why now?", placeholder: "What you want to do next, and what is pulling you toward it." },
+];
+
+// Replaces the story with the same topic (so re-answering a question updates it, and older versions do not sit beside the new one).
+export function replaceStoryTopic(list: Story[], story: Story): Story[] {
+  return addStoryTo(list.filter((s) => s.topic.toLowerCase() !== story.topic.toLowerCase()), story);
+}
+
+// The newest saved answer for each "Your story" question, in the order the questions are asked.
+export function yourStoryAnswers(list: Story[]): string[] {
+  return YOUR_STORY_PROMPTS.map((p) => [...list].reverse().find((s) => s.topic.toLowerCase() === p.topic.toLowerCase())?.answer ?? "");
+}
+
 // The stories as a block of notes for the next build, newest first, within a character budget. The person said every one of
 // these themselves, so the resume tool treats them like the rest of their notes.
 export function storiesAsNotes(list: Story[], budget: number): string {

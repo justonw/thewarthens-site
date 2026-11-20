@@ -75,4 +75,31 @@ assert.ok(out.startsWith("INTERVIEW PREP: Customer Success Manager at Lumen Anal
 assert.ok(out.includes("QUESTIONS TO ASK THEM") && out.includes("REMEMBER"));
 assert.ok(!/[—–]/.test(out), "no dashes in the text");
 
+// The new version (voice: true). Visitors keep the old opening rules until INTERVIEW_V2 is switched on.
+assert.equal(lib.INTERVIEW_V2, false, "the new version is OFF for visitors until the real output has been read and approved");
+const v2: any = lib.buildInterviewRequest({ ...input, voice: true }, "claude-sonnet-5-5");
+assert.notEqual(v2.system, req.system, "voice changes the rules");
+assert.ok(v2.system.includes("90 to 120 words") && v2.system.includes('starts with "Your story"') && v2.system.includes("not a resume read aloud"), "the spoken opening rules are in");
+assert.ok(v2.system.includes('Never start with "I am a [title] at [company], a [kind of] company"'), "the resume-summary opener is banned");
+assert.ok(v2.system.includes("at most one number, never two numbers side by side") && v2.system.includes("passionate, driven, results-driven, proven"), "stacked numbers and AI words are banned");
+assert.ok(!v2.system.includes("Do not put opinions, feelings, or self-praise in the opening"), "feelings are allowed when the person said them");
+assert.ok(v2.system.includes("Feelings and opinions are allowed only when the person said them in their own words"), "and only then");
+assert.ok(!req.system.includes("90 to 120 words") && req.system.includes("70 to 100 words"), "the old rules stay for everyone else");
+assert.ok(v2.system.includes("Never invent an employer") && v2.system.includes("is NOT their current title") && v2.system.includes("Never write he, she, him, her, his, or they about the person"), "the safety rules survive in the new version");
+const v2lens: any = lib.buildInterviewRequest({ ...input, voice: true, lensText: "\n\nRole lens. Kind of role: Test." }, "claude-sonnet-5-5");
+assert.ok(v2lens.system.startsWith(v2.system) && v2lens.system.includes("Role lens."), "a lens still goes after the new rules");
+
+// A saved sheet can carry the deeper coaching for a question, bounded and cleaned; a sheet without it is unchanged.
+const deepRaw = { draft: "I rebuilt the onboarding checklist and got first sale from 21 days to 13. [what the team did differently]", strong: ["Name the one decision you made."], avoid: ["Do not list every task."], followUps: [{ q: "What would you do differently?", hint: "Say one real thing you learned." }, { q: "x", hint: "too short" }], example: "I rebuilt it in a weekend." };
+const deep = lib.cleanDeep(deepRaw);
+assert.ok(deep && deep.followUps.length === 1 && deep.draft.includes("[what the team did differently]") && deep.strong.length === 1, "a deep answer is cleaned and keeps its blanks");
+assert.equal(lib.cleanDeep({ draft: "short" }), null, "nothing usable is refused");
+assert.equal(lib.cleanDeep(null), null);
+const withDeep = lib.cleanSheet({ ...good, questions: good.questions.map((q: any, i: number) => (i === 0 ? { ...q, deep: deepRaw } : q)) }, "manager");
+assert.ok(withDeep.questions[0].deep && !withDeep.questions[1].deep, "deep coaching is kept only where it was built");
+const deepText = lib.sheetToPlainText(withDeep, "Job");
+assert.ok(deepText.includes("Your first answer:") && deepText.includes("Watch out for:") && deepText.includes("They might ask next: What would you do differently?"), "the plain text carries the deeper coaching");
+assert.ok(!/[—–]/.test(deepText));
+assert.ok(lib.sheetText(withDeep).length > 0);
+
 console.log("interview checks passed");

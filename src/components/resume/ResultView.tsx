@@ -13,14 +13,15 @@ import { NO_TRACKER_ENTRIES, TRACKER_KEY, type TrackerEntry } from "@/lib/job-tr
 import ResumeEditor from "./ResumeEditor";
 import CoverLetterEditor from "./CoverLetterEditor";
 import NextSteps from "./NextSteps";
-import { Confetti, ReadinessRing } from "./Celebrate";
+import { Confetti } from "./Celebrate";
 import ShareCard from "./ShareCard";
 import StrengthenPanel from "./StrengthenPanel";
 import OutreachPanel from "./OutreachPanel";
 import AnswersPanel from "./AnswersPanel";
 import InterviewPanel from "./InterviewPanel";
 import { sheetToPlainText, type PrepSheet } from "@/lib/interview";
-import { answersToText, cleanLetter, fileSlug, messagesToText } from "@/lib/kit-export";
+import { answersToDocument, answersToText, cleanLetter, fileSlug, kitFileName, messagesToDocument, messagesToText, sheetToDocument } from "@/lib/kit-export";
+import type { KitDocument } from "@/lib/kit-documents";
 import LookPanel from "./LookPanel";
 import { DEFAULT_LOOK, LOOK_KEY, cleanLook, type LookOptions } from "@/lib/resume-look";
 import NumbersCoach from "./NumbersCoach";
@@ -28,7 +29,7 @@ import KitNav, { type KitId, type KitItem } from "./KitNav";
 import BeforeYouSend, { type ReadyItem } from "./BeforeYouSend";
 import DownloadHub, { type HubRow } from "./DownloadHub";
 import MakeStronger from "./MakeStronger";
-import { STORIES_KEY, addStoryTo, newStory, noStories, type Story } from "@/lib/resume-profile";
+import { STORIES_KEY, addStoryTo, newStory, noStories, replaceStoryTopic, type Story } from "@/lib/resume-profile";
 import { cleanDoc, sameJob, type SavedAnswer, type SavedMessage } from "@/lib/resume-library";
 import type { Purpose } from "@/lib/outreach";
 
@@ -288,12 +289,34 @@ export default function ResultView({
       ? { id: "contact", label: "Contact details", detail: `No ${missingContact} made it onto the resume. A recruiter needs a way to reach you.`, state: "fix", action: { label: "Add it", onClick: () => jumpTo("rt-contact-fix", true) } }
       : { id: "contact", label: "Contact details", detail: "Your email and phone are on it.", state: "ok" },
     otherFlags.length > 0
-      ? { id: "checks", label: "Resume check", detail: `${otherFlags.map((r) => r.label).join(", ")}.`, state: "fix", action: { label: "See what", onClick: () => jumpTo("resume-check") } }
+      ? { id: "checks", label: "Resume check", detail: `${otherFlags.map((r) => r.label).join(", ")}.`, state: "fix", action: { label: "See what", onClick: () => jumpTo(otherFlags[0] ? `check-${otherFlags[0].id}` : "resume-check") } }
       : { id: "checks", label: "Resume check", detail: `All ${ats.rows.length} checks pass.`, state: "ok" },
   ];
   // The kit: every part a finished resume leads to, in the order a job search happens, each marked done or needing something.
   // The same count the "Before you send" card shows: open needed items, including reading it through.
   const resumeNeeds = readyItems.filter((i) => i.state === "fix").length + (readThrough ? 0 : 1);
+  // The one status line in the header. It says in words what is open and takes the person straight to it, so it is never a
+  // number that raises a question with nowhere to click.
+  const firstFix = readyItems.find((i) => i.state === "fix");
+  const headStatus: { tone: "amber" | "blue" | "green"; text: string; go: () => void } = firstFix
+    ? {
+        tone: "amber",
+        text:
+          firstFix.id === "checks"
+            ? `Needs a look: ${otherFlags[0]?.label ?? "Resume check"}${otherFlags.length > 1 ? ` and ${otherFlags.length - 1} more` : ""}`
+            : "Add your contact details",
+        go: () => onResume(() => (firstFix.id === "contact" ? jumpTo("rt-contact-fix", true) : jumpTo(otherFlags[0] ? `check-${otherFlags[0].id}` : "resume-check"))),
+      }
+    : !readThrough
+      ? { tone: "blue", text: "Read it through, then send", go: () => onResume(() => jumpTo("before-you-send")) }
+      : { tone: "green", text: "Ready to send", go: () => onResume(() => jumpTo("rt-download")) };
+  // Those places live on the Resume tab, so open it first when the person is on another tab.
+  function onResume(then: () => void) {
+    if (tab !== "resume") {
+      setTab("resume");
+      window.setTimeout(then, 150);
+    } else then();
+  }
   const hasMessage = (messages?.length ?? 0) > 0;
   const hasAnswer = (answers?.length ?? 0) > 0;
   const kitItems: KitItem[] = [
@@ -331,7 +354,34 @@ export default function ResultView({
   const [letterBusy, setLetterBusy] = useState<"" | "pdf" | "docx">("");
   const jobLine = `${result.postingTitle || doc.headline}${result.postingCompany ? ` at ${result.postingCompany}` : ""}`;
   const jobSlug = fileSlug(result.postingTitle || doc.headline);
-  const textFile = (text: string, name: string) => downloadBlob(new Blob([text], { type: "text/plain;charset=utf-8" }), name);
+  // Messages, answers, and the interview sheet download as real documents (PDF or Word) and can be copied as plain text.
+  const [kitBusy, setKitBusy] = useState("");
+  const [copiedKit, setCopiedKit] = useState("");
+  async function downloadKit(kind: "interview-prep" | "messages" | "answers", ext: "pdf" | "docx", description: KitDocument) {
+    setKitBusy(`${kind}-${ext}`);
+    try {
+      const { buildKitDocx, buildKitPdf } = await import("@/lib/kit-documents");
+      const name = kitFileName(kind, jobSlug, ext);
+      if (ext === "pdf") downloadBlob(new Blob([(await buildKitPdf(description)) as BlobPart], { type: "application/pdf" }), name);
+      else downloadBlob(await buildKitDocx(description), name);
+    } finally {
+      setKitBusy("");
+    }
+  }
+  async function copyKit(key: string, text: string) {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedKit(key);
+      window.setTimeout(() => setCopiedKit(""), 1800);
+    } catch {
+      // Copying can be blocked; the downloads still work.
+    }
+  }
+  const kitActions = (kind: "interview-prep" | "messages" | "answers", description: KitDocument, text: string) => [
+    { label: "Download PDF", onClick: () => void downloadKit(kind, "pdf", description), busy: kitBusy === `${kind}-pdf` },
+    { label: "Download Word", onClick: () => void downloadKit(kind, "docx", description), busy: kitBusy === `${kind}-docx` },
+    { label: copiedKit === kind ? "Copied" : "Copy text", onClick: () => void copyKit(kind, text) },
+  ];
   async function downloadLetter(kind: "pdf" | "docx") {
     if (!letter) return;
     setLetterBusy(kind);
@@ -351,10 +401,21 @@ export default function ResultView({
     {
       id: "resume",
       title: "Resume",
-      detail: `PDF or Word, in the ${RESUME_STYLES.find((x) => x.id === style)?.label ?? "Classic"} template.`,
+      detail: "PDF or Word. Pick the template below, then download.",
+      // The same choice as "Template for your download" on the Resume tab, so it is never out of reach.
+      choice: {
+        legend: "Template",
+        value: style,
+        options: [
+          ...(design ? [{ id: "custom", label: "Match my resume", note: "Uses the look of the resume you gave us: its type, header, and accent color." }] : []),
+          ...RESUME_STYLES.map((st) => ({ id: st.id, label: st.label, note: st.note })),
+        ],
+        onPick: (id) => setStyle(id as ResumeStyle),
+      },
       actions: [
         { label: "Download PDF", onClick: () => void download("pdf"), busy: busy === "pdf" },
         { label: "Download Word", onClick: () => void download("docx"), busy: busy === "docx" },
+        { label: "See a preview", onClick: () => { setHubOpen(false); onResume(() => { setPreview(true); jumpTo("rt-download"); }); } },
       ],
     },
   ];
@@ -375,21 +436,21 @@ export default function ResultView({
         id: "messages",
         title: "Messages",
         detail: hasMessage ? `${messages?.length ?? 0} saved for this job.` : "Short notes to a real person.",
-        actions: hasMessage ? [{ label: "Download as text", onClick: () => textFile(messagesToText(messages ?? [], jobLine), `messages-${jobSlug}.txt`) }] : [],
+        actions: hasMessage ? kitActions("messages", messagesToDocument(messages ?? [], jobLine), messagesToText(messages ?? [], jobLine)) : [],
         empty: { text: "Not written yet.", action: { label: "Write one", onClick: () => goTo("reach") } },
       },
       {
         id: "answers",
         title: "Application answers",
         detail: hasAnswer ? `${answers?.length ?? 0} saved for this job.` : "Drafts for the questions an application asks.",
-        actions: hasAnswer ? [{ label: "Download as text", onClick: () => textFile(answersToText(answers ?? [], jobLine), `answers-${jobSlug}.txt`) }] : [],
+        actions: hasAnswer ? kitActions("answers", answersToDocument(answers ?? [], jobLine), answersToText(answers ?? [], jobLine)) : [],
         empty: { text: "Not drafted yet.", action: { label: "Draft one", onClick: () => goTo("answers") } },
       },
       {
         id: "interview",
         title: "Interview prep sheet",
         detail: interview ? "Likely questions and the facts from your history to use." : "Likely questions for this job.",
-        actions: interview ? [{ label: "Download as text", onClick: () => textFile(sheetToPlainText(interview, jobLine), `interview-prep-${jobSlug}.txt`) }] : [],
+        actions: interview ? kitActions("interview-prep", sheetToDocument(interview, jobLine), sheetToPlainText(interview, jobLine)) : [],
         empty: { text: "Not built yet.", action: { label: "Build it", onClick: () => goTo("interview") } },
       }
     );
@@ -550,15 +611,17 @@ export default function ResultView({
         <Confetti />
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <ReadinessRing passed={ats.rows.length - flags} total={ats.rows.length} />
             <div>
-              {flags === 0 ? (
-                <p className="rb-pop inline-flex items-center rounded-full bg-green-600 px-3 py-1 text-xs font-bold uppercase tracking-wider text-white">All checks passed</p>
-              ) : (
-                <p className="rb-pop inline-flex items-center rounded-full bg-amber-500 px-3 py-1 text-xs font-bold uppercase tracking-wider text-white">
-                  {flags} check{flags === 1 ? "" : "s"} to fix
-                </p>
-              )}
+              <button
+                type="button"
+                onClick={headStatus.go}
+                className={`rb-pop inline-flex min-h-9 max-w-full items-center gap-1.5 rounded-full px-3.5 py-1.5 text-left text-sm font-semibold text-white transition-opacity hover:opacity-90 ${
+                  headStatus.tone === "amber" ? "bg-amber-600" : headStatus.tone === "blue" ? "bg-blue-600" : "bg-green-700"
+                }`}
+              >
+                {headStatus.text}
+                <span aria-hidden>→</span>
+              </button>
               <h2 className="mt-1.5 text-xl font-semibold tracking-tight sm:text-2xl">
                 Your {general ? "general resume" : letter ? "resume and cover letter" : "resume"} for {result.postingTitle || doc.headline}
                 {result.postingCompany ? ` at ${result.postingCompany}` : ""}
@@ -672,6 +735,7 @@ export default function ResultView({
           saved={interview ?? null}
           onSave={onInterview}
           onStory={(topic, question, answer) => setStories((cur) => addStoryTo(cur, newStory(topic, question, answer)))}
+          onStoryReplace={(topic, question, answer) => setStories((cur) => replaceStoryTopic(cur, newStory(topic, question, answer)))}
           onBack={() => setTab("resume")}
         />
       )}
@@ -795,7 +859,7 @@ export default function ResultView({
               </p>
               <ul className="mt-3 space-y-2.5">
                 {ats.rows.map((r) => (
-                  <li key={r.id} className="flex gap-2.5 text-sm">
+                  <li key={r.id} id={`check-${r.id}`} className="flex scroll-mt-28 gap-2.5 text-sm">
                     <span
                       aria-hidden
                       className={`mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold ${

@@ -203,6 +203,10 @@ export default function ResumeBuilder() {
   );
   // Whether the copy was asked for in the build that produced the result on screen.
   const [mailThis, setMailThis] = useState(false);
+  // "Use my session to improve this web application". For ONE build only: never pre-checked, never remembered, and cleared
+  // again as soon as that build is made, so the next job asks again.
+  const [shareOk, setShareOk] = useState(false);
+  const [shareStopped, setShareStopped] = useState<"" | "working" | "done" | "failed">("");
   const [gaps, setGaps] = useState<ResumeGap[]>([]);
   const [changes, setChanges] = useState<string[]>([]);
   const [remaining, setRemaining] = useState<number | null>(null);
@@ -386,12 +390,13 @@ export default function ResumeBuilder() {
       coverLetter: wantLetter && !general,
       hiringManager: hiringManager.trim(),
       matchDesign: !fromScratch && matchDesign && resumeFiles.some((f) => Boolean(f.attachment)),
+      shareOk,
     };
     // A one-off hiccup on our side should not reach the person: try once more before showing an error.
     // Every try has its own id. When a try does not come back, we first ask the server to give that build back (it
     // may have finished on our side while the connection dropped), so trying again never costs a second build.
     saveDraft(INFLIGHT_DRAFT_KEY);
-    let data: { ok?: boolean; error?: string; message?: string; result?: TailorResult; letterFailed?: boolean; remaining?: number | null; usage?: Usage | null } = {};
+    let data: { ok?: boolean; error?: string; message?: string; result?: TailorResult; letterFailed?: boolean; remaining?: number | null; usage?: Usage | null; shareId?: string | null } = {};
     let status = 0;
     for (let attempt = 1; attempt <= 2; attempt++) {
       const buildId = newBuildId();
@@ -447,7 +452,9 @@ export default function ResumeBuilder() {
     // Keep this build in "My applications" and put the job in the tracker, so there is nothing to remember to do.
     const built = data.result;
     const id = newBuildId();
-    setLibrary((cur) => upsertEntry(cur, entryFromResult(id, built, built.coverLetter ?? null)));
+    setLibrary((cur) => upsertEntry(cur, { ...entryFromResult(id, built, built.coverLetter ?? null), shareId: shareOk && data.shareId ? data.shareId : undefined }));
+    setShareStopped("");
+    setShareOk(false);
     setEntryId(id);
     if (!built.general) trackJob(built.postingCompany, built.postingTitle);
 
@@ -483,6 +490,13 @@ export default function ResumeBuilder() {
     const top = target.getBoundingClientRect().top + window.scrollY - (backWithProblem ? 160 : toolFirst ? 80 : 100);
     window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase]);
+
+  // Tell the page section around the builder which stage it is in, so the "Start here" intro can hide itself once the form is done.
+  useEffect(() => {
+    const section = document.getElementById("start");
+    section?.setAttribute("data-phase", phase);
+    return () => section?.removeAttribute("data-phase");
   }, [phase]);
 
   // Paying on Stripe takes the person to another page and back, which would empty the form. So the form is kept
@@ -592,6 +606,22 @@ export default function ResumeBuilder() {
     return () => window.clearTimeout(timer);
   }, [justPaid]);
 
+  // Stops sharing one build: the saved copy is emptied on our side, and the build here no longer says it is shared.
+  async function stopSharing(id: string) {
+    const e = library.find((x) => x.id === id);
+    if (!e?.shareId) return;
+    setShareStopped("working");
+    try {
+      const res = await fetch("/api/resume-share", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ shareId: e.shareId, email: (email.trim() || saved?.email || "").trim() }) });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) throw new Error("not stopped");
+      setLibrary((cur) => cur.map((x) => (x.id === id ? { ...x, shareId: undefined } : x)));
+      setShareStopped("done");
+    } catch {
+      setShareStopped("failed");
+    }
+  }
+
   function startOver() {
     // Keeps the resume, notes, and email, so the next job takes seconds.
     track("next-job");
@@ -643,6 +673,7 @@ export default function ResumeBuilder() {
     setUsage(null);
     setOriginal(null);
     setEntryId(id);
+    setShareStopped("");
     setPhase("result");
   }
 
@@ -776,7 +807,22 @@ export default function ResumeBuilder() {
   }
 
   if (phase === "result" && doc && result) {
+    const shareNote = current?.shareId || shareStopped === "done" ? (
+      <p role="status" className="mb-4 rounded-xl border border-border-subtle bg-white px-4 py-3 text-xs text-foreground-muted">
+        {shareStopped === "done"
+          ? "Sharing stopped. We emptied the copy we had of this build."
+          : "You chose to let The Warthens use this session to improve this web application. "}
+        {current?.shareId && (
+          <button type="button" onClick={() => entryId && void stopSharing(entryId)} disabled={shareStopped === "working"} className="font-semibold text-blue-700 underline underline-offset-2">
+            {shareStopped === "working" ? "Stopping…" : "Stop sharing this build"}
+          </button>
+        )}
+        {shareStopped === "failed" && " We couldn't stop it just now. Please try again in a minute."}
+      </p>
+    ) : null;
     return (
+      <>
+      {shareNote}
       <ResultView
         key={entryId ?? "new"}
         result={result}
@@ -812,6 +858,7 @@ export default function ResumeBuilder() {
         appliedDaysAgo={current ? followUpDue(current).days || null : null}
         onFollowedUp={entryId ? () => markFollowedUp(entryId) : undefined}
       />
+      </>
     );
   }
 
@@ -1255,6 +1302,12 @@ export default function ResumeBuilder() {
 
       {!(outOfBuilds && nothingToBuy && !justPaid) && (
       <div className="pt-1">
+        <label className="mb-4 flex cursor-pointer items-start gap-3 rounded-2xl border border-border-subtle bg-white px-4 py-3 shadow-sm">
+          <input type="checkbox" checked={shareOk} onChange={(e) => setShareOk(e.target.checked)} className="mt-0.5 h-4 w-4 shrink-0 accent-blue-600" />
+          <span className="text-sm">
+            I&apos;m willing to let The Warthens use this resume-building session to improve this web application.
+          </span>
+        </label>
         <button
           ref={buildButton}
           type="submit"
@@ -1265,7 +1318,7 @@ export default function ResumeBuilder() {
         </button>
         {missing.length > 0 && <p className="mt-2 text-center text-xs text-foreground-muted">Still needed: {missing.join(", ")}.</p>}
         <p className="mt-3 text-center text-xs text-foreground-muted">
-          Your first 2 builds are free. We send your resume and the posting, including any files or screenshots, to an AI service (Anthropic&apos;s Claude) to write your documents. We use your email to count your free builds, to send the copy you ask for (through our email service, Resend), and we may send the occasional resource. Reply to any email from us to opt out. We only reword what&apos;s in your resume and notes. We never add experience you don&apos;t have.
+          Your first 2 builds are free. We send your resume and the posting, including any files or screenshots, to an AI service (Anthropic&apos;s Claude) to write your documents. We use your email to count your free builds, to send the copy you ask for (through our email service, Resend), and we may send the occasional resource. By submitting your email, you consent to receive communications from The Warthens. You can opt out at any time by replying to any email from us. We only reword what&apos;s in your resume and notes. We never add experience you don&apos;t have.
         </p>
       </div>
       )}

@@ -7,10 +7,13 @@ import { useEffect, useRef } from "react";
 // <dialog>, so it traps focus, closes on Escape, and works with a screen reader without extra code.
 
 export type HubAction = { label: string; onClick: () => void; busy?: boolean };
+// A set of options shown as buttons on a row, such as the resume's template. Choosing one changes what the row's downloads make.
+export type HubChoice = { legend: string; value: string; options: { id: string; label: string; note?: string }[]; onPick: (id: string) => void };
 export type HubRow = {
   id: string;
   title: string;
   detail: string;
+  choice?: HubChoice;
   // The ways to take it. Empty means it has not been made yet, and `empty` says how to make it.
   actions: HubAction[];
   empty?: { text: string; action: HubAction };
@@ -85,6 +88,31 @@ export default function DownloadHub({
             <li key={r.id} className="rounded-2xl border border-border-subtle bg-background-elevated p-4">
               <p className="font-semibold">{r.title}</p>
               <p className="mt-0.5 text-sm text-foreground-muted">{r.detail}</p>
+              {r.choice && (
+                <div role="group" aria-label={r.choice.legend} className="mt-3">
+                  <p className="text-xs font-semibold text-foreground-muted">{r.choice.legend}</p>
+                  <div className="mt-1.5 flex flex-wrap gap-1.5">
+                    {r.choice.options.map((o) => {
+                      const on = r.choice?.value === o.id;
+                      return (
+                        <button
+                          key={o.id}
+                          type="button"
+                          aria-pressed={on}
+                          title={o.note}
+                          onClick={() => r.choice?.onPick(o.id)}
+                          className={`inline-flex min-h-10 items-center rounded-full border px-3.5 text-xs font-semibold transition-colors ${
+                            on ? "border-blue-600 bg-blue-600 text-white" : "border-border-subtle bg-background hover:border-blue-500/40"
+                          }`}
+                        >
+                          {o.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {r.choice.options.find((o) => o.id === r.choice?.value)?.note && <p className="mt-1.5 text-xs text-foreground-muted">{r.choice.options.find((o) => o.id === r.choice?.value)?.note}</p>}
+                </div>
+              )}
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 {r.actions.length > 0 ? (
                   r.actions.map((a) => (

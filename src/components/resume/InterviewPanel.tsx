@@ -1,12 +1,14 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { STAGES, sheetToPlainText, type PrepQuestion, type PrepSheet, type QuestionKind, type Stage } from "@/lib/interview";
+import { INTERVIEW_V2, STAGES, sheetToPlainText, type PrepQuestion, type PrepSheet, type QuestionKind, type Stage } from "@/lib/interview";
 import type { TailorResult, ResumeDoc } from "@/lib/resume-tailor";
-import { storiesAsNotes, type Story } from "@/lib/resume-profile";
+import { YOUR_STORY_PROMPTS, newStory, replaceStoryTopic, storiesAsNotes, yourStoryAnswers, type Story } from "@/lib/resume-profile";
 import { downloadBlob } from "@/lib/download";
+import { fileSlug, kitFileName, sheetToDocument } from "@/lib/kit-export";
 import { track } from "@/lib/track";
 import AutoTextarea from "./AutoTextarea";
+import VoiceInput from "./VoiceInput";
 
 // "Interview prep": once a company replies, a prep sheet for that exact job, built only from the person's resume and the true
 // stories they have told us. It gives practice questions for the kind of interview, why each is asked, how to approach it,
@@ -23,12 +25,81 @@ const errors: Record<string, string> = {
   email: "Add your email address on the resume form first. It only counts your monthly sheets.",
 };
 
+const deepErrors: Record<string, string> = {
+  "deep-limit": "You've used this month's answer drafts. They come back on the 1st.",
+  "slow-down": "That was a lot of tries in a short time. Wait a few minutes and try again.",
+  upstream: "That didn't work this time, and it didn't use up a draft. Try again in a moment.",
+  refused: "That answer used a number we couldn't find in your resume or stories, so we threw it away. Try again.",
+  cap: "We've reached our limit for answer drafts this month. Please try again next month.",
+  unavailable: "Answer drafts aren't available right now. Please try again later.",
+  email: "Add your email address on the resume form first. It only counts your monthly drafts.",
+};
+
 const KIND_LABEL: Record<QuestionKind, string> = { role: "The work", behavioral: "A time when", gap: "A gap to be honest about", motivation: "Why this role" };
 const box = "w-full rounded-xl border border-border-subtle bg-background px-3 py-2.5 text-base leading-relaxed outline-none focus:border-blue-500/50";
 
-function QuestionCard({ q, index, onStory }: { q: PrepQuestion; index: number; onStory?: (topic: string, question: string, answer: string) => void }) {
-  const [text, setText] = useState("");
+// The [short blanks] in a first answer are shown highlighted: details only the person knows, for them to fill in.
+function Blanks({ text }: { text: string }) {
+  return (
+    <>
+      {text.split(/(\[[^\]\n]{2,60}\])/g).map((part, i) =>
+        /^\[[^\]\n]{2,60}\]$/.test(part) ? (
+          <mark key={i} className="rounded bg-amber-100 px-1 text-amber-950">
+            {part}
+          </mark>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      )}
+    </>
+  );
+}
+
+function CoachList({ title, items }: { title: string; items: string[] }) {
+  if (items.length === 0) return null;
+  return (
+    <div>
+      <p className="font-semibold">{title}</p>
+      <ul className="mt-1 list-disc space-y-1 pl-5 text-foreground-muted">
+        {items.map((x, i) => (
+          <li key={i}>{x}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function QuestionCard({ q, index, onStory, onDeepen }: { q: PrepQuestion; index: number; onStory?: (topic: string, question: string, answer: string) => void; onDeepen?: (example: string) => Promise<string | null> }) {
+  const [text, setText] = useState(q.deep?.example ?? "");
   const [saved, setSaved] = useState(false);
+  const [building, setBuilding] = useState(false);
+  const [problem, setProblem] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  async function buildAnswer() {
+    if (!onDeepen || building) return;
+    setBuilding(true);
+    setProblem("");
+    const example = text.trim();
+    // A real example written for this question is kept for the next resume and answers, like the "Save this example" button does.
+    if (example.length >= 5 && !saved && q.storyAsk) {
+      onStory?.(q.question.slice(0, 120), q.storyAsk, example);
+      setSaved(true);
+    }
+    const err = await onDeepen(example);
+    if (err) setProblem(err);
+    setBuilding(false);
+  }
+  async function copyDraft(draft: string) {
+    try {
+      await navigator.clipboard.writeText(draft);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setProblem("Your browser blocked copying. Select the text and copy it by hand.");
+    }
+  }
+
   return (
     <details className="group rounded-2xl border border-border-subtle bg-white p-4 shadow-sm" open={index === 0}>
       <summary className="flex cursor-pointer list-none items-start gap-3">
@@ -85,6 +156,79 @@ function QuestionCard({ q, index, onStory }: { q: PrepQuestion; index: number; o
             </button>
           </div>
         )}
+
+        {onDeepen && (
+          <div className="rounded-xl border border-violet-500/30 bg-violet-500/5 p-3">
+            <p className="text-xs font-bold uppercase tracking-wider text-violet-700">{q.deep ? "Your answer, built from your real history" : "Build my answer"}</p>
+            {q.deep ? (
+              <div className="mt-2 space-y-3">
+                {q.deep.draft && (
+                  <div>
+                    <p className="font-semibold">Your first answer</p>
+                    <p className="mt-1 whitespace-pre-wrap text-base leading-relaxed">
+                      <Blanks text={q.deep.draft} />
+                    </p>
+                    <p className="mt-1 text-xs text-foreground-muted">The highlighted blanks are details only you know. Fill them in with the real thing, then say it out loud a few times so it sounds like you.</p>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      <button type="button" onClick={() => void copyDraft(q.deep?.draft ?? "")} className="inline-flex min-h-10 items-center rounded-full border border-border-subtle bg-white px-4 text-xs font-semibold hover:border-blue-500/40">
+                        {copied ? "Copied" : "Copy answer"}
+                      </button>
+                      <button type="button" onClick={() => void buildAnswer()} disabled={building} className="inline-flex min-h-10 items-center rounded-full border border-border-subtle bg-white px-4 text-xs font-semibold hover:border-blue-500/40 disabled:opacity-60">
+                        {building ? "Writing…" : "Write it again"}
+                      </button>
+                    </div>
+                  </div>
+                )}
+                <CoachList title="What makes a strong answer" items={q.deep.strong} />
+                <CoachList title="Watch out for" items={q.deep.avoid} />
+                {q.deep.followUps.length > 0 && (
+                  <div>
+                    <p className="font-semibold">They might ask next</p>
+                    <ul className="mt-1 space-y-2">
+                      {q.deep.followUps.map((f, i) => (
+                        <li key={i}>
+                          <span className="block font-medium">{f.q}</span>
+                          {f.hint && <span className="block text-foreground-muted">{f.hint}</span>}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {!q.deep.draft && (
+                  <button type="button" onClick={() => void buildAnswer()} disabled={building} className="inline-flex min-h-10 items-center rounded-full border border-border-subtle bg-white px-4 text-xs font-semibold hover:border-blue-500/40 disabled:opacity-60">
+                    {building ? "Coaching…" : "Coach me again"}
+                  </button>
+                )}
+              </div>
+            ) : (
+              <>
+                <p className="mt-1 text-xs text-foreground-muted">
+                  {q.kind === "gap"
+                    ? "This one needs an honest answer more than a script. We coach you on how to handle it, using only what is true."
+                    : q.storyAsk
+                      ? "Write your real example above first, so the answer is in your own words. Details only you know are left as blanks for you to fill in."
+                      : "We write a first answer from your real history. Details only you know are left as blanks for you to fill in."}
+                </p>
+                {!q.storyAsk && q.kind !== "gap" && (
+                  <AutoTextarea value={text} onChange={(e) => setText(e.target.value)} rows={2} maxLength={700} placeholder="Anything real you want us to use? (optional)" className={`${box} mt-2`} aria-label="Anything real you want us to use" />
+                )}
+                <button
+                  type="button"
+                  onClick={() => void buildAnswer()}
+                  disabled={building}
+                  className="mt-2 inline-flex min-h-11 items-center rounded-full bg-violet-600 px-5 text-sm font-semibold text-white transition-colors hover:bg-violet-500 disabled:opacity-60"
+                >
+                  {building ? "Writing…" : q.kind === "gap" ? "Coach me on this one" : "Build my answer"}
+                </button>
+              </>
+            )}
+            {problem && (
+              <p role="alert" className="mt-2 text-sm text-red-700">
+                {problem}
+              </p>
+            )}
+          </div>
+        )}
       </div>
     </details>
   );
@@ -98,6 +242,7 @@ export default function InterviewPanel({
   saved,
   onSave,
   onStory,
+  onStoryReplace,
   onBack,
 }: {
   doc: ResumeDoc;
@@ -108,6 +253,8 @@ export default function InterviewPanel({
   saved: PrepSheet | null;
   onSave?: (sheet: PrepSheet) => void;
   onStory?: (topic: string, question: string, answer: string) => void;
+  // Replaces the story with the same topic (the three "Your story" questions), so a new answer updates the old one.
+  onStoryReplace?: (topic: string, question: string, answer: string) => void;
   onBack: () => void;
 }) {
   const [stage, setStage] = useState<Stage>(saved?.stage ?? "manager");
@@ -115,6 +262,10 @@ export default function InterviewPanel({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState("");
+  // The three questions about the person (the new version only). Each answer is kept as a "Your story" line the opening is built from.
+  const [story, setStory] = useState<string[]>(() => yourStoryAnswers(stories));
+  const storyRef = useRef<HTMLDivElement>(null);
+  const hasStory = yourStoryAnswers(stories).some(Boolean);
   const topRef = useRef<HTMLDivElement>(null);
   const job = `${result.postingTitle || doc.headline}${result.postingCompany ? ` at ${result.postingCompany}` : ""}`;
 
@@ -123,6 +274,17 @@ export default function InterviewPanel({
     if (!email) return setError(errors.email);
     setBusy(true);
     setError("");
+    // The person's own story answers go in as "Your story" lines (replacing older answers to the same question).
+    let storyList = stories;
+    if (INTERVIEW_V2) {
+      const before = yourStoryAnswers(stories);
+      YOUR_STORY_PROMPTS.forEach((p, i) => {
+        const answer = (story[i] ?? "").trim();
+        if (answer.length < 3) return;
+        storyList = replaceStoryTopic(storyList, newStory(p.topic, p.question, answer));
+        if (answer !== before[i]) onStoryReplace?.(p.topic, p.question, answer);
+      });
+    }
     try {
       const res = await fetch("/api/resume-interview", {
         method: "POST",
@@ -136,7 +298,8 @@ export default function InterviewPanel({
           postingKeywords: result.postingKeywords,
           fitReason: result.fit?.reason ?? "",
           unmet: result.gaps.map((g) => g.requirement),
-          stories: storiesAsNotes(stories, 2800),
+          stories: storiesAsNotes(storyList, 2800),
+          ...(INTERVIEW_V2 ? { voice: true } : {}),
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -155,6 +318,39 @@ export default function InterviewPanel({
     }
   }
 
+  // "Build my answer" for one question: a first answer and the coaching around it, kept with the sheet.
+  async function deepen(index: number, example: string): Promise<string | null> {
+    if (!sheet) return deepErrors.upstream;
+    if (!email) return deepErrors.email;
+    const q = sheet.questions[index];
+    if (!q) return deepErrors.upstream;
+    try {
+      const res = await fetch("/api/resume-interview-deep", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          doc,
+          stage: sheet.stage,
+          postingTitle: result.postingTitle,
+          postingCompany: result.postingCompany,
+          postingKeywords: result.postingKeywords,
+          stories: storiesAsNotes(stories, 2800),
+          question: { question: q.question, kind: q.kind, why: q.why, points: q.points },
+          example,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok || !data.deep) return deepErrors[data.error as string] ?? deepErrors.upstream;
+      const next: PrepSheet = { ...sheet, questions: sheet.questions.map((x, k) => (k === index ? { ...x, deep: data.deep } : x)) };
+      setSheet(next);
+      onSave?.(next);
+      return null;
+    } catch {
+      return deepErrors.upstream;
+    }
+  }
+
   async function copy(what: string, text: string) {
     try {
       await navigator.clipboard.writeText(text);
@@ -166,6 +362,22 @@ export default function InterviewPanel({
   }
 
   const plain = sheet ? sheetToPlainText(sheet, job) : "";
+
+  // The sheet downloads as a real document (PDF or Word), not a plain text file.
+  const [saving, setSaving] = useState<"" | "pdf" | "docx">("");
+  async function save(kind: "pdf" | "docx") {
+    if (!sheet) return;
+    setSaving(kind);
+    try {
+      const { buildKitDocx, buildKitPdf } = await import("@/lib/kit-documents");
+      const description = sheetToDocument(sheet, job);
+      const name = kitFileName("interview-prep", fileSlug(result.postingTitle || doc.headline || "job"), kind);
+      if (kind === "pdf") downloadBlob(new Blob([(await buildKitPdf(description)) as BlobPart], { type: "application/pdf" }), name);
+      else downloadBlob(await buildKitDocx(description), name);
+    } finally {
+      setSaving("");
+    }
+  }
 
   return (
     <div ref={topRef} className="scroll-mt-24 space-y-5">
@@ -192,6 +404,27 @@ export default function InterviewPanel({
             </button>
           ))}
         </div>
+        {INTERVIEW_V2 && (
+          <div ref={storyRef} className="mt-5 rounded-2xl border border-violet-500/30 bg-violet-500/5 p-4">
+            <p className="text-sm font-semibold">
+              Make your opening sound like you <span className="font-normal text-foreground-muted">(optional)</span>
+            </p>
+            <p className="mt-1 text-xs text-foreground-muted">
+              Your resume shows what you did. These three questions are about you. Answer in your own words. We use them to write an opening that sounds like you, and we never add anything you did not say. They are saved on this device for next time.
+            </p>
+            {YOUR_STORY_PROMPTS.map((p, i) => (
+              <div key={p.topic} className="mt-3">
+                <label htmlFor={`ys-${i}`} className="block text-sm font-semibold">
+                  {p.question}
+                </label>
+                <AutoTextarea id={`ys-${i}`} value={story[i] ?? ""} onChange={(e) => setStory((cur) => cur.map((x, k) => (k === i ? e.target.value : x)))} rows={2} maxLength={500} placeholder={p.placeholder} className={`${box} mt-1.5`} />
+                <div className="mt-1.5">
+                  <VoiceInput onText={(t) => setStory((cur) => cur.map((x, k) => (k === i ? (x ? `${x.trimEnd()} ${t}` : t) : x)))} />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
         <button type="button" onClick={() => void build()} disabled={busy} className="mt-4 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-blue-600 px-6 text-base font-semibold text-white shadow-lg shadow-blue-600/25 transition-colors hover:bg-blue-500 disabled:opacity-60 sm:w-auto">
           {busy ? "Building your prep sheet…" : sheet ? "Build it again" : "Build my prep sheet"}
         </button>
@@ -212,13 +445,22 @@ export default function InterviewPanel({
             <button type="button" onClick={() => void copy("opening", sheet.opening)} className="mt-3 inline-flex min-h-10 items-center rounded-full border border-border-subtle bg-background px-4 text-xs font-semibold hover:border-blue-500/40">
               {copied === "opening" ? "Copied" : "Copy opening"}
             </button>
+            {INTERVIEW_V2 && !hasStory && (
+              <p className="mt-3 text-xs text-foreground-muted">
+                Does not sound like you yet?{" "}
+                <button type="button" onClick={() => storyRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })} className="font-semibold text-blue-700 underline underline-offset-2">
+                  Answer three questions about you
+                </button>
+                , then build it again.
+              </p>
+            )}
           </div>
 
           <div>
             <p className="mb-2 text-sm font-semibold">Practice questions ({sheet.questions.length})</p>
             <div className="space-y-3">
               {sheet.questions.map((q, i) => (
-                <QuestionCard key={`${sheet.at}-${i}`} q={q} index={i} onStory={onStory} />
+                <QuestionCard key={`${sheet.at}-${i}`} q={q} index={i} onStory={onStory} onDeepen={INTERVIEW_V2 ? (example) => deepen(i, example) : undefined} />
               ))}
             </div>
           </div>
@@ -252,12 +494,11 @@ export default function InterviewPanel({
             <button type="button" onClick={() => void copy("all", plain)} className="inline-flex min-h-11 items-center rounded-full border border-border-subtle bg-white px-5 text-sm font-semibold shadow-sm hover:border-blue-500/40">
               {copied === "all" ? "Copied" : "Copy the whole sheet"}
             </button>
-            <button
-              type="button"
-              onClick={() => downloadBlob(new Blob([plain], { type: "text/plain;charset=utf-8" }), `interview-prep-${(result.postingTitle || doc.headline || "job").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "job"}.txt`)}
-              className="inline-flex min-h-11 items-center rounded-full border border-border-subtle bg-white px-5 text-sm font-semibold shadow-sm hover:border-blue-500/40"
-            >
-              Download as a text file
+            <button type="button" onClick={() => void save("pdf")} disabled={saving !== ""} className="inline-flex min-h-11 items-center rounded-full bg-foreground px-5 text-sm font-semibold text-background transition-opacity hover:opacity-90 disabled:opacity-60">
+              {saving === "pdf" ? "Preparing…" : "Download PDF"}
+            </button>
+            <button type="button" onClick={() => void save("docx")} disabled={saving !== ""} className="inline-flex min-h-11 items-center rounded-full border border-border-subtle bg-white px-5 text-sm font-semibold shadow-sm hover:border-blue-500/40 disabled:opacity-60">
+              {saving === "docx" ? "Preparing…" : "Download Word"}
             </button>
           </div>
         </>

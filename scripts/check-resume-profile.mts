@@ -1,7 +1,7 @@
 // Checks the saved profile: stories are added once, kept to a limit, turned into notes within a budget, and a downloaded
 // file loads back safely (and a wrong or hostile file is refused). Run: node --experimental-strip-types scripts/check-resume-profile.mts
 import assert from "node:assert/strict";
-import { MAX_STORIES, PROFILE_APP, addStoryTo, buildProfileFile, newStory, parseProfileFile, profileFileName, storiesAsNotes } from "../src/lib/resume-profile.ts";
+import { MAX_STORIES, PROFILE_APP, YOUR_STORY_PROMPTS, YOUR_STORY_PREFIX, addStoryTo, buildProfileFile, newStory, parseProfileFile, profileFileName, replaceStoryTopic, storiesAsNotes, yourStoryAnswers } from "../src/lib/resume-profile.ts";
 
 const limits = { resume: 40000, notes: 6000 };
 let list: ReturnType<typeof newStory>[] = [];
@@ -47,4 +47,19 @@ const noLibrary = parseProfileFile(JSON.stringify({ app: PROFILE_APP, version: 1
 assert.ok(noLibrary.ok && noLibrary.profile.library?.length === 0, "an older file has no saved builds");
 const tooMany = parseProfileFile(JSON.stringify({ app: PROFILE_APP, version: 1, resume: "r", stories: [], library: Array.from({ length: 500 }, (_, i) => ({ id: `x${i}` })) }), limits);
 assert.ok(tooMany.ok && (tooMany.profile.library?.length ?? 0) <= 60, "the number of saved builds in a file is capped");
+// "Your story": re-answering a question replaces the old answer, and the answers come back in the order they are asked.
+{
+  let st: ReturnType<typeof newStory>[] = [];
+  const [a, b] = YOUR_STORY_PROMPTS;
+  st = replaceStoryTopic(st, newStory(a.topic, a.question, "I keep ending up as the person who keeps everyone moving."));
+  st = replaceStoryTopic(st, newStory(a.topic, a.question, "I am the one who keeps a busy house on schedule."));
+  assert.equal(st.length, 1, "a new answer to the same story question replaces the old one");
+  assert.equal(yourStoryAnswers(st)[0], "I am the one who keeps a busy house on schedule.");
+  assert.equal(yourStoryAnswers(st)[1], "", "an unanswered question is empty");
+  st = replaceStoryTopic(st, newStory("Quota", "Target?", "I tracked a monthly goal."));
+  st = replaceStoryTopic(st, newStory(b.topic, b.question, "Faith and family."));
+  assert.equal(st.length, 3, "other stories are untouched");
+  assert.ok(YOUR_STORY_PROMPTS.every((p) => p.topic.startsWith(YOUR_STORY_PREFIX)), "every topic starts with the prefix the prompt looks for");
+  assert.ok(storiesAsNotes(st, 2000).includes("- Your story, what shaped how I work: Faith and family."), "the notes carry the story lines");
+}
 console.log("profile checks passed");
