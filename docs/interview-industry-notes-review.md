@@ -1,6 +1,6 @@
 # Interview prep: industry notes to review
 
-Written Nov 20, 2026. These notes shape the practice questions and the opening for each kind of role. **Approved industries are live for visitors. The rest are drafts, so only the owner's test builds get them.** Approved Nov 20, 2026 by Juston Warthen: Sales, Administrative and office, Healthcare front office, Nursing and clinical care, Skilled trades and maintenance.
+Written Nov 20, 2026. These notes shape the practice questions and the opening for each kind of role. **Approved industries are live for visitors. The rest are drafts, so only the owner's test builds get them.** Approved Nov 20, 2026 by Juston Warthen: Sales, Administrative and office, Healthcare front office, Nursing and clinical care, Skilled trades and maintenance, Driving and logistics, Warehouse and production, Retail and hospitality, Teaching and education, Accounting and finance.
 
 How to review: read one industry, fix anything that is wrong or that you would not say, and tell Claude which ones are approved. Approved ones are switched on for visitors with your name and the date. Anyone who has worked in that field is the best reviewer. Nothing here states a fact about a person or a company, and no numbers appear.
 
@@ -106,7 +106,7 @@ Job titles that match: driver, cdl, delivery, courier, dispatcher, dispatch, log
   - staying calm in traffic or bad weather, which can speak to safe judgment
 - **Opening: voice:** straight and steady; safety and reliability without exaggeration.
 
-Approved? [ ] yes  [ ] needs changes: ______
+Approved: [x] yes (Juston Warthen, Nov 20, 2026)
 
 ## Warehouse and production
 
@@ -123,7 +123,7 @@ Job titles that match: warehouse, forklift, material handler, picker, packer, pr
   - a past mistake that taught them to double-check, which can speak to quality
 - **Opening: voice:** plain, practical, and to the point; reliability and safety over big words.
 
-Approved? [ ] yes  [ ] needs changes: ______
+Approved: [x] yes (Juston Warthen, Nov 20, 2026)
 
 ## Retail, food service, and hospitality
 
@@ -140,7 +140,7 @@ Job titles that match: retail, cashier, sales associate, store associate, barist
   - being the one people bring problems to, which can speak to complaints
 - **Opening: voice:** warm, friendly, and upbeat but real; energy shown through a specific moment.
 
-Approved? [ ] yes  [ ] needs changes: ______
+Approved: [x] yes (Juston Warthen, Nov 20, 2026)
 
 ## Teaching and education
 
@@ -157,7 +157,7 @@ Job titles that match: teacher, instructor, tutor, teaching assistant, paraprofe
   - a time they struggled to learn something, which can speak to patience
 - **Opening: voice:** warm, clear, and learner-centered; examples from real learners kept private, with no names.
 
-Approved? [ ] yes  [ ] needs changes: ______
+Approved: [x] yes (Juston Warthen, Nov 20, 2026)
 
 ## Accounting and finance
 
@@ -174,7 +174,7 @@ Job titles that match: accountant, bookkeeper, accounts payable, accounts receiv
   - being the one who double-checks, which can speak to catching errors
 - **Opening: voice:** precise and measured; trustworthy over flashy, with no overstatement.
 
-Approved? [ ] yes  [ ] needs changes: ______
+Approved: [x] yes (Juston Warthen, Nov 20, 2026)
 
 ## Customer service and support
 
