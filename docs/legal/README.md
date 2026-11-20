@@ -9,6 +9,7 @@ Created Nov 19, 2026. I am not a lawyer. These files are working drafts for you 
 | `terms-draft.md` | Terms of use | Attorney finalizes liability and governing law, then the `/terms` page |
 | `refund-policy-draft.md` | "All sales final" policy (decided Nov 19) | Add the notice at the buy button when the pages go live |
 | `security-checklist.md` | Accounts to lock down, what the code already does, what to add | You do Part 1 (about 1 hour) |
+| `tester-consent-draft.md` | A short agreement for people who test before launch | Fill the brackets, send before anyone tests |
 | `claims-and-wording-audit.md` | Statements about results and privacy on the site | You decide the "needs your decision" list |
 
 ## Order I would do things

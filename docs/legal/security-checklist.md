@@ -43,3 +43,34 @@ For **every** account below: turn on two-step sign-in with an authenticator app 
 8. **If something goes wrong:** (a) rotate the key involved, (b) look at the provider's logs for what was accessed, (c) if personal data was involved, tell the people affected and any state attorney general the law requires, and (d) write down what happened. Do not delete logs.
 9. **Moving to the new Mac:** use a new device only after signing out of the old one on each account, and keep the repo out of cloud-synced folders (the iCloud guard script already covers this).
 10. **Enterprise customers later:** SOC 2 and a penetration test only when a company or school asks for them.
+
+## Results of the checks run on Nov 19, 2026
+
+**Domain and email (public records)**
+- Registrar: Squarespace Domains (formerly Google Domains). Transfer lock and delete protection are ON. Expires Aug 25, 2027: confirm auto-renew.
+- Resend DKIM record is present. Confirm "verified" in the Resend dashboard.
+- **DMARC is `p=none`** (monitor only), so fake email from your domain is not blocked. Plan: after a few weeks of clean reports, move to `p=quarantine`, then `p=reject`. Reports go to Mailgun and an OnDMARC inbox.
+- **Mailgun is in the picture:** the root domain's mail servers (MX) and SPF point at Mailgun. Decide: still using it? Then add two-step sign-in to the Mailgun account and make sure Resend and Google are covered by SPF where needed. Not using it? Remove the stale records.
+- DNSSEC: unknown, check at the registrar. CAA: none (optional).
+
+**This Mac (read-only checks)**
+- macOS 26.6.2, FileVault on, firewall on (stealth mode off, optional), System Integrity Protection on, Gatekeeper on, no management profiles, no cron jobs, Remote Login and Screen Sharing closed.
+- Listening ports: AirPlay Receiver (ports 5000, 7000) and Apple's Handoff service are normal; turn AirPlay Receiver off in System Settings > General > AirDrop & Handoff if you do not use it.
+- Startup helpers found: Zoom, Microsoft Teams updater, FxFactory, Camo (Reincubate camera helper), Epic Games, Google updaters. Nothing unexpected, but Teams, FxFactory, Camo, and Epic run with high privileges: uninstall any you no longer use.
+- Recent sign-ins: only local ones.
+- Not confirmed: automatic update settings and "require password immediately" on the lock screen. Check both in System Settings.
+- Result: no sign of compromise. No paid scan needed.
+
+## Step by step: what to do now, in order
+1. **Google account** (10 min): myaccount.google.com, Security, 2-Step Verification, add a passkey or authenticator app, download backup codes, then review "Your devices" and "Third-party access" and remove anything unfamiliar.
+2. **Password manager** (10 min): pick Apple Passwords or 1Password. Give GitHub, Netlify, Stripe, Resend, Anthropic, Squarespace, and Mailgun each a unique password stored there.
+3. **GitHub** (10 min): Settings, Password and authentication, turn on two-factor and save recovery codes; Settings, Code security, turn on secret scanning and push protection.
+4. **Netlify** (5 min): Account settings, Security, turn on two-factor.
+5. **Stripe** (5 min): Settings, security, turn on two-step authentication and login alerts; confirm the `charge.refunded` webhook event is enabled.
+6. **Squarespace (domain)** (10 min): two-step sign-in, confirm the lock, auto-renew, and card; look for DNSSEC.
+7. **Anthropic console** (5 min): Settings, limits, set a monthly spend limit and an email alert; two-step if offered.
+8. **Resend** (10 min): confirm the domain says verified; set a usage alert.
+9. **Mailgun** (5 to 10 min): sign in, decide keep or retire, turn on two-step if keeping.
+10. **YouTube / Apple ID** (10 min): two-step sign-in.
+11. **Mac** (10 min): System Settings, check automatic updates and "Require password immediately after screen saver or display off", and uninstall unused apps with privileged helpers.
+12. **Look at active sessions** in Google, GitHub, Netlify, and Stripe and sign out anything you do not recognize.
