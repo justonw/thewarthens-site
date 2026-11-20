@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { ResumeFit, ResumeGap } from "@/lib/resume-tailor";
 import VoiceInput from "./VoiceInput";
 
@@ -121,11 +121,17 @@ export default function StrengthenPanel({
   fit,
   justAdded,
   onAdd,
+  embedded = false,
+  onStatus,
 }: {
   gaps: ResumeGap[];
   fit?: ResumeFit;
   justAdded: string;
   onAdd: (index: number, answer: string) => Promise<string | null>;
+  // Inside the combined "Make it stronger" section: no outer frame, and a smaller heading, because the section has its own.
+  embedded?: boolean;
+  // Tells the section how many questions are still open, so it can show one progress for everything.
+  onStatus?: (s: { open: number; total: number; visible: boolean }) => void;
 }) {
   // How many questions there were to begin with, so the bar can show how far along the person is.
   const [startCount] = useState(gaps.length);
@@ -136,11 +142,32 @@ export default function StrengthenPanel({
   const added = total - gaps.length;
   const handled = total - open.length;
 
-  if (!fit && total === 0) return null;
+  const visible = Boolean(fit) || total > 0;
+  useEffect(() => {
+    onStatus?.({ open: open.length, total, visible });
+  }, [open.length, total, visible, onStatus]);
+
+  if (!visible) return null;
 
   return (
-    <section id="strengthen" aria-labelledby="strengthen-title" className="scroll-mt-24 rounded-3xl bg-gradient-to-br from-violet-500 via-blue-500 to-fuchsia-500 p-[2px] shadow-lg shadow-violet-900/10">
-      <div className="rounded-[calc(1.5rem-2px)] bg-gradient-to-br from-white via-white to-violet-50 p-5 sm:p-7">
+    <section
+      id="strengthen"
+      aria-labelledby="strengthen-title"
+      className={embedded ? "scroll-mt-24" : "scroll-mt-24 rounded-3xl bg-gradient-to-br from-violet-500 via-blue-500 to-fuchsia-500 p-[2px] shadow-lg shadow-violet-900/10"}
+    >
+      <div className={embedded ? "" : "rounded-[calc(1.5rem-2px)] bg-gradient-to-br from-white via-white to-violet-50 p-5 sm:p-7"}>
+        {embedded ? (
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h4 id="strengthen-title" className="text-base font-semibold tracking-tight">
+              {open.length > 0 ? "Questions about this job" : "You've gone through every question"}
+            </h4>
+            {total > 0 && (
+              <p className="text-sm font-semibold text-violet-800">
+                {handled} of {total} reviewed{added > 0 ? `, ${added} added to your resume` : ""}
+              </p>
+            )}
+          </div>
+        ) : (
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="flex items-start gap-3">
             <span aria-hidden className="mt-0.5 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-fuchsia-600 text-white shadow-md">
@@ -163,8 +190,9 @@ export default function StrengthenPanel({
             </p>
           )}
         </div>
+        )}
 
-        {total > 0 && (
+        {total > 0 && !embedded && (
           <div className="mt-3 h-2 overflow-hidden rounded-full bg-violet-100" role="progressbar" aria-valuemin={0} aria-valuemax={total} aria-valuenow={handled} aria-label="Questions reviewed">
             <div className="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 transition-all duration-500" style={{ width: `${Math.round((handled / total) * 100)}%` }} />
           </div>

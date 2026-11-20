@@ -57,7 +57,7 @@ export default function EmailGatedDownload({
       });
       const data = await res.json();
       if (!res.ok) {
-        setErrorMsg(data.error || "Something went wrong.");
+        setErrorMsg(data.error || "That did not go through. Check your email address and try again.");
         setStatus("error");
         return;
       }
@@ -71,7 +71,7 @@ export default function EmailGatedDownload({
 
   if (status === "success") {
     return (
-      <div className="rounded-3xl border border-border-subtle bg-background-elevated p-6 text-center sm:p-8">
+      <div role="status" className="rounded-3xl border border-border-subtle bg-background-elevated p-6 text-center sm:p-8">
         <p className="text-sm font-semibold text-blue-600">Check your inbox</p>
         <p className="mt-2 text-sm text-foreground-muted">
           We sent {title.toLowerCase()} to {email}. You can also grab{" "}
@@ -127,7 +127,7 @@ export default function EmailGatedDownload({
         </button>
       </form>
       {status === "error" && (
-        <p className="mt-3 text-sm text-red-600">
+        <p role="alert" className="mt-3 text-sm text-red-600">
           {errorMsg} Download directly instead: <DirectLinks files={files} />.
         </p>
       )}

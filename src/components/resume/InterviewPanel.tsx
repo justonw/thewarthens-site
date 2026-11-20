@@ -207,7 +207,7 @@ export default function InterviewPanel({
         <>
           <div className="rounded-3xl border border-border-subtle bg-white p-5 shadow-sm sm:p-6">
             <p className="text-xs font-bold uppercase tracking-wider text-blue-700">Your 60-second opening</p>
-            <p className="mt-1 text-sm text-foreground-muted">For &quot;tell me about yourself.&quot; Say it in your own words. This is the shape.</p>
+            <p className="mt-1 text-sm text-foreground-muted">For &ldquo;tell me about yourself.&rdquo; Say it in your own words. This is the shape.</p>
             <p className="mt-3 whitespace-pre-wrap text-base leading-relaxed">{sheet.opening}</p>
             <button type="button" onClick={() => void copy("opening", sheet.opening)} className="mt-3 inline-flex min-h-10 items-center rounded-full border border-border-subtle bg-background px-4 text-xs font-semibold hover:border-blue-500/40">
               {copied === "opening" ? "Copied" : "Copy opening"}

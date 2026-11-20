@@ -20,6 +20,7 @@ import type { ResumeStyle } from "@/lib/resume-files";
 import { downloadBlob } from "@/lib/download";
 import { track } from "@/lib/track";
 import GeneralTarget from "./GeneralTarget";
+import StartQuestion, { type Intent } from "./StartQuestion";
 import type { PrepSheet } from "@/lib/interview";
 import { STORIES_KEY, USE_STORIES_KEY, addStoryTo, buildProfileFile, noStories, profileFileName, storiesAsNotes, type Profile, type Story } from "@/lib/resume-profile";
 import ScratchForm, { emptyScratch, scratchReady, scratchToText, type Scratch } from "./ScratchForm";
@@ -165,6 +166,8 @@ export default function ResumeBuilder() {
   const [posting, setPosting] = useState("");
   // A general resume: no posting, just the kind of role the person is aiming for.
   const [general, setGeneral] = useState(false);
+  // Where the person is in a job search (the one starting question). It decides the kind of resume and which part of the kit opens first.
+  const [intent, setIntent] = useState<Intent | null>(null);
   const [targetRole, setTargetRole] = useState("");
   const [postingFiles, setPostingFiles] = useState<PickedFile[]>([]);
   const [notes, setNotes] = useState("");
@@ -472,10 +475,14 @@ export default function ResumeBuilder() {
     previousPhase.current = phase;
     if (was === phase) return;
     const backWithProblem = phase === "form" && was === "loading";
-    const target = (backWithProblem && document.getElementById("rt-problem")) || document.getElementById("resume-tool");
+    // When the person said they want to reach out or prep for an interview, the tool they asked for opens first, so take them to it
+    // (the kit strip sits right above it), not to the top of the result where they would have to look for it.
+    const toolFirst = phase === "result" && !general && (openFollowUp || intent === "reach" || intent === "interview");
+    const target = (backWithProblem && document.getElementById("rt-problem")) || (toolFirst && document.getElementById("rt-tabs")) || document.getElementById("resume-tool");
     if (!target) return;
-    const top = target.getBoundingClientRect().top + window.scrollY - (backWithProblem ? 160 : 100);
+    const top = target.getBoundingClientRect().top + window.scrollY - (backWithProblem ? 160 : toolFirst ? 80 : 100);
     window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
   // Paying on Stripe takes the person to another page and back, which would empty the form. So the form is kept
@@ -597,6 +604,7 @@ export default function ResumeBuilder() {
     setPosting("");
     setPostingFiles([]);
     setGeneral(false);
+    setIntent(null);
     setTargetRole("");
     setError("");
   }
@@ -799,6 +807,7 @@ export default function ResumeBuilder() {
         interview={current?.interview}
         onInterview={saveInterview}
         startOnReach={openFollowUp}
+        startTab={intent === "reach" ? "reach" : intent === "interview" ? "interview" : undefined}
         initialPurpose={openFollowUp ? "followup" : "intro"}
         appliedDaysAgo={current ? followUpDue(current).days || null : null}
         onFollowedUp={entryId ? () => markFollowedUp(entryId) : undefined}
@@ -817,7 +826,9 @@ export default function ResumeBuilder() {
 
   // What the quick screen says it is using, in a few words: the first line of the saved resume (usually the name), or the file.
   const savedWords = saved?.resume.trim() ? saved.resume.trim().split(/\s+/).length : 0;
-  const savedFirstLine = saved?.resume.split("\n").map((l) => l.trim()).find(Boolean)?.slice(0, 70) ?? "";
+  const savedFirst = saved?.resume.split("\n").map((l) => l.trim()).find(Boolean) ?? "";
+  // The first line is usually the person's name. A resume pasted as one long line is cut with an ellipsis, not mid-word.
+  const savedFirstLine = savedFirst.length > 70 ? `${savedFirst.slice(0, 70).trimEnd()}…` : savedFirst;
   const savedSummary = saved ? (savedFirstLine ? `${savedFirstLine}${savedWords ? ` · ${savedWords.toLocaleString()} words` : ""}` : saved.files.map((f) => f.name).join(", ")) : "";
   const answerCount = includeStories ? stories.length : 0;
   const jobBox = (
@@ -855,6 +866,14 @@ export default function ResumeBuilder() {
       </p>
     </div>
   );
+  function chooseIntent(next: Intent | null) {
+    setIntent(next);
+    if (next === "explore") chooseGeneral();
+    else if (next) {
+      setGeneral(false);
+      window.setTimeout(() => document.getElementById("rt-posting")?.scrollIntoView({ behavior: "smooth", block: "center" }), 120);
+    }
+  }
   function showFullForm(focusId: string) {
     setLanePref("full");
     window.setTimeout(() => document.getElementById(focusId)?.scrollIntoView({ behavior: "smooth", block: "center" }), 80);
@@ -863,6 +882,8 @@ export default function ResumeBuilder() {
   return (
     <div className="space-y-10">
     <form id="resume-tool" onSubmit={build} className="space-y-6" noValidate>
+      {!fast && hydrated && phase === "form" && <StartQuestion value={intent} onChange={chooseIntent} />}
+
       {!fast && (
       <div className="z-30 mx-auto max-w-3xl rounded-2xl border border-border-subtle bg-white/90 px-4 py-3 shadow-md backdrop-blur sm:px-6 md:sticky md:top-16">
         <ol className="flex items-center" aria-label="Your progress">
@@ -1151,21 +1172,21 @@ export default function ResumeBuilder() {
                 <p>Most career guides agree on this order:</p>
                 <ol className="list-decimal space-y-1 pl-5">
                   <li>
-                    <span className="font-semibold text-foreground">A real person&apos;s name.</span> It shows you did your homework. Example: &quot;Dear Jamie Alvarez,&quot;
+                    <span className="font-semibold text-foreground">A real person&apos;s name.</span> It shows you did your homework. Example: &ldquo;Dear Jamie Alvarez,&rdquo;
                   </li>
                   <li>
-                    <span className="font-semibold text-foreground">The company&apos;s hiring team.</span> The safe choice when there&apos;s no name. Example: &quot;Dear Spotify Hiring Team,&quot;
+                    <span className="font-semibold text-foreground">The company&apos;s hiring team.</span> The safe choice when there&apos;s no name. Example: &ldquo;Dear Spotify Hiring Team,&rdquo;
                   </li>
                   <li>
-                    <span className="font-semibold text-foreground">The team you&apos;d join,</span> if the posting names it. Example: &quot;Dear Customer Success Team,&quot;
+                    <span className="font-semibold text-foreground">The team you&apos;d join,</span> if the posting names it. Example: &ldquo;Dear Customer Success Team,&rdquo;
                   </li>
                 </ol>
-                <p>&quot;To whom it may concern&quot; sounds like a form letter, so we never use it. Small details like this rarely decide an application, but a real name is the one that stands out.</p>
+                <p>&ldquo;To whom it may concern&rdquo; sounds like a form letter, so we never use it. Small details like this rarely decide an application, but a real name is the one that stands out.</p>
                 <p className="font-semibold text-foreground">Ways to find a name</p>
                 <ul className="list-disc space-y-1 pl-5">
                   <li>Read the posting again: many name a contact or a recruiter near the bottom.</li>
                   <li>Search the company on LinkedIn for the team&apos;s manager, or a recruiter at that company.</li>
-                  <li>Check the company&apos;s careers or &quot;Our team&quot; page.</li>
+                  <li>Check the company&apos;s careers or &ldquo;Our team&rdquo; page.</li>
                   <li>Call the company and ask who is hiring for the role. Career counselors call this the most reliable way.</li>
                   <li>Ask anyone you know who works there.</li>
                 </ul>

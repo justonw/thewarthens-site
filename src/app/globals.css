@@ -613,3 +613,10 @@ article a[class*="rounded-3xl"] {
     padding-block: 0.4rem;
   }
 }
+
+/* The resume kit's bottom bar shows below 1280px wide. While it does, the chat button sits above it, not on top of its last item. */
+@media (max-width: 1279px) {
+  body[data-kit-bar] .guide-fab {
+    bottom: 6rem;
+  }
+}

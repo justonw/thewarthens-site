@@ -432,7 +432,7 @@ export default function SiteGuide() {
           type="button"
           onClick={openByVisitor}
           style={typingInField ? { display: "none" } : undefined}
-          className={`fixed right-4 z-[60] inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-950/25 transition-colors hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ${scrolledFar ? "max-sm:h-12 max-sm:w-12 max-sm:justify-center max-sm:gap-0 max-sm:px-0 max-sm:py-0 " : ""}${hiddenOnPhone ? "max-sm:hidden " : ""}${lifted ? "bottom-24 sm:right-6 sm:bottom-24" : "bottom-4 sm:right-6 sm:bottom-6"}`}
+          className={`guide-fab fixed right-4 z-[60] inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-950/25 transition-colors hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ${scrolledFar ? "max-sm:h-12 max-sm:w-12 max-sm:justify-center max-sm:gap-0 max-sm:px-0 max-sm:py-0 " : ""}${hiddenOnPhone ? "max-sm:hidden " : ""}${lifted ? "bottom-24 sm:right-6 sm:bottom-24" : "bottom-4 sm:right-6 sm:bottom-6"}`}
         >
           <span aria-hidden className="text-base">💬</span>
           <span className={scrolledFar ? "max-sm:sr-only" : ""}>Where to start?</span>

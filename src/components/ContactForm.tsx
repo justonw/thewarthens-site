@@ -25,6 +25,15 @@ export default function ContactForm({ email }: { email: string }) {
   }, []);
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
+  // The long form is replaced by a short thank-you card, which would leave the card above the screen for someone who was at the
+  // submit button. So when it appears, bring it into view and give it focus, so a screen reader reads it too.
+  const sentRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (status !== "sent") return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    sentRef.current?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" });
+    sentRef.current?.focus({ preventScroll: true });
+  }, [status]);
 
   const isTestimony = topic === "Share my testimony or my story";
 
@@ -56,8 +65,10 @@ export default function ContactForm({ email }: { email: string }) {
   if (status === "sent") {
     return (
       <div
+        ref={sentRef}
+        tabIndex={-1}
         role="status"
-        className="rounded-3xl border border-purple-600/20 bg-background-elevated p-8 text-center shadow-lg shadow-purple-900/5"
+        className="rounded-3xl border border-purple-600/20 bg-background-elevated p-8 text-center shadow-lg shadow-purple-900/5 outline-none"
       >
         <p className="text-2xl font-semibold">Thank you, we got it.</p>
         <p className="mx-auto mt-3 max-w-md text-foreground-muted">

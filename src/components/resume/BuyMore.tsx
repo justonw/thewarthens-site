@@ -203,7 +203,7 @@ export default function BuyMore({
                   <span className="text-base font-semibold">{p.builds === 1 ? "1 build" : `${p.builds} builds`}</span>
                   <span className="rb-gradient-text text-xl font-bold">{p.display}</span>
                 </span>
-                <span className="mt-1 block text-xs text-foreground-muted">{busy === id ? "Opening the payment page..." : p.note}</span>
+                <span className="mt-1 block text-xs text-foreground-muted">{busy === id ? "Opening the payment page…" : p.note}</span>
                 {p.best && <span className="mt-2 inline-block rounded-full bg-violet-600 px-2.5 py-0.5 text-xs font-bold text-white">Best value</span>}
               </button>
             );

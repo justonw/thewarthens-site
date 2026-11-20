@@ -270,7 +270,7 @@ export default async function GuidePage({
             <div className="mt-5 flex flex-wrap gap-3">
               {startHere.paidLinks.map((link) => (
                 <a
-                  key={link.href}
+                  key={`${link.href}|${link.label}`}
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { quizQuestions, careerPaths, type PathId } from "@/lib/quiz";
 import { getGuideForPath } from "@/lib/guides";
@@ -16,27 +16,46 @@ function computeResults(scores: Scores) {
 }
 
 export default function CareerQuiz() {
-  const [step, setStep] = useState(0);
-  const [scores, setScores] = useState<Scores>({});
-  const [done, setDone] = useState(false);
+  // The path picked for each question so far. Everything else (the step, the scores, whether it is done) follows from this,
+  // which is also what lets someone go back a question after a mis-tap.
+  const [picked, setPicked] = useState<PathId[]>([]);
+  const step = picked.length;
+  const done = step >= quizQuestions.length;
+  const scores = picked.reduce<Scores>((acc, p) => ({ ...acc, [p]: (acc[p] ?? 0) + 1 }), {});
 
   const question = quizQuestions[step];
   const progress = Math.round((step / quizQuestions.length) * 100);
 
-  function answer(path: PathId) {
-    const next = { ...scores, [path]: (scores[path] ?? 0) + 1 };
-    setScores(next);
-    if (step + 1 < quizQuestions.length) {
-      setStep(step + 1);
-    } else {
-      setDone(true);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const firstRender = useRef(true);
+
+  // Whenever the question or the result changes, make sure the person can see it, and tell a screen reader. The card changes
+  // height between questions (the result is much taller), so without this the top of the new content can sit above the screen.
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
     }
+    const el = cardRef.current;
+    if (el) {
+      const top = el.getBoundingClientRect().top;
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (top < 80 || top > window.innerHeight * 0.4) el.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+    }
+    headingRef.current?.focus({ preventScroll: true });
+  }, [step]);
+
+  function answer(path: PathId) {
+    setPicked([...picked, path]);
+  }
+
+  function back() {
+    setPicked(picked.slice(0, -1));
   }
 
   function retake() {
-    setStep(0);
-    setScores({});
-    setDone(false);
+    setPicked([]);
   }
 
   if (done) {
@@ -47,11 +66,11 @@ export default function CareerQuiz() {
     const startHere = getStartHereForPath(top.id);
 
     return (
-      <div className="rounded-3xl border border-border-subtle bg-background-elevated p-6 sm:p-8">
+      <div ref={cardRef} className="scroll-mt-24 rounded-3xl border border-border-subtle bg-background-elevated p-6 sm:p-8">
         <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
           Your Best-Fit Path
         </p>
-        <h3 className="mt-2 text-2xl font-semibold">{top.title}</h3>
+        <h3 ref={headingRef} tabIndex={-1} className="mt-2 text-2xl font-semibold outline-none">{top.title}</h3>
         <p className="mt-3 text-foreground-muted">{top.blurb}</p>
         {!top.affiliate && (
           <p className="mt-2 text-xs font-medium text-foreground-muted">
@@ -62,7 +81,7 @@ export default function CareerQuiz() {
         <div className="mt-5 flex flex-wrap gap-3">
           {top.links.map((link) => (
             <a
-              key={link.href}
+              key={`${link.href}|${link.label}`}
               href={link.href}
               target="_blank"
               rel="noopener noreferrer"
@@ -144,7 +163,7 @@ export default function CareerQuiz() {
   }
 
   return (
-    <div className="rounded-3xl border border-border-subtle bg-background-elevated p-6 sm:p-8">
+    <div ref={cardRef} className="scroll-mt-24 rounded-3xl border border-border-subtle bg-background-elevated p-6 sm:p-8">
       <div className="flex items-center justify-between">
         <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
           Find Your Path
@@ -160,7 +179,7 @@ export default function CareerQuiz() {
         />
       </div>
 
-      <h3 className="mt-6 text-xl font-semibold sm:text-2xl">{question.question}</h3>
+      <h3 ref={headingRef} tabIndex={-1} className="mt-6 text-xl font-semibold outline-none sm:text-2xl">{question.question}</h3>
 
       <div className="mt-5 flex flex-col gap-3">
         {question.options.map((option) => (
@@ -179,6 +198,12 @@ export default function CareerQuiz() {
           </button>
         ))}
       </div>
+
+      {step > 0 && (
+        <button type="button" onClick={back} className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-foreground-muted underline underline-offset-2 hover:text-foreground">
+          ← Back to the last question
+        </button>
+      )}
     </div>
   );
 }

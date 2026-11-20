@@ -195,7 +195,7 @@ const steps = [
   },
   {
     title: "Answer a few questions, then download",
-    body: "If the job asks for something your resume doesn't show, our gap coach asks short, specific questions about your own experience and writes in what's true. Edit anything on the page, then download.",
+    body: "If the job asks for something your resume doesn't show, we ask a few short, specific questions about your own experience and write in what's true. Edit anything on the page, then download.",
     icon: (
       <svg {...iconProps} aria-hidden>
         <path d="M12 4v12m0 0l-4-4m4 4l4-4" />

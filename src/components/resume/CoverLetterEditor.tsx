@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { CoverLetter, ResumeDoc } from "@/lib/resume-tailor";
 import { buildCoverLetterDocx, buildCoverLetterPdf, coverLetterFileName, coverLetterToText } from "@/lib/resume-files";
 import { downloadBlob } from "@/lib/download";
+import { cleanLetter } from "@/lib/kit-export";
 import AutoTextarea from "./AutoTextarea";
 
 const field =
@@ -26,11 +27,7 @@ export default function CoverLetterEditor({
 }) {
   const [busy, setBusy] = useState<"" | "pdf" | "docx">("");
   const [copied, setCopied] = useState(false);
-  const clean: CoverLetter = {
-    greeting: letter.greeting.trim(),
-    paragraphs: letter.paragraphs.map((p) => p.trim()).filter(Boolean),
-    closing: letter.closing.trim() || "Sincerely,",
-  };
+  const clean: CoverLetter = cleanLetter(letter);
   const words = clean.paragraphs.join(" ").split(/\s+/).filter(Boolean).length;
 
   async function download(kind: "pdf" | "docx") {

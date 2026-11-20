@@ -8,7 +8,7 @@
 //      because a link does not send anything until a visitor clicks it.
 //   2. Secret-looking environment variable names (KEY, SECRET, TOKEN), which show that a service is being used.
 //   3. The packages in package.json "dependencies", so a new service library is noticed.
-import { readFileSync, readdirSync, statSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 const root = new URL("..", import.meta.url).pathname;
@@ -19,6 +19,8 @@ const approved = JSON.parse(readFileSync(join(root, "docs/legal/third-parties.js
 };
 
 function walk(dir: string, out: string[] = []): string[] {
+  // A folder that does not exist (for example netlify/ before the scheduled functions are added) has nothing to check.
+  if (!existsSync(dir)) return out;
   for (const name of readdirSync(dir)) {
     if (name === "node_modules" || name === ".next" || name.startsWith(".")) continue;
     const p = join(dir, name);

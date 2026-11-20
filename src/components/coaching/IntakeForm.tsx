@@ -57,6 +57,15 @@ export default function IntakeForm() {
     focusRef.current?.focus();
   }, [step]);
 
+  // The form is replaced by a confirmation card. Bring it into view and give it focus, so it is not left above the screen.
+  const doneRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (status !== "success") return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    doneRef.current?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" });
+    doneRef.current?.focus({ preventScroll: true });
+  }, [status]);
+
   const isContactStep = step === CONTACT_STEP;
   const question = isContactStep ? null : intakeQuestions[step];
   const progress = Math.round(((step + 1) / TOTAL_STEPS) * 100);
@@ -164,8 +173,10 @@ export default function IntakeForm() {
     const first = name.trim().split(" ")[0];
     return (
       <div
+        ref={doneRef}
+        tabIndex={-1}
         role="status"
-        className="cd-pop relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-600 p-8 text-center text-white shadow-2xl shadow-blue-900/30 sm:p-10"
+        className="cd-pop relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-600 p-8 text-center text-white shadow-2xl shadow-blue-900/30 outline-none sm:p-10"
       >
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white/20">
           <svg viewBox="0 0 24 24" className="h-8 w-8" fill="currentColor" aria-hidden>
@@ -197,8 +208,10 @@ export default function IntakeForm() {
   if (status === "success") {
     return (
       <div
+        ref={doneRef}
+        tabIndex={-1}
         role="status"
-        className="rounded-3xl border border-border-subtle bg-background-elevated p-8 text-center sm:p-10"
+        className="rounded-3xl border border-border-subtle bg-background-elevated p-8 text-center outline-none sm:p-10"
       >
         <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
           <svg

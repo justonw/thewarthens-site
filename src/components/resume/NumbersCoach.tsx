@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { ResumeDoc } from "@/lib/resume-tailor";
 import { answerHasNumber, findUnquantified, numberQuestion, quantifyScore, type BulletRef } from "@/lib/quantify";
 import { track } from "@/lib/track";
@@ -94,6 +94,8 @@ export default function NumbersCoach({
   email,
   keywords,
   onAnswered,
+  embedded = false,
+  onStatus,
 }: {
   doc: ResumeDoc;
   onDoc: (d: ResumeDoc) => void;
@@ -101,6 +103,10 @@ export default function NumbersCoach({
   keywords: string[];
   // Called with what the person said, so it can be kept as a true story for their next resume.
   onAnswered?: (topic: string, question: string, answer: string) => void;
+  // Inside the combined "Make it stronger" section: no outer frame, and a smaller heading, because the section has its own.
+  embedded?: boolean;
+  // Tells the section how many bullets are still open, so it can show one progress for everything.
+  onStatus?: (s: { open: number; total: number; visible: boolean }) => void;
 }) {
   const [skipped, setSkipped] = useState<Set<string>>(() => new Set());
   const [flash, setFlash] = useState("");
@@ -108,6 +114,13 @@ export default function NumbersCoach({
   const [last, setLast] = useState<{ job: number; bullet: number; before: string; after: string } | null>(null);
   const score = useMemo(() => quantifyScore(doc), [doc]);
   const asked = useMemo(() => findUnquantified(doc, keywords, skipped), [doc, keywords, skipped]);
+  // How many bullets there were to ask about at the start, so the section's progress has a fixed total.
+  const [startAsked] = useState(asked.length);
+  const total = Math.max(startAsked, asked.length);
+  const visible = score.total > 0 && !(asked.length === 0 && score.withNumber === 0 && skipped.size === 0);
+  useEffect(() => {
+    onStatus?.({ open: asked.length, total, visible });
+  }, [asked.length, total, visible, onStatus]);
 
   async function add(item: BulletRef, answer: string): Promise<string | null> {
     if (!email) return errors.email;
@@ -166,15 +179,21 @@ export default function NumbersCoach({
   }
 
   return (
-    <section aria-labelledby="nc-title" className="rounded-3xl border border-border-subtle bg-gradient-to-br from-amber-500/10 via-background-elevated to-blue-500/10 p-5 shadow-sm sm:p-6">
+    <section aria-labelledby="nc-title" className={embedded ? "" : "rounded-3xl border border-border-subtle bg-gradient-to-br from-amber-500/10 via-background-elevated to-blue-500/10 p-5 shadow-sm sm:p-6"}>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-amber-700">Numbers coach</p>
-          <h3 id="nc-title" className="mt-1 text-xl font-semibold tracking-tight">
-            Make your bullets measurable
-          </h3>
+          {!embedded && <p className="text-xs font-bold uppercase tracking-wider text-amber-700">Numbers coach</p>}
+          {embedded ? (
+            <h4 id="nc-title" className="text-base font-semibold tracking-tight">
+              Make your bullets measurable
+            </h4>
+          ) : (
+            <h3 id="nc-title" className="mt-1 text-xl font-semibold tracking-tight">
+              Make your bullets measurable
+            </h3>
+          )}
           <p className="mt-1 max-w-xl text-sm text-foreground-muted">
-            A number makes a bullet easier to believe and to remember. Answer with a real figure; an honest rough number is fine. If there isn&apos;t one, tap &quot;No number&quot; and the bullet stays as it is.
+            A number makes a bullet easier to believe and to remember. Answer with a real figure; an honest rough number is fine. If there isn&apos;t one, tap &ldquo;No number&rdquo; and the bullet stays as it is.
           </p>
         </div>
         <div className="min-w-[10rem]">
