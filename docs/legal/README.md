@@ -7,14 +7,14 @@ Created Nov 19, 2026. I am not a lawyer. These files are working drafts for you 
 | `data-map.md` | Every place visitor data goes, and what we keep | You confirm the **CONFIRM** items (retention settings at Anthropic, Resend, Netlify) |
 | `privacy-policy-draft.md` | Policy written from the data map | Fill the brackets, attorney reads it, then I build the `/privacy` page |
 | `terms-draft.md` | Terms of use | Attorney finalizes liability and governing law, then the `/terms` page |
-| `refund-policy-draft.md` | Refund policy (none existed) | You decide the bracketed choices |
+| `refund-policy-draft.md` | "All sales final" policy (decided Nov 19) | Add the notice at the buy button when the pages go live |
 | `security-checklist.md` | Accounts to lock down, what the code already does, what to add | You do Part 1 (about 1 hour) |
 | `claims-and-wording-audit.md` | Statements about results and privacy on the site | You decide the "needs your decision" list |
 
 ## Order I would do things
 1. Security checklist, Part 1 (you). This has the biggest risk reduction for the least time.
 2. Confirm the retention items in the data map.
-3. Decide the refund policy.
+3. Refund policy decided: all sales final.
 4. Send the data map, privacy policy, terms, and refund policy to an attorney for one review (ask them to also look at the partner program and the plan for an opt-in sharing program).
 5. I build the three pages and the footer links from the final text, you preview, then push.
 
