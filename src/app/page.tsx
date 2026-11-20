@@ -5,7 +5,24 @@ import CrewStrip from "@/components/career-day/CrewStrip";
 import Reveal from "@/components/Reveal";
 
 export const metadata: Metadata = {
+  title: { absolute: "The Warthens: Career Change to Tech, Resume Help & Faith" },
+  description:
+    "Switching to tech? Take the free 2-minute career quiz, tailor your resume to any job in about a minute, and follow Juston & Atiya's career and faith journey.",
   alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    url: "https://thewarthens.com",
+    siteName: "The Warthens",
+    title: "The Warthens: Career Change to Tech, Resume Help & Faith",
+    description:
+      "Switching to tech? Take the free 2-minute career quiz, tailor your resume to any job in about a minute, and follow Juston & Atiya's career and faith journey.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "The Warthens: Career Change to Tech, Resume Help & Faith",
+    description:
+      "Switching to tech? Take the free 2-minute career quiz, tailor your resume to any job in about a minute, and follow Juston & Atiya's career and faith journey.",
+  },
 };
 
 // The front door: one question, and each answer goes straight to the right part of the site.

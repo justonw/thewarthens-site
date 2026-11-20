@@ -48,13 +48,13 @@ export async function generateMetadata({
       title,
       description,
       url: `/faith/${writing.category}/${writing.slug}`,
-      images: [{ url: writing.heroImage?.src ?? "/faith/opengraph-image", width: 1200, height: 630 }],
+      images: [{ url: writing.heroImage?.src ?? `/faith/${writing.category}/${writing.slug}/opengraph-image`, width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [writing.heroImage?.src ?? "/faith/opengraph-image"],
+      images: [writing.heroImage?.src ?? `/faith/${writing.category}/${writing.slug}/opengraph-image`],
     },
   };
 }
@@ -91,7 +91,7 @@ export default async function FaithWritingPage({
     "@type": "Article",
     headline: writing.title,
     description: writing.dek,
-    ...(writing.heroImage && { image: `https://thewarthens.com${writing.heroImage.src}` }),
+    image: writing.heroImage ? `https://thewarthens.com${writing.heroImage.src}` : `https://thewarthens.com/faith/${writing.category}/${writing.slug}/opengraph-image`,
     author: { "@type": "Person", name: writing.author },
     publisher: {
       "@type": "Organization",

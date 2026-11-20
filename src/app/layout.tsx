@@ -39,6 +39,8 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+    // Lets Google show a large picture and a full snippet in results (a bigger, more eye-catching result).
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
   },
   openGraph: {
     type: "website",
