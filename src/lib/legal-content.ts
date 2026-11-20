@@ -150,7 +150,7 @@ export const privacy: LegalDoc = {
           p: "Your resume and the job are sent to **our AI provider**, which runs the AI that writes your documents. We only ask the AI to reword what is in your resume and notes, and we have rules that stop it from adding experience you do not have. You should read every document before you send it, and everything in it must be true.",
         },
         {
-          p: "Our AI provider's published terms say that it deletes the inputs and outputs of our requests within 30 days, keeps them longer only if its safety systems flag them for misuse (up to two years) or if the law requires it, and does not use them to train its models by default. These are the provider's terms, not ours. They can change, and we do not control them.",
+          p: "At the time of writing, our AI provider's published terms say that it deletes the inputs and outputs of our requests within 30 days, keeps them longer only if its safety systems flag them for misuse (up to two years) or if the law requires it, and does not use them to train its models by default. These are the provider's terms, not ours. They can change, and we do not control them.",
         },
       ],
     },
@@ -175,7 +175,7 @@ export const privacy: LegalDoc = {
           p: "We may also share information if the law requires it, to protect our rights or someone's safety, or as part of a sale or transfer of our business. We do not sell your personal information or share it for advertising.",
         },
         {
-          p: "Copies of your information may exist with these providers for the periods their own terms allow, even after we delete ours. For example, our email service keeps a log of the emails it sends, including their contents, for about 30 days.",
+          p: "Copies of your information may exist with these providers for the periods their own terms allow, even after we delete ours. For example, at the time of writing our email service keeps a log of the emails it sends, including their contents, for about 30 days.",
         },
       ],
     },
@@ -203,7 +203,7 @@ export const privacy: LegalDoc = {
           ],
         },
         {
-          p: "**We do not delete our own records automatically.** We remove information when you ask us to, when you stop sharing a build, or when we decide we no longer need it. How long our outside providers keep information is set by their own terms, which can change, and we do not control it. Any period we mention for a provider is based on what its published terms say today, and it may be different when you read this or when your information is handled. We cannot guarantee that a provider has deleted your information by any given date.",
+          p: "**We do not delete our own records automatically.** We remove information when you ask us to, when you stop sharing a build, or when we decide we no longer need it. Our outside providers keep and delete information under their own policies, as those policies are in effect from time to time. We do not control them. We may describe a provider's practice as an example, but it is the provider's current policy, not ours, that applies, and we cannot guarantee when a provider will delete anything.",
         },
       ],
     },
