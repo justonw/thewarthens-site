@@ -1,6 +1,6 @@
 # Interview prep: industry notes to review
 
-Written Nov 20, 2026. These notes shape the practice questions and the opening for each kind of role. **Approved industries are live for visitors. The rest are drafts, so only the owner's test builds get them.** Approved Nov 20, 2026 by Juston Warthen: Sales, Administrative and office, Healthcare front office, Nursing and clinical care, Skilled trades and maintenance, Driving and logistics, Warehouse and production, Retail and hospitality, Teaching and education, Accounting and finance.
+Written Nov 20, 2026. These notes shape the practice questions and the opening for each kind of role. **Approved industries are live for visitors. The rest are drafts, so only the owner's test builds get them.** Approved Nov 20, 2026 by Juston Warthen: Sales, Administrative and office, Healthcare front office, Nursing and clinical care, Skilled trades and maintenance, Driving and logistics, Warehouse and production, Retail and hospitality, Teaching and education, Accounting and finance, Customer service, Software and IT, Management and supervision, Marketing and content, Human resources and recruiting.
 
 How to review: read one industry, fix anything that is wrong or that you would not say, and tell Claude which ones are approved. Approved ones are switched on for visitors with your name and the date. Anyone who has worked in that field is the best reviewer. Nothing here states a fact about a person or a company, and no numbers appear.
 
@@ -191,7 +191,7 @@ Job titles that match: customer service, customer support, customer success, cus
   - a first job dealing with the public, which can speak to patience
 - **Opening: voice:** steady, warm, and plain; empathy shown through what they did, not by saying they are empathetic.
 
-Approved? [ ] yes  [ ] needs changes: ______
+Approved: [x] yes (Juston Warthen, Nov 20, 2026)
 
 ## Software, IT, and data
 
@@ -208,7 +208,7 @@ Job titles that match: software, developer, programmer, web developer, devops, q
   - a project or course they finished while working, which can speak to follow-through and learning fast
 - **Opening: voice:** plain, curious, and specific; name the problem and the fix, and avoid piles of jargon.
 
-Approved? [ ] yes  [ ] needs changes: ______
+Approved: [x] yes (Juston Warthen, Nov 20, 2026)
 
 ## Management and supervision
 
@@ -225,7 +225,7 @@ Job titles that match: manager, supervisor, team lead, shift lead, director, ope
   - stepping up when no one else would, which can speak to taking ownership
 - **Opening: voice:** grounded and humble; credit the team and put people before process.
 
-Approved? [ ] yes  [ ] needs changes: ______
+Approved: [x] yes (Juston Warthen, Nov 20, 2026)
 
 ## Marketing and content
 
@@ -242,7 +242,7 @@ Job titles that match: marketing, content, social media, copywriter, brand, comm
   - a project they made for fun or for a cause, which can speak to initiative
 - **Opening: voice:** lively but specific; show the work and its result, not adjectives.
 
-Approved? [ ] yes  [ ] needs changes: ______
+Approved: [x] yes (Juston Warthen, Nov 20, 2026)
 
 ## Human resources and recruiting
 
@@ -259,7 +259,7 @@ Job titles that match: recruiter, human resources, hr, talent acquisition, peopl
   - their own job search, which can speak to how candidates feel
 - **Opening: voice:** warm and fair and confidential by habit; people first, never gossip or names.
 
-Approved? [ ] yes  [ ] needs changes: ______
+Approved: [x] yes (Juston Warthen, Nov 20, 2026)
 
 ## Caregiving and direct support
 
