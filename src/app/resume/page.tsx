@@ -4,7 +4,7 @@ import Reveal from "@/components/Reveal";
 import ResumeBuilder from "@/components/resume/ResumeBuilder";
 import CoachingCallout from "@/components/coaching/CoachingCallout";
 import FieldExplorer from "@/components/resume/FieldExplorer";
-import { FinalCta, HowItWorks, ResumeHero, ResumeProof } from "@/components/resume/ResumeLanding";
+import { FinalCta, HowItWorks, ResumeHero, ResumeProof, ResumeWhatYouGet } from "@/components/resume/ResumeLanding";
 import { resumeGuides } from "@/lib/resume-guides";
 
 // The title and description are written for the search results page: under about 60 and 160 characters, with the
@@ -144,14 +144,15 @@ export default function ResumePage() {
       <section id="start" className="group/start relative scroll-mt-20 px-6 pb-16">
         <div aria-hidden className="pointer-events-none absolute inset-x-0 top-10 -z-10 mx-auto h-[70%] max-w-5xl rounded-[3rem] bg-gradient-to-b from-blue-500/5 via-violet-500/5 to-transparent" />
         <div className="mx-auto max-w-5xl">
-          {/* "Start here" only makes sense on the form. The builder sets data-phase on this section, and the intro hides while it is building and on the result. */}
-          <div className="mx-auto mb-6 max-w-3xl text-center group-data-[phase=loading]/start:hidden group-data-[phase=result]/start:hidden">
-            <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">Start here</h2>
-            <p className="mt-2 text-sm text-foreground-muted">Add the job you want, then your resume. Everything else is optional.</p>
+          {/* The intro only makes sense on the form. The builder sets data-phase on this section, and the intro hides while it is building and on the result. */}
+          <div className="mx-auto mb-5 max-w-3xl text-center group-data-[phase=loading]/start:hidden group-data-[phase=result]/start:hidden">
+            <h2 className="sr-only">Start here</h2>
           </div>
           <ResumeBuilder />
         </div>
       </section>
+
+      <ResumeWhatYouGet />
 
       <ResumeProof />
 

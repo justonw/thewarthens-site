@@ -929,7 +929,6 @@ export default function ResumeBuilder() {
   return (
     <div className="space-y-10">
     <form id="resume-tool" onSubmit={build} className="space-y-6" noValidate>
-      {!fast && hydrated && phase === "form" && <StartQuestion value={intent} onChange={chooseIntent} />}
 
       {!fast && (
       <div className="z-30 mx-auto max-w-3xl rounded-2xl border border-border-subtle bg-white/90 px-4 py-3 shadow-md backdrop-blur sm:px-6 md:sticky md:top-16">
@@ -1109,6 +1108,8 @@ export default function ResumeBuilder() {
       )}
 
       <div className="mx-auto max-w-3xl space-y-4">
+      {/* Asked after the job and resume boxes, not before them, so the first thing on the page is the box to drop a job into. */}
+      {!fast && hydrated && phase === "form" && <StartQuestion value={intent} onChange={chooseIntent} />}
       {!fast && (<>
       <div className="rounded-3xl border border-border-subtle bg-white p-5 shadow-lg shadow-blue-900/5 transition-shadow focus-within:border-blue-500/40 focus-within:shadow-xl sm:p-6">
         <button

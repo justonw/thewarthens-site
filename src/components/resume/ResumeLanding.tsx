@@ -90,56 +90,44 @@ const GET = [
   { title: "Help with application questions", body: "When an application asks a question, paste it in and get a draft answer from your real experience. You edit it and submit it." },
   { title: "Interview practice for that job", body: "Practice questions for that role, ideas for answering each from your own experience, and questions you can ask them." },
 ];
-const EASY = ["Paste a link. We do the rest", "About a minute", "Download PDF and Word", "2 free builds"];
+const EASY = ["Paste a link, text, or a screenshot", "About a minute per job", "Download PDF and Word", "2 free builds"];
 
-// The top of the page: a headline, one line, and a plain list of what one job link gets you and how easy it is, so a visitor
-// sees the whole value before the tool. The moving example, the numbers, and the evidence come after the tool (see
-// ResumeProof), for anyone who wants the reasons before they trust it.
+// The top of the page: what this is, in a headline and a line, and nothing else, so the tool itself (the job box and the resume box, ready for
+// a link, text, a screenshot, or a dropped file) starts right under it. What one job link gets you, and the moving example, come after the tool
+// (see ResumeWhatYouGet and ResumeProof), for anyone who wants the reasons before they trust it.
 export function ResumeHero() {
   return (
     <section className="relative overflow-hidden">
       <div aria-hidden className="rb-mesh pointer-events-none absolute inset-0 -z-10" />
-      <div className="mx-auto max-w-3xl px-6 pb-6 pt-8 text-center sm:pt-12">
+      <div className="mx-auto max-w-3xl px-6 pb-3 pt-6 text-center sm:pt-8">
         <p className="rb-rise inline-flex items-center gap-2 rounded-full border border-border-subtle bg-white/80 px-3.5 py-1.5 text-xs font-semibold text-foreground-muted shadow-sm backdrop-blur">
           <span className="relative flex h-2 w-2">
             <span className="rb-ping absolute inline-flex h-full w-full rounded-full bg-green-500" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
           </span>
-          Resume Builder · About a minute
+          Resume Builder · About a minute per job
         </p>
-        <h1 className="rb-rise text-balance mt-4 text-3xl font-bold leading-[1.1] tracking-tight sm:text-4xl lg:text-5xl" style={delay(0.08)}>
-          A resume <span className="rb-gradient-text">tailored</span> to the exact job you are applying for
+        <h1 className="rb-rise text-balance mt-3 text-3xl font-bold leading-[1.1] tracking-tight sm:text-4xl" style={delay(0.08)}>
+          Tailor your resume and your job hunt to <span className="rb-gradient-text">every job</span> you apply for
         </h1>
-        <p className="rb-rise mx-auto mt-4 max-w-xl text-balance text-base text-foreground-muted sm:text-lg" style={delay(0.16)}>
-          Paste the link to the job. We rework your resume to match what the company is looking for, then help with the rest of the application.
+        <p className="rb-rise mx-auto mt-3 max-w-xl text-balance text-base font-medium text-foreground sm:text-lg" style={delay(0.16)}>
+          Every resume built for the job you want also comes with:
         </p>
-      </div>
-
-      <div className="mx-auto max-w-5xl px-6 pb-8">
-        <p className="rb-rise text-center text-xs font-bold uppercase tracking-wider text-blue-700" style={delay(0.22)}>
-          What you get from one job link
-        </p>
-        <ol className="mt-3 grid gap-2 sm:grid-cols-2 sm:gap-3 lg:grid-cols-4">
-          {GET.map((g, i) => (
-            <li key={g.title} className="rb-rise flex items-center gap-3 rounded-2xl border border-border-subtle bg-white/90 px-4 py-3 shadow-sm backdrop-blur sm:items-start sm:py-4" style={delay(0.26 + i * 0.06)}>
-              <span aria-hidden className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-violet-600 text-sm font-bold text-white">
-                {i + 1}
+        <ul aria-label="Also included" className="rb-rise mx-auto mt-3 flex max-w-2xl flex-wrap justify-center gap-2" style={delay(0.2)}>
+          {["A note to the hiring manager", "Application answers", "Interview prep"].map((t) => (
+            <li key={t} className="inline-flex items-center gap-2 rounded-full border border-blue-500/25 bg-white px-3.5 py-1.5 text-sm font-semibold shadow-sm">
+              <span aria-hidden className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-violet-600 text-sm font-bold leading-none text-white">
+                +
               </span>
-              <span className="min-w-0">
-                <span className="block text-sm font-semibold leading-snug">{g.title}</span>
-                <span className="mt-1 hidden text-xs leading-snug text-foreground-muted sm:block">{g.body}</span>
-              </span>
+              {t}
             </li>
           ))}
-        </ol>
-        <p className="rb-rise mt-5 text-center text-xs font-bold uppercase tracking-wider text-blue-700" style={delay(0.5)}>
-          Easy by design
-        </p>
-        <ul className="rb-rise mt-2 flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs font-medium text-foreground-muted" style={delay(0.54)}>
+        </ul>
+        <ul className="rb-rise mx-auto mt-4 grid max-w-md grid-cols-2 gap-x-4 gap-y-2.5 text-xs font-medium text-foreground-muted sm:flex sm:max-w-none sm:flex-wrap sm:justify-center sm:gap-x-6" style={delay(0.22)}>
           {EASY.map((t) => (
-            <li key={t} className="flex items-center gap-1.5">
-              <Tick className="h-4 w-4" />
-              {t}
+            <li key={t} className="flex items-start gap-2 text-left sm:items-center">
+              <Tick className="mt-px h-4 w-4 sm:mt-0" />
+              <span>{t}</span>
             </li>
           ))}
         </ul>
@@ -148,23 +136,53 @@ export function ResumeHero() {
   );
 }
 
-// The reasons to trust it: a picture of what the tool does, the numbers, and the evidence. Below the tool, not above it.
+// What one job link gets you, and a picture of it working. Below the tool.
+export function ResumeWhatYouGet() {
+  return (
+    <section aria-label="What you get for every job" className="relative overflow-hidden pb-14">
+      <div className="mx-auto grid max-w-6xl items-center gap-10 px-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12">
+        <div>
+          <p className="text-center text-xs font-bold uppercase tracking-wider text-blue-700 lg:text-left">For every job you add</p>
+          <ol className="mt-3 grid gap-2 sm:grid-cols-2 sm:gap-3">
+            {GET.map((g, i) => (
+              <li key={g.title} className="flex items-center gap-3 rounded-2xl border border-border-subtle bg-white/90 px-4 py-3 text-left shadow-sm backdrop-blur sm:items-start sm:py-4">
+                <span aria-hidden className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-violet-600 text-sm font-bold text-white">
+                  {i + 1}
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-sm font-semibold leading-snug">{g.title}</span>
+                  <span className="mt-1 hidden text-xs leading-snug text-foreground-muted sm:block">{g.body}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+          <div className="mt-4 rounded-2xl border border-blue-500/25 bg-gradient-to-r from-blue-500/5 to-violet-500/5 px-5 py-4 text-center lg:text-left">
+            <p className="text-sm font-semibold sm:text-base">Applying to a lot of jobs? Each one gets its own set.</p>
+            <p className="mt-1 text-xs text-foreground-muted sm:text-sm">
+              Every build is kept on this device in My applications, so you can open one, edit it, or write a follow-up later, and move on to the next job.
+            </p>
+          </div>
+        </div>
+        <HeroDemo />
+      </div>
+    </section>
+  );
+}
+
+// The reasons to trust it: the numbers and the evidence. Below the tool, not above it.
 export function ResumeProof() {
   return (
     <section aria-label="Why tailoring works" className="relative overflow-hidden pb-14">
-      <div className="mx-auto grid max-w-6xl items-center gap-10 px-6 lg:grid-cols-[0.95fr_1.05fr] lg:gap-14">
-        <HeroDemo />
-        <div>
-          <ul className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
-            {stats.map((s, i) => (
-              <li key={s.big} className="rb-rise rounded-2xl border border-border-subtle bg-white/80 p-5 text-center shadow-sm backdrop-blur lg:text-left" style={delay(0.1 + i * 0.1)}>
-                <p className="rb-gradient-text text-3xl font-bold tracking-tight sm:text-4xl">{s.big}</p>
-                <p className="mt-1.5 text-sm text-foreground-muted">{s.small}</p>
-              </li>
-            ))}
-          </ul>
-          <EvidenceDropdown />
-        </div>
+      <div className="mx-auto max-w-3xl px-6">
+        <ul className="grid gap-3 sm:grid-cols-3">
+          {stats.map((s, i) => (
+            <li key={s.big} className="rb-rise rounded-2xl border border-border-subtle bg-white/80 p-5 text-center shadow-sm backdrop-blur" style={delay(0.1 + i * 0.1)}>
+              <p className="rb-gradient-text text-3xl font-bold tracking-tight sm:text-4xl">{s.big}</p>
+              <p className="mt-1.5 text-sm text-foreground-muted">{s.small}</p>
+            </li>
+          ))}
+        </ul>
+        <EvidenceDropdown />
       </div>
     </section>
   );
