@@ -30,7 +30,7 @@ export const privacy: LegalDoc = {
       blocks: [
         {
           bullets: [
-            "The Resume Builder sends your resume and the job to an AI service to write your documents. We do not save the text of your resume or the job posting on our servers, unless you tick the optional box that lets us use that one build to improve the site (see \"Sharing a build to help us improve this site\" below).",
+            "The Resume Builder sends your resume and the job to an AI service to write your documents. We do not save the text of your resume or the job posting on our servers (our providers may keep copies for a short time, described below), unless you tick the optional box that lets us use that one build to improve the site (see \"Sharing a build to help us improve this site\" below).",
             "We use your email to count your free builds, to send the copy you ask for, and, if you opt in or are on our list, an occasional note. Every note has an unsubscribe link.",
             "We do not sell your information, and we do not use ad trackers.",
             "We do not use what you send us to train AI models, including anything you choose to share.",
@@ -157,7 +157,7 @@ export const privacy: LegalDoc = {
     {
       heading: "Who we share information with",
       blocks: [
-        { p: "We share information only with service providers who help us run the site, under their own terms. They fall into these kinds:" },
+        { p: "We share information with service providers and other third parties who help us run the site and our business, under their own terms or agreements with us. They include these kinds:" },
         {
           bullets: [
             "An AI provider that writes your documents.",
@@ -165,7 +165,11 @@ export const privacy: LegalDoc = {
             "A payment processor that takes payments.",
             "Our website host, which also stores our counters and lists.",
             "A video platform for the videos embedded on some pages.",
+            "Other service providers and third parties that are relevant to what we offer, such as tools for support, scheduling, security, and record keeping, and professional advisers such as accountants and lawyers.",
           ],
+        },
+        {
+          p: "This list is not exhaustive. As our business grows we may add or change the providers and third parties we work with, and we may share information with them for the purposes described in this policy. We expect them to use it only to provide their services to us.",
         },
         {
           p: "We may also share information if the law requires it, to protect our rights or someone's safety, or as part of a sale or transfer of our business. We do not sell your personal information or share it for advertising.",
@@ -195,8 +199,11 @@ export const privacy: LegalDoc = {
             "Build counts and balances: kept until you ask us to delete them. They are stored under a scrambled version of your email address.",
             "Occasional-note and waitlist addresses: until you unsubscribe or ask us to remove them. We keep an unsubscribe record so we do not email you again.",
             "Contact and coaching messages, and build alerts: kept in our email inbox for as long as we need them to reply and keep our records. We delete them when you ask.",
-            "Purchase records: kept for as long as needed for tax and accounting, which we expect to be up to seven years.",
+            "Purchase records: kept for as long as needed for tax and accounting, which can be several years.",
           ],
+        },
+        {
+          p: "**We do not delete our own records automatically.** We remove information when you ask us to, when you stop sharing a build, or when we decide we no longer need it. How long our outside providers keep information is set by their own terms, which can change, and we do not control it. Any period we mention for a provider is based on what its published terms say today, and it may be different when you read this or when your information is handled. We cannot guarantee that a provider has deleted your information by any given date.",
         },
       ],
     },
@@ -213,7 +220,7 @@ export const privacy: LegalDoc = {
       heading: "Security",
       blocks: [
         {
-          p: "We use reasonable measures to protect information, including keeping card handling with our payment processor, scrambling the email addresses in our usage counters, limiting who can access our records, and signed unsubscribe links. No system is completely secure, and we cannot guarantee it. If a breach affects your information, we will notify you as the law requires.",
+          p: "We use reasonable measures to protect information, including keeping card handling with our payment processor, keeping email addresses in our usage counters only as one-way codes, limiting who can access our records, and signed unsubscribe links. No system is completely secure, and we cannot guarantee it. If a breach affects your information, we will notify you as the law requires.",
         },
         { p: "If you find a security problem on our site, please email **info@thewarthens.com**. Our contact details are also at /.well-known/security.txt." },
       ],
