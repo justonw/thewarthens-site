@@ -1,6 +1,6 @@
 # Interview prep: industry notes to review
 
-Written Nov 20, 2026. These notes shape the practice questions and the opening for each kind of role. **Approved industries are live for visitors. The rest are drafts, so only the owner's test builds get them.** Approved Nov 20, 2026 by Juston Warthen: Sales, Administrative and office, Healthcare front office, Nursing and clinical care, Skilled trades and maintenance, Driving and logistics, Warehouse and production, Retail and hospitality, Teaching and education, Accounting and finance, Customer service, Software and IT, Management and supervision, Marketing and content, Human resources and recruiting.
+Written Nov 20, 2026. These notes shape the practice questions and the opening for each kind of role. **Approved industries are live for visitors. The rest are drafts, so only the owner's test builds get them.** Approved Nov 20, 2026 by Juston Warthen: Sales, Administrative and office, Healthcare front office, Nursing and clinical care, Skilled trades and maintenance, Driving and logistics, Warehouse and production, Retail and hospitality, Teaching and education, Accounting and finance, Customer service, Software and IT, Management and supervision, Marketing and content, Human resources and recruiting, Caregiving and direct support, Social services and nonprofit programs, Security and public safety, Engineering and technical support, Projects, operations, and purchasing.
 
 How to review: read one industry, fix anything that is wrong or that you would not say, and tell Claude which ones are approved. Approved ones are switched on for visitors with your name and the date. Anyone who has worked in that field is the best reviewer. Nothing here states a fact about a person or a company, and no numbers appear.
 
@@ -276,7 +276,7 @@ Job titles that match: caregiver, home health aide, personal care aide, direct s
   - being the dependable one in a family, which can speak to consistency
 - **Opening: voice:** gentle, plain, and steady; respect and dignity, with no stories about named people.
 
-Approved? [ ] yes  [ ] needs changes: ______
+Approved: [x] yes (Juston Warthen, Nov 20, 2026)
 
 ## Social services and nonprofit programs
 
@@ -293,7 +293,7 @@ Job titles that match: social worker, case manager, caseworker, counselor, progr
   - a family role as the one who knew where to find help, which can speak to connecting people to resources
 - **Opening: voice:** humble, respectful, and grounded; the person helped is the focus, never a hero story.
 
-Approved? [ ] yes  [ ] needs changes: ______
+Approved: [x] yes (Juston Warthen, Nov 20, 2026)
 
 ## Security and public safety
 
@@ -310,7 +310,7 @@ Job titles that match: security officer, security guard, loss prevention, police
   - growing up as the peacemaker, which can speak to defusing conflict
 - **Opening: voice:** calm, professional, and matter-of-fact; no tough-guy talk, with judgment and honesty over bravado.
 
-Approved? [ ] yes  [ ] needs changes: ______
+Approved: [x] yes (Juston Warthen, Nov 20, 2026)
 
 ## Engineering and technical support
 
@@ -327,7 +327,7 @@ Job titles that match: mechanical engineer, electrical engineer, civil engineer,
   - explaining a technical thing to a family member, which can speak to clear communication
 - **Opening: voice:** precise, plain, and curious; name the problem, the method, and the result, with no piles of buzzwords.
 
-Approved? [ ] yes  [ ] needs changes: ______
+Approved: [x] yes (Juston Warthen, Nov 20, 2026)
 
 ## Projects, operations, and purchasing
 
@@ -344,7 +344,7 @@ Job titles that match: project manager, project coordinator, program manager, pr
   - a project that went sideways and how they recovered, which can speak to calm problem solving
 - **Opening: voice:** organized, calm, and specific, in plain status-style sentences; credit the people they worked with.
 
-Approved? [ ] yes  [ ] needs changes: ______
+Approved: [x] yes (Juston Warthen, Nov 20, 2026)
 
 ## Banking, insurance, and real estate
 
