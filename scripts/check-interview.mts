@@ -75,8 +75,8 @@ assert.ok(out.startsWith("INTERVIEW PREP: Customer Success Manager at Lumen Anal
 assert.ok(out.includes("QUESTIONS TO ASK THEM") && out.includes("REMEMBER"));
 assert.ok(!/[—–]/.test(out), "no dashes in the text");
 
-// The new version (voice: true). Visitors keep the old opening rules until INTERVIEW_V2 is switched on.
-assert.equal(lib.INTERVIEW_V2, false, "the new version stays OFF for visitors until the live owner test has been read");
+// The new version (voice: true), switched on for everyone.
+assert.equal(lib.INTERVIEW_V2, true, "the new version is ON for visitors");
 const v2: any = lib.buildInterviewRequest({ ...input, voice: true }, "claude-sonnet-5-5");
 assert.notEqual(v2.system, req.system, "voice changes the rules");
 assert.ok(v2.system.includes("100 to 130 words") && v2.system.includes('Your story, what shaped how I work') && v2.system.includes("not a resume read aloud"), "the spoken opening rules are in");

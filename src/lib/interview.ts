@@ -15,7 +15,7 @@ export const MAX_QUESTIONS = 11;
 // on every question (see interview-deep.ts). It is OFF for visitors until the real output has been read and approved. The owner can
 // test it on the live site first (the API accepts voice: true and the deep route works with the owner code). Turning this on is the
 // one change that shows it to everyone.
-export const INTERVIEW_V2 = false;
+export const INTERVIEW_V2 = true;
 // Allowance for the per-question answers: each one is a small request, so the monthly count per email is higher than for sheets.
 export const DEEP_PER_EMAIL_PER_MONTH = 40;
 export const DEEP_PER_MONTH = 3000;
