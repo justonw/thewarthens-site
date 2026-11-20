@@ -268,6 +268,8 @@ export default function InterviewPanel({
   const [bridge, setBridge] = useState("");
   const storyRef = useRef<HTMLDivElement>(null);
   const topRef = useRef<HTMLDivElement>(null);
+  // The parts of the job the person can connect their moment to: the posting's key terms, without the job title itself.
+  const partsOfJob = result.postingKeywords.filter((k) => !result.postingTitle || !result.postingTitle.toLowerCase().includes(k.toLowerCase())).slice(0, 8);
   const job = `${result.postingTitle || doc.headline}${result.postingCompany ? ` at ${result.postingCompany}` : ""}`;
 
   async function build() {
@@ -436,12 +438,12 @@ export default function InterviewPanel({
                 <div className="mt-1.5">
                   <VoiceInput onText={(t) => setStory((cur) => cur.map((x, k) => (k === i ? (x ? `${x.trimEnd()} ${t}` : t) : x)))} />
                 </div>
-                {i === 1 && (story[1] ?? "").trim().length >= 3 && result.postingKeywords.length > 0 && (
+                {i === 1 && (story[1] ?? "").trim().length >= 3 && partsOfJob.length > 0 && (
                   <div className="mt-3 rounded-xl border border-violet-500/20 bg-white/60 p-3">
                     <p className="text-sm font-semibold">Which part of this job does that connect to?</p>
                     <p className="mt-0.5 text-xs text-foreground-muted">Pick one. We link what you said to it in a sentence, using only your own idea.</p>
                     <div className="mt-2 flex flex-wrap gap-1.5" role="group" aria-label="Parts of this job">
-                      {result.postingKeywords.slice(0, 8).map((k) => (
+                      {partsOfJob.map((k) => (
                         <button
                           key={k}
                           type="button"

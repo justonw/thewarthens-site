@@ -33,7 +33,9 @@ for (const l of LENSES) {
   assert.ok(l.exercises.length >= 3, `${where}: at least 3 exercises or role-plays`);
   assert.ok(l.situations.length >= 3, `${where}: at least 3 situations`);
   assert.ok(l.transferable.length >= 3, `${where}: at least 3 kinds of experience that transfer into this field`);
-  const text = JSON.stringify([l.measured, l.exercises, l.situations, l.compliance, l.transferable]);
+  assert.ok(l.opening && l.opening.proof.length >= 20 && l.opening.tone.length >= 10 && l.opening.bridges.length >= 3, `${where}: opening notes have a proof, three bridges, and a voice`);
+  for (const b of l.opening.bridges) assert.ok(b.includes("which can speak to"), `${where}: each bridge says which part of the work it can speak to`);
+  const text = JSON.stringify([l.measured, l.exercises, l.situations, l.compliance, l.transferable, l.opening]);
   assert.ok(!/[—–]/.test(text), `${where}: no em or en dashes`);
   assert.ok(!/\d/.test(text), `${where}: no numbers, benchmarks, or rates (a lens names what is tested, never a figure)`);
   assert.ok(!/\$|%/.test(text), `${where}: no money or percentages`);
@@ -53,6 +55,7 @@ assert.deepEqual(matchLenses("Sales Administrative Assistant", [], true, fakeLib
 
 // The prompt text.
 const text = lensRules([LENSES[0]]);
+assert.ok(text.includes("Opening notes: lead the proof with") && text.includes("never invent or stretch a moment"), "the opening notes and their limits are in the lens text");
 assert.ok(text.includes("Sales") && text.includes("Measured on") && text.includes("Ask 10 questions") && text.includes("Never invent a metric") && text.includes("MUST be about one of them"), "the lens text names the role and the rules");
 assert.ok(GENERIC_LENS.includes("never invent a metric"), "the generic lens keeps the rules");
 
@@ -75,6 +78,17 @@ const EXPECT: [string, string][] = [
   ["Software Engineer", "software-it"], ["IT Help Desk Technician", "software-it"], ["Data Analyst", "software-it"], ["Systems Administrator", "software-it"],
   ["Shift Supervisor", "management-supervision"], ["Store Manager", "management-supervision"], ["Operations Manager", "management-supervision"],
   ["Social Media Manager", "marketing-content"], ["Content Writer", "marketing-content"], ["Marketing Coordinator", "marketing-content"],
+  ["Security Officer", "protective-services-public-safety"], ["Police Officer", "protective-services-public-safety"], ["Firefighter", "protective-services-public-safety"],
+  ["Caregiver", "caregiving-direct-support"], ["Home Health Aide", "caregiving-direct-support"], ["Direct Support Professional", "caregiving-direct-support"], ["Nanny", "caregiving-direct-support"],
+  ["Social Worker", "social-services-nonprofit"], ["Case Manager", "social-services-nonprofit"], ["Grant Writer", "social-services-nonprofit"], ["Nonprofit Program Coordinator", "social-services-nonprofit"],
+  ["Mechanical Engineer", "engineering-technical"], ["Electrical Engineer", "engineering-technical"], ["Civil Engineer", "engineering-technical"], ["Engineering Technician", "engineering-technical"],
+  ["Project Manager", "project-operations-purchasing"], ["Buyer", "project-operations-purchasing"], ["Event Coordinator", "project-operations-purchasing"], ["Supply Chain Analyst", "project-operations-purchasing"],
+  ["Bank Teller", "banking-insurance-real-estate"], ["Loan Officer", "banking-insurance-real-estate"], ["Real Estate Agent", "banking-insurance-real-estate"], ["Property Manager", "banking-insurance-real-estate"], ["Leasing Agent", "banking-insurance-real-estate"], ["Claims Adjuster", "banking-insurance-real-estate"],
+  ["Video Editor", "creative-media"], ["Photographer", "creative-media"], ["UX Designer", "creative-media"],
+  ["Hair Stylist", "personal-services-wellness"], ["Personal Trainer", "personal-services-wellness"], ["Cosmetologist", "personal-services-wellness"],
+  ["Paralegal", "legal-support"], ["Legal Assistant", "legal-support"],
+  ["Dental Assistant", "dental-vet-therapy"], ["Veterinary Technician", "dental-vet-therapy"], ["Physical Therapist", "dental-vet-therapy"], ["Pharmacist", "dental-vet-therapy"],
+  ["Janitor", "facilities-grounds-labor"], ["Groundskeeper", "facilities-grounds-labor"], ["Landscaper", "facilities-grounds-labor"], ["Construction Laborer", "facilities-grounds-labor"],
   ["Technical Recruiter", "hr-recruiting"], ["HR Generalist", "hr-recruiting"], ["Talent Acquisition Specialist", "hr-recruiting"],
 ];
 for (const [title, id] of EXPECT) {
