@@ -34,6 +34,8 @@ export type TailorInput = {
   // No job posting: the person named the kind of role they are aiming for, and wants a strong general resume for it.
   general?: boolean;
   targetRole?: string;
+  // Owner testing only (v3c): what counts as relevant experience in the field the person is going after (see fieldNotes in interview-lenses.ts).
+  fieldNotes?: string;
 };
 
 // Returns clean attachments, or null if anything about them looks wrong.
@@ -291,6 +293,14 @@ const V3B_RULES = `
 const HEADLINE_RULES = `
 - Headline (this replaces the earlier rule about the headline): it shows the role the person is targeting, and it must never claim a title they have not held. Compare the target with the job titles in their experience. If one of their jobs is the same kind of job (the same title, or the same role at another level or another employer), write the target title exactly as the posting words it. If none is, because the target is a different kind of job or needs a license or credential the resume does not show, write "Aspiring " followed by the exact target title as the posting words it, and nothing else (for example "Aspiring Teacher" or "Aspiring Journeyman Electrician"). A step up within the same field (a Sales Development Representative applying for Account Executive, a Support Specialist applying for Support Lead) counts as the same kind of job: use the target title alone. When you cannot tell, use "Aspiring". Keep it 50 characters or fewer. The "postingTitle" is always the target title without "Aspiring".`;
 
+// Added in v3c when the target field is known: bring forward the real experience that counts in that field, and only that.
+const FIELD_RULES = `
+
+Field emphasis. The person is going after the kind of job described in the field notes below, which list kinds of real experience that count for it. This matters most for someone coming from another field.
+- Where the resume truly shows any of these, bring it forward: lead the summary with it, list it first among the skills, and make it the first bullet of the job it belongs to, using the field's own wording for what the person actually did. Reorder and reword only. Never add an activity, a number, a setting, or a result the resume does not give.
+- Do not rename or restyle past job titles, and do not say the person has done a field's work they have not done. When the field's work is new to them, say what they did that is related, in their real terms.
+- If the resume shows none of these, do not mention the field's kinds of experience at all.`;
+
 function systemFor(variant: PromptVariant): string {
   if (variant === "baseline") return BASELINE_SYSTEM;
   if (variant === "v3c") return systemFor("v3b") + HEADLINE_RULES;
@@ -310,7 +320,7 @@ export function buildResumeRequest(input: TailorInput, model: string = RESUME_MO
     // Medium effort keeps the thinking short: a rewrite does not need deep reasoning, and it costs less.
     output_config: { effort: "medium" },
     // A general resume has no posting, so the posting-wording rules do not apply: it keeps the base prompt it was tested with.
-    system: `${systemFor(input.general && variant !== "baseline" ? "v1" : variant)}${input.fromScratch ? SCRATCH_RULES : ""}${input.general ? GENERAL_RULES : ""}${input.general && variant === "v3c" ? HEADLINE_RULES : ""}${input.matchDesign ? DESIGN_RULES : ""}${input.coverLetter && !input.general ? COVER_LETTER_RULES : ""}\n\nToday\'s date is ${new Date().toISOString().slice(0, 10)}. A job that says "Present" is still current.\n\nAlways answer by calling the ${TOOL_NAME} tool exactly once. Do not write any other text.`,
+    system: `${systemFor(input.general && variant !== "baseline" ? "v1" : variant)}${input.fromScratch ? SCRATCH_RULES : ""}${input.general ? GENERAL_RULES : ""}${input.general && variant === "v3c" ? HEADLINE_RULES : ""}${variant === "v3c" && input.fieldNotes ? `${FIELD_RULES}\n<field_notes>\n${input.fieldNotes}\n</field_notes>` : ""}${input.matchDesign ? DESIGN_RULES : ""}${input.coverLetter && !input.general ? COVER_LETTER_RULES : ""}\n\nToday\'s date is ${new Date().toISOString().slice(0, 10)}. A job that says "Present" is still current.\n\nAlways answer by calling the ${TOOL_NAME} tool exactly once. Do not write any other text.`,
     tools: [
       {
         name: TOOL_NAME,

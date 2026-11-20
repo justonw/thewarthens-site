@@ -40,6 +40,9 @@ export type Lens = {
   situations: string[];
   // Rules, privacy, or safety topics that come up. Empty when none do.
   compliance: string[];
+  // Kinds of real experience that count for this field, especially for someone moving into it from another field. Used to decide what
+  // to bring forward when tailoring a resume (only where the resume really shows it), and later to ask for missing evidence.
+  transferable: string[];
 };
 
 export const LENSES: Lens[] = [
@@ -55,6 +58,7 @@ export const LENSES: Lens[] = [
     exercises: ["walk through a discovery call from the opening to the agreed next step", "a sell-me-this or pitch-the-product exercise", "handling a common objection such as price or timing", "a mock cold call or outreach message", "how they would plan a territory or a list of accounts"],
     situations: ["a prospect who goes quiet", "a deal lost to a competitor", "a stalled deal that needs a push", "handing a closed deal to the team that delivers it"],
     compliance: ["honest claims about the product", "do-not-call and email consent rules where they apply", "accurate records in the CRM"],
+    transferable: ["prospecting or outreach to new people", "running discovery-style conversations or interviews", "following up and keeping people engaged", "tracking contacts or a pipeline in a system", "presenting or persuading a group", "meeting targets or goals"],
   },
   {
     id: "admin-office",
@@ -68,6 +72,7 @@ export const LENSES: Lens[] = [
     exercises: ["prioritize several competing requests from different people right now", "a scheduling puzzle with conflicts", "write or proofread a short professional email", "how they would organize a messy shared folder or process", "what they do when someone asks for information that is confidential", "how they decide what to handle themselves and what to bring to the person they support"],
     situations: ["two leaders who each want priority", "a last-minute change to travel or a meeting", "an error found after something was sent", "an upset caller or visitor", "overhearing or seeing something private", "a temporary assignment that ends and the handoff to the next person"],
     compliance: ["confidentiality of what they see and hear", "handling sensitive documents", "access to private calendars and email"],
+    transferable: ["coordinating schedules, calendars, or travel", "handling email or messages for others", "keeping records and files organized", "handling confidential information", "supporting a team or a leader", "front-desk or phone work"],
   },
   {
     id: "healthcare-front-office",
@@ -81,6 +86,7 @@ export const LENSES: Lens[] = [
     exercises: ["a patient arrives with missing or wrong insurance information, what are the steps", "explain a cost or copay to a patient clearly and kindly", "verify details on a described record and catch what does not match"],
     situations: ["an upset patient who has been waiting", "a patient in pain or distress at the desk", "a caller asking about another person's information", "a double-booked schedule", "the system going down at a busy time"],
     compliance: ["HIPAA privacy: who may be told what, and checking identity first", "sharing only the minimum needed", "accurate, complete patient records"],
+    transferable: ["registering or checking in people", "handling insurance or payment details", "scheduling appointments", "handling private information carefully", "calming upset or worried people", "accurate data entry"],
   },
   {
     id: "nursing-clinical",
@@ -94,6 +100,7 @@ export const LENSES: Lens[] = [
     exercises: ["a patient's condition changes during the shift, what do you do first", "prioritize several patients who all need something now", "give a handoff report at shift change", "describe how they double-check a medication or a procedure"],
     situations: ["an upset family member", "a disagreement with a colleague or provider", "a near miss or an error", "being short-staffed", "a patient who refuses care"],
     compliance: ["patient privacy", "scope of practice: what they may and may not do", "infection control", "accurate and timely documentation", "reporting safety concerns", "licenses and certifications they actually hold"],
+    transferable: ["direct care for people, including family or volunteer care", "noticing changes and reporting them", "charting or documentation", "safety and infection-control routines", "working with a care team", "care-related training such as first aid or CPR"],
   },
   {
     id: "skilled-trades",
@@ -107,6 +114,7 @@ export const LENSES: Lens[] = [
     exercises: ["troubleshoot a described fault out loud, step by step", "read or explain a plan, drawing, or work order", "how they check their work before leaving", "describe the safety steps before starting a job"],
     situations: ["finding a hazard on site", "a customer who wants something outside the job", "a part or material that is not available", "a job running behind", "working around other trades"],
     compliance: ["safety rules and protective equipment", "lockout and tagout where it applies", "local codes and inspections", "licenses and certifications they actually hold"],
+    transferable: ["hands-on installation or repair", "reading plans or instructions", "working with tools and equipment", "following safety rules and training", "troubleshooting", "working on a crew"],
   },
   {
     id: "driving-logistics",
@@ -120,6 +128,7 @@ export const LENSES: Lens[] = [
     exercises: ["how they plan a route when there is a delay", "walk through their pre-trip inspection", "what they do when their hours are running short", "for dispatch: how they prioritize loads and keep drivers informed"],
     situations: ["bad weather or heavy traffic", "damaged or missing freight", "a difficult customer at delivery", "a breakdown on the road", "pressure to skip a safety step to save time"],
     compliance: ["hours of service rules", "vehicle inspections", "safety rules", "accurate logs and paperwork", "license class and endorsements they actually hold"],
+    transferable: ["driving or delivery work", "planning routes or schedules", "handling paperwork or logs", "vehicle checks", "safe driving records the resume shows", "customer handoffs"],
   },
   {
     id: "warehouse-production",
@@ -133,6 +142,7 @@ export const LENSES: Lens[] = [
     exercises: ["how they keep accuracy when output goals are high", "walk through safe equipment or forklift checks", "what they would do on finding a quality defect", "how they would organize a stock area"],
     situations: ["a count that does not match", "a coworker taking an unsafe shortcut", "a machine going down", "an order due soon", "a change of task or shift at short notice"],
     compliance: ["safety rules", "equipment certifications they actually hold", "lifting and ergonomics", "quality procedures"],
+    transferable: ["handling, packing, or assembling goods", "accuracy and counts", "operating equipment", "meeting production goals", "following safety and quality steps", "shift work"],
   },
   {
     id: "retail-hospitality",
@@ -146,6 +156,7 @@ export const LENSES: Lens[] = [
     exercises: ["handle an upset customer who has a point", "how they handle a rush with a short team", "suggest an add-on without being pushy", "habits that keep orders and the drawer accurate"],
     situations: ["a customer complaint", "a long line", "a coworker who does not show up", "a customer who disagrees with a policy", "suspected theft"],
     compliance: ["cash handling", "age-restricted sales where they apply", "food safety and allergens", "workplace safety"],
+    transferable: ["serving customers face to face", "handling cash or orders", "working a rush", "resolving complaints", "product or menu knowledge", "recommending or upselling"],
   },
   {
     id: "teaching-education",
@@ -159,6 +170,7 @@ export const LENSES: Lens[] = [
     exercises: ["describe a lesson they would teach and how they know students understood", "a classroom management scenario", "how they would support a student far behind or far ahead", "a short mock lesson or explanation"],
     situations: ["a disruptive student", "a frustrated parent", "very different needs in one room", "a lesson that did not work", "working with other staff"],
     compliance: ["student privacy", "mandated reporting duties", "supporting students with learning plans", "student safety", "the license or certification they actually hold"],
+    transferable: ["training or onboarding others", "mentoring or coaching", "presenting or explaining complex topics", "creating educational content or materials", "working with parents or families", "leading a group, class, workshop, or study, including youth or faith groups", "tutoring"],
   },
   {
     id: "accounting-finance",
@@ -172,6 +184,7 @@ export const LENSES: Lens[] = [
     exercises: ["walk through how they reconcile an account and chase a difference", "a short spreadsheet or numbers exercise", "explain a variance to someone outside finance", "what they do when two numbers do not agree"],
     situations: ["a deadline at month end", "a vendor or employee disputing an amount", "an error found after posting", "being asked to adjust the numbers"],
     compliance: ["internal controls and separation of duties", "confidentiality of financial and pay information", "honest reporting", "certifications they actually hold"],
+    transferable: ["accurate record keeping", "reconciling or checking numbers", "budgets or tracking money", "spreadsheets", "meeting deadlines", "handling confidential financial information"],
   },
   {
     id: "customer-service",
@@ -185,6 +198,7 @@ export const LENSES: Lens[] = [
     exercises: ["role-play an angry customer", "explain a hard no kindly", "balance speed against thoroughness", "write a short reply to a described complaint"],
     situations: ["a customer demanding a refund against policy", "a problem the team cannot fix", "a long wait", "an abusive caller", "the same issue reported by many customers"],
     compliance: ["customer data privacy and checking identity", "accurate promises", "following refund and escalation policy"],
+    transferable: ["helping customers solve problems", "handling complaints calmly", "explaining products or policies", "working a queue or tickets", "following up until it is resolved", "onboarding customers"],
   },
   {
     id: "software-it",
@@ -198,6 +212,7 @@ export const LENSES: Lens[] = [
     exercises: ["talk through how they debug a problem step by step", "a coding or SQL exercise, or a walkthrough of a past project", "explain a technical idea to a non-technical person", "design or plan a small system at their level"],
     situations: ["a production issue under pressure", "a disagreement in code review", "unclear requirements", "a mistake they caused", "learning an unfamiliar tool quickly"],
     compliance: ["access and data security", "least access", "change control", "handling customer data"],
+    transferable: ["building or fixing software or systems", "troubleshooting problems", "scripts or automation", "writing documentation", "supporting users", "learning new tools quickly"],
   },
   {
     id: "management-supervision",
@@ -211,6 +226,7 @@ export const LENSES: Lens[] = [
     exercises: ["how they would handle an underperformer, step by step", "how they would run their first month in the role", "how they prioritize when the team is short", "how they give hard feedback"],
     situations: ["conflict between two team members", "an employee with a personal issue", "pressure from above that conflicts with the team", "an unpopular decision", "a mistake by the team they own"],
     compliance: ["fair and consistent treatment", "documenting performance issues", "workplace safety", "confidentiality of personnel matters"],
+    transferable: ["leading or training others", "scheduling work", "giving feedback", "handling conflict", "meeting team goals", "running projects or events"],
   },
   {
     id: "marketing-content",
@@ -224,6 +240,7 @@ export const LENSES: Lens[] = [
     exercises: ["walk through a campaign from goal to result", "critique a described ad or post", "a small content plan for a described audience", "what they do when a campaign underperforms"],
     situations: ["a post that gets a negative reaction", "a tight budget", "conflicting feedback from several people", "a result that cannot be tied to one action"],
     compliance: ["honest advertising claims", "permission for images and music", "disclosure rules for sponsored content", "brand and privacy rules"],
+    transferable: ["creating content such as video, writing, or design", "growing an audience", "measuring engagement", "running campaigns or events", "social media or email", "working with partners"],
   },
   {
     id: "hr-recruiting",
@@ -237,6 +254,7 @@ export const LENSES: Lens[] = [
     exercises: ["how they would find people for a hard-to-fill role", "screen a described candidate", "handle a hiring manager who wants to skip steps", "respond to a described employee complaint"],
     situations: ["a manager and a candidate who want different things", "a concern raised in confidence", "turning down a candidate kindly", "an urgent hire"],
     compliance: ["fair hiring and never asking about protected topics", "confidentiality", "consistent documentation"],
+    transferable: ["finding and contacting people", "interviewing or screening", "onboarding", "keeping confidential records", "explaining policies or benefits", "coordinating schedules"],
   },
 ];
 
@@ -286,6 +304,12 @@ How to use the lens:
 - For an exercise, role-play, or situation, say in "approach" what the interviewer is looking for. In "points" use only real history from the resume or stories. When none fits, leave "points" short and set "storyAsk" to ask for a true example.
 - For a rules, privacy, or safety topic, ask how they handle it in their own words, and never claim a license, certification, or training the material does not show.
 - Do not write a script, a pitch, or an answer for the person. Never state a fact about the company. Never invent a metric or a number.`;
+}
+
+// Field notes for tailoring a resume (owner-only for now): what counts as relevant experience in the field the person is aiming for.
+export function fieldNotes(lenses: Lens[]): string {
+  if (lenses.length === 0) return "";
+  return lenses.map((l) => `Field: ${l.name}. Kinds of experience that count for it: ${l.transferable.join("; ")}.`).join("\n");
 }
 
 // Used for the owner's test builds when no lens matches, so a gap can still be tried out.

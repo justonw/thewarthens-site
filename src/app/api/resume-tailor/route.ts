@@ -23,6 +23,7 @@ import {
 import { DEFAULT_MONTHLY_CAP, FREE_PER_EMAIL, getKv, purchasedTotal, refund, reserve, withTimeout, type Reservation } from "@/lib/resume-limits";
 import { claimRefund, finishBuildMark, startBuildMark, validBuildId, type BuildMark } from "@/lib/resume-builds";
 import { isLiveHost } from "@/lib/coaching-recipients";
+import { fieldNotes, matchLenses } from "@/lib/interview-lenses";
 import { keywordCoverage } from "@/lib/resume-ats";
 import { resumeToPlainText } from "@/lib/resume-files";
 
@@ -262,7 +263,8 @@ export async function POST(req: NextRequest) {
   try {
     // The resume and the cover letter are written by two requests at the same time. A letter is a different job,
     // and asking for both in one answer often left the letter missing or half-written.
-    const base: TailorInput = { general, targetRole, resumeText, resumeFiles, postingText: general ? "" : postingText, postingFiles: general ? [] : postingFiles, notes, coverLetter: false, hiringManager, fromScratch, matchDesign: matchDesign && resumeFiles.length > 0 };
+    const fieldNotesText = unlimited && variant === "v3c" ? fieldNotes(matchLenses(general ? targetRole : postingText.slice(0, 240), [], true).map((m) => m.lens)) : "";
+    const base: TailorInput = { general, targetRole, fieldNotes: fieldNotesText, resumeText, resumeFiles, postingText: general ? "" : postingText, postingFiles: general ? [] : postingFiles, notes, coverLetter: false, hiringManager, fromScratch, matchDesign: matchDesign && resumeFiles.length > 0 };
     const startedAll = Date.now();
     const fileState: { badFile?: boolean } = {};
     const [firstParsed, letterResult] = await Promise.all([

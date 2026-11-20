@@ -32,7 +32,8 @@ for (const l of LENSES) {
   assert.ok(l.measured.length >= 3, `${where}: at least 3 things people are measured on`);
   assert.ok(l.exercises.length >= 3, `${where}: at least 3 exercises or role-plays`);
   assert.ok(l.situations.length >= 3, `${where}: at least 3 situations`);
-  const text = JSON.stringify([l.measured, l.exercises, l.situations, l.compliance]);
+  assert.ok(l.transferable.length >= 3, `${where}: at least 3 kinds of experience that transfer into this field`);
+  const text = JSON.stringify([l.measured, l.exercises, l.situations, l.compliance, l.transferable]);
   assert.ok(!/[—–]/.test(text), `${where}: no em or en dashes`);
   assert.ok(!/\d/.test(text), `${where}: no numbers, benchmarks, or rates (a lens names what is tested, never a figure)`);
   assert.ok(!/\$|%/.test(text), `${where}: no money or percentages`);
@@ -54,6 +55,9 @@ assert.deepEqual(matchLenses("Sales Administrative Assistant", [], true, fakeLib
 const text = lensRules([LENSES[0]]);
 assert.ok(text.includes("Sales") && text.includes("Measured on") && text.includes("Ask 10 questions") && text.includes("Never invent a metric") && text.includes("MUST be about one of them"), "the lens text names the role and the rules");
 assert.ok(GENERIC_LENS.includes("never invent a metric"), "the generic lens keeps the rules");
+
+// Field notes for tailoring.
+assert.ok(lib.fieldNotes([LENSES.find((l: any) => l.id === "teaching-education")]).includes("mentoring or coaching") && lib.fieldNotes([]) === "", "field notes list what counts, and nothing when no lens matches");
 
 // 3: sample titles land on the right lens (the first match must be this one).
 const EXPECT: [string, string][] = [

@@ -42,6 +42,13 @@ assert.ok(gV3c.includes('write "Aspiring "') && gV3c.lastIndexOf("Headline (this
 assert.ok(!sysOf(now.buildResumeRequest({ ...input, general: true, targetRole: "Teacher", postingText: "" }, "claude-sonnet-5-5", [], "v3b")).includes('write "Aspiring "'), "a general default build does not");
 assert.equal(now.parseResumeResponse({ content: [{ type: "tool_use", name: "write_resume", input: { name: "Dana", headline: "Aspiring Teacher", contact: [], summary: "s", skills: [], experience: [{ title: "Lead", company: "Acme", location: "", dates: "x", bullets: ["b"] }], training: [], education: [], postingKeywords: [], postingCompany: "", gaps: [], changes: [] } }] }, true).result.postingTitle, "Teacher", "the target title does not carry 'Aspiring'");
 
+// v3c also takes field notes (what counts as relevant experience in the target field); no other version does.
+const notes = "Field: Teaching and education. Kinds of experience that count for it: mentoring or coaching.";
+const withNotes = sysOf(now.buildResumeRequest({ ...input, fieldNotes: notes }, "claude-sonnet-5-5", [], "v3c"));
+assert.ok(withNotes.includes("Field emphasis") && withNotes.includes("<field_notes>") && withNotes.includes("mentoring or coaching") && withNotes.includes("Never add an activity"), "v3c carries the field notes and the rules for using them");
+assert.ok(!sysOf(now.buildResumeRequest({ ...input, fieldNotes: notes }, "claude-sonnet-5-5", [], "v3b")).includes("Field emphasis"), "the default ignores field notes");
+assert.ok(!v3c.includes("Field emphasis"), "no field notes, no field rules");
+
 // Skills that arrive as a list are kept, not dropped (a dropped list used to blank the whole skills section).
 const doc = now.parseDoc({
   name: "Dana", headline: "CSM", contact: [], summary: "s",
