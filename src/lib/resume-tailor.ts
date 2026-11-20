@@ -285,7 +285,8 @@ More rules for the summary, skills, and bullets:
 // "v3b" is v3 plus a rule to win back the posting's real keywords: the first test of v3 stopped the padding but also used fewer
 // of the posting's own words, which hiring software scans for.
 const V3B_RULES = `
-- The posting's own words: whenever the resume shows that the person did or has something the posting names (a duty, tool, skill, or credential), use the posting's exact term for it in the summary, the skills, or a bullet, instead of a paraphrase. Never use a posting term for something the resume does not show.`;
+- The posting's own words: whenever the resume shows that the person did or has something the posting names (a duty, tool, skill, or credential), use the posting's exact term for it in the summary, the skills, or a bullet, instead of a paraphrase. Never use a posting term for something the resume does not show.
+- Say it naturally or not at all. A posting phrase goes into a bullet only when the bullet reads as a normal resume line and the work really is that activity. Never write that the work is "similar to", "like", "equivalent to", "an example of", or "in the style of" a posting phrase, and never add a clause that exists only to carry a keyword (for example "similar to quarterly business reviews" or "as an example of stakeholder presentations"). When the honest wording is the person's own ("quarterly progress reviews with parents"), use that and leave the posting's phrase for "gaps". A hiring manager must be able to read every bullet without noticing that it was tailored.`;
 
 // "v3c" is v3b plus an honest headline: the target title when the person has held that kind of job, and "Aspiring" plus the
 // target title when they have not (a change of field, or a credential the resume does not show). Owner-only until tested across
@@ -387,7 +388,7 @@ export function buildResumeRequest(input: TailorInput, model: string = RESUME_MO
         content: buildContent(
           input,
           missingPhrases.length
-            ? `A first draft did not use these phrases from the posting: ${missingPhrases.map((p) => `"${p}"`).join(", ")}. For each one that the person's real work truly matches, use that exact phrase by reframing the bullet or summary line that proves it, keeping every number, name, and date. Leave out any that do not match, and list those in gaps. Do not merge or drop jobs. Now call ${TOOL_NAME} with the tailored resume.`
+            ? `A first draft did not use these phrases from the posting: ${missingPhrases.map((p) => `"${p}"`).join(", ")}. For each one that the person's real work truly matches, use that exact phrase by reframing the bullet or summary line that proves it, keeping every number, name, and date. If the only way to include a phrase is to say the work is \"similar to\" it or \"an example of\" it, leave the phrase out and list it in gaps instead. Leave out any that do not match, and list those in gaps. Do not merge or drop jobs. Now call ${TOOL_NAME} with the tailored resume.`
             : undefined
         ),
       },

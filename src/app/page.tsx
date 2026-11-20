@@ -7,7 +7,7 @@ import Reveal from "@/components/Reveal";
 export const metadata: Metadata = {
   title: { absolute: "The Warthens: Career Change to Tech, Resume Help & Faith" },
   description:
-    "Switching to tech? Take the free 2-minute career quiz, tailor your resume to any job in about a minute, and follow Juston & Atiya's career and faith journey.",
+    "Switching to tech? Take the free 2-minute career quiz, tailor your resume to any job, and follow Juston & Atiya's career and faith journey.",
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
@@ -15,13 +15,13 @@ export const metadata: Metadata = {
     siteName: "The Warthens",
     title: "The Warthens: Career Change to Tech, Resume Help & Faith",
     description:
-      "Switching to tech? Take the free 2-minute career quiz, tailor your resume to any job in about a minute, and follow Juston & Atiya's career and faith journey.",
+      "Switching to tech? Take the free 2-minute career quiz, tailor your resume to any job, and follow Juston & Atiya's career and faith journey.",
   },
   twitter: {
     card: "summary_large_image",
     title: "The Warthens: Career Change to Tech, Resume Help & Faith",
     description:
-      "Switching to tech? Take the free 2-minute career quiz, tailor your resume to any job in about a minute, and follow Juston & Atiya's career and faith journey.",
+      "Switching to tech? Take the free 2-minute career quiz, tailor your resume to any job, and follow Juston & Atiya's career and faith journey.",
   },
 };
 
@@ -39,7 +39,7 @@ const doors = [
   {
     icon: "file" as const,
     title: "Get a better resume",
-    body: "Add your resume and a job posting. Get a tailored version in about a minute.",
+    body: "Add your resume and a job posting. Get a version tailored to that job.",
     href: "/resume",
     track: "door-resume",
     cta: "Build my resume",

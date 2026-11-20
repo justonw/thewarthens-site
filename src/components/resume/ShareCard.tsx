@@ -5,7 +5,7 @@ import { useState } from "react";
 // "Know someone job hunting?" The message is generic on purpose: it never includes the person's name, the
 // job, or the company, since a job search is often private.
 const URL = "https://thewarthens.com/resume?from=share";
-const TEXT = "I just tailored my resume to a job posting in about a minute with this Resume Builder from The Warthens.";
+const TEXT = "I just tailored my resume to a job posting with this Resume Builder from The Warthens.";
 
 export default function ShareCard() {
   const [copied, setCopied] = useState(false);

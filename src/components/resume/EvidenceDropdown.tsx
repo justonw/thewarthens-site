@@ -12,6 +12,13 @@ type Source = {
 
 const sources: Source[] = [
   {
+    name: "CareerOneStop, Applicant tracking systems (U.S. Department of Labor)",
+    finding: "Says to use the job posting's exact keywords, about twice each, and to customize your resume for each application.",
+    detail: "Also says to avoid columns, tables, and graphics, which can keep the software from reading your text.",
+    kind: "Government career guidance, not outcome data",
+    href: "https://www.careeronestop.org/JobSearch/Resumes/ResumeGuide/TopResumeStrategies/applicant-tracking-systems.aspx",
+  },
+  {
     name: "Huntr, Job Search Trends Report (Q2 2025)",
     finding: "Tailored resumes: 5.75% of applications reached an interview or offer. Generic resumes: 2.68%. About 2.1 times as often.",
     detail: "Over 1.39 million applications tracked since Q4 2024.",

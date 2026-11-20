@@ -11,7 +11,7 @@ import { resumeGuides } from "@/lib/resume-guides";
 // words people type ("tailor resume to job description") near the front.
 const title = "Tailor Your Resume to a Job Description | The Warthens";
 const description =
-  "Add your resume and a job posting. Get a tailored resume and matching cover letter as PDF and Word in about a minute, built only from your real experience.";
+  "Add your resume and a job posting. Get your real experience in the job's own words, plus a matching cover letter, as PDF and Word.";
 
 export const metadata: Metadata = {
   title,
@@ -49,6 +49,11 @@ const faq = [
     question: "Does it work for my field?",
     answer:
       "Yes. It works for any industry and any job, because it builds from your own resume, the notes you add, and the posting, matched to what the posting asks for. It isn't guessing what your field expects. A few things have their own formats: federal government resumes, academic CVs, and acting or creative resumes follow special rules, so treat the result as a draft there. Everything else, from healthcare and trades to teaching, finance, retail, and tech, fits the one-column layout we use.",
+  },
+  {
+    question: "Do I need to rewrite my whole resume for every job?",
+    answer:
+      "No. Keep one strong resume as your base. For each job, we adjust the summary, the skills, and the wording of your experience to match that posting, so the qualifications it asks for are easy to find. That helps hiring software that screens for the employer's terms, and it helps the person reading it, who shouldn't have to connect the dots. Hiring systems differ from one employer to the next, so we can't promise how any one of them will treat yours. What tailoring does is make your real fit visible. It doesn't create qualifications you don't have, and it doesn't guarantee an interview.",
   },
   {
     question: "Will it make things up to match the job?",

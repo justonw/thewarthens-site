@@ -161,7 +161,7 @@ const baseGuides: ResumeGuide[] = [
       },
       {
         id: "faster",
-        heading: "Doing it in about a minute",
+        heading: "Letting the Resume Builder do it",
         blocks: [
           {
             type: "p",
@@ -174,7 +174,7 @@ const baseGuides: ResumeGuide[] = [
       {
         question: "How long does it take to tailor a resume?",
         answer:
-          "By hand, about 30 to 45 minutes for the first posting and 15 to 20 for later ones once you have a strong base resume. The Resume Builder does it in about a minute.",
+          "By hand, about 30 to 45 minutes for the first posting and 15 to 20 for later ones once you have a strong base resume. The Resume Builder does the work for you.",
       },
       {
         question: "Should I rewrite my whole resume for every job?",

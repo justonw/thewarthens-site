@@ -79,18 +79,18 @@ function HeroDemo() {
 
 const stats = [
   { big: "1.6 to 2.1x", small: "as many interviews or offers per application when the resume is tailored, in Huntr's data" },
-  { big: "About 1 min", small: "from pasting your resume to downloading the new one" },
+  { big: "Yours only", small: "every line comes from your real experience, and nothing is invented to match the job" },
   { big: "2 free", small: "builds per email, each with an optional cover letter" },
 ];
 
 // What one job link gets you, in plain words. These are the things the tool really does, in the order a person uses them.
 const GET = [
-  { title: "A resume matched to that job", body: "We rework your experience to line up with what the company is asking for in the job description. A cover letter too, if you want one." },
+  { title: "A resume matched to that job", body: "We put your real experience in the job description's own words, using the skills and tools the posting asks for that you actually have. A cover letter too, if you want one." },
   { title: "A note for the hiring manager", body: "We write a short note to the recruiter or hiring manager, and a follow-up if you don't hear back. You copy it and send it yourself." },
   { title: "Help with application questions", body: "When an application asks a question, paste it in and get a draft answer from your real experience. You edit it and submit it." },
   { title: "Interview practice for that job", body: "Practice questions for that role, ideas for answering each from your own experience, and questions you can ask them." },
 ];
-const EASY = ["Paste a link, text, or a screenshot", "About a minute per job", "Download PDF and Word", "2 free builds"];
+const EASY = ["Paste a link, text, or a screenshot", "Built from your real experience", "Download PDF and Word", "2 free builds"];
 
 // The top of the page: what this is, in a headline and a line, and nothing else, so the tool itself (the job box and the resume box, ready for
 // a link, text, a screenshot, or a dropped file) starts right under it. What one job link gets you, and the moving example, come after the tool
@@ -105,12 +105,15 @@ export function ResumeHero() {
             <span className="rb-ping absolute inline-flex h-full w-full rounded-full bg-green-500" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
           </span>
-          Resume Builder · About a minute per job
+          Resume Builder · Tailored to each job
         </p>
         <h1 className="rb-rise text-balance mt-3 text-3xl font-bold leading-[1.1] tracking-tight sm:text-4xl" style={delay(0.08)}>
           Tailor your resume and your job hunt to <span className="rb-gradient-text">every job</span> you apply for
         </h1>
-        <p className="rb-rise mx-auto mt-3 max-w-xl text-balance text-base font-medium text-foreground sm:text-lg" style={delay(0.16)}>
+        <p className="rb-rise mx-auto mt-3 max-w-xl text-balance text-base text-foreground-muted sm:text-lg" style={delay(0.12)}>
+          We put your real experience in the job&apos;s own words, so the hiring software and the person reading it can both see you fit.
+        </p>
+        <p className="rb-rise mx-auto mt-4 max-w-xl text-balance text-base font-medium text-foreground sm:text-lg" style={delay(0.16)}>
           Every resume built for the job you want also comes with:
         </p>
         <ul aria-label="Also included" className="rb-rise mx-auto mt-3 flex max-w-2xl flex-wrap justify-center gap-2" style={delay(0.2)}>
@@ -226,7 +229,7 @@ const steps = [
 export function HowItWorks() {
   return (
     <section id="how" className="mx-auto max-w-5xl scroll-mt-24 px-6 pb-16">
-      <h2 className="text-center text-2xl font-bold tracking-tight sm:text-3xl">Three steps. About a minute.</h2>
+      <h2 className="text-center text-2xl font-bold tracking-tight sm:text-3xl">Three steps.</h2>
       <ol className="relative mt-8 grid gap-4 md:grid-cols-3">
         <div aria-hidden className="absolute left-[16%] right-[16%] top-9 hidden h-px bg-gradient-to-r from-blue-500/40 via-violet-500/40 to-blue-500/40 md:block" />
         {steps.map((s, i) => (
@@ -250,7 +253,7 @@ export function FinalCta() {
         <div aria-hidden className="rb-glow pointer-events-none absolute -bottom-20 -left-10 h-64 w-64 rounded-full bg-blue-500/30 blur-3xl" />
         <h2 className="relative text-balance text-2xl font-bold tracking-tight sm:text-4xl">Your next application deserves its own resume.</h2>
         <p className="relative mx-auto mt-3 max-w-xl text-balance text-base text-indigo-100">
-          Two free builds. Takes about a minute. Everything in it comes from your real experience.
+          Two free builds. Everything in it comes from your real experience.
         </p>
         <a href="#start" className="rb-cta relative mt-7 inline-flex items-center justify-center gap-2 rounded-full px-8 py-4 text-base font-semibold text-white">
           Build my tailored resume

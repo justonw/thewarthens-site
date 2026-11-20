@@ -30,7 +30,7 @@ export default function StartHereHub() {
         description: startHereSeo[g.slug]?.description ?? g.dek,
         tag: "Step-by-step path",
       }))}
-      cta={{ heading: "Already know your field? Get the resume ready.", text: "Tailor your resume to a specific job in about a minute, or scan it for missing keywords for free.", label: "Open the Resume Builder", href: "/resume" }}
+      cta={{ heading: "Already know your field? Get the resume ready.", text: "Tailor your resume to a specific job, or scan it for missing keywords for free.", label: "Open the Resume Builder", href: "/resume" }}
     />
   );
 }
