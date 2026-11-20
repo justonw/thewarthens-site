@@ -50,7 +50,8 @@ For **every** account below: turn on two-step sign-in with an authenticator app 
 - Registrar: Squarespace Domains (formerly Google Domains). Transfer lock and delete protection are ON. Expires Aug 25, 2027: confirm auto-renew.
 - Resend DKIM record is present. Confirm "verified" in the Resend dashboard.
 - **DMARC is `p=none`** (monitor only), so fake email from your domain is not blocked. Plan: after a few weeks of clean reports, move to `p=quarantine`, then `p=reject`. Reports go to Mailgun and an OnDMARC inbox.
-- **Mailgun is in the picture:** the root domain's mail servers (MX) and SPF point at Mailgun. Decide: still using it? Then add two-step sign-in to the Mailgun account and make sure Resend and Google are covered by SPF where needed. Not using it? Remove the stale records.
+- **The Mailgun records are Squarespace's email forwarding, not a separate account** (confirmed Nov 19 in Squarespace Domains > Email: `info@thewarthens.com` forwards to `techjourneyinfo@gmail.com`). Do not delete the MX or SPF records: they make `info@` work. There is no Mailgun login to secure.
+- **`techjourneyinfo@gmail.com` is a critical account:** it receives everything sent to `info@` (contact form, replies from the public) and the site's alerts (payments, sign-ups, signature failures). It needs the same protection as your main Google account: unique password in the manager, two-step with a passkey or authenticator, backup codes saved.
 - DNSSEC: unknown, check at the registrar. CAA: none (optional).
 
 **This Mac (read-only checks)**
@@ -63,14 +64,14 @@ For **every** account below: turn on two-step sign-in with an authenticator app 
 
 ## Step by step: what to do now, in order
 1. **Google account** (10 min): myaccount.google.com, Security, 2-Step Verification, add a passkey or authenticator app, download backup codes, then review "Your devices" and "Third-party access" and remove anything unfamiliar.
-2. **Password manager** (10 min): pick Apple Passwords or 1Password. Give GitHub, Netlify, Stripe, Resend, Anthropic, Squarespace, and Mailgun each a unique password stored there.
+2. **Password manager** (10 min): pick Apple Passwords or 1Password. Give GitHub, Netlify, Stripe, Resend, Anthropic, Squarespace, and the techjourneyinfo Gmail each a unique password stored there.
 3. **GitHub** (10 min): Settings, Password and authentication, turn on two-factor and save recovery codes; Settings, Code security, turn on secret scanning and push protection.
 4. **Netlify** (5 min): Account settings, Security, turn on two-factor.
-5. **Stripe** (5 min): Settings, security, turn on two-step authentication and login alerts; confirm the `charge.refunded` webhook event is enabled.
+5. **Stripe** (5 min): Settings, security, turn on two-step authentication and login alerts; when you go live, create ONE live webhook with `checkout.session.completed`, `checkout.session.async_payment_succeeded`, and `charge.refunded` (deferred: Stripe is still in sandbox; never add a second destination, the site has one signing secret).
 6. **Squarespace (domain)** (10 min): two-step sign-in, confirm the lock, auto-renew, and card; look for DNSSEC.
 7. **Anthropic console** (5 min): Settings, limits, set a monthly spend limit and an email alert; two-step if offered.
 8. **Resend** (10 min): confirm the domain says verified; set a usage alert.
-9. **Mailgun** (5 to 10 min): sign in, decide keep or retire, turn on two-step if keeping.
+9. **techjourneyinfo@gmail.com** (10 min): password in the manager, 2-Step Verification (passkey or authenticator app), backup codes saved, review devices and third-party access. This is where `info@thewarthens.com` mail lands. (There is no Mailgun account; those DNS records are Squarespace's forwarding. Leave them alone.)
 10. **YouTube / Apple ID** (10 min): two-step sign-in.
 11. **Mac** (10 min): System Settings, check automatic updates and "Require password immediately after screen saver or display off", and uninstall unused apps with privileged helpers.
 12. **Look at active sessions** in Google, GitHub, Netlify, and Stripe and sign out anything you do not recognize.
