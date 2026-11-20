@@ -1,6 +1,6 @@
 # Interview prep: industry notes to review
 
-Written Nov 20, 2026. These notes shape the practice questions and the opening for each kind of role. **Right now every one is a draft, so visitors do not get them.** Only the owner's test builds do.
+Written Nov 20, 2026. These notes shape the practice questions and the opening for each kind of role. **Approved industries are live for visitors. The rest are drafts, so only the owner's test builds get them.** Approved Nov 20, 2026 by Juston Warthen: Sales, Administrative and office, Healthcare front office, Nursing and clinical care, Skilled trades and maintenance.
 
 How to review: read one industry, fix anything that is wrong or that you would not say, and tell Claude which ones are approved. Approved ones are switched on for visitors with your name and the date. Anyone who has worked in that field is the best reviewer. Nothing here states a fact about a person or a company, and no numbers appear.
 
@@ -21,7 +21,7 @@ Job titles that match: sales, account executive, account manager, business devel
   - growing up around a family business or selling something small, which can speak to understanding what a customer cares about
 - **Opening: voice:** direct, warm, and specific; confident without bragging; never salesy.
 
-Approved? [ ] yes  [ ] needs changes: ______
+Approved: [x] yes (Juston Warthen, Nov 20, 2026)
 
 ## Administrative and office support
 
@@ -38,7 +38,7 @@ Job titles that match: administrative, executive assistant, office manager, offi
   - helping a relative or a small family business with paperwork, which can speak to being trusted with private details
 - **Opening: voice:** calm, organized, and plain; reliability shown through one specific example, never just claimed.
 
-Approved? [ ] yes  [ ] needs changes: ______
+Approved: [x] yes (Juston Warthen, Nov 20, 2026)
 
 ## Healthcare front office and billing
 
@@ -55,7 +55,7 @@ Job titles that match: patient access, patient registration, medical receptionis
   - being the calm one when others are stressed, which can speak to patients who are worried
 - **Opening: voice:** warm, careful, and steady; privacy and accuracy matter more than speed.
 
-Approved? [ ] yes  [ ] needs changes: ______
+Approved: [x] yes (Juston Warthen, Nov 20, 2026)
 
 ## Nursing and clinical care
 
@@ -72,7 +72,7 @@ Job titles that match: nurse, rn, lpn, lvn, cna, nursing assistant, patient care
   - caring for someone at home, which can speak to the patience of direct care
 - **Opening: voice:** calm, plain, and specific with no heroics; patient safety comes first, and never overstate what they are licensed or trained to do.
 
-Approved? [ ] yes  [ ] needs changes: ______
+Approved: [x] yes (Juston Warthen, Nov 20, 2026)
 
 ## Skilled trades and maintenance
 
@@ -89,7 +89,7 @@ Job titles that match: electrician, plumber, hvac, carpenter, welder, mechanic, 
   - learning from an older worker, which can speak to taking direction and wanting to learn the trade
 - **Opening: voice:** plain and practical in short sentences; pride in the work shown through detail, not adjectives.
 
-Approved? [ ] yes  [ ] needs changes: ______
+Approved: [x] yes (Juston Warthen, Nov 20, 2026)
 
 ## Driving, delivery, and logistics
 
