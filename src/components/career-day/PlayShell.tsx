@@ -111,6 +111,7 @@ export default function PlayShell({ children }: { children: ReactNode }) {
   const atPicker = pathname === PLAY_PATH;
   const anyProgress = Object.keys(doneAll).length > 0 || Object.keys(factsAll).length > 0;
   const mapPath = band ? bandPath(band.id) : PLAY_PATH;
+  const onMap = !!band && pathname === mapPath;
 
   const resetAll = useCallback(() => {
     stopSpeech();
@@ -204,9 +205,29 @@ export default function PlayShell({ children }: { children: ReactNode }) {
           <div aria-hidden className="cd-stars pointer-events-none absolute inset-0" />
           <SkyDecor />
 
+          <nav aria-label="The Warthens website, top of page" className="relative z-20 mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 pt-1 text-sm font-semibold text-white/70 sm:px-6">
+            <Link href="/" onClick={stopSpeech} className="inline-flex min-h-10 items-center rounded-lg px-1 underline-offset-4 hover:text-white hover:underline">
+              ← The Warthens
+            </Link>
+            <Link href="/techjr" onClick={stopSpeech} className="inline-flex min-h-10 items-center rounded-lg px-1 underline-offset-4 hover:text-white hover:underline">
+              For parents
+            </Link>
+          </nav>
+
           <header className="sticky top-0 z-30 border-b border-white/15 bg-indigo-950/70 backdrop-blur-md">
             <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-3 py-2.5 sm:gap-4 sm:px-5">
-              {band ? (
+              {band && onMap ? (
+                // Already on the map, so "All worlds" would link to this same page and seem broken. Offer the age picker instead.
+                <Link
+                  href={PLAY_PATH}
+                  onClick={stopSpeech}
+                  className="flex min-h-12 items-center gap-2 whitespace-nowrap rounded-2xl bg-white/10 px-3 py-2 text-base font-extrabold text-white ring-1 ring-white/20 transition hover:bg-white/20 active:scale-95 sm:px-4"
+                >
+                  <span aria-hidden>←</span>
+                  <span className="hidden sm:inline">Change age</span>
+                  <span className="sm:hidden">Ages</span>
+                </Link>
+              ) : band ? (
                 <Link
                   href={mapPath}
                   onClick={stopSpeech}
