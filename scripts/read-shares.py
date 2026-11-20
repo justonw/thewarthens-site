@@ -9,6 +9,7 @@ People are shown as "d***@gmail.com". A copy that its owner stopped sharing show
 The owner code is read from RESUME_OWNER_CODE or ~/.resume-owner-code and is never printed.
 """
 import argparse, json, os, ssl, sys, urllib.request
+from datetime import datetime, timezone
 from pathlib import Path
 
 ap = argparse.ArgumentParser()
@@ -36,7 +37,10 @@ if a.id:
         sys.exit("No copy with that id.")
     if rec.get("state") == "withdrawn":
         sys.exit("That person stopped sharing it. Nothing is kept.")
-    print(f"{rec['person']}  shared {rec['at']}  (files were attached: {rec['hadFiles']})\n")
+    at = rec["at"]
+    if isinstance(at, (int, float)):
+        at = datetime.fromtimestamp(at / 1000, timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    print(f"{rec['person']}  shared {at}  (files were attached: {rec['hadFiles']})\n")
     print("=== RESUME THEY PASTED ===\n" + (rec["resumeText"] or "(none: they attached a file, which is never kept)"))
     print("\n=== JOB POSTING ===\n" + (rec["postingText"] or "(none)"))
     print("\n=== THEIR NOTES ===\n" + (rec["notes"] or "(none)"))

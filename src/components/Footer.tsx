@@ -212,8 +212,19 @@ export default function Footer() {
           on their platforms.
         </p>
         <p className="mt-4 text-xs text-foreground-muted">
-          © {new Date().getFullYear()} The Warthens. All rights reserved.
+          © {new Date().getFullYear()} Warthen Enterprise LLC. All rights reserved.
         </p>
+        <nav aria-label="Legal" className="mt-2 flex flex-wrap gap-x-4 text-xs text-foreground-muted">
+          <Link href="/privacy" className="py-1 underline-offset-2 hover:text-foreground hover:underline max-sm:py-2">
+            Privacy
+          </Link>
+          <Link href="/terms" className="py-1 underline-offset-2 hover:text-foreground hover:underline max-sm:py-2">
+            Terms
+          </Link>
+          <Link href="/refunds" className="py-1 underline-offset-2 hover:text-foreground hover:underline max-sm:py-2">
+            Refunds
+          </Link>
+        </nav>
       </div>
     </footer>
   );
