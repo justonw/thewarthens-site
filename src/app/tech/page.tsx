@@ -5,7 +5,8 @@ import { guides } from "@/lib/guides";
 import { startHereGuides } from "@/lib/start-here";
 import FoldOnPhone from "@/components/FoldOnPhone";
 import Reveal from "@/components/Reveal";
-import ScrollCue from "@/components/ScrollCue";
+import TechHero from "@/components/TechHero";
+import TechRail from "@/components/TechRail";
 import CareerQuiz from "@/components/CareerQuiz";
 import IncomeSnapshot from "@/components/IncomeSnapshot";
 import JobTracker from "@/components/JobTracker";
@@ -131,39 +132,12 @@ export default function TechJourneyPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
-      <section className="relative overflow-hidden">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 -z-10"
-          style={{
-            background:
-              "radial-gradient(50% 40% at 20% 0%, rgba(56,189,248,0.16), transparent)",
-          }}
-        />
-        <Reveal className="mx-auto max-w-3xl px-6 pt-16 pb-10 text-center sm:pt-24 sm:pb-12">
-          <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
-            Tech Journey
-          </p>
-          <h1 className="text-balance mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
-            Your career is connected to your peace
-          </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-balance text-lg text-foreground-muted">
-            Income problems become real problems: not being able to be
-            present with your family, driving for hours after your shift
-            ends, watching bills pile up. Tech is the field that changed
-            things for us, and it&apos;s a wide door: coding, IT,
-            cybersecurity, sales, marketing tech, healthcare tech, UX, and
-            the trades all count. This page is every resource we&apos;d
-            hand a friend who&apos;s ready to think bigger than their
-            current job.
-          </p>
-          <ScrollCue className="mt-8" />
-        </Reveal>
-      </section>
+      <TechHero />
+      <TechRail items={quickNav} watchId="tech-jump" />
 
       <StartDoors variant="tech" />
 
-      <div className="z-40 border-y border-border-subtle bg-background/95 backdrop-blur md:sticky md:top-16">
+      <div id="tech-jump" className="z-40 border-y border-border-subtle bg-background/95 backdrop-blur md:sticky md:top-16 xl:static">
         <nav
           aria-label="Page sections"
           className="mx-auto flex max-w-6xl flex-nowrap items-center gap-2 overflow-x-auto px-6 py-3 [-ms-overflow-style:none] [scrollbar-width:none] lg:flex-wrap lg:overflow-visible [&::-webkit-scrollbar]:hidden"
