@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { timingSafeEqual } from "node:crypto";
 import { FUNNEL_EVENTS, eventKey } from "@/lib/funnel";
 import { getKv, withTimeout } from "@/lib/resume-limits";
+import { fieldReport } from "@/lib/field-counts";
 
 // Owner only. Returns the daily counts of each resume-tool step for the last N days (default 14), newest first.
 // It needs the owner code. Run it with scripts/funnel.py.
@@ -17,7 +18,7 @@ function isOwner(code: unknown) {
 }
 
 export async function POST(req: NextRequest) {
-  let body: { ownerCode?: string; days?: number };
+  let body: { ownerCode?: string; days?: number; fields?: boolean };
   try {
     body = await req.json();
   } catch {
@@ -26,6 +27,8 @@ export async function POST(req: NextRequest) {
   if (!isOwner(body.ownerCode)) return NextResponse.json({ error: "forbidden" }, { status: 403 });
   const days = Math.max(1, Math.min(60, Math.floor(Number(body.days) || 14)));
   const kv = await withTimeout(getKv(true), 5000, "open the store");
+  // The report of what kinds of jobs resumes were built for, and which job titles have no lens yet.
+  if (body.fields === true) return NextResponse.json({ ok: true, report: await fieldReport(kv, days) });
   const out: { day: string; counts: Record<string, number> }[] = [];
   for (let i = 0; i < days; i++) {
     const d = new Date(Date.now() - i * 86_400_000);

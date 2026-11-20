@@ -24,6 +24,7 @@ import { DEFAULT_MONTHLY_CAP, FREE_PER_EMAIL, getKv, purchasedTotal, refund, res
 import { claimRefund, finishBuildMark, startBuildMark, validBuildId, type BuildMark } from "@/lib/resume-builds";
 import { isLiveHost } from "@/lib/coaching-recipients";
 import { fieldNotes, matchLenses } from "@/lib/interview-lenses";
+import { countField } from "@/lib/field-counts";
 import { keywordCoverage } from "@/lib/resume-ats";
 import { resumeToPlainText } from "@/lib/resume-files";
 
@@ -338,6 +339,8 @@ export async function POST(req: NextRequest) {
     // daily Resend allowance that visitors' receipts and resume copies share.
     if (!unlimited) await notify(live, email, parsed.result.postingTitle, source, Boolean(letter));
     if (mark && kv) await withTimeout(finishBuildMark(kv, mark), 5000, "finish the build record").catch(() => {});
+    // A count of the kind of job (never anything from the resume), for the owner report. Real visitors on the live site only.
+    if (!unlimited && live && kv) await withTimeout(countField(kv, parsed.result.postingTitle, parsed.result.postingKeywords, general), 4000, "count the field").catch(() => {});
 
     // "Free build 2 of 2" or "Paid build 3 of 15", for the page and the email. Never worth failing a finished build over.
     let usage: { kind: "free" | "paid"; number: number; of: number | null; left: number } | null = null;

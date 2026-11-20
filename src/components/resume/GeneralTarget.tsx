@@ -37,7 +37,7 @@ export default function GeneralTarget({ value, onChange, done, onBack }: { value
           ))}
         </div>
         <p className="mt-4 rounded-xl bg-violet-500/10 px-3 py-2 text-xs text-foreground-muted">
-          A resume matched to one job description gets read more often than a general one. A general resume is a good start, and the tailored one is the one to send.
+          A resume matched to one job description tends to do better than a general one, though no one can promise a result. A general resume is a good start, and the tailored one is the one to send.
         </p>
         <p className="mt-3 text-xs">
           <button type="button" onClick={onBack} className="font-semibold text-blue-600 underline underline-offset-2">

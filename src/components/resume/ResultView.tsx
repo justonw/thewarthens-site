@@ -572,7 +572,7 @@ export default function ResultView({
                 {mailed === "sending" ? "Sending…" : mailed === "sent" ? "Email it again" : "Email me a copy"}
               </button>
             </div>
-            <p className="-mt-1 text-xs text-foreground-muted">Email copies go to {email}.</p>
+            <p className="-mt-1 text-xs text-foreground-muted">Email copies go to {email}. Emailing sends your resume and cover letter through our email service (Resend).</p>
             <div className="space-y-2" role="group" aria-label="Download style">
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                 <span className="text-xs font-semibold text-foreground-muted">Template for your download</span>
