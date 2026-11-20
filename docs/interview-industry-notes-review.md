@@ -1,6 +1,6 @@
 # Interview prep: industry notes to review
 
-Written Nov 20, 2026. These notes shape the practice questions and the opening for each kind of role. **Approved industries are live for visitors. The rest are drafts, so only the owner's test builds get them.** Approved Nov 20, 2026 by Juston Warthen: Sales, Administrative and office, Healthcare front office, Nursing and clinical care, Skilled trades and maintenance, Driving and logistics, Warehouse and production, Retail and hospitality, Teaching and education, Accounting and finance, Customer service, Software and IT, Management and supervision, Marketing and content, Human resources and recruiting, Caregiving and direct support, Social services and nonprofit programs, Security and public safety, Engineering and technical support, Projects, operations, and purchasing.
+Written Nov 20, 2026. These notes shape the practice questions and the opening for each kind of role. **All approved industries are live for visitors.** Approved Nov 20, 2026 by Juston Warthen: Sales, Administrative and office, Healthcare front office, Nursing and clinical care, Skilled trades and maintenance, Driving and logistics, Warehouse and production, Retail and hospitality, Teaching and education, Accounting and finance, Customer service, Software and IT, Management and supervision, Marketing and content, Human resources and recruiting, Caregiving and direct support, Social services and nonprofit programs, Security and public safety, Engineering and technical support, Projects, operations, and purchasing, Banking, insurance, and real estate, Creative and media production, Personal services and wellness, Legal and compliance support, Dental, veterinary, and therapy support, Facilities, grounds, and construction labor. All 26 are approved.
 
 How to review: read one industry, fix anything that is wrong or that you would not say, and tell Claude which ones are approved. Approved ones are switched on for visitors with your name and the date. Anyone who has worked in that field is the best reviewer. Nothing here states a fact about a person or a company, and no numbers appear.
 
@@ -361,7 +361,7 @@ Job titles that match: bank teller, teller, personal banker, banker, loan office
   - helping a relative make a big decision, which can speak to explaining things honestly
 - **Opening: voice:** trustworthy, measured, and plain; never promise outcomes, and put honesty over polish.
 
-Approved? [ ] yes  [ ] needs changes: ______
+Approved: [x] yes (Juston Warthen, Nov 20, 2026)
 
 ## Creative and media production
 
@@ -378,7 +378,7 @@ Job titles that match: video editor, photographer, videographer, motion designer
   - a time feedback made the work better, which can speak to taking direction
 - **Opening: voice:** specific and visual; point to real work, and show confidence without adjectives.
 
-Approved? [ ] yes  [ ] needs changes: ______
+Approved: [x] yes (Juston Warthen, Nov 20, 2026)
 
 ## Personal services and wellness
 
@@ -395,7 +395,7 @@ Job titles that match: cosmetologist, hair stylist, stylist, barber, esthetician
   - learning to listen before suggesting, which can speak to the consultation
 - **Opening: voice:** warm, confident, and easygoing; show craft through one detail, and keep clients' details private.
 
-Approved? [ ] yes  [ ] needs changes: ______
+Approved: [x] yes (Juston Warthen, Nov 20, 2026)
 
 ## Legal and compliance support
 
@@ -412,7 +412,7 @@ Job titles that match: legal assistant, paralegal, legal secretary, court clerk,
   - being trusted with private information, which can speak to confidentiality
 - **Opening: voice:** precise, discreet, and calm; never share client details, and put reliability over flair.
 
-Approved? [ ] yes  [ ] needs changes: ______
+Approved: [x] yes (Juston Warthen, Nov 20, 2026)
 
 ## Dental, veterinary, and therapy support
 
@@ -429,7 +429,7 @@ Job titles that match: dental assistant, dental hygienist, veterinary technician
   - volunteering with animals or people, which can speak to patience
 - **Opening: voice:** gentle, steady, and plain; care and safety first, with privacy for patients and owners.
 
-Approved? [ ] yes  [ ] needs changes: ______
+Approved: [x] yes (Juston Warthen, Nov 20, 2026)
 
 ## Facilities, grounds, and construction labor
 
@@ -446,4 +446,4 @@ Job titles that match: janitor, custodian, groundskeeper, landscaper, laborer, c
   - taking care of their own home or yard, which can speak to pride in the work
 - **Opening: voice:** plain, humble, and steady; reliability and care shown through specific details.
 
-Approved? [ ] yes  [ ] needs changes: ______
+Approved: [x] yes (Juston Warthen, Nov 20, 2026)
