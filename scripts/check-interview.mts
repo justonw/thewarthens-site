@@ -76,15 +76,15 @@ assert.ok(out.includes("QUESTIONS TO ASK THEM") && out.includes("REMEMBER"));
 assert.ok(!/[—–]/.test(out), "no dashes in the text");
 
 // The new version (voice: true). Visitors keep the old opening rules until INTERVIEW_V2 is switched on.
-assert.equal(lib.INTERVIEW_V2, false, "the new version is OFF for visitors until the real output has been read and approved");
+assert.equal(lib.INTERVIEW_V2, false, "the new version stays OFF for visitors until the live owner test has been read");
 const v2: any = lib.buildInterviewRequest({ ...input, voice: true }, "claude-sonnet-5-5");
 assert.notEqual(v2.system, req.system, "voice changes the rules");
-assert.ok(v2.system.includes("90 to 120 words") && v2.system.includes('starts with "Your story"') && v2.system.includes("not a resume read aloud"), "the spoken opening rules are in");
+assert.ok(v2.system.includes("100 to 130 words") && v2.system.includes('Your story, what shaped how I work') && v2.system.includes("not a resume read aloud"), "the spoken opening rules are in");
 assert.ok(v2.system.includes('Never start with "I am a [title] at [company], a [kind of] company"'), "the resume-summary opener is banned");
 assert.ok(v2.system.includes("at most one number, never two numbers side by side") && v2.system.includes("passionate, driven, results-driven, proven"), "stacked numbers and AI words are banned");
 assert.ok(!v2.system.includes("Do not put opinions, feelings, or self-praise in the opening"), "feelings are allowed when the person said them");
 assert.ok(v2.system.includes("Feelings and opinions are allowed only when the person said them in their own words"), "and only then");
-assert.ok(!req.system.includes("90 to 120 words") && req.system.includes("70 to 100 words"), "the old rules stay for everyone else");
+assert.ok(!req.system.includes("100 to 130 words") && req.system.includes("70 to 100 words"), "the old rules stay when voice is off");
 assert.ok(v2.system.includes("Never invent an employer") && v2.system.includes("is NOT their current title") && v2.system.includes("Never write he, she, him, her, his, or they about the person"), "the safety rules survive in the new version");
 const v2lens: any = lib.buildInterviewRequest({ ...input, voice: true, lensText: "\n\nRole lens. Kind of role: Test." }, "claude-sonnet-5-5");
 assert.ok(v2lens.system.startsWith(v2.system) && v2lens.system.includes("Role lens."), "a lens still goes after the new rules");
@@ -101,5 +101,32 @@ const deepText = lib.sheetToPlainText(withDeep, "Job");
 assert.ok(deepText.includes("Your first answer:") && deepText.includes("Watch out for:") && deepText.includes("They might ask next: What would you do differently?"), "the plain text carries the deeper coaching");
 assert.ok(!/[—–]/.test(deepText));
 assert.ok(lib.sheetText(withDeep).length > 0);
+
+// The framework: thread, human moment, bridge, proof, what is next.
+assert.ok(v2.system.includes("The bridge:") && v2.system.includes("must not claim a result, a skill, or a habit the material does not show") && v2.system.includes("never paste their sentence whole"), "the bridge rules and the no-copy rule are in");
+assert.ok(v2.system.includes("skip steps 2 and 3"), "without a human moment nothing personal is invented");
+const withBridge: any = lib.buildInterviewRequest({ ...input, voice: true, bridgeTo: "renewals" }, "claude-sonnet-5-5");
+const bridgeText = JSON.stringify(withBridge.messages);
+assert.ok(bridgeText.includes("<bridge_to>") && bridgeText.includes("renewals"), "the picked part of the job goes to the AI");
+assert.ok(!JSON.stringify(lib.buildInterviewRequest({ ...input, voice: true }, "claude-sonnet-5-5").messages).includes("<bridge_to>"), "no pick, no bridge block");
+assert.ok(!JSON.stringify(lib.buildInterviewRequest({ ...input, bridgeTo: "renewals" }, "claude-sonnet-5-5").messages).includes("<bridge_to>"), "the old rules never get a bridge");
+
+// What the opening was built from is kept with the sheet, and the check under it says what is missing.
+assert.equal(lib.hasMoment("- Your story, what shaped how I work: I grew up in my mom's diner."), true);
+assert.equal(lib.hasMoment("- Your story, what connects my work: I keep people moving."), false, "another story line is not the human moment");
+assert.equal(lib.hasMoment(""), false);
+const metaSheet = lib.cleanSheet({ ...good, meta: { moment: true, bridge: "renewals" } }, "manager");
+assert.deepEqual(metaSheet.meta, { moment: true, bridge: "renewals" }, "meta is kept");
+assert.equal(lib.cleanSheet(good, "manager").meta, undefined, "an older sheet has no meta");
+const nWords = (n: number) => Array.from({ length: n }, () => "word").join(" ");
+const noMoment = lib.openingCheck(nWords(110), { moment: false, bridge: "" });
+assert.ok(noMoment.items.some((i: any) => !i.ok && i.label.includes("outside your resume")) && !noMoment.items.some((i: any) => i.label.includes("Connected")), "no moment: that is flagged and the bridge is not asked for yet");
+const noBr = lib.openingCheck(nWords(110), { moment: true, bridge: "" });
+assert.ok(noBr.items.some((i: any) => !i.ok && i.label.includes("Connected to a part of this job")), "a moment without a pick is flagged");
+const complete = lib.openingCheck(nWords(110), { moment: true, bridge: "renewals" });
+assert.ok(complete.items.every((i: any) => i.ok), "a complete opening passes every check");
+assert.ok(complete.seconds >= 40 && complete.seconds <= 55, `about 45 seconds for 110 words (got ${complete.seconds})`);
+assert.ok(lib.openingCheck(nWords(200), undefined).items[0].ok === false, "too long is flagged");
+assert.ok(lib.openingCheck("I led 11 agents, cut 21 days to 13, and grew 30 percent in 2024 with 45 accounts. " + nWords(80), undefined).items.some((i: any) => !i.ok && i.label.includes("pile of numbers")), "stacked numbers are flagged");
 
 console.log("interview checks passed");

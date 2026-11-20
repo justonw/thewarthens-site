@@ -34,9 +34,20 @@ export function addStoryTo(list: Story[], story: Story): Story[] {
 // The three questions that let the interview opening sound like the person. Each answer is kept as a story whose topic starts with
 // "Your story", so every later build can use it (interview prep reads exactly those lines for the human part of the opening).
 export const YOUR_STORY_PREFIX = "Your story";
-export const YOUR_STORY_PROMPTS: { topic: string; question: string; placeholder: string }[] = [
+export const YOUR_STORY_PROMPTS: { topic: string; question: string; placeholder: string; starters?: { label: string; text: string }[] }[] = [
   { topic: "Your story, what connects my work", question: "What connects the jobs and seasons of life on your resume?", placeholder: "For example: I keep ending up as the person who keeps everyone moving." },
-  { topic: "Your story, what shaped how I work", question: "What from outside work (family, faith, a hard season, something you lived through) shapes how you work?", placeholder: "A sentence or two, in your own words." },
+  {
+    topic: "Your story, what shaped how I work",
+    question: "Tell us one true thing from outside your resume that shapes how you work.",
+    placeholder: "One or two sentences, in your own words. Something a resume leaves out.",
+    // Tapping one only starts the sentence. The person finishes it, so nothing is made up for them.
+    starters: [
+      { label: "A job before my career", text: "Before my career, I " },
+      { label: "Family or faith", text: "Growing up, my family taught me " },
+      { label: "A hard season", text: "A hard season taught me " },
+      { label: "Volunteering or a hobby", text: "Outside work, I " },
+    ],
+  },
   { topic: "Your story, why this work and why now", question: "Why this kind of work, and why now?", placeholder: "What you want to do next, and what is pulling you toward it." },
 ];
 

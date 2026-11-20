@@ -5,6 +5,7 @@ import {
   INTERVIEW_PER_EMAIL_PER_MONTH,
   INTERVIEW_PER_MONTH,
   INTERVIEW_V2,
+  hasMoment,
   buildInterviewRequest,
   inventedNumbers,
   isStage,
@@ -129,6 +130,7 @@ export async function POST(req: NextRequest) {
     lensText,
     // The new opening rules: the owner can test them first; everyone gets them once INTERVIEW_V2 is switched on.
     voice: body.voice === true && (owner || INTERVIEW_V2) ? true : INTERVIEW_V2,
+    bridgeTo: cleanText(body.bridgeTo, 160),
   };
 
   // Hands the count back if nothing usable came back, so a failed try costs the person nothing.
@@ -158,7 +160,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Everything the person gave us, so a number that appears nowhere in it can be caught.
-  const sources = [JSON.stringify({ ...doc, contact: [] }), input.stories, input.postingTitle, input.postingKeywords.join(" "), input.fitReason, input.unmet.join(" ")];
+  const sources = [JSON.stringify({ ...doc, contact: [] }), input.stories, input.postingTitle, input.postingKeywords.join(" "), input.bridgeTo ?? "", input.fitReason, input.unmet.join(" ")];
 
   let sheet = await ask(input);
   if (sheet) {
@@ -177,5 +179,8 @@ export async function POST(req: NextRequest) {
     console.error("resume-interview refused a sheet with numbers nobody gave us");
     return NextResponse.json({ error: "refused" }, { status: 422 });
   }
+  // What the opening was built from, so the check under it can say what is missing.
+  const moment = Boolean(input.voice) && hasMoment(input.stories);
+  sheet.meta = { moment, bridge: moment && input.voice ? input.bridgeTo ?? "" : "" };
   return NextResponse.json({ ok: true, sheet, ...(owner ? { lens: lensIds.length > 0 ? lensIds : wantsDrafts ? ["generic"] : [] } : {}) });
 }

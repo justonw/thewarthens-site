@@ -67,6 +67,8 @@ export type PrepSheet = {
   askThem: string[];
   // A few practical reminders.
   remember: string[];
+  // What the opening was built from, so the check under it can say what is missing (set by the server).
+  meta?: { moment: boolean; bridge: string };
   at: string;
 };
 
@@ -86,6 +88,8 @@ export type InterviewInput = {
   lensText?: string;
   // The new opening rules (spoken, personal when the person has told us their story). Owner test, or INTERVIEW_V2 for everyone.
   voice?: boolean;
+  // The part of this job the person says their personal moment connects to (one of the posting's requirements, picked by them). "" when none.
+  bridgeTo?: string;
 };
 
 const TOOL = "write_interview_prep";
@@ -110,7 +114,7 @@ Always answer by calling the ${TOOL} tool exactly once. Do not write any other t
 // The opening, rewritten so it sounds like a person talking and not a resume read aloud. The old rules allowed only resume facts and
 // forbade any opinion, so the result was a summary of the resume. The person's OWN words are allowed (and used) here: lines in
 // <true_stories> that start with "Your story" are what they told us about what connects their work and what shaped it.
-const OPENING_V2 = `- "opening": what the person says when asked "tell me about yourself". It must sound like a real person talking, not a resume read aloud: 90 to 120 words, first person, spoken rhythm, contractions, short sentences. Build it in this order. (1) Who they are and the thread that runs through their work, in plain words. (2) The human part, taken only from the true stories whose line starts with "Your story" (what connects their jobs, what outside work shaped how they work, why this work and why now): use their own phrases, and say a thing about their life only if they said it. (3) ONE real result from the resume or stories, the one that fits this job best, said simply: at most one number, never two numbers side by side. (4) Why this kind of work, as what they want to do next, tied to the work the posting describes and not to admiration of the company. Take their current title and employer from the most recent entry in "experience" (the resume's headline names the job they are applying for, so it is NOT their current title and must never be said as if they hold it). If there are no "Your story" lines, invent nothing personal: find the through-line of their real history in one plain sentence (for example from the first call through onboarding), then the one result, then why this work. Never start with "I am a [title] at [company], a [kind of] company". Never list tools or skills. Never use the posting's own wording as the reason ("it asks for..."). Never use: passionate, driven, results-driven, proven, track record, thrive, leverage, dynamic, seasoned, adept, skilled, unique, journey, "wear many hats", "hit the ground running". No exclamation marks, no flattery, and at most one list of three things. Feelings and opinions are allowed only when the person said them in their own words in the true stories. Never write he, she, him, her, his, or they about the person.`;
+const OPENING_V2 = `- "opening": what the person says when asked "tell me about yourself". It must sound like a real person talking, not a resume read aloud: 100 to 130 words, first person, spoken rhythm, contractions, short sentences. Build it in this order. (1) The thread: who they are and what runs through their work, in one plain sentence (use the "Your story, what connects my work" line when there is one). (2) The human moment: ONE true thing from outside the resume, taken only from the true story line that starts with "Your story, what shaped how I work". Keep their own phrases, but fit them into natural spoken sentences: never paste their sentence whole, and say a thing about their life only if they said it. (3) The bridge: when a <bridge_to> requirement is given and there is a human moment, write ONE sentence that connects that moment to that part of the job, as what they would bring or how they think about that work (for example "That is why renewals matter to me: ..."). The bridge may only reuse the idea in their moment and the real work on the resume. It must not claim a result, a skill, or a habit the material does not show. Without a <bridge_to> requirement, do not write a bridge. (4) The proof: ONE real result from the resume or stories, the one that fits this job best, said simply: at most one number, never two numbers side by side. When the role lens below lists what people in this field are measured on, prefer the proof that matches it. (5) What is next: why this kind of work and why now, as what they want to do next, tied to the work the posting describes and not to admiration of the company (use the "Your story, why this work and why now" line when there is one). Take their current title and employer from the most recent entry in "experience" (the resume's headline names the job they are applying for, so it is NOT their current title and must never be said as if they hold it). If there is no human moment, invent nothing personal: skip steps 2 and 3, find the through-line of their real history in one plain sentence (for example from the first call through onboarding), then the one result, then why this work. Never start with "I am a [title] at [company], a [kind of] company". Never list tools or skills. Never use the posting's own wording as the reason ("it asks for..."). Never use: passionate, driven, results-driven, proven, track record, thrive, leverage, dynamic, seasoned, adept, skilled, unique, journey, "wear many hats", "hit the ground running". No exclamation marks, no flattery, and at most one list of three things. Feelings and opinions are allowed only when the person said them in their own words in the true stories. Never write he, she, him, her, his, or they about the person.`;
 const OPINION_SENTENCE = `Do not put opinions, feelings, or self-praise in the opening (for example "the part of my job I do best"). `;
 export function systemFor(voice: boolean): string {
   if (!voice) return SYSTEM;
@@ -130,6 +134,7 @@ export function buildInterviewRequest(input: InterviewInput, model: string) {
   });
   blocks.push({ type: "text", text: `The interview: ${stage.label}. ${stage.blurb}` });
   blocks.push({ type: "text", text: input.unmet.length > 0 ? `<unmet>\n${input.unmet.slice(0, 6).join("\n")}\n</unmet>\nThe posting asks for these, and the resume does not show them. Use them for the gap questions. Never claim them.` : "There are no known gaps." });
+  if (input.voice && input.bridgeTo) blocks.push({ type: "text", text: `<bridge_to>\n${input.bridgeTo}\n</bridge_to>\nThe job seeker picked this part of the job as the one their personal moment connects to.` });
   if (input.fix) blocks.push({ type: "text", text: input.fix });
   blocks.push({ type: "text", text: `Now call ${TOOL}.` });
 
@@ -229,7 +234,9 @@ export function cleanSheet(raw: unknown, stage: Stage, now = new Date()): PrepSh
   }
   const askThem = list(o.askThem, 240, 7);
   if (opening.length < 40 || questions.length < 3) return null;
-  return { stage, opening, questions, askThem, remember: list(o.remember, 240, 5), at: typeof o.at === "string" && o.at ? o.at.slice(0, 40) : now.toISOString() };
+  const m = o.meta && typeof o.meta === "object" ? (o.meta as Record<string, unknown>) : null;
+  const meta = m ? { moment: m.moment === true, bridge: plainText(m.bridge, 160) } : undefined;
+  return { stage, opening, questions, askThem, remember: list(o.remember, 240, 5), ...(meta ? { meta } : {}), at: typeof o.at === "string" && o.at ? o.at.slice(0, 40) : now.toISOString() };
 }
 
 export function parseInterviewResponse(data: unknown, stage: Stage): PrepSheet | null {
@@ -275,4 +282,37 @@ export function sheetToPlainText(sheet: PrepSheet, jobLine: string): string {
   if (sheet.askThem.length) out.push("", "QUESTIONS TO ASK THEM", ...sheet.askThem.map((a) => `- ${a}`));
   if (sheet.remember.length) out.push("", "REMEMBER", ...sheet.remember.map((a) => `- ${a}`));
   return out.join("\n");
+}
+
+
+// The line of the person's true stories that holds their "human moment" (what from outside work shaped how they work).
+const MOMENT_TOPIC = "your story, what shaped how i work";
+export function hasMoment(stories: string): boolean {
+  return stories.split("\n").some((line) => {
+    const l = line.replace(/^[-\s]+/, "").toLowerCase();
+    return l.startsWith(MOMENT_TOPIC) && l.slice(MOMENT_TOPIC.length).replace(/^[:\s]+/, "").length >= 3;
+  });
+}
+
+// "What your opening has, and what it still needs": plain checks on the opening, with one fix for each thing missing.
+export type OpeningCheckItem = { ok: boolean; label: string; fix: string };
+export function openingCheck(opening: string, meta: { moment: boolean; bridge: string } | undefined): { seconds: number; items: OpeningCheckItem[] } {
+  const words = opening.trim().split(/\s+/).filter(Boolean).length;
+  const seconds = Math.round(words / 2.4 / 5) * 5;
+  const items: OpeningCheckItem[] = [];
+  const longEnough = words >= 70 && words <= 150;
+  items.push({
+    ok: longEnough,
+    label: `About ${seconds} seconds out loud`,
+    fix: words < 70 ? "A bit short. Add one real result or one more sentence on why this work." : "Trim it. Keep one result and a short ending, and cut the rest.",
+  });
+  if (meta) {
+    items.push({ ok: meta.moment, label: "One true thing from outside your resume", fix: "Answer the question about what shaped how you work, then build it again." });
+    if (meta.moment) {
+      items.push({ ok: meta.bridge !== "", label: "Connected to a part of this job", fix: "Pick the part of this job your moment connects to, then build it again." });
+    }
+  }
+  const nums = opening.replace(/(\d),(?=\d{3}\b)/g, "$1").match(/\d+(?:\.\d+)?/g) ?? [];
+  items.push({ ok: nums.length <= 3, label: "One result, not a pile of numbers", fix: "Keep the one number that matters most for this job." });
+  return { seconds, items };
 }

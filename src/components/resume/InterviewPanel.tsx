@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { INTERVIEW_V2, STAGES, sheetToPlainText, type PrepQuestion, type PrepSheet, type QuestionKind, type Stage } from "@/lib/interview";
+import { INTERVIEW_V2, STAGES, openingCheck, sheetToPlainText, type PrepQuestion, type PrepSheet, type QuestionKind, type Stage } from "@/lib/interview";
 import type { TailorResult, ResumeDoc } from "@/lib/resume-tailor";
 import { YOUR_STORY_PROMPTS, newStory, replaceStoryTopic, storiesAsNotes, yourStoryAnswers, type Story } from "@/lib/resume-profile";
 import { downloadBlob } from "@/lib/download";
@@ -264,8 +264,9 @@ export default function InterviewPanel({
   const [copied, setCopied] = useState("");
   // The three questions about the person (the new version only). Each answer is kept as a "Your story" line the opening is built from.
   const [story, setStory] = useState<string[]>(() => yourStoryAnswers(stories));
+  // The part of this job the person says their personal moment connects to ("" until they pick one).
+  const [bridge, setBridge] = useState("");
   const storyRef = useRef<HTMLDivElement>(null);
-  const hasStory = yourStoryAnswers(stories).some(Boolean);
   const topRef = useRef<HTMLDivElement>(null);
   const job = `${result.postingTitle || doc.headline}${result.postingCompany ? ` at ${result.postingCompany}` : ""}`;
 
@@ -299,7 +300,7 @@ export default function InterviewPanel({
           fitReason: result.fit?.reason ?? "",
           unmet: result.gaps.map((g) => g.requirement),
           stories: storiesAsNotes(storyList, 2800),
-          ...(INTERVIEW_V2 ? { voice: true } : {}),
+          ...(INTERVIEW_V2 ? { voice: true, bridgeTo: (story[1] ?? "").trim().length >= 3 ? bridge : "" } : {}),
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -410,17 +411,50 @@ export default function InterviewPanel({
               Make your opening sound like you <span className="font-normal text-foreground-muted">(optional)</span>
             </p>
             <p className="mt-1 text-xs text-foreground-muted">
-              Your resume shows what you did. These three questions are about you. Answer in your own words. We use them to write an opening that sounds like you, and we never add anything you did not say. They are saved on this device for next time.
+              Your resume shows what you did. A strong opening also gives them a picture of you: one true thing from outside your resume, tied to what this job needs. Answer in your own words. We never add anything you did not say. Your answers are saved on this device for next time.
             </p>
             {YOUR_STORY_PROMPTS.map((p, i) => (
               <div key={p.topic} className="mt-3">
                 <label htmlFor={`ys-${i}`} className="block text-sm font-semibold">
                   {p.question}
                 </label>
+                {p.starters && (
+                  <div className="mt-1.5 flex flex-wrap gap-1.5" role="group" aria-label="Ways to start">
+                    {p.starters.map((st) => (
+                      <button
+                        key={st.label}
+                        type="button"
+                        onClick={() => setStory((cur) => cur.map((x, k) => (k === i ? (x.trim() ? x : st.text) : x)))}
+                        className="min-h-9 rounded-full border border-violet-500/30 bg-white px-3 text-xs font-semibold text-violet-800 transition-colors hover:bg-violet-500/10"
+                      >
+                        {st.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
                 <AutoTextarea id={`ys-${i}`} value={story[i] ?? ""} onChange={(e) => setStory((cur) => cur.map((x, k) => (k === i ? e.target.value : x)))} rows={2} maxLength={500} placeholder={p.placeholder} className={`${box} mt-1.5`} />
                 <div className="mt-1.5">
                   <VoiceInput onText={(t) => setStory((cur) => cur.map((x, k) => (k === i ? (x ? `${x.trimEnd()} ${t}` : t) : x)))} />
                 </div>
+                {i === 1 && (story[1] ?? "").trim().length >= 3 && result.postingKeywords.length > 0 && (
+                  <div className="mt-3 rounded-xl border border-violet-500/20 bg-white/60 p-3">
+                    <p className="text-sm font-semibold">Which part of this job does that connect to?</p>
+                    <p className="mt-0.5 text-xs text-foreground-muted">Pick one. We link what you said to it in a sentence, using only your own idea.</p>
+                    <div className="mt-2 flex flex-wrap gap-1.5" role="group" aria-label="Parts of this job">
+                      {result.postingKeywords.slice(0, 8).map((k) => (
+                        <button
+                          key={k}
+                          type="button"
+                          aria-pressed={bridge === k}
+                          onClick={() => setBridge(bridge === k ? "" : k)}
+                          className={`min-h-9 rounded-full border px-3 text-xs font-semibold transition-colors ${bridge === k ? "border-violet-700 bg-violet-700 text-white" : "border-border-subtle bg-white text-foreground hover:border-violet-500/50"}`}
+                        >
+                          {k}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -445,14 +479,29 @@ export default function InterviewPanel({
             <button type="button" onClick={() => void copy("opening", sheet.opening)} className="mt-3 inline-flex min-h-10 items-center rounded-full border border-border-subtle bg-background px-4 text-xs font-semibold hover:border-blue-500/40">
               {copied === "opening" ? "Copied" : "Copy opening"}
             </button>
-            {INTERVIEW_V2 && !hasStory && (
-              <p className="mt-3 text-xs text-foreground-muted">
-                Does not sound like you yet?{" "}
-                <button type="button" onClick={() => storyRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })} className="font-semibold text-blue-700 underline underline-offset-2">
-                  Answer three questions about you
-                </button>
-                , then build it again.
-              </p>
+            {INTERVIEW_V2 && (
+              <div className="mt-4 rounded-2xl border border-border-subtle bg-background-elevated p-3.5">
+                <p className="text-xs font-bold uppercase tracking-wider text-foreground-muted">What your opening has</p>
+                <ul className="mt-2 space-y-1.5">
+                  {openingCheck(sheet.opening, sheet.meta).items.map((it) => (
+                    <li key={it.label} className="flex items-start gap-2 text-sm">
+                      <span aria-hidden className={`mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${it.ok ? "bg-green-600" : "bg-amber-500"}`}>
+                        {it.ok ? "✓" : "!"}
+                      </span>
+                      <span>
+                        <span className="font-semibold">{it.label}</span>
+                        <span className="sr-only">{it.ok ? ": done" : ": needs work"}</span>
+                        {!it.ok && <span className="block text-xs text-foreground-muted">{it.fix}</span>}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                {(!sheet.meta?.moment || !sheet.meta?.bridge) && (
+                  <button type="button" onClick={() => storyRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })} className="mt-2.5 text-xs font-semibold text-blue-700 underline underline-offset-2">
+                    Go to the questions about you
+                  </button>
+                )}
+              </div>
             )}
           </div>
 
