@@ -47,19 +47,16 @@ export const guides: Guide[] = [
     updated: "November 2026",
     hype: [
       {
-        text: "CourseCareers, a tech sales course provider, says on its own pages that you don't need a degree, that its course costs $499 and takes about 4 to 12 weeks, and that the path to six-figure roles doesn't require a degree. It also says openly that it is biased because it sells the course, and it offers a 14-day money-back guarantee.",
-        source: "CourseCareers, \"Is Tech Sales a Good Career?\" (Dec 19, 2025) and \"How to Get Into Tech Sales With No Experience\" (Nov 4, 2025)",
-        url: "https://coursecareers.com/blog-posts/is-tech-sales-a-good-career",
+        text: "A tech sales course provider says on its own website that you don't need a degree, that its course costs under $500 and takes about 4 to 12 weeks, and that the path to six-figure roles doesn't require a degree. It also says openly that it is biased because it sells the course.",
+        source: "A tech sales course provider's own pages (not named here)",
       },
       {
-        text: "Six-figure claims are usually about the next job up. The same CourseCareers pages put median SDR on-target earnings at $80,000 and cite $200,000 for account executives, the role after SDR.",
-        source: "CourseCareers, citing The Bridge Group",
-        url: "https://coursecareers.com/blog-posts/tech-sales-career-roadmap",
+        text: "Six-figure claims are usually about the next job up. That same provider's pages put median SDR on-target earnings at $80,000 and cite $200,000 for account executives, the role after SDR.",
+        source: "The same provider's pages (not named here)",
       },
       {
-        text: "In 2022 the Washington State Attorney General sued Prehired, a \"tech sales bootcamp,\" over marketing that said \"We guarantee you land a $60k+ job offer.\" The state said the program was about 15 hours of videos. That was a lawsuit filing, not a verdict, and it is one company from 2022, but it shows what job guarantees in this space have looked like.",
-        source: "Washington State Attorney General, news release, Jun 8, 2022",
-        url: "https://www.atg.wa.gov/news/news-releases/ag-ferguson-files-lawsuit-shut-down-predatory-tech-sales-program-recover-money",
+        text: "In 2022 a state attorney general sued a tech sales training company over marketing that guaranteed a job offer at a stated salary. The state said the program was about 15 hours of videos. That was a lawsuit filing, not a verdict, and it is one company from 2022, but it shows what job guarantees in this space have looked like.",
+        source: "A 2022 state attorney general news release (company not named here)",
       },
     ],
     realityData: [
@@ -209,8 +206,6 @@ export const guides: Guide[] = [
       { label: "Betts Recruiting, Top SDR Compensation Trends in Tech for 2026 (Apr 28, 2026)", url: "https://bettsrecruiting.com/blog/top-sdr-compensation-trends-in-tech-for-2026/" },
       { label: "SaaStr, The Great SDR Downsizing (Emergence Capital survey, April 2025)", url: "https://www.saastr.com/the-great-sdr-downsizing-36-of-b2b-companies-cut-sales-development-teams-in-2025/" },
       { label: "ZoomInfo via Stacker, AI is reshaping GTM careers, especially at entry level (Aug 12, 2026)", url: "https://krdo.com/stacker-business-economy/2026/08/12/ai-is-reshaping-gtm-careers-especially-at-entry-level/" },
-      { label: "Washington State Attorney General, Prehired lawsuit (Jun 8, 2022)", url: "https://www.atg.wa.gov/news/news-releases/ag-ferguson-files-lawsuit-shut-down-predatory-tech-sales-program-recover-money" },
-      { label: "CourseCareers, Is Tech Sales a Good Career? (Dec 19, 2025)", url: "https://coursecareers.com/blog-posts/is-tech-sales-a-good-career" },
     ],
   },
   {

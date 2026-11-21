@@ -46,9 +46,10 @@ Anonymous, self-selected people who post to ask for advice. Real, dated, but not
 - Oct 9, 2026, AM/SDR trying to switch industries: "I can't even get an interview for an SDR spot." https://www.repvue.com/community/posts/switching-industries-advice
 - Nov 3, 2026, SDR on comp math: plan pays on meetings held, not booked, quota 20 held a month, "no shows run about 30%." https://www.repvue.com/community/posts/comp-plan-math
 
-## 6. The hype, documented
-- Jun 8, 2022, Washington State Attorney General sued Prehired, a "tech sales bootcamp," over marketing that said "We guarantee you land a $60k+ job offer." The state said the program was about 15 hours of videos. This was a lawsuit filing, not a verdict, and it is one company from 2022. https://www.atg.wa.gov/news/news-releases/ag-ferguson-files-lawsuit-shut-down-predatory-tech-sales-program-recover-money
-- CourseCareers (course $499, about 4 to 12 weeks, 14-day money-back guarantee; pages dated Nov 4 and Dec 19, 2025) says "you don't need a degree," cites $80,000 median SDR OTE, cites $200,000 for account executives, and says it is "biased" because it sells the course. https://coursecareers.com/blog-posts/is-tech-sales-a-good-career
+## 6. The hype (sources deliberately not named)
+We chose not to name the companies on the hype side. The site and this sheet describe them generically.
+- A tech sales course provider says on its own pages that you do not need a degree, that its course costs under $500 and takes about 4 to 12 weeks, and that the path to six-figure roles does not require a degree. It says openly that it is biased because it sells the course. It puts median SDR on-target earnings at $80,000 and cites $200,000 for account executives.
+- In 2022 a state attorney general sued a tech sales training company over marketing that guaranteed a job offer at a stated salary. This was a lawsuit filing, not a verdict, and it is one company from 2022. Keep your notes on who they are somewhere private, in case a viewer asks.
 
 ## Removed because I could not verify it from a source this time
 - "41 to 42% of enterprise teams have an AI SDR tool" (no source named).
@@ -56,10 +57,10 @@ Anonymous, self-selected people who post to ask for advice. Real, dated, but not
 - "Teams hit the same pipeline with about 26% fewer SDRs."
 - "Over 1,000 applications in 3 hours" (graph8). Not re-checked.
 - "Cold call connect rates run 3 to 10%."
-- "Promotion time stretched from 12 to 18 to 24 months" (blog claim). Note: a CourseCareers page says the median time to AE among those promoted was 12 months, and only a minority are promoted. The memoryBlue 20.9 months is an average.
+- "Promotion time stretched from 12 to 18 to 24 months" (blog claim). Note: a course provider page says the median time to AE among those promoted was 12 months, and only a minority are promoted. The memoryBlue 20.9 months is an average.
 If you want any of these back, send me a link to the article and I will read it first.
 
 ## Heads up for you
-- **Disclose the CourseCareers link.** Your site uses CourseCareers affiliate links. If the video says "tech sales is extremely hard" and then points to a course, say you may earn a commission, and say it in the video, not only the description.
+- **Disclose your training-partner link.** Your site uses an affiliate link to a course provider. If the video says "tech sales is extremely hard" and then points to a course, say you may earn a commission, and say it in the video, not only the description.
 - **"Extreme" has a ceiling.** The sources support "hard to get in, hard to stay, narrow path up, and pay that hasn't grown." They do not support "the job is disappearing" or "almost nobody gets hired." Several 2026 sources point the other way. Saying the strong version would be easy for a viewer to fact-check against you.
 - **I did not read Reddit.** The in-app browser blocks it. RepVue's public community was readable, so the voices are from there.
