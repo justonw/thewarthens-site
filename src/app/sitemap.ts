@@ -51,7 +51,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/faith", priority: 0.8, lastModified: new Date("2026-11-14") },
     { path: "/faith/women-who-seek", priority: 0.7, lastModified: SITE_LAST_UPDATED },
     { path: "/faith/present-but-missing", priority: 0.7, lastModified: new Date("2026-11-07") },
-    { path: "/10k", priority: 0.6, lastModified: new Date("2026-11-21") },
     ...guides.map((g) => ({
       path: `/tech/guides/${g.slug}`,
       priority: 0.7,
