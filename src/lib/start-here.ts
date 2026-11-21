@@ -127,8 +127,8 @@ export const startHereGuides: StartHereGuide[] = [
         text: "Burnout is the single most common reason SDRs quit (35%), ahead of feeling stuck (28%) or unrealistic quotas (18%).",
       },
       {
-        text: "This is the highest-turnover role in the sales ladder: year-one SDR turnover runs 35-40%, with an average tenure around 14 months. Only 60% of SDRs hit quota in a given year, per the most rigorous industry benchmark, and some other sources report the miss rate running even higher.",
-        source: "The Bridge Group, 2025 SDR Models, Metrics & Compensation Report",
+        text: "Turnover in this role is high: the Bridge Group's 2025 benchmark found median annual attrition of 40% (13% involuntary, 11% voluntary, 16% promoted). Only 60% of SDRs were at quota, the lowest in that study's history, and RepVue currently shows 57.5%. A survey of SDR leaders in August and September 2026 put average SDR tenure at 19.8 months.",
+        source: "The Bridge Group, 2025 SDR report (Feb 6, 2025); RepVue SDR salary page (Nov 21, 2026); memoryBlue, State of Sales Development 2026",
       },
       {
         text: "The mental health cost is documented, not just anecdotal: one 2024 study found sales teams scored meaningfully worse than R&D teams on measures of depression, anxiety, and hostility.",

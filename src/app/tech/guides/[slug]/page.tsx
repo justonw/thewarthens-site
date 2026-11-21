@@ -49,6 +49,17 @@ function Section({
   );
 }
 
+// A source line: a link to the source's own page when the guide gives one.
+function SourceText({ source, url }: { source: string; url?: string }) {
+  return url ? (
+    <a href={url} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
+      {source}
+    </a>
+  ) : (
+    <>{source}</>
+  );
+}
+
 export default async function GuidePage({
   params,
 }: {
@@ -161,7 +172,7 @@ export default async function GuidePage({
               <p className="text-sm">{point.text}</p>
               {point.source && (
                 <p className="mt-2 text-xs font-semibold text-foreground-muted">
-                  Source: {point.source}
+                  Source: <SourceText source={point.source} url={point.url} />
                 </p>
               )}
             </li>
@@ -179,7 +190,7 @@ export default async function GuidePage({
               <p className="text-sm">{point.text}</p>
               {point.source && (
                 <p className="mt-2 text-xs font-semibold text-blue-600">
-                  Source: {point.source}
+                  Source: <SourceText source={point.source} url={point.url} />
                 </p>
               )}
             </li>
@@ -202,7 +213,7 @@ export default async function GuidePage({
                 <p className="text-sm">{point.text}</p>
                 {point.source && (
                   <p className="mt-2 text-xs font-semibold text-blue-600">
-                    Source: {point.source}
+                    Source: <SourceText source={point.source} url={point.url} />
                   </p>
                 )}
               </li>
@@ -220,7 +231,7 @@ export default async function GuidePage({
             >
               <p className="text-sm italic text-foreground">&ldquo;{v.quote}&rdquo;</p>
               <p className="mt-2 text-xs font-semibold text-foreground-muted">
-                {v.source}
+                <SourceText source={v.source} url={v.url} />
               </p>
             </blockquote>
           ))}

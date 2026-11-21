@@ -3,11 +3,14 @@ import type { PathId } from "@/lib/quiz";
 export type GuidePoint = {
   text: string;
   source?: string;
+  // Where to read it: the source's own page, shown as a link.
+  url?: string;
 };
 
 export type GuideQuote = {
   quote: string;
   source: string;
+  url?: string;
 };
 
 export type GuideFaq = {
@@ -32,7 +35,7 @@ export type Guide = {
   forWhom: string[];
   notForWhom: string[];
   faq: GuideFaq[];
-  sources: string[];
+  sources: (string | { label: string; url: string })[];
 };
 
 export const guides: Guide[] = [
@@ -40,116 +43,174 @@ export const guides: Guide[] = [
     slug: "tech-sales-hype-vs-reality",
     pathId: "sales",
     title: "Tech Sales (SDR): Hype vs. Reality",
-    dek: "Is tech sales worth it in 2026? What sales-training marketing claims about breaking into tech sales, checked against real 2025-2026 industry data and what actual SDRs say.",
-    updated: "August 2026",
+    dek: "Is tech sales worth it in 2026? What training marketing promises, checked against sales data from 2025 and 2026, a survey of SDR leaders taken in August and September 2026, and what SDRs are posting right now.",
+    updated: "November 2026",
     hype: [
       {
-        text: "Sales-training marketing in this space commonly claims no prior tech or sales experience is needed, and pitches a fast path to a \"$100K+ career\" within weeks of finishing a course.",
+        text: "CourseCareers, a tech sales course provider, says on its own pages that you don't need a degree, that its course costs $499 and takes about 4 to 12 weeks, and that the path to six-figure roles doesn't require a degree. It also says openly that it is biased because it sells the course, and it offers a 14-day money-back guarantee.",
+        source: "CourseCareers, \"Is Tech Sales a Good Career?\" (Dec 19, 2025) and \"How to Get Into Tech Sales With No Experience\" (Nov 4, 2025)",
+        url: "https://coursecareers.com/blog-posts/is-tech-sales-a-good-career",
       },
       {
-        text: "A common claim across course marketing: typical starting salaries for entry-level tech sales roles are around $68,000, with most people hired within 1 to 6 months of finishing a course.",
+        text: "Six-figure claims are usually about the next job up. The same CourseCareers pages put median SDR on-target earnings at $80,000 and cite $200,000 for account executives, the role after SDR.",
+        source: "CourseCareers, citing The Bridge Group",
+        url: "https://coursecareers.com/blog-posts/tech-sales-career-roadmap",
       },
       {
-        text: "The consistent framing across most sales-training marketing: this is \"the most degree-blind, well-paid entry in the economy,\" where retail or service experience beats a business degree.",
+        text: "In 2022 the Washington State Attorney General sued Prehired, a \"tech sales bootcamp,\" over marketing that said \"We guarantee you land a $60k+ job offer.\" The state said the program was about 15 hours of videos. That was a lawsuit filing, not a verdict, and it is one company from 2022, but it shows what job guarantees in this space have looked like.",
+        source: "Washington State Attorney General, news release, Jun 8, 2022",
+        url: "https://www.atg.wa.gov/news/news-releases/ag-ferguson-files-lawsuit-shut-down-predatory-tech-sales-program-recover-money",
       },
     ],
     realityData: [
       {
-        text: "The most rigorous, current industry benchmark puts median SDR base pay at $55,000 and OTE (on-target earnings, meaning base plus commission if you hit quota) at $80,000, unchanged since 2022. That means it's actually lost ground to inflation over the past several years.",
-        source: "The Bridge Group, 2025 SDR Models, Metrics & Compensation Report (351 B2B companies surveyed)",
+        text: "RepVue's live salary page, based on 8,073 verified submissions, shows a median SDR base of $60,000 (no change in the last year) and median on-target earnings (OTE, meaning base plus commission if you hit quota) of $90,000. It shows 57.5% of SDRs attain quota.",
+        source: "RepVue, Sales Development Representative salary page, viewed Nov 21, 2026",
+        url: "https://www.repvue.com/salaries/sales-development-representative",
       },
       {
-        text: "A separate, crowd-verified salary database of over 8,000 SDR data points puts median pay a bit higher: $60K base, $85K OTE, with real variance by company size and industry.",
-        source: "RepVue",
+        text: "The Bridge Group's 2025 benchmark of 351 B2B companies found median SDR OTE of $80,000 ($55,000 base and $25,000 variable), unchanged since 2022. The report says pay has grown about 0.56% a year over the past decade, well below inflation.",
+        source: "The Bridge Group, 2025 SDR Models, Motions & Metrics report (published Feb 6, 2025)",
+        url: "https://www.bridgegroupinc.com/research/2025-sdr-models-metrics-report-the-bridge-group",
       },
       {
-        text: "Those numbers roughly track with what we already show on our own Income Snapshot ($42K-$61K entry). The dishonest part of the marketing isn't the entry number, it's that the \"$100K+ career\" language sits right next to the entry pitch without making clear it's describing pay after you're promoted to Account Executive, not SDR pay itself.",
-      },
-      {
-        text: "Only 60% of SDRs hit quota in 2025, the lowest rate on record in this benchmark's history.",
+        text: "In that benchmark, 60% of SDRs were at quota, the lowest in the study's history, and the share has trended down since 2018. The median monthly quota was 10 meetings held, and the median SDR logged 112 outreach activities a day (44 phone, 41 email, 19 LinkedIn, 8 text or other).",
         source: "The Bridge Group, 2025",
+        url: "https://www.bridgegroupinc.com/research/2025-sdr-models-metrics-report-the-bridge-group",
       },
       {
-        text: "Median annual attrition (people leaving the role) sits at 40%, with average tenure of 1.9 years.",
+        text: "Annual turnover was 40% in 2024: 13% left involuntarily, 11% left voluntarily, and 16% were promoted. The report says promotions have halved since 2020, when they were 34%. In a typical year, more SDRs left the role (24%) than were promoted (16%).",
         source: "The Bridge Group, 2025",
+        url: "https://www.bridgegroupinc.com/research/2025-sdr-models-metrics-report-the-bridge-group",
       },
       {
-        text: "The promotion pipeline from SDR to Account Executive, the entire premise of \"it's just a stepping stone,\" is shrinking. Promotions accounted for 34% of why people left the SDR seat in 2020. By 2025 that dropped to 16%. More people are leaving for other reasons (a different job, leaving sales entirely) than being promoted up.",
-        source: "The Bridge Group, 2025",
+        text: "A survey of 574 SDR leaders taken Aug 26 to Sep 20, 2026 found average SDR tenure of 19.8 months and average time to promotion of 20.9 months. In 33% of organizations, tenure ends before the promotion point; in 47% it ends at about the same time; only about 20% keep SDRs past it. The report's own summary is that roughly four in five organizations lose the typical SDR at or before promotion. In North America, average tenure is 18.7 months.",
+        source: "memoryBlue, The State of Sales Development 2026 (survey run by SDR Leaders Global, sponsored by memoryBlue)",
+        url: "https://memoryblue.com/collateral/the-state-of-sales-development-2026/",
       },
       {
-        text: "Some industry reporting suggests SDR-to-AE promotion timelines have stretched from roughly 12 months a few years ago to 18-24 months now, though we'd call this a directional read rather than a hard number, since it comes from sales-ops blogs rather than an audited study.",
+        text: "On openings: new SDR job posts at US B2B digital-native companies were down 21% from a year earlier in the first half of 2026, below the rest of the hiring market. Overall go-to-market job posts were down 15%. The author notes job-post data can be noisy, and this covers digital-native companies, not every employer.",
+        source: "Growth Unhinged (Kyle Poyar), May 20, 2026, on the H1 2026 State of GTM Hiring report using Sumble job-post data",
+        url: "https://www.growthunhinged.com/p/who-s-actually-hiring-in-gtm-right-now",
       },
       {
-        text: "One recruiting company reported getting over 1,000 applications within 3 hours of posting a single SDR opening in 2025, illustrating how competitive entry-level postings have become, even though this is one company's experience, not a market-wide statistic.",
-        source: "graph8.com",
+        text: "Recruiting firm Betts says SDR hiring fell to roughly half of its pandemic-era peak in 2024, and that entry-level go-to-market roles have declined as more companies adopt AI tools. Betts sells hiring services to employers.",
+        source: "Betts Recruiting, \"Top SDR Compensation Trends in Tech for 2026\" (Apr 28, 2026)",
+        url: "https://bettsrecruiting.com/blog/top-sdr-compensation-trends-in-tech-for-2026/",
+      },
+      {
+        text: "In an April 2025 survey of more than 560 venture-backed B2B software companies, 36% had decreased SDR/BDR headcount in the prior year, the highest share of any sales role surveyed. 44% kept it the same and 19% increased it.",
+        source: "SaaStr (Jason Lemkin), reporting on Emergence Capital's Beyond Benchmarks survey",
+        url: "https://www.saastr.com/the-great-sdr-downsizing-36-of-b2b-companies-cut-sales-development-teams-in-2025/",
+      },
+      {
+        text: "A ZoomInfo-produced analysis published Aug 12, 2026 says most reductions in junior sales roles come through turnover that is not backfilled, not through mass layoffs, and that promotion rates from SDR to account executive have dropped significantly. It is written by a sales-software company and cites other vendors.",
+        source: "ZoomInfo story distributed by Stacker, Aug 12, 2026",
+        url: "https://krdo.com/stacker-business-economy/2026/08/12/ai-is-reshaping-gtm-careers-especially-at-entry-level/",
+      },
+      {
+        text: "Not every source says the function is shrinking. The same Aug to Sep 2026 survey found 53% of organizations grew SDR headcount over the past year, 25% held steady and 23% cut, and its leaders reported average SDR quota attainment of 82%. That survey asked leaders of existing teams, so it cannot show how hard it is to get hired onto one. The sources disagree, and we would rather show you both.",
+        source: "memoryBlue, The State of Sales Development 2026",
+        url: "https://memoryblue.com/collateral/the-state-of-sales-development-2026/",
       },
     ],
     aiAngle: {
       intro:
-        "AI outbound tools are real and spreading fast, but the story is more \"fewer humans needed to hit the same targets\" than \"the SDR role is disappearing.\"",
+        "AI is changing the SDR job, but the data does not show the job disappearing. It shows some junior seats not being refilled and new AI skills being expected.",
       points: [
         {
-          text: "Roughly 41-42% of enterprise B2B sales teams had an AI SDR tool in production by early 2026, up from just 3% two years earlier.",
+          text: "78% of SDR teams use AI. Only 16% use autonomous AI SDR agents (13% alongside people, 3% as a partial replacement) and 59% never have. Of the 14 organizations using AI agents as a partial replacement, half cut headcount, a group the report itself calls too small to generalize from.",
+          source: "memoryBlue, The State of Sales Development 2026 (Aug 26 to Sep 20, 2026)",
+          url: "https://memoryblue.com/collateral/the-state-of-sales-development-2026/",
         },
         {
-          text: "Most companies are pairing AI tools with human SDRs rather than replacing them outright. AI-booked meetings convert to real opportunities at around 15%, compared to about 25% for meetings a human SDR booked. AI is good at volume, weaker at judging whether a lead is actually worth a salesperson's time.",
+          text: "AI-native companies more than doubled their SDR headcount year over year, even as SDR job posts overall fell 21%. The report names Cursor, Decagon and OpenAI among AI companies hiring SDRs.",
+          source: "Growth Unhinged (Kyle Poyar), May 20, 2026",
+          url: "https://www.growthunhinged.com/p/who-s-actually-hiring-in-gtm-right-now",
         },
         {
-          text: "The practical effect: some teams report hitting the same pipeline goals with about 26% fewer SDRs than before. That's not the job vanishing, it's fewer seats needed to do it, which lines up with the shrinking promotion pipeline above.",
+          text: "Betts says some companies are moving from the SDR title to \"Sales Development Analyst,\" where people are expected to arrive already fluent in AI tools for outreach, research and reporting, and calls AI fluency the current hiring baseline for go-to-market roles.",
+          source: "Betts Recruiting, Apr 28, 2026",
+          url: "https://bettsrecruiting.com/blog/top-sdr-compensation-trends-in-tech-for-2026/",
         },
       ],
     },
     voices: [
       {
-        quote:
-          "Laid off last July, applied over 300 jobs since Jan 2024, however not receiving any interviews yet... it's really difficult to be selected for interviews.",
-        source: "Bootcamp/training grad, posted on Blind (teamblind.com)",
+        quote: "Nobody mentioned that requirement the first two times.",
+        source: "Senior SDR passed over for an account executive seat for the third time in 2.5 years. RepVue Community, Nov 16, 2026",
+        url: "https://www.repvue.com/community/posts/passed-over-for-ae-a-third-time",
       },
       {
-        quote:
-          "Every 3 months you felt lucky to survive.",
-        source: "SDR, company review on RepVue, describing a high-pressure quota environment",
+        quote: "three people on my team have left since August without being backfilled",
+        source: "BDR asking whether to stay. RepVue Community, Nov 19, 2026",
+        url: "https://www.repvue.com/community/posts/team-shrinking-and-nobody-is-saying-why",
+      },
+      {
+        quote: "Severance is only 4 weeks",
+        source: "Laid-off SDR weighing a 6-month contract SDR role at the old base with no variable pay. RepVue Community, Nov 20, 2026",
+        url: "https://www.repvue.com/community/posts/contract-sdr-role-or-keep-waiting",
+      },
+      {
+        quote: "I can't even get an interview for an SDR spot.",
+        source: "Experienced account manager and SDR trying to switch industries. RepVue Community, Oct 9, 2026",
+        url: "https://www.repvue.com/community/posts/switching-industries-advice",
+      },
+      {
+        quote: "no shows run about 30% for me",
+        source: "SDR whose plan pays on meetings held, not booked, with a quota of 20 held a month. RepVue Community, Nov 3, 2026",
+        url: "https://www.repvue.com/community/posts/comp-plan-math",
       },
     ],
     synthesis: [
-      "The entry-level pay claims for tech sales roughly check out. Real industry data (Bridge Group, RepVue) lands close to our own $42K-$61K figure, and that's a genuinely strong outcome for someone coming from retail, hospitality, or customer service with no degree.",
-      "Where the marketing gets dishonest is in blurring SDR pay with the post-promotion Account Executive pay, and staying quiet about a promotion pipeline that's measurably shrinking. The \"$100K+ career\" pitch is describing a destination that fewer people are actually reaching on the timeline implied.",
-      "We're keeping our current training partnership for this path because the entry-level pay and the on-ramp itself are real. But we'd rather you go in knowing the honest numbers than find them out three months into a 40-call-a-day quota grind.",
+      "The sources agree on a few hard things. The entry door is narrower than the marketing suggests (SDR job posts down 21% in the first half of 2026, and recruiters saying entry-level go-to-market roles have declined). Pay has barely moved (median on-target earnings of $80,000 to $90,000, flat since 2022 in one benchmark). And only about 57% to 60% of SDRs hit quota.",
+      "The promotion story is where the marketing and the data differ most. The typical SDR stays about 19.8 months and waits about 20.9 months for a promotion, the Bridge Group found promotions have halved since 2020, and SDRs on RepVue describe being passed over for account executive seats that go to outside hires. Fast, guaranteed six-figure promotion is not what the data shows.",
+      "Where the sources disagree is whether the whole SDR function is shrinking. Surveys of team leaders show more teams growing than cutting, while job-post data shows fewer new openings. Both can be true: fewer entry-level openings, and the teams that exist still hiring and keeping people. We would rather you go in knowing the honest range than find it out three months into a day of about 112 outreach touches.",
+      "We're keeping our current training partnership for this path because the entry-level pay and the on-ramp itself are real. But we'd rather you go in knowing the honest numbers.",
     ],
     forWhom: [
-      "People with real customer-facing or resilience experience (retail, hospitality, service, military) who can handle daily rejection at volume: the transferable-skills pitch is legitimately true for this group.",
-      "People who go in expecting realistic total comp of $55K-$90K, not $100K+, and a competitive 18-24+ month path to promotion, not a guaranteed 12-month one.",
-      "People weighing SDR against other low-credential tech-adjacent entry points (support, customer success, RevOps): SDR still pays a real premium, the door is just harder to walk through than advertised.",
+      "People with real customer-facing or resilience experience (retail, hospitality, service, military) who can handle daily rejection at volume and a pay plan that depends on meetings held.",
+      "People who go in expecting realistic total pay of about $55,000 to $90,000 and a wait of around 20 months for a promotion, not a fast, guaranteed six-figure track.",
+      "People willing to apply widely, build skills with AI sales tools, and stay with a slow search.",
     ],
     notForWhom: [
-      "Anyone counting on a fast, guaranteed six-figure track within a year. The data doesn't support that timeline for a typical entrant.",
-      "Anyone who can't tolerate high daily rejection (cold call connect rates run 3-10%) in an environment where AI tools are compressing how many SDRs a team needs.",
+      "Anyone counting on a guaranteed job or a fast six-figure track after a short course. A 2022 state attorney general lawsuit over a tech sales course's job guarantee, and the current hiring data, both argue against that.",
+      "Anyone who cannot handle daily rejection and a quota that only about 57% to 60% of SDRs reach.",
+      "Anyone who needs steady income right away. Median annual turnover in the role is 40%, and SDRs are posting about layoffs and contract roles with no variable pay.",
     ],
     faq: [
       {
         question: "Is tech sales worth it in 2026?",
-        answer: "For entry-level pay, yes: real industry data puts SDR total comp around $55K-$90K, close to what we show on our Income Snapshot, a genuinely strong outcome for someone with no degree. It's worth it for people with real customer-facing experience who go in expecting that range, not the '$100K+ career' framing some marketing uses, and a competitive 18-24+ month path to promotion rather than a guaranteed 12-month one.",
+        answer: "It can be, for the right person, but it is harder than the marketing says. Median SDR pay is about $60,000 base and $80,000 to $90,000 on-target earnings, which is only paid in full if you hit quota, and only about 57% to 60% of SDRs do. New SDR job posts at US digital-native B2B companies were down 21% in the first half of 2026, and the typical SDR waits about 20.9 months for a promotion while staying about 19.8 months. A survey of team leaders in August and September 2026 found more teams growing than cutting, so the sources disagree on how much the role is shrinking.",
       },
       {
-        question: "Is tech sales saturated?",
-        answer: "Entry-level postings are more competitive than a few years ago: one company reported over 1,000 applications within 3 hours of posting a single SDR opening in 2025. AI outbound tools are also letting teams hit the same pipeline goals with fewer SDRs. It's not gone, but it's harder to break into than the marketing suggests.",
+        question: "Is it hard to get hired as an SDR in 2026?",
+        answer: "Openings are down, but the role is not gone. Job-post data for the first half of 2026 shows new SDR posts down 21%, a recruiting firm says entry-level go-to-market roles have declined as companies adopt AI tools, and SDRs on RepVue describe long searches and being passed over for promotions. A survey of 574 SDR leaders (Aug 26 to Sep 20, 2026) found 53% of organizations grew SDR headcount and 23% cut it. That survey asked team leaders, so it cannot show how hard hiring is for a first-time applicant.",
       },
       {
         question: "How much do tech sales reps (SDRs) actually make?",
-        answer: "The most rigorous current benchmark puts median SDR base pay at $55,000 and total on-target earnings (OTE) at $80,000, though only 60% of SDRs actually hit quota in 2025. A separate crowd-verified database puts it slightly higher: $60K base, $85K OTE. Either way, that's below the $100K+ figure often used in marketing, which usually describes post-promotion Account Executive pay, not SDR pay.",
+        answer: "RepVue's data from 8,073 verified submissions shows a median base of $60,000 and median on-target earnings of $90,000 as of November 2026. The Bridge Group's 2025 benchmark of 351 companies found $80,000 OTE ($55,000 base, $25,000 variable), unchanged since 2022. OTE assumes you hit quota, and RepVue shows 57.5% of SDRs do. The six-figure numbers in marketing usually describe account executives, not SDRs.",
       },
       {
-        question: "How long does it take to get promoted from SDR to Account Executive?",
-        answer: "Longer than it used to. Promotions accounted for 34% of why people left the SDR seat in 2020; by 2025 that had dropped to just 16%, meaning more people are leaving the role for other reasons than being promoted up. Some industry reporting suggests the typical timeline has stretched from around 12 months to 18-24 months.",
+        question: "How long does it take to get promoted from SDR to account executive?",
+        answer: "In the 2026 memoryBlue survey of SDR leaders, average time to promotion was 20.9 months while average SDR tenure was 19.8 months, and roughly four in five organizations lose the typical SDR at or before the promotion point. The Bridge Group found promotions made up 16% of SDRs in 2024, down from 34% in 2020.",
+      },
+      {
+        question: "Will AI replace SDRs?",
+        answer: "The data so far does not show that. In the 2026 memoryBlue survey, 78% of SDR teams use AI but only 16% use autonomous AI SDR agents. AI-native companies more than doubled their SDR headcount over the past year according to the H1 2026 hiring report, while a ZoomInfo analysis says most junior reductions are roles that are not backfilled after someone leaves. Nobody can say what happens next, so treat any single prediction with care.",
       },
     ],
     sources: [
-      "The Bridge Group, 2025 SDR Models, Metrics & Compensation Report, bridgegroupinc.com",
-      "RepVue SDR salary data, repvue.com",
-      "graph8.com, \"Is the SDR Role Dead? We Got 1,000 Applications in 3 Hours\"",
-      "Sales-training and course marketing pages, reviewed directly",
-      "Blind (teamblind.com) and RepVue company reviews",
+      { label: "RepVue, Sales Development Representative salary page (viewed Nov 21, 2026)", url: "https://www.repvue.com/salaries/sales-development-representative" },
+      { label: "RepVue Community, SDR forum (public posts, Oct and Nov 2026)", url: "https://www.repvue.com/community/sdr" },
+      { label: "memoryBlue, The State of Sales Development 2026 (survey Aug 26 to Sep 20, 2026)", url: "https://memoryblue.com/collateral/the-state-of-sales-development-2026/" },
+      { label: "The Bridge Group, 2025 SDR Models, Motions & Metrics report (Feb 6, 2025)", url: "https://www.bridgegroupinc.com/research/2025-sdr-models-metrics-report-the-bridge-group" },
+      { label: "Growth Unhinged, Who's actually hiring in GTM right now (May 20, 2026)", url: "https://www.growthunhinged.com/p/who-s-actually-hiring-in-gtm-right-now" },
+      { label: "Betts Recruiting, Top SDR Compensation Trends in Tech for 2026 (Apr 28, 2026)", url: "https://bettsrecruiting.com/blog/top-sdr-compensation-trends-in-tech-for-2026/" },
+      { label: "SaaStr, The Great SDR Downsizing (Emergence Capital survey, April 2025)", url: "https://www.saastr.com/the-great-sdr-downsizing-36-of-b2b-companies-cut-sales-development-teams-in-2025/" },
+      { label: "ZoomInfo via Stacker, AI is reshaping GTM careers, especially at entry level (Aug 12, 2026)", url: "https://krdo.com/stacker-business-economy/2026/08/12/ai-is-reshaping-gtm-careers-especially-at-entry-level/" },
+      { label: "Washington State Attorney General, Prehired lawsuit (Jun 8, 2022)", url: "https://www.atg.wa.gov/news/news-releases/ag-ferguson-files-lawsuit-shut-down-predatory-tech-sales-program-recover-money" },
+      { label: "CourseCareers, Is Tech Sales a Good Career? (Dec 19, 2025)", url: "https://coursecareers.com/blog-posts/is-tech-sales-a-good-career" },
     ],
   },
   {
