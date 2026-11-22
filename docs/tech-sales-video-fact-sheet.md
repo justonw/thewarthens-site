@@ -46,10 +46,13 @@ Anonymous, self-selected people who post to ask for advice. Real, dated, but not
 - Oct 9, 2026, AM/SDR trying to switch industries: "I can't even get an interview for an SDR spot." https://www.repvue.com/community/posts/switching-industries-advice
 - Nov 3, 2026, SDR on comp math: plan pays on meetings held, not booked, quota 20 held a month, "no shows run about 30%." https://www.repvue.com/community/posts/comp-plan-math
 
-## 6. The hype (sources deliberately not named)
-We chose not to name the companies on the hype side. The site and this sheet describe them generically.
-- A tech sales course provider says on its own pages that you do not need a degree, that its course costs under $500 and takes about 4 to 12 weeks, and that the path to six-figure roles does not require a degree. It says openly that it is biased because it sells the course. It puts median SDR on-target earnings at $80,000 and cites $200,000 for account executives.
-- In 2022 a state attorney general sued a tech sales training company over marketing that guaranteed a job offer at a stated salary. This was a lawsuit filing, not a verdict, and it is one company from 2022. Keep your notes on who they are somewhere private, in case a viewer asks.
+## 6. The hype: what people are led to expect (sources deliberately not named)
+The hype side is about expectations for someone getting into tech sales, not about what any course says about itself. The guide labels each source "Unnamed source" with a date. Keep private notes on who they are, in case a viewer asks.
+1. **"No degree, no experience needed."** Provider pages, late 2025: "you don't need a degree," start as an SDR or BDR.
+2. **"Six figures is the destination."** A marketplace course page (viewed Nov 21, 2026): "You've got six-figure potential." A provider (late 2025): the path to six-figure roles doesn't require a degree. That provider cites $200,000 median OTE for account executives vs $80,000 for SDRs (secondary figure, not independently checked).
+3. **"No ceiling on what you can earn."** Career-advice site, updated Apr 27, 2026: "no income cap," top performers can reach $10,000 a month or more, especially in tech sales. Our caveat from RepVue: median OTE $90,000 a year and 57.5% attain quota.
+4. **"Finish training and a job follows."** 2022 state attorney general lawsuit over a job-offer guarantee at a stated salary (a filing, not a verdict). A bootcamp-review site (Jan 24, 2025): "job guarantees" mean placement with a partner company and 2 to 3 months of on-the-job training.
+5. **"SDR is a quick stepping stone."** Provider pages, late 2025: median time to account executive about 12 months among SDRs who made it (only counts those promoted). Compare the reality side: 20.9 months average time to promotion, 16% promoted in a year.
 
 ## Removed because I could not verify it from a source this time
 - "41 to 42% of enterprise teams have an AI SDR tool" (no source named).

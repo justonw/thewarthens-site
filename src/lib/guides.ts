@@ -24,6 +24,8 @@ export type Guide = {
   title: string;
   dek: string;
   updated: string;
+  // The line above the Hype cards. Defaults to what marketing says.
+  hypeIntro?: string;
   hype: GuidePoint[];
   realityData: GuidePoint[];
   aiAngle: {
@@ -45,18 +47,27 @@ export const guides: Guide[] = [
     title: "Tech Sales (SDR): Hype vs. Reality",
     dek: "Is tech sales worth it in 2026? What training marketing promises, checked against sales data from 2025 and 2026, a survey of SDR leaders taken in August and September 2026, and what SDRs are posting right now.",
     updated: "November 2026",
+    hypeIntro: "What people are led to expect about getting into tech sales: how easy it is to start, how much you will make, and how fast it happens.",
     hype: [
       {
-        text: "A tech sales course provider says on its own website that you don't need a degree, that its course costs under $500 and takes about 4 to 12 weeks, and that the path to six-figure roles doesn't require a degree. It also says openly that it is biased because it sells the course.",
-        source: "A tech sales course provider's own pages (not named here)",
+        text: "Expectation: you can break in with no degree and no experience. Training providers say so plainly (\"you don't need a degree\") and tell beginners to start as an SDR or BDR, the entry-level seat.",
+        source: "Unnamed source, late 2025",
       },
       {
-        text: "Six-figure claims are usually about the next job up. That same provider's pages put median SDR on-target earnings at $80,000 and cite $200,000 for account executives, the role after SDR.",
-        source: "The same provider's pages (not named here)",
+        text: "Expectation: six figures is the destination. One course page tells shoppers \"You've got six-figure potential,\" and another provider says the path to six-figure roles doesn't require a degree. Those numbers usually describe the next job up, account executive: that provider cites $200,000 median on-target earnings for account executives against $80,000 for SDRs.",
+        source: "Unnamed sources, late 2025 and Nov 2026",
       },
       {
-        text: "In 2022 a state attorney general sued a tech sales training company over marketing that guaranteed a job offer at a stated salary. The state said the program was about 15 hours of videos. That was a lawsuit filing, not a verdict, and it is one company from 2022, but it shows what job guarantees in this space have looked like.",
-        source: "A 2022 state attorney general news release (company not named here)",
+        text: "Expectation: there is no ceiling on what you can earn. A career-advice website, updated in April 2026, says commission-based sales jobs have \"no income cap\" and that top performers can reach $10,000 a month or more, especially in tech sales. Top performers can, but the typical SDR is far below that: RepVue's median on-target earnings are $90,000 a year, about $7,500 a month, and only 57.5% of SDRs attain quota.",
+        source: "Unnamed source, updated Apr 27, 2026",
+      },
+      {
+        text: "Expectation: finish the training and a job follows. In 2022 a state attorney general sued a tech sales training company over marketing that guaranteed a job offer at a stated salary (a lawsuit filing, not a verdict). A bootcamp-review website noted in January 2025 that tech sales \"job guarantees\" usually mean placement with a partner company and 2 to 3 months of on-the-job training, so it matters what exactly is guaranteed.",
+        source: "Unnamed sources, 2022 and Jan 2025",
+      },
+      {
+        text: "Expectation: SDR is a quick stepping stone. One provider's pages say the median time to account executive was about 12 months among SDRs who made it. That counts only the people who were promoted.",
+        source: "Unnamed source, late 2025",
       },
     ],
     realityData: [
