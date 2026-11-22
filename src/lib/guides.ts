@@ -27,6 +27,8 @@ export type Guide = {
   // The line above the Hype cards. Defaults to what marketing says.
   hypeIntro?: string;
   hype: GuidePoint[];
+  // Optional: show each hype followed by the reality that answers it. Numbers are positions in hype, realityData and voices.
+  pairs?: { hype: number; reality: number[]; voices?: number[] }[];
   realityData: GuidePoint[];
   aiAngle: {
     intro: string;
@@ -69,6 +71,13 @@ export const guides: Guide[] = [
         text: "Expectation: SDR is a quick stepping stone. One provider's pages say the median time to account executive was about 12 months among SDRs who made it. That counts only the people who were promoted.",
         source: "Unnamed source, late 2025",
       },
+    ],
+    pairs: [
+      { hype: 0, reality: [5, 6], voices: [3] },
+      { hype: 1, reality: [0, 1] },
+      { hype: 2, reality: [2], voices: [4] },
+      { hype: 3, reality: [7, 8, 9], voices: [1, 2] },
+      { hype: 4, reality: [3, 4], voices: [0] },
     ],
     realityData: [
       {

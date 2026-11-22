@@ -159,6 +159,71 @@ export default async function GuidePage({
         </Reveal>
       </section>
 
+      {guide.pairs && (
+        <section className="mx-auto max-w-3xl px-6 py-10">
+          <Reveal>
+            <h2 className="text-xl font-semibold sm:text-2xl">Hype vs. Reality, one expectation at a time</h2>
+            {guide.hypeIntro && <p className="mt-2 text-sm text-foreground-muted">{guide.hypeIntro}</p>}
+          </Reveal>
+          <div className="mt-8 space-y-14">
+            {guide.pairs.map((pair, n) => {
+              const hype = guide.hype[pair.hype];
+              return (
+                <Reveal key={n}>
+                  <div id={`pair-${n + 1}`} className="scroll-mt-24">
+                    <div className="rounded-2xl border border-border-subtle bg-background-elevated p-5">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
+                        The hype &middot; {n + 1} of {guide.pairs?.length}
+                      </p>
+                      <p className="mt-2 text-base">{hype.text}</p>
+                      {hype.source && (
+                        <p className="mt-2 text-xs font-semibold text-foreground-muted">
+                          Source: <SourceText source={hype.source} url={hype.url} />
+                        </p>
+                      )}
+                    </div>
+                    <p className="mt-6 text-xs font-semibold uppercase tracking-wider text-blue-600">The reality</p>
+                    <ul className="mt-3 space-y-3">
+                      {pair.reality.map((ri) => {
+                        const point = guide.realityData[ri];
+                        return (
+                          <li key={ri} className="rounded-2xl border border-blue-500/20 bg-background-elevated p-4">
+                            <p className="text-sm">{point.text}</p>
+                            {point.source && (
+                              <p className="mt-2 text-xs font-semibold text-blue-600">
+                                Source: <SourceText source={point.source} url={point.url} />
+                              </p>
+                            )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                    {pair.voices && pair.voices.length > 0 && (
+                      <div className="mt-4 space-y-3">
+                        <p className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">What people are posting</p>
+                        {pair.voices.map((vi) => {
+                          const v = guide.voices[vi];
+                          return (
+                            <blockquote key={vi} className="rounded-2xl border-l-4 border-blue-500/40 bg-background-elevated p-5">
+                              <p className="text-sm italic text-foreground">&ldquo;{v.quote}&rdquo;</p>
+                              <p className="mt-2 text-xs font-semibold text-foreground-muted">
+                                <SourceText source={v.source} url={v.url} />
+                              </p>
+                            </blockquote>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </Reveal>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {!guide.pairs && (
+        <>
       <Section title="The Hype">
         <p className="mb-4 text-sm text-foreground-muted">
           {guide.hypeIntro ?? "What course and training marketing in this space typically says."}
@@ -197,6 +262,8 @@ export default async function GuidePage({
           ))}
         </ul>
       </Section>
+        </>
+      )}
 
       <section className="mx-auto max-w-3xl px-6 py-10">
         <Reveal className="rounded-3xl border border-blue-500/30 bg-blue-500/5 p-6 sm:p-8">
@@ -222,6 +289,8 @@ export default async function GuidePage({
         </Reveal>
       </section>
 
+      {!guide.pairs && (
+        <>
       <Section title="Real Voices">
         <div className="space-y-4">
           {guide.voices.map((v, i) => (
@@ -237,6 +306,8 @@ export default async function GuidePage({
           ))}
         </div>
       </Section>
+        </>
+      )}
 
       <Section title="Our Honest Take">
         <div className="space-y-4">
