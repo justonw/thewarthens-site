@@ -7,6 +7,7 @@ import ParadigmTest from "@/components/source/ParadigmTest";
 import FoundationVisual from "@/components/source/FoundationVisual";
 import HouseProgress from "@/components/source/HouseProgress";
 import SectionNav, { type NavItem } from "@/components/source/SectionNav";
+import SourceRail from "@/components/source/SourceRail";
 import TeachMode, { TeachButton } from "@/components/source/TeachMode";
 import VerseBlock from "@/components/source/VerseBlock";
 import LibraryLoader from "@/components/source/LibraryLoader";
@@ -18,7 +19,7 @@ import {
   PAGE_TAGLINE,
   PAGE_TITLE,
   acts,
-  documentVerseCount,
+  devotionalPath,
   faq,
   featuredFor,
   hurtingVerses,
@@ -29,7 +30,6 @@ import {
   seoDescription,
   seoKeywords,
   seoTitle,
-  shortAnswer,
   shareDescription,
   shareTitle,
   verseByRef,
@@ -69,12 +69,11 @@ function Fade({ from, to }: { from: string; to: string }) {
 
 const navItems: NavItem[] = [
   { id: "test", label: "Quick check" },
-  { id: "why", label: "Why" },
   { id: "foundation", label: "Foundation" },
   { id: "act-1", label: "Know Him" },
   { id: "act-2", label: "See Him" },
   { id: "act-3", label: "Come to Him" },
-  { id: "state", label: "Your state" },
+  { id: "state", label: "Worksheet" },
   { id: "questions", label: "Questions" },
   { id: "hurting", label: "Hurting?" },
   { id: "library", label: "All verses" },
@@ -82,7 +81,6 @@ const navItems: NavItem[] = [
 
 const gold = "text-sol-gold";
 const eyebrow = "text-xs font-semibold uppercase tracking-[0.22em] text-sol-gold";
-const card = "rounded-3xl border border-sol-line bg-sol-card";
 
 function OurTake({ children }: { children: React.ReactNode }) {
   return (
@@ -95,6 +93,7 @@ function OurTake({ children }: { children: React.ReactNode }) {
 
 export default function SourceOfLifePage() {
   const url = `${site}${PAGE_PATH}`;
+  const path = devotionalPath();
   const quotes = {
     job1: verseByRef("questions", "Job 1:12"),
     job2: verseByRef("questions", "Job 2:6"),
@@ -158,6 +157,10 @@ export default function SourceOfLifePage() {
     <article className="relative overflow-x-clip">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <HouseProgress />
+      <SourceRail
+        watchId="path"
+        items={[...path.steps, ...path.more].map((st) => ({ id: st.id, mark: st.mark ?? String(st.number), title: st.title, line: st.line, peek: st.peek, note: st.note }))}
+      />
       <TeachMode />
 
       {/* Always-available way to the hurting path */}
@@ -179,7 +182,7 @@ export default function SourceOfLifePage() {
           }}
         />
         <div className="mx-auto max-w-5xl px-6 pt-16 pb-16 text-center sm:pt-24 sm:pb-24">
-          <p className={eyebrow}>{PAGE_TITLE} · Faith Journey with The Warthens</p>
+          <p className={eyebrow}>{PAGE_TITLE} · A devotional · Faith Journey with The Warthens</p>
           <h1 className="mt-7 font-sol font-semibold tracking-tight text-sol-ink">
             <span className="block text-4xl leading-[1.1] sm:text-6xl lg:text-[4.25rem] lg:leading-[1.08]">Good is not always God.</span>
             <span className="mt-2 block pb-3 text-4xl italic leading-[1.2] text-sol-violet sm:text-6xl lg:text-[4.25rem] lg:leading-[1.15]">
@@ -187,33 +190,52 @@ export default function SourceOfLifePage() {
             </span>
           </h1>
           <p className="text-balance mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-sol-ink/80 sm:text-xl">
-            Everything is held in God’s hands, so you can come to the Father in all of it. Here is the Scripture behind that,
-            and a way to look at your own life through it.
+            Everything is held in God’s hands, so you can come to the Father in all of it. Read this as a devotional:
+            Scripture first, in three acts, with a worksheet to take honest stock of where you are.
           </p>
           <p className="mx-auto mt-3 max-w-xl text-sm italic text-sol-muted">
-            A study by Juston Warthen. Written from conviction, not claiming the full picture, and open to other views.
+            A study by Juston Warthen, not claiming the full picture and open to other views.
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-            <a href="#test" className="rounded-full bg-sol-primary px-7 py-3.5 text-sm font-semibold text-sol-on-primary shadow-lg shadow-sol-primary/20 transition-colors hover:bg-sol-primary/90">
-              Take the 2-minute check →
+            <a href="#foundation" className="rounded-full bg-sol-primary px-7 py-3.5 text-sm font-semibold text-sol-on-primary shadow-lg shadow-sol-primary/20 transition-colors hover:bg-sol-primary/90">
+              Begin with the foundation →
+            </a>
+            <a href="#test" className="rounded-full border border-sol-line px-7 py-3.5 text-sm font-semibold text-sol-ink transition-colors hover:border-sol-gold/60">
+              Take the 2-minute check
             </a>
             <a href="#library" className="rounded-full border border-sol-line px-7 py-3.5 text-sm font-semibold text-sol-ink transition-colors hover:border-sol-gold/60">
               Browse every verse
             </a>
           </div>
-          <ul className="mx-auto mt-12 grid max-w-2xl gap-3 text-left sm:grid-cols-3">
-            {[
-              ["1", "A quick check", "See how you already sort good and bad in your own life."],
-              ["2", "The Scripture", `${documentVerseCount} passages in three acts, King James Version.`],
-              ["3", "A worksheet", "Take honest stock of where you are right now."],
-            ].map(([n, t, d]) => (
-              <li key={n} className="rounded-2xl border border-sol-line bg-sol-card p-4">
-                <p className="font-sol text-2xl text-sol-gold">{n}</p>
-                <p className="mt-1 text-sm font-semibold text-sol-ink">{t}</p>
-                <p className="mt-1 text-sm text-sol-muted">{d}</p>
-              </li>
-            ))}
-          </ul>
+          <div id="path" className="mx-auto mt-12 max-w-3xl text-left">
+            <p className={`${eyebrow} text-center`}>How this devotional is laid out</p>
+            <p className="text-balance mx-auto mt-2 max-w-xl text-center text-sm text-sol-muted">
+              Each part opens with Scripture (gold line, King James Version). My short take follows in a purple box, open to other views.
+            </p>
+            <ol className="mt-5 grid gap-3 sm:grid-cols-2">
+              {path.steps.map((st) => (
+                <li key={st.id}>
+                  <a href={`#${st.id}`} className="flex h-full gap-3 rounded-2xl border border-sol-line bg-sol-card p-4 transition-colors hover:border-sol-gold/60">
+                    <span aria-hidden className="font-sol text-2xl leading-none text-sol-gold">{st.number}</span>
+                    <span className="min-w-0">
+                      <span className="block text-sm font-semibold text-sol-ink">{st.title}</span>
+                      <span className="mt-0.5 block text-sm text-sol-muted">{st.line}</span>
+                      {st.note && <span className="mt-1 block text-xs font-semibold text-sol-gold">{st.note}</span>}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ol>
+            <p className="mt-4 text-center text-sm text-sol-muted">
+              Also here:{" "}
+              {path.more.map((m, i) => (
+                <span key={m.id}>
+                  {i > 0 && " · "}
+                  <a href={`#${m.id}`} className="font-semibold text-sol-ink underline underline-offset-4 hover:text-sol-gold">{m.title}</a>
+                </span>
+              ))}
+            </p>
+          </div>
         </div>
       </header>
 
@@ -246,73 +268,6 @@ export default function SourceOfLifePage() {
         </div>
       </section>
       <Fade from={NIGHT} to={LIGHT} />
-
-      {/* ------------------------------------------------ why + how to read */}
-      <section id="why" className="mx-auto max-w-3xl scroll-mt-32 px-6 pb-20">
-        <Reveal>
-          <div className="rounded-3xl border border-sol-gold/30 bg-sol-card p-6 shadow-sm shadow-sol-ink/5 sm:p-8">
-            <h2 className="text-xs font-semibold uppercase tracking-[0.22em] text-sol-gold">The short answer</h2>
-            <p className="mt-3 font-sol text-xl font-semibold leading-snug text-sol-ink sm:text-2xl">Is everything good from God and everything bad from the devil?</p>
-            <p className="mt-3 font-sol text-xl leading-relaxed text-sol-ink sm:text-2xl sm:leading-relaxed">{shortAnswer}</p>
-          </div>
-        </Reveal>
-
-        <Reveal delay={80}>
-          <p className={`${eyebrow} mt-16`}>Why I made this</p>
-          <h2 className="mt-3 font-sol text-3xl font-semibold text-sol-ink sm:text-4xl">Where this started.</h2>
-          <p className="mt-2 text-sm text-sol-muted">By Juston Warthen</p>
-          <div className="mt-6 space-y-5 text-lg leading-relaxed text-sol-ink/80">
-            <p>
-              It started with a statement from a pulpit: whatever good happens in your life is God, and whatever bad
-              happens in your life is the devil. It sounded simple, and it did not sit right with what I was reading. I
-              had also been let down by the state of my own life, so the question was not abstract for me. I wanted a
-              more thorough look, so over time I started collecting Scripture. This page is that collection.
-            </p>
-            <p>
-              I am grateful for the people who teach faithfully, and I am not writing against anyone. But I came to feel
-              that idea can quietly dumb down who God is. When that is missed, we start chasing what feels good, we avoid
-              the hard question of why God allowed something, and our attention slides off God and onto the devil when it
-              never needed to. The devil and God are not equal.
-            </p>
-            <p>
-              What I call good and bad is my paradigm, the lens I look through. It does not mean it lines up with truth.
-              Even in the Garden there was a tree of the knowledge of good and evil. I do not claim the full revelation,
-              but I wonder if our trouble began when we started sorting good and evil by our own knowledge. My aim is one
-              lens: Christ, who is truth.
-            </p>
-          </div>
-        </Reveal>
-
-        <Reveal delay={80}>
-          <div className="mt-10 rounded-3xl border border-sol-violet/30 bg-sol-violet/[0.07] p-6 sm:p-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-sol-violet">Where I stand</p>
-            <p className="mt-3 text-lg leading-relaxed text-sol-ink">
-              I believe what is on this page. I am not claiming to have the absolute full picture, and I am open to other views. Please test it for yourself, the way the Bereans did.
-            </p>
-            <div className="mt-5">
-              <VerseBlock verse={verseByRef("questions", "Acts 17:11")} domId="why-acts-17-11" />
-            </div>
-          </div>
-        </Reveal>
-
-        <Reveal delay={80}>
-          <div className={`${card} mt-6 p-6 sm:p-8`}>
-            <p className="text-sm font-semibold text-sol-ink">How to read this page</p>
-            <p className="mt-2 text-sol-muted">
-              Some of this is Scripture and some of it is my perspective. I keep them visibly apart so you can weigh each one.
-            </p>
-            <div className="mt-5 grid gap-4 sm:grid-cols-2">
-              <div className="border-l-2 border-sol-gold/60 pl-4">
-                <p className="font-sol text-lg text-sol-ink">Gold line, serif type: the Bible itself, in the King James Version.</p>
-              </div>
-              <div className="rounded-2xl border border-sol-violet/30 bg-sol-violet/[0.07] p-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-sol-violet">My take</p>
-                <p className="mt-1 text-base text-sol-ink">Purple box: what I think it means, open to other views.</p>
-              </div>
-            </div>
-          </div>
-        </Reveal>
-      </section>
 
       {/* ------------------------------------------------ the foundation */}
       <section id="foundation" className="scroll-mt-32 px-6 py-20">
@@ -463,7 +418,7 @@ export default function SourceOfLifePage() {
       {/* ------------------------------------------------ current state */}
       <section id="state" className="scroll-mt-32 px-6 py-20">
         <div className="mx-auto max-w-3xl text-center">
-          <p className={eyebrow}>Take accountability</p>
+          <p className={eyebrow}>Your worksheet · Take accountability</p>
           <h2 className="mt-3 font-sol text-3xl font-semibold text-sol-ink sm:text-5xl">Your current state</h2>
           <p className="text-balance mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-sol-ink/80">
             We take accountability because that is the current state. When we understand where we are and why, we can

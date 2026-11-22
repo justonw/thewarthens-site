@@ -335,3 +335,69 @@ export const worksheetPrompts: { id: string; label: string; hint: string }[] = [
     hint: "One small, real step. He is the lens we look at all of life through.",
   },
 ];
+
+// ---------------------------------------------------------------------------------------------
+// The path through the page, in the order it is read. The overview near the top and the side tabs
+// both read from this, so what they say always matches what is actually on the page.
+
+export type PathStep = {
+  id: string;
+  /** 1 to 6 for the main path. Left out for the "also here" parts. */
+  number?: number;
+  /** A short mark for the side tab when there is no number. */
+  mark?: string;
+  title: string;
+  line: string;
+  /** What is inside, shown as a preview when a side tab is hovered or focused. */
+  peek: string[];
+  note?: string;
+};
+
+const ROMAN = { 1: "I", 2: "II", 3: "III" } as const;
+
+export function devotionalPath(): { steps: PathStep[]; more: PathStep[] } {
+  const passagesIn = (ids: string[]) => verses.filter((v) => !v.added && ids.includes(v.section)).length;
+  const actSteps: PathStep[] = acts.map((a, i) => {
+    const mine = sections.filter((s) => s.act === a.number);
+    return {
+      id: `act-${a.number}`,
+      number: i + 3,
+      title: `Act ${ROMAN[a.number]}: ${a.name}`,
+      line: a.line,
+      peek: mine.map((s) => s.title),
+      note: `${mine.length} sections, ${passagesIn(mine.map((s) => s.id))} passages`,
+    };
+  });
+  const steps: PathStep[] = [
+    {
+      id: "test",
+      number: 1,
+      title: "A quick check",
+      line: "Seven everyday moments. Choose who you think is behind each one.",
+      peek: ["About 2 minutes", "There are no right or wrong answers", "It shows how you already sort good and bad"],
+      note: "About 2 minutes",
+    },
+    {
+      id: "foundation",
+      number: 2,
+      title: "The foundation",
+      line: "Check what you are building on before you build.",
+      peek: ["A cracked foundation or a solid one", "Matthew 7:24-27", "1 Corinthians 3:11"],
+    },
+    ...actSteps,
+    {
+      id: "state",
+      number: 6,
+      title: "Your worksheet",
+      line: "Five questions to take honest stock of where you are.",
+      peek: worksheetPrompts.map((p) => p.label),
+      note: "Stays on your device. Print it to save a PDF.",
+    },
+  ];
+  const more: PathStep[] = [
+    { id: "questions", mark: "?", title: "Honest questions", line: "What a careful reader will ask.", peek: faq.slice(0, 3).map((f) => f.question), note: `${faq.length} questions` },
+    { id: "hurting", mark: "♡", title: "If you are hurting", line: "Start here. You do not have to settle any debate first.", peek: ["Scripture for a hard season", "A simple prayer", "988 (U.S.) if you are in crisis"] },
+    { id: "library", mark: "⌕", title: "Every verse", line: "Search the whole study.", peek: [], note: `${documentVerseCount} passages in the study` },
+  ];
+  return { steps, more };
+}
