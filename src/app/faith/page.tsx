@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import StartDoors from "@/components/StartDoors";
@@ -142,11 +141,26 @@ export default function FaithJourneyPage() {
             We don&apos;t believe in adopting whatever culture hands us unless
             it&apos;s actually rooted in biblical, theological truth.
           </p>
+          <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+            <a
+              href="#writings"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-purple-700 px-7 py-3 text-base font-semibold text-white shadow-lg shadow-purple-900/20 transition-colors hover:bg-purple-600"
+            >
+              Read the articles
+              <span aria-hidden>↓</span>
+            </a>
+            <a
+              href="#videos"
+              className="inline-flex min-h-12 items-center justify-center rounded-full border border-border-subtle bg-background-elevated px-7 py-3 text-base font-semibold text-foreground transition-colors hover:border-purple-500/50 hover:text-purple-800"
+            >
+              Watch the videos
+            </a>
+          </div>
         </div>
       </div>
 
       {/* Pinned: our Jesus story stays at the top */}
-      <div className="mx-auto max-w-5xl px-6 pb-12">
+      <div id="videos" className="mx-auto max-w-5xl scroll-mt-24 px-6 pb-12">
         <Reveal>
           <div className="grid overflow-hidden rounded-[2rem] border border-purple-600/20 bg-background-elevated shadow-xl shadow-purple-950/10 md:grid-cols-[1.05fr_0.95fr]">
             <Link href={newest.href} className="group relative block aspect-video md:aspect-auto md:min-h-72" aria-label={`${newest.title}: ${newest.cta}`}>
@@ -208,7 +222,12 @@ export default function FaithJourneyPage() {
       {/* Newer videos */}
       <div className="mx-auto max-w-5xl px-6 pb-14 pt-12 sm:pt-16">
         <Reveal>
-          <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">New on the channel</h2>
+          <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+            <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">New on the channel</h2>
+            <a href={FAITH_YOUTUBE_URL} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-purple-700 underline underline-offset-4 hover:text-purple-900">
+              See all on YouTube
+            </a>
+          </div>
         </Reveal>
         <ul className="mt-6 grid gap-4 md:grid-cols-2">
           {olderVideos.map((v, i) => (
@@ -234,126 +253,6 @@ export default function FaithJourneyPage() {
             </li>
           ))}
         </ul>
-      </div>
-
-      {/* Plug for the Faith Journey YouTube channel */}
-      <div
-        className="relative overflow-hidden text-white"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 12% 0%, rgba(244,184,160,0.32), transparent 45%), radial-gradient(circle at 95% 100%, rgba(147,51,234,0.35), transparent 50%), linear-gradient(135deg, #9c5268, #7d3f52 50%, #572838)",
-        }}
-      >
-        {/* soft decorative glows and a faint dot texture */}
-        <div aria-hidden className="pointer-events-none absolute -left-24 top-10 h-72 w-72 rounded-full bg-rose-300/20 blur-3xl" />
-        <div aria-hidden className="pointer-events-none absolute -right-20 bottom-0 h-80 w-80 rounded-full bg-purple-400/25 blur-3xl" />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.07]"
-          style={{
-            backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)",
-            backgroundSize: "22px 22px",
-          }}
-        />
-
-        <div className="relative mx-auto grid max-w-5xl items-center gap-10 px-6 py-16 sm:py-20 md:grid-cols-[1.05fr_0.95fr] md:gap-14">
-          <Reveal>
-            <p className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-rose-100">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75 motion-safe:animate-ping" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-red-400" />
-              </span>
-              On YouTube
-            </p>
-            <h2 className="text-balance mt-5 text-3xl font-semibold tracking-tight sm:text-4xl">
-              Watch Faith Journey with The Warthens
-            </h2>
-            <p className="mt-4 max-w-lg text-balance text-lg text-rose-100">
-              Testimonies, Bible study, and honest conversations about trusting God, from our family
-              to yours.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-2">
-              {["Testimonies", "Bible study", "Trusting God", "Real conversations"].map((chip) => (
-                <span
-                  key={chip}
-                  className="rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-xs font-semibold text-rose-50"
-                >
-                  {chip}
-                </span>
-              ))}
-            </div>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <a
-                href={FAITH_YOUTUBE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full bg-white px-5 sm:px-7 py-3.5 text-sm font-semibold text-purple-800 shadow-xl shadow-black/20 transition-all hover:-translate-y-0.5 hover:bg-rose-50"
-              >
-                Watch on YouTube
-                <span aria-hidden>→</span>
-              </a>
-              <a
-                href={`${FAITH_YOUTUBE_URL}?sub_confirmation=1`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center rounded-full border border-white/40 px-5 sm:px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/10"
-              >
-                Subscribe
-              </a>
-            </div>
-          </Reveal>
-
-          <Reveal delay={120}>
-            <div className="relative rounded-3xl border border-white/20 bg-white/10 p-5 shadow-2xl shadow-black/25 backdrop-blur-md sm:p-6">
-              <div className="flex items-center gap-3">
-                <span className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#0b1020] ring-2 ring-white/40">
-                  <Image
-                    src="/brand/icon-square.png"
-                    alt=""
-                    width={48}
-                    height={48}
-                    className="h-full w-full object-cover"
-                  />
-                </span>
-                <div className="min-w-0">
-                  <p className="truncate font-semibold leading-tight">Faith Journey with The Warthens</p>
-                  <p className="text-xs text-rose-100">Juston &amp; Atiya Warthen</p>
-                </div>
-              </div>
-
-              <a
-                href={FAITH_YOUTUBE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Watch Faith Journey with The Warthens on YouTube"
-                className="group relative mt-5 flex aspect-video items-center justify-center overflow-hidden rounded-2xl border border-white/15"
-                style={{
-                  backgroundImage:
-                    "radial-gradient(60% 90% at 20% 0%, rgba(147,51,234,0.55), transparent), radial-gradient(50% 80% at 100% 100%, rgba(59,130,246,0.4), transparent), linear-gradient(135deg, #14104a, #241b72 55%, #3b1d86)",
-                }}
-              >
-                <Image
-                  src="/brand/icon-square.png"
-                  alt=""
-                  width={160}
-                  height={160}
-                  className="pointer-events-none absolute -right-6 -bottom-8 h-40 w-40 rounded-3xl opacity-25 mix-blend-screen"
-                />
-                <span className="relative flex h-20 w-20 items-center justify-center">
-                  <span className="absolute inset-0 rounded-full bg-white/30 motion-safe:animate-ping" />
-                  <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-white text-purple-700 shadow-xl transition-transform duration-300 group-hover:scale-110">
-                    <svg viewBox="0 0 24 24" fill="currentColor" className="ml-1 h-7 w-7" aria-hidden>
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                  </span>
-                </span>
-                <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-4 py-3 text-left text-xs font-semibold tracking-wide text-white">
-                  New videos on faith and trusting God
-                </span>
-              </a>
-            </div>
-          </Reveal>
-        </div>
       </div>
 
       {/* Everything to read or do, filterable */}

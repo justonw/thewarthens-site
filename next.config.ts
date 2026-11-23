@@ -59,6 +59,12 @@ const nextConfig: NextConfig = {
         destination: "/faith/present-but-missing",
         permanent: false,
       },
+      // Short link for Atiya's "What I Learned in 15 Years of Ministry", for a video description or a QR code.
+      {
+        source: "/ministry",
+        destination: "/faith/15-years-in-ministry",
+        permanent: false,
+      },
       // Short link for Source of Life, to say out loud or put on a QR code or a slide.
       {
         source: "/source",

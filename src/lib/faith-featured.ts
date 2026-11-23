@@ -66,6 +66,14 @@ export type LibraryItem = {
 // Lessons, exercises and communities that are not in faith-writings.ts.
 export const extraLibraryItems: LibraryItem[] = [
   {
+    href: "/faith/15-years-in-ministry",
+    title: "What I Learned in 15 Years of Ministry",
+    blurb:
+      "Three lessons from Atiya for anyone who serves in a local church, or has stepped back from serving: know God and His Word, lead with humility, and serve people without being bound by their opinions.",
+    cta: "Read the lessons",
+    tags: ["lesson"],
+  },
+  {
     href: "/faith/present-but-missing",
     title: "Present but Missing",
     blurb:
