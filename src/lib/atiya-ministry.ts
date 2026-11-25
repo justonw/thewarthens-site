@@ -1,6 +1,7 @@
 // "What I Learned in 15 Years of Ministry": Atiya's three lessons, on one page. The reading comes first, and each verse
 // sits right after the part it belongs to, with one or two lines on why it was chosen and how far it can honestly be
-// applied. All Scripture is the New Living Translation (NLT), copied word for word from the NLT text on Bible Gateway.
+// applied. Scripture is the New Living Translation (NLT), copied word for word from the NLT text on Bible Gateway, except
+// where a passage is marked NASB 2020 (the same wording used in the video overlays). Each passage shows its own translation.
 // (1 Corinthians 3:11 has a dash in the NLT's own wording, so that one dash is kept as printed.)
 
 export const MINISTRY_PATH = "/faith/15-years-in-ministry";
@@ -15,7 +16,10 @@ export const ministrySeoDescription =
 export const NLT_NOTICE =
   "Scripture quotations marked (NLT) are taken from the Holy Bible, New Living Translation, copyright © 1996, 2004, 2015 by Tyndale House Foundation. Used by permission of Tyndale House Publishers, Carol Stream, Illinois 60188. All rights reserved.";
 
-export type Passage = { ref: string; text: string };
+export type Passage = { ref: string; text: string; version?: "NLT" | "NASB 2020" };
+
+export const NASB_NOTICE =
+  "Scripture quotations taken from the (NASB®) New American Standard Bible®, Copyright © 1960, 1971, 1977, 1995, 2020 by The Lockman Foundation. Used by permission. All rights reserved. www.lockman.org";
 
 export type Block =
   | { kind: "p"; text: string; lead?: boolean }
@@ -71,6 +75,16 @@ export const lessons: Lesson[] = [
         ],
         why: "The Bereans did not simply accept what they heard, even from Paul. They checked it against the Scriptures for themselves.",
       },
+      {
+        kind: "scripture",
+        passages: [
+          {
+            ref: "Hebrews 4:12",
+            text: "For the word of God is alive and powerful. It is sharper than the sharpest two-edged sword, cutting between soul and spirit, between joint and marrow. It exposes our innermost thoughts and desires.",
+          },
+        ],
+        why: "God's Word is alive, and it reaches what is really in us. That is why it matters to read it for yourself and not only hear it from someone else.",
+      },
       { kind: "p", text: "You cannot rely on someone else's interpretation of Scripture to be your foundation. You cannot build your life on someone else's foundation." },
       {
         kind: "scripture",
@@ -96,8 +110,19 @@ export const lessons: Lesson[] = [
       },
       {
         kind: "scripture",
-        passages: [{ ref: "Proverbs 16:18", text: "Pride goes before destruction, and haughtiness before a fall." }],
-        why: "God's Word is clear about where pride leads: destruction and a fall.",
+        passages: [{ ref: "Proverbs 16:18", version: "NASB 2020", text: "Pride goes before destruction,\nAnd a haughty spirit before stumbling." }],
+        why: "God's Word is clear about where pride leads: destruction and stumbling.",
+      },
+      {
+        kind: "scripture",
+        passages: [
+          {
+            ref: "Mark 10:45",
+            version: "NASB 2020",
+            text: "For even the Son of Man did not come to be served, but to serve, and to give His life as a ransom for many.",
+          },
+        ],
+        why: "The opposite of pride is Jesus Himself. He said this to disciples who were arguing about who would be greatest, and He pointed to His own example: not to be served, but to serve.",
       },
     ],
   },

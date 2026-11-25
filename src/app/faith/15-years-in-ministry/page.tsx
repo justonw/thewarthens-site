@@ -7,6 +7,7 @@ import {
   MINISTRY_PATH,
   MINISTRY_PUBLISHED,
   MINISTRY_TITLE,
+  NASB_NOTICE,
   NLT_NOTICE,
   audience,
   closing,
@@ -156,9 +157,9 @@ export default function MinistryPage() {
                       <div className="space-y-5">
                         {b.passages.map((p) => (
                           <figure key={p.ref}>
-                            <blockquote className="font-sol text-xl italic leading-relaxed text-sol-ink sm:text-2xl sm:leading-relaxed">{p.text}</blockquote>
+                            <blockquote className="whitespace-pre-line font-sol text-xl italic leading-relaxed text-sol-ink sm:text-2xl sm:leading-relaxed">{p.text}</blockquote>
                             <figcaption className="mt-2 text-xs font-semibold uppercase tracking-[0.2em] text-sol-gold">
-                              {p.ref} <span className="font-normal text-sol-muted">NLT</span>
+                              {p.ref} <span className="font-normal text-sol-muted">{p.version ?? "NLT"}</span>
                             </figcaption>
                           </figure>
                         ))}
@@ -192,6 +193,7 @@ export default function MinistryPage() {
           By Atiya Warthen. More from <Link href="/faith" className="font-semibold underline underline-offset-4">Faith Journey</Link>.
         </p>
         <p className="mt-3">{NLT_NOTICE}</p>
+        <p className="mt-3">{NASB_NOTICE}</p>
       </footer>
     </article>
   );
