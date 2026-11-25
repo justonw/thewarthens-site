@@ -12,15 +12,15 @@ const newsreader = Newsreader({
 // A private link: search engines are told not to list it, and it is not in the sitemap.
 export const metadata: Metadata = {
   title: "You're invited: Atiya's Birthday Lunch",
-  description: "Sunday, December 6 at Chattahoochee Food Works in Atlanta. Tap the link for the details, the menu picks, parking, and to RSVP by November 28.",
+  description: "Click to reveal the details, and tell us how many people are coming.",
   robots: { index: false, follow: false, nocache: true },
   openGraph: {
     title: "You're invited: Atiya's Birthday Lunch",
-    description: "Tap the link for details and to RSVP by November 28.",
+    description: "Click to reveal the details. Tell us how many people are coming.",
     type: "website",
     url: "https://thewarthens.com/birthday",
   },
-  twitter: { card: "summary_large_image", title: "You're invited: Atiya's Birthday Lunch", description: "Tap the link for details and to RSVP by November 28." },
+  twitter: { card: "summary_large_image", title: "You're invited: Atiya's Birthday Lunch", description: "Click to reveal the details. Tell us how many people are coming." },
 };
 
 export default function BirthdayLayout({ children }: { children: ReactNode }) {
