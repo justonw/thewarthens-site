@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 
 // Pages that run as a standalone kiosk (no site header or footer, so there is
 // nowhere for a visitor to wander off to). Right now: the Tech Journey Jr. game.
-const KIOSK_PREFIXES = ["/techjr/play"];
+const KIOSK_PREFIXES = ["/techjr/play", "/birthday"];
 
 export default function SiteChrome({ children }: { children: ReactNode }) {
   const pathname = usePathname();

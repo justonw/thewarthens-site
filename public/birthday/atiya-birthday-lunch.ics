@@ -1,0 +1,21 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//The Warthens//Birthday Lunch//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:atiya-birthday-lunch-2026-12-06@thewarthens.com
+DTSTAMP:20261124T150000Z
+DTSTART:20261206T172800Z
+DTEND:20261206T200000Z
+SUMMARY:Atiya's Birthday Lunch
+LOCATION:Chattahoochee Food Works\, 1235 Chattahoochee Ave NW\, Ste 130\, Atlanta\, GA 30318
+DESCRIPTION:Arrive between 12:28 and 12:43 PM. Details\, menu picks and parking: https://thewarthens.com/birthday
+URL:https://thewarthens.com/birthday
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Atiya's Birthday Lunch is in 2 hours
+TRIGGER:-PT2H
+END:VALARM
+END:VEVENT
+END:VCALENDAR
