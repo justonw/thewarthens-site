@@ -7,6 +7,9 @@ import {
   MINISTRY_PATH,
   MINISTRY_PUBLISHED,
   MINISTRY_TITLE,
+  MINISTRY_VIDEO_ID,
+  MINISTRY_VIDEO_TITLE,
+  MINISTRY_VIDEO_UPLOADED,
   NASB_NOTICE,
   NLT_NOTICE,
   audience,
@@ -15,6 +18,7 @@ import {
   lessons,
   ministrySeoDescription,
   ministrySeoTitle,
+  videoIntro,
 } from "@/lib/atiya-ministry";
 
 const site = "https://thewarthens.com";
@@ -75,6 +79,19 @@ export default function MinistryPage() {
         author: { "@type": "Person", name: "Atiya Warthen", url: `${site}/about` },
         publisher: { "@type": "Organization", name: "The Warthens", logo: { "@type": "ImageObject", url: `${site}/brand/icon-square.png` } },
       },
+      {
+        "@type": "VideoObject",
+        "@id": `${url}#video`,
+        name: MINISTRY_VIDEO_TITLE,
+        description: videoIntro,
+        thumbnailUrl: [`https://i.ytimg.com/vi/${MINISTRY_VIDEO_ID}/maxresdefault.jpg`],
+        uploadDate: MINISTRY_VIDEO_UPLOADED,
+        contentUrl: `https://www.youtube.com/watch?v=${MINISTRY_VIDEO_ID}`,
+        embedUrl: `https://www.youtube.com/embed/${MINISTRY_VIDEO_ID}`,
+        inLanguage: "en",
+        author: { "@type": "Person", name: "Atiya Warthen", url: `${site}/about` },
+        publisher: { "@type": "Organization", name: "The Warthens", logo: { "@type": "ImageObject", url: `${site}/brand/icon-square.png` } },
+      },
     ],
   };
 
@@ -111,6 +128,32 @@ export default function MinistryPage() {
       </header>
 
       <SectionNav items={navItems} />
+
+      {/* ------------------------------------------------ the video */}
+      <section id="video" className="mx-auto max-w-4xl scroll-mt-32 px-6 pt-12">
+        <Reveal>
+          <p className={`${eyebrow} text-center`}>Watch the video</p>
+          <div className="mx-auto mt-5 overflow-hidden rounded-3xl border border-sol-line bg-black shadow-2xl shadow-sol-ink/15">
+            <div className="aspect-video w-full">
+              <iframe
+                className="h-full w-full"
+                src={`https://www.youtube.com/embed/${MINISTRY_VIDEO_ID}`}
+                title={MINISTRY_VIDEO_TITLE}
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+              />
+            </div>
+          </div>
+          <p className="text-balance mx-auto mt-6 max-w-3xl text-center text-lg leading-relaxed text-sol-ink/85 sm:text-xl">{videoIntro}</p>
+          <p className="mt-3 text-center text-sm">
+            <a href={`https://youtu.be/${MINISTRY_VIDEO_ID}`} target="_blank" rel="noopener noreferrer" className="font-semibold text-sol-gold underline underline-offset-4">
+              Watch on YouTube
+            </a>
+          </p>
+        </Reveal>
+      </section>
 
       {/* ------------------------------------------------ who this is for */}
       <section className="mx-auto max-w-4xl px-6 py-14">

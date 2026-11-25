@@ -34,6 +34,15 @@ export type Lesson = {
   blocks: Block[];
 };
 
+// The video that goes with this page (Faith Journey with The Warthens on YouTube).
+export const MINISTRY_VIDEO_ID = "McXD35540wU";
+export const MINISTRY_VIDEO_TITLE = "The Real Reason I Left Ministry After 15 Years";
+export const MINISTRY_VIDEO_UPLOADED = "2026-11-25";
+
+// Shown right under the video.
+export const videoIntro =
+  "Whether you serve in a local church today or have stepped back from serving, this is for you. We cover the importance of knowing God and His Word for yourself, why pride keeps you serving the wrong thing, and serving God's people without being bound by their opinions.";
+
 export const dek = "Three lessons for anyone who serves in a local church, and for anyone who has stepped back from serving.";
 
 export const audience = [
