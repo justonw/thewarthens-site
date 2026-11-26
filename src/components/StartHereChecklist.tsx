@@ -68,7 +68,7 @@ export default function StartHereChecklist({
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
-                    className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700"
+                    className="mt-1 inline-flex min-h-9 items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700"
                   >
                     {step.linkLabel}
                     <span aria-hidden>→</span>

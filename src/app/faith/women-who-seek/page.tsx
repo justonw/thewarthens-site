@@ -276,7 +276,7 @@ export default function WomenWhoSeekPage() {
                 href={ZOOM_LINK}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-mauve-700 hover:text-mauve-800"
+                className="mt-3 inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-mauve-700 hover:text-mauve-800"
               >
                 Join Zoom Meeting
                 <span aria-hidden>→</span>

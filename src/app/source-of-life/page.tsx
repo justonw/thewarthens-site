@@ -11,6 +11,7 @@ import SourceRail from "@/components/source/SourceRail";
 import TeachMode, { TeachButton } from "@/components/source/TeachMode";
 import VerseBlock from "@/components/source/VerseBlock";
 import LibraryLoader from "@/components/source/LibraryLoader";
+import OpenToVerse from "@/components/source/OpenToVerse";
 import Worksheet from "@/components/source/Worksheet";
 import {
   PAGE_MODIFIED,
@@ -162,6 +163,7 @@ export default function SourceOfLifePage() {
         items={[...path.steps, ...path.more].map((st) => ({ id: st.id, mark: st.mark ?? String(st.number), title: st.title, line: st.line, peek: st.peek, note: st.note }))}
       />
       <TeachMode />
+      <OpenToVerse />
 
       {/* Always-available way to the hurting path */}
       <a

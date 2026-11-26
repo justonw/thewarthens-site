@@ -215,7 +215,7 @@ export default async function FaithWritingPage({
           </a>
           <Link
             href="/faith"
-            className="mt-2 text-sm font-semibold text-purple-700 underline decoration-purple-300 underline-offset-4 hover:text-purple-800"
+            className="mt-2 inline-flex min-h-10 items-center text-sm font-semibold text-purple-700 underline decoration-purple-300 underline-offset-4 hover:text-purple-800"
           >
             Back to Faith Journey
           </Link>

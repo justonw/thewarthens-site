@@ -267,7 +267,7 @@ export default function CoachingPage() {
                 href="#free-session"
                 className="font-semibold text-slate-200 underline-offset-4 hover:text-white hover:underline"
               >
-                Learn more
+                How the free session works
               </a>
             </p>
           </div>

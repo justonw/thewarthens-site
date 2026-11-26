@@ -21,8 +21,8 @@ const day2 = new Date("2026-11-19T12:00:00Z");
 assert.equal(await countField(kv, "Registered Nurse - Med Surg", [], false, day1), "nursing-clinical");
 assert.equal(await countField(kv, "Account Executive", ["quota"], false, day1), "sales");
 assert.equal(await countField(kv, "Teacher", [], true, day2), "teaching-education", "a general resume is counted under its field");
-assert.equal(await countField(kv, "Dental Hygienist (Part-time)", [], false, day1), "none");
-assert.equal(await countField(kv, "Dental Hygienist", [], false, day2), "none");
+assert.equal(await countField(kv, "Lighthouse Keeper (Part-time)", [], false, day1), "none");
+assert.equal(await countField(kv, "Lighthouse Keeper", [], false, day2), "none");
 assert.equal(await countField(kv, "", [], false, day2), "none", "no title is counted as none and adds no title");
 
 const rep = await fieldReport(kv, 3, day2);
@@ -30,7 +30,7 @@ assert.equal(rep.builds, 6);
 assert.equal(rep.general, 1);
 assert.equal(rep.fields.find((f) => f.id === "nursing-clinical")?.n, 1);
 assert.equal(rep.fields.find((f) => f.id === "none")?.n, 3);
-assert.deepEqual(rep.nolens, [{ title: "dental hygienist", n: 2 }], "titles are added up across days, and carry nothing personal");
+assert.deepEqual(rep.nolens, [{ title: "lighthouse keeper", n: 2 }], "titles are added up across days, and carry nothing personal");
 assert.equal((await fieldReport(kv, 1, day2)).builds, 3, "only the last day when asked for one");
 
 assert.equal(titleSlug("Sr. Dental Assistant (Remote)!"), "sr-dental-assistant");

@@ -532,9 +532,9 @@ export const startHereGuides: StartHereGuide[] = [
         id: "community",
         title: "Join a community for help",
         description:
-          "freeCodeCamp's own Discord and r/learnprogramming are both free and built for beginners asking exactly the questions you'll have.",
-        href: "https://www.freecodecamp.org/news/freecodecamp-discord-server/",
-        linkLabel: "freeCodeCamp Discord",
+          "freeCodeCamp's own forum and r/learnprogramming are both free and built for beginners asking exactly the questions you'll have.",
+        href: "https://forum.freecodecamp.org/",
+        linkLabel: "freeCodeCamp forum",
       },
     ],
     paidNote:

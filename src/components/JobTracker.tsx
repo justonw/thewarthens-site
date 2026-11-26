@@ -72,7 +72,7 @@ export default function JobTracker() {
       <p className="mt-3 text-sm text-foreground-muted">
         Saved in your browser on this device. Clearing your browser data will
         clear it too, so grab the{" "}
-        <a href="#tracker-download" className="font-semibold text-blue-600 hover:text-blue-700">
+        <a href="#toolkit" className="font-semibold text-blue-600 hover:text-blue-700">
           downloadable version
         </a>{" "}
         if you want a permanent copy.

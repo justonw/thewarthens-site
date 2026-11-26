@@ -7,11 +7,11 @@
 export const MINISTRY_PATH = "/faith/15-years-in-ministry";
 export const MINISTRY_TITLE = "What I Learned in 15 Years of Ministry";
 export const MINISTRY_PUBLISHED = "2026-11-24";
-export const MINISTRY_MODIFIED = "2026-11-24";
+export const MINISTRY_MODIFIED = "2026-11-26";
 
 export const ministrySeoTitle = "What I Learned in 15 Years of Ministry | Atiya Warthen";
 export const ministrySeoDescription =
-  "Three lessons from 15 years of serving in ministry: know God and His Word for yourself, lead with humility, and serve God's people without being bound by their opinions.";
+  "Three lessons from 15 years in ministry: know God and His Word for yourself, lead with humility, and serve God's people without being bound by their opinions.";
 
 export const NLT_NOTICE =
   "Scripture quotations marked (NLT) are taken from the Holy Bible, New Living Translation, copyright © 1996, 2004, 2015 by Tyndale House Foundation. Used by permission of Tyndale House Publishers, Carol Stream, Illinois 60188. All rights reserved.";

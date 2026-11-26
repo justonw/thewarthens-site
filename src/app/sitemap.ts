@@ -48,10 +48,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/jesus", priority: 0.7, lastModified: new Date("2026-11-14") },
     { path: "/source-of-life", priority: 0.7, lastModified: new Date("2026-11-14") },
     { path: "/source-of-life/leader-guide", priority: 0.5, lastModified: new Date("2026-11-14") },
-    { path: "/faith", priority: 0.8, lastModified: new Date("2026-11-14") },
+    { path: "/faith", priority: 0.8, lastModified: new Date("2026-11-26") },
     { path: "/faith/women-who-seek", priority: 0.7, lastModified: SITE_LAST_UPDATED },
     { path: "/faith/present-but-missing", priority: 0.7, lastModified: new Date("2026-11-07") },
-    { path: "/faith/15-years-in-ministry", priority: 0.7, lastModified: new Date("2026-11-24") },
+    { path: "/faith/15-years-in-ministry", priority: 0.7, lastModified: new Date("2026-11-26") },
     ...guides.map((g) => ({
       path: `/tech/guides/${g.slug}`,
       priority: 0.7,

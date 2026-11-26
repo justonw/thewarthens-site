@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useId, type ReactNode } from "react";
 import {
   avatarEyeColors,
   avatarHairColors,
@@ -485,18 +485,18 @@ function hearingAids(): ReactNode {
   );
 }
 
-function Outfit({ kind, color }: { kind: string; color: string }) {
+function Outfit({ kind, color, torsoId }: { kind: string; color: string; torsoId: string }) {
   const dark = darken(color, 0.22);
   const light = lighten(color, 0.35);
   return (
     <g>
       {kind === "hoodie" && <path d="M28 100 C28 80 44 74 60 74 C76 74 92 80 92 100 Z" fill={dark} />}
       <path d="M14 124 C14 100 36 92 60 92 C84 92 106 100 106 124 Z" fill={color} />
-      <clipPath id="avatar-torso">
+      <clipPath id={torsoId}>
         <path d="M14 124 C14 100 36 92 60 92 C84 92 106 100 106 124 Z" />
       </clipPath>
       {kind === "stripes" && (
-        <g clipPath="url(#avatar-torso)" stroke={light} strokeWidth="3.2" opacity="0.9">
+        <g clipPath={`url(#${torsoId})`} stroke={light} strokeWidth="3.2" opacity="0.9">
           <path d="M10 103 H110" />
           <path d="M10 111 H110" />
           <path d="M10 119 H110" />
@@ -542,9 +542,13 @@ export default function Avatar({
   const eye = avatarEyeColors.find((e) => e.id === look.eyes)?.hex ?? avatarEyeColors[0].hex;
   const accessory = look.accessory ?? "none";
 
-  const faceId = `avatar-face-${look.skin}`;
-  const hairId = `avatar-hair-${look.hairColor}`;
-  const bgId = `avatar-bg-${look.outfitColor ?? "blue"}`;
+  // Many avatars share one page, so every id inside the picture has to belong to this one picture.
+  const uid = useId().replace(/[^a-zA-Z0-9_-]/g, "");
+  const clipId = `avatar-clip-${uid}`;
+  const torsoId = `avatar-torso-${uid}`;
+  const faceId = `avatar-face-${uid}`;
+  const hairId = `avatar-hair-${uid}`;
+  const bgId = `avatar-bg-${uid}`;
   const hairFill = `url(#${hairId})`;
   const brow = darken(hair, 0.25);
   const lip = mix(skin, "#A8323F", 0.55);
@@ -561,7 +565,7 @@ export default function Avatar({
       className={className}
     >
       <defs>
-        <clipPath id="avatar-clip">
+        <clipPath id={clipId}>
           <circle cx="60" cy="60" r="60" />
         </clipPath>
         <radialGradient id={faceId} cx="45%" cy="38%" r="70%">
@@ -580,9 +584,9 @@ export default function Avatar({
         </linearGradient>
       </defs>
       <circle cx="60" cy="60" r="60" fill={`url(#${bgId})`} />
-      <g clipPath="url(#avatar-clip)">
+      <g clipPath={`url(#${clipId})`}>
         {backHair(look.hair, hairFill, boy)}
-        <Outfit kind={look.outfit ?? "hoodie"} color={outfitColor} />
+        <Outfit kind={look.outfit ?? "hoodie"} color={outfitColor} torsoId={torsoId} />
         <rect x="52" y="78" width="16" height="18" rx="6" fill={skin} />
         <path d="M52 86 Q60 94 68 86 L68 92 L52 92 Z" fill="#000" opacity="0.12" />
         <path d="M31 58 C29 31 44 21 60 21 C76 21 91 31 89 58 Z" fill={hairFill} />

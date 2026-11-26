@@ -18,7 +18,13 @@ export const metadata: Metadata = {
 type Ref = { section: string; ref: string };
 
 // Verse links point to the exact verse on the page, so a leader can open it and read it aloud.
-const verseLink = ({ section, ref }: Ref) => ({ ref, href: `/source-of-life#${verseByRef(section, ref).id}` });
+// Verses in the honest questions are shown inside their answers, and the page gives those a "q-" in front of the id.
+// Romans 8:28 is the exception: the page shows it as a large card of its own.
+const verseLink = ({ section, ref }: Ref) => {
+  const id = verseByRef(section, ref).id;
+  const anchor = id === "questions-romans-8-28" ? "lens-romans-8-28" : section === "questions" ? `q-${id}` : id;
+  return { ref, href: `/source-of-life#${anchor}` };
+};
 
 const steps: {
   minutes: number;
